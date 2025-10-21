@@ -1,0 +1,20 @@
+{
+  "name": "@repo/api",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --ext .ts --max-warnings 0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "5.9.2",
+    "@types/node": "^22.15.30"
+  }
+}
