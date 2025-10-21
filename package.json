@@ -1,5 +1,5 @@
 {
-  "name": "with-tailwind",
+  "name": "datagsm-front",
   "private": true,
   "scripts": {
     "build": "turbo run build",
