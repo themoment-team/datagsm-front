@@ -1,0 +1,15 @@
+.next/
+out/
+build/
+public/
+
+node_modules/
+
+*.d.ts
+next-env.d.ts
+
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+.DS_Store
