@@ -1,5 +1,5 @@
 {
-  "name": "@repo/ui",
+  "name": "@repo/shared",
   "version": "0.0.0",
   "sideEffects": [
     "**/*.css"
@@ -8,15 +8,17 @@
     "dist"
   ],
   "exports": {
-    "./styles.css": "./dist/index.css",
-    "./*": "./dist/*.js"
+    "./ui/styles.css": "./dist/ui/index.css",
+    "./ui/*": "./dist/ui/*.js",
+    "./api/*": "./dist/api/*.js",
+    "./types/*": "./dist/types/*.js"
   },
   "license": "MIT",
   "scripts": {
-    "build:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css",
+    "build:styles": "tailwindcss -i ./src/ui/styles.css -o ./dist/ui/index.css",
     "build:components": "tsc",
     "check-types": "tsc --noEmit",
-    "dev:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
+    "dev:styles": "tailwindcss -i ./src/ui/styles.css -o ./dist/ui/index.css --watch",
     "dev:components": "tsc --watch",
     "lint": "eslint src --max-warnings 0"
   },

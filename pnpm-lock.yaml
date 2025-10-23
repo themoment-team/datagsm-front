@@ -42,9 +42,9 @@ importers:
 
   apps/admin:
     dependencies:
-      '@repo/ui':
+      '@repo/shared':
         specifier: workspace:*
-        version: link:../../packages/ui
+        version: link:../../packages/shared
       next:
         specifier: ^15.4.2
         version: 15.4.2(react-dom@19.1.0)(react@19.1.0)
@@ -97,9 +97,9 @@ importers:
 
   apps/client:
     dependencies:
-      '@repo/ui':
+      '@repo/shared':
         specifier: workspace:*
-        version: link:../../packages/ui
+        version: link:../../packages/shared
       next:
         specifier: ^15.4.2
         version: 15.4.2(react-dom@19.1.0)(react@19.1.0)
@@ -186,22 +186,11 @@ importers:
         specifier: ^8.39.0
         version: 8.39.0(eslint@9.33.0)(typescript@5.9.2)
 
-  packages/tailwind-config:
-    devDependencies:
-      postcss:
-        specifier: ^8.5.3
-        version: 8.5.3
-      tailwindcss:
-        specifier: ^4.1.5
-        version: 4.1.5
-
-  packages/typescript-config: {}
-
-  packages/ui:
+  packages/shared:
     dependencies:
       react:
         specifier: ^19
-        version: 19.0.0
+        version: 19.1.0
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -227,6 +216,17 @@ importers:
       typescript:
         specifier: 5.9.2
         version: 5.9.2
+
+  packages/tailwind-config:
+    devDependencies:
+      postcss:
+        specifier: ^8.5.3
+        version: 8.5.3
+      tailwindcss:
+        specifier: ^4.1.5
+        version: 4.1.5
+
+  packages/typescript-config: {}
 
 packages:
 
@@ -3019,11 +3019,6 @@ packages:
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: true
-
-  /react@19.0.0:
-    resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
-    engines: {node: '>=0.10.0'}
-    dev: false
 
   /react@19.1.0:
     resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
