@@ -9,9 +9,31 @@
   ],
   "exports": {
     "./ui/styles.css": "./dist/ui/index.css",
-    "./ui/*": "./dist/ui/*.js",
-    "./api/*": "./dist/api/*.js",
-    "./types/*": "./dist/types/*.js"
+    "./ui/*": {
+      "types": "./src/ui/*.ts",
+      "default": "./dist/ui/*.js"
+    },
+    "./api/*": {
+      "types": "./src/api/*.ts",
+      "default": "./dist/api/*.js"
+    },
+    "./types/*": {
+      "types": "./src/types/*.ts",
+      "default": "./dist/types/*.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "ui/*": [
+        "./src/ui/*"
+      ],
+      "api/*": [
+        "./src/api/*"
+      ],
+      "types/*": [
+        "./src/types/*"
+      ]
+    }
   },
   "license": "MIT",
   "scripts": {
