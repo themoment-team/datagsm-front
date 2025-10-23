@@ -3,7 +3,10 @@
   "compilerOptions": {
     "outDir": "dist",
     "composite": true,
-    "incremental": true
+    "incremental": true,
+    "paths": {
+      "@repo/shared/*": ["./src/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["dist", "build", "node_modules"]
