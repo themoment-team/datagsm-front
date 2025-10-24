@@ -8,7 +8,7 @@
     "dist"
   ],
   "exports": {
-    "./ui/styles.css": "./dist/ui/index.css",
+    "./styles/globals.css": "./dist/styles/globals.css",
     "./ui/*": {
       "types": "./src/ui/*.ts",
       "default": "./dist/ui/*.js"
@@ -44,10 +44,10 @@
   },
   "license": "MIT",
   "scripts": {
-    "build:styles": "tailwindcss -i ./src/ui/styles.css -o ./dist/ui/index.css",
+    "build:styles": "tailwindcss -i ./src/styles/globals.css -o ./dist/styles/globals.css",
     "build:components": "tsc",
     "check-types": "tsc --noEmit",
-    "dev:styles": "tailwindcss -i ./src/ui/styles.css -o ./dist/ui/index.css --watch",
+    "dev:styles": "tailwindcss -i ./src/styles/globals.css -o ./dist/styles/globals.css --watch",
     "dev:components": "tsc --watch",
     "lint": "eslint src --max-warnings 0"
   },
