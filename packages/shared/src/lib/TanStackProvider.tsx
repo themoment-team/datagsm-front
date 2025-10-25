@@ -5,7 +5,7 @@ import { PropsWithChildren } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { cn } from '@/shared/lib/cn';
+import { cn } from './cn';
 
 const TanStackProvider = ({ children }: PropsWithChildren) => {
   const queryClient = new QueryClient({
