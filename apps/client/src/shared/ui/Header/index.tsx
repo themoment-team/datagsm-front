@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { googleLogout } from '@react-oauth/google';
 import { deleteCookie } from '@repo/shared/lib';
 import { Button } from '@repo/shared/ui';
 import { Database, LogOut } from 'lucide-react';
@@ -13,7 +12,6 @@ const Header = () => {
   const router = useRouter();
 
   const handleLogout = () => {
-    googleLogout();
     deleteCookie('accessToken');
     deleteCookie('refreshToken');
     router.push('/signin');
