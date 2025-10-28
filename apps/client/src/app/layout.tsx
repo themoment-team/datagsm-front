@@ -3,6 +3,7 @@ import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import type { Metadata } from 'next';
 
 import '@/shared/styles/globals.css';
+import { Header } from '@/shared/ui';
 
 export const metadata: Metadata = {
   title: 'datagsm-client',
@@ -19,7 +20,10 @@ const RootLayout = ({
       <body>
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
           <TanStackProvider>
-            <ToastProvider>{children}</ToastProvider>
+            <ToastProvider>
+              <Header />
+              {children}
+            </ToastProvider>
           </TanStackProvider>
         </GoogleOAuthProvider>
       </body>
