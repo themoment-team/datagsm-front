@@ -8,15 +8,15 @@ axiosInstance.interceptors.request.use(
   async (config) => {
     return config;
   },
-  async (error) => Promise.reject(error),
+  (error) => Promise.reject(error),
 );
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    if (response.status >= 200 && response.status <= 300) {
+    if (response.status >= 200 && response.status < 300) {
       return response.data;
     }
     return Promise.reject(response.data);
   },
-  async (error) => Promise.reject(error),
+  (error) => Promise.reject(error),
 );
