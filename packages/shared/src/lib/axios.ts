@@ -17,6 +17,7 @@ axiosInstance.interceptors.request.use(
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => Promise.reject(error),
@@ -27,6 +28,7 @@ axiosInstance.interceptors.response.use(
     if (response.status >= 200 && response.status < 300) {
       return response.data;
     }
+
     return Promise.reject(response.data);
   },
   async (error: AxiosError) => {
@@ -41,6 +43,7 @@ axiosInstance.interceptors.response.use(
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
             }
+
             resolve(axiosInstance(originalRequest));
           });
         });
@@ -49,6 +52,7 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
       try {
         const refreshToken = getCookie('refreshToken');
+
         if (!refreshToken) throw new Error('No refresh token');
 
         const { data } = await axios.put(authUrl.putRefresh(), {
@@ -73,9 +77,11 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         deleteCookie('accessToken');
         deleteCookie('refreshToken');
+
         if (typeof window !== 'undefined') {
           window.location.href = '/signin';
         }
+
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
