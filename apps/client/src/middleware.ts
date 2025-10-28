@@ -9,12 +9,25 @@ export function middleware(request: NextRequest) {
       const referer = request.headers.get('referer');
       const url = request.nextUrl.clone();
 
-      if (referer && referer.includes(url.origin) && !referer.includes('/signin')) {
-        return NextResponse.redirect(referer);
-      } else {
-        url.pathname = '/';
-        return NextResponse.redirect(url);
+      if (referer) {
+        try {
+          const refererUrl = new URL(referer);
+
+          if (
+            refererUrl.origin === url.origin &&
+            refererUrl.pathname !== '/signin' &&
+            refererUrl.pathname.startsWith('/')
+          ) {
+            url.pathname = refererUrl.pathname;
+            url.search = refererUrl.search;
+            return NextResponse.redirect(url);
+          }
+        } catch {
+          // new URL()이 TypeError를 던질 수 있으므로 try-catch가 필요
+        }
       }
+      url.pathname = '/';
+      return NextResponse.redirect(url);
     }
 
     return NextResponse.next();
