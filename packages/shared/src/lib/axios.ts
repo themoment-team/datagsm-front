@@ -11,6 +11,11 @@ export const axiosInstance = axios.create({
   timeout: 10000,
 });
 
+const refreshAxiosInstance = axios.create({
+  baseURL: '/api',
+  timeout: 10000,
+});
+
 axiosInstance.interceptors.request.use(
   async (config) => {
     const token = getCookie('accessToken');
@@ -55,7 +60,7 @@ axiosInstance.interceptors.response.use(
 
         if (!refreshToken) throw new Error('No refresh token');
 
-        const { data } = await axios.put(authUrl.putRefresh(), {
+        const { data } = await refreshAxiosInstance.put(authUrl.putRefresh(), {
           refreshToken,
         });
 
