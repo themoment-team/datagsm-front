@@ -1,4 +1,4 @@
-import { axiosInstance } from '../lib/axios';
+import { axiosInstance } from '@repo/shared/lib';
 
 export const del = async <T>(...args: Parameters<typeof axiosInstance.delete>) =>
   await axiosInstance.delete<T, T>(...args);
