@@ -1,6 +1,5 @@
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import TanStackProvider from '@repo/shared/lib/TanStackProvider';
-import ToastProvider from '@repo/shared/lib/ToastProvider';
+import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import type { Metadata } from 'next';
 
 import '@/shared/styles/globals.css';
