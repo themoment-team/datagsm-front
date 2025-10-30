@@ -1,7 +1,9 @@
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import type { Metadata } from 'next';
 
-import TanStackProvider from '@/shared/lib/TanStackProvider';
 import '@/shared/styles/globals.css';
+import { Header } from '@/shared/ui';
 
 export const metadata: Metadata = {
   title: 'datagsm-client',
@@ -16,7 +18,14 @@ const RootLayout = ({
   return (
     <html lang="ko">
       <body>
-        <TanStackProvider>{children}</TanStackProvider>
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
+          <TanStackProvider>
+            <ToastProvider>
+              <Header />
+              {children}
+            </ToastProvider>
+          </TanStackProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

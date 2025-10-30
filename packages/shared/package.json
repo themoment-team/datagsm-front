@@ -13,6 +13,10 @@
       "types": "./src/ui/*.ts",
       "default": "./dist/ui/*.js"
     },
+    "./assets/*": {
+      "types": "./src/assets/*",
+      "default": "./dist/assets/*"
+    },
     "./api/*": {
       "types": "./src/api/*.ts",
       "default": "./dist/api/*.js"
@@ -30,6 +34,9 @@
     "*": {
       "ui/*": [
         "./src/ui/*"
+      ],
+      "assets/*": [
+        "./src/assets/*"
       ],
       "api/*": [
         "./src/api/*"
@@ -69,6 +76,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "lucide-react": "^0.546.0",
     "tailwind-merge": "^3.3.1"
   }
 }
