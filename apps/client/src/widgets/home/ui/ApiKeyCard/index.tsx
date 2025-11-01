@@ -3,7 +3,7 @@
 import { Button, Card } from '@repo/shared/ui';
 import { Check, Copy } from 'lucide-react';
 
-import { useApiKeyCopy } from '@/features/api-key/model/useApiKeyCopy';
+import { useApiKeyCopy } from '@/widgets/home';
 
 interface ApiKeyCardProps {
   apiKey: string;
