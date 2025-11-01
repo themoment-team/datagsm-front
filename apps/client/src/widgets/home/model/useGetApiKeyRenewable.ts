@@ -11,5 +11,8 @@ export const useGetApiKeyRenewable = (
     queryFn: () => get<ApiKeyRenewableResponse>(authUrl.getApiKeyRenewable()),
     staleTime: 1000 * 60 * 1,
     gcTime: 1000 * 60 * 5,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
     ...options,
   });

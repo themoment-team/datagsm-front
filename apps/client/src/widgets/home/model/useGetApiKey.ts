@@ -11,5 +11,8 @@ export const useGetApiKey = (
     queryFn: () => get<ApiKeyResponse>(authUrl.getApiKey()),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
     ...options,
   });
