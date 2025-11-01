@@ -7,7 +7,7 @@ export const useApiKeyCopy = (apiKey: string) => {
     try {
       await navigator.clipboard.writeText(apiKey);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error('Failed to copy API key:', error);
     }
