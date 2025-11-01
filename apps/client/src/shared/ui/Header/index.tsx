@@ -36,7 +36,12 @@ const Header = () => {
           <Link href="/docs" className="hover:text-primary text-sm font-medium transition-colors">
             독스
           </Link>
-          <Button variant="ghost" size="sm" onClick={handleLogout} className="cursor-pointer gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLogout}
+            className="cursor-pointer gap-2"
+          >
             <LogOut className="h-4 w-4" />
             로그아웃
           </Button>
