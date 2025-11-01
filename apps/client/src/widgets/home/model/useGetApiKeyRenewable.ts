@@ -1,7 +1,7 @@
 import { authQueryKeys, authUrl, get } from '@repo/shared/api';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
-import { ApiKeyRenewableResponse } from './types';
+import { ApiKeyRenewableResponse } from '@/entities/home';
 
 export const useGetApiKeyRenewable = (
   options?: Omit<UseQueryOptions<ApiKeyRenewableResponse>, 'queryKey' | 'queryFn'>,

@@ -1,7 +1,7 @@
 import { authQueryKeys, authUrl, get } from '@repo/shared/api';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
-import { ApiKeyResponse } from './types';
+import { ApiKeyResponse } from '@/entities/home';
 
 export const useGetApiKey = (
   options?: Omit<UseQueryOptions<ApiKeyResponse>, 'queryKey' | 'queryFn'>,

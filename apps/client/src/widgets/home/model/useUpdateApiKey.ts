@@ -2,7 +2,7 @@ import { authQueryKeys, authUrl, put } from '@repo/shared/api';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { ApiKeyResponse } from './types';
+import { ApiKeyResponse } from '@/entities/home';
 
 export const useUpdateApiKey = (
   options?: Omit<
