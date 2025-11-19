@@ -1,14 +1,12 @@
-'use client';
-
-import { ApiKeyRenewableResponse, ApiKeyResponse } from '@/entities/home';
+import { getApiKey, getApiKeyRenewable } from '@/views/home';
 import { ApiKeyCard, ApiKeyHeader } from '@/widgets/home';
 
-interface HomePageProps {
-  initialApiKeyData?: ApiKeyResponse;
-  initialApiKeyRenewableData?: ApiKeyRenewableResponse;
-}
+const HomePage = async () => {
+  const [initialApiKeyData, initialApiKeyRenewableData] = await Promise.all([
+    getApiKey(),
+    getApiKeyRenewable(),
+  ]);
 
-const HomePage = ({ initialApiKeyData, initialApiKeyRenewableData }: HomePageProps) => {
   return (
     <div className="bg-background h-[calc(100vh-4.0625rem)]">
       <main className="container mx-auto px-4 py-16">
