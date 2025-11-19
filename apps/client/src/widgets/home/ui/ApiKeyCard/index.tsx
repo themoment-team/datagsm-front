@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { authQueryKeys } from '@repo/shared/api';
 import { Button, Card } from '@repo/shared/ui';
@@ -22,7 +22,6 @@ interface ApiKeyCardProps {
 }
 
 const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCardProps) => {
-  const [hasCreateFailed, setHasCreateFailed] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const queryClient = useQueryClient();
@@ -33,11 +32,10 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
 
   const { isPending: isCreatingApiKey, mutate: createApiKey } = useCreateApiKey({
     onSuccess: () => {
-      setHasCreateFailed(false);
       queryClient.invalidateQueries({ queryKey: authQueryKeys.getApiKey() });
+      toast.success('API Key가 생성되었습니다.');
     },
     onError: () => {
-      setHasCreateFailed(true);
       toast.error('API Key 생성에 실패했습니다. 다시 시도해주세요.');
     },
   });
@@ -56,12 +54,6 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
       toast.error('API Key 갱신에 실패했습니다. 다시 시도해주세요.');
     },
   });
-
-  useEffect(() => {
-    if (!isLoadingApiKey && !apiKeyData?.data?.apiKey && !isCreatingApiKey && !hasCreateFailed) {
-      createApiKey();
-    }
-  }, [isLoadingApiKey, apiKeyData?.data?.apiKey, isCreatingApiKey, hasCreateFailed, createApiKey]);
 
   const handleRenew = () => {
     const renewable = apiKeyRenewableData?.data?.renewable;
@@ -90,28 +82,14 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
   if (!apiKeyData?.data?.apiKey) {
     return (
       <Card className="p-6">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="text-gray-500">
-              {isCreatingApiKey
-                ? 'API Key를 생성하는 중...'
-                : hasCreateFailed
-                  ? 'API Key 생성에 실패했습니다.'
-                  : 'API Key가 없습니다.'}
-            </div>
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="text-center">
+            <p className="mb-2 text-gray-500">API Key가 존재하지 않습니다.</p>
+            <p className="text-sm text-gray-400">아래 버튼을 눌러 새로운 API Key를 생성하세요.</p>
           </div>
-          {hasCreateFailed && (
-            <Button
-              onClick={() => {
-                setHasCreateFailed(false);
-                createApiKey();
-              }}
-              disabled={isCreatingApiKey}
-              variant="outline"
-            >
-              다시 시도
-            </Button>
-          )}
+          <Button onClick={() => createApiKey()} disabled={isCreatingApiKey} size="lg">
+            {isCreatingApiKey ? 'API Key 생성 중...' : 'API Key 생성하기'}
+          </Button>
         </div>
       </Card>
     );
