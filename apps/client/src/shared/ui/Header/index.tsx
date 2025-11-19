@@ -3,17 +3,24 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
+import { authQueryKeys } from '@repo/shared/api';
 import { deleteCookie } from '@repo/shared/lib';
 import { Button } from '@repo/shared/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { Database, LogOut } from 'lucide-react';
 
 const Header = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
+    queryClient.removeQueries({ queryKey: authQueryKeys.getApiKey() });
+    queryClient.removeQueries({ queryKey: authQueryKeys.getApiKeyRenewable() });
+
     deleteCookie('accessToken');
     deleteCookie('refreshToken');
+
     router.push('/signin');
   };
 
