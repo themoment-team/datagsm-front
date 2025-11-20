@@ -8,6 +8,7 @@ import { deleteCookie } from '@repo/shared/lib';
 import { Button } from '@repo/shared/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { Database, LogOut } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Header = () => {
   const pathname = usePathname();
@@ -21,6 +22,7 @@ const Header = () => {
     deleteCookie('accessToken');
     deleteCookie('refreshToken');
 
+    toast.success('로그아웃 되었습니다.');
     router.push('/signin');
   };
 
