@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { authQueryKeys } from '@repo/shared/api';
+import { cn } from '@repo/shared/lib';
 import { Button, Card } from '@repo/shared/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Copy, RefreshCw } from 'lucide-react';
@@ -73,19 +74,21 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
 
   if (isLoadingApiKey) {
     return (
-      <Card className="p-6">
-        <div className="text-gray-500">API Key를 불러오는 중...</div>
+      <Card className={cn('p-6')}>
+        <div className={cn('text-gray-500')}>API Key를 불러오는 중...</div>
       </Card>
     );
   }
 
   if (!apiKeyData?.data?.apiKey) {
     return (
-      <Card className="p-6">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <div className="text-center">
-            <p className="mb-2 text-gray-500">API Key가 존재하지 않습니다.</p>
-            <p className="text-sm text-gray-400">아래 버튼을 눌러 새로운 API Key를 생성하세요.</p>
+      <Card className={cn('p-6')}>
+        <div className={cn('flex flex-col items-center justify-center gap-4')}>
+          <div className={cn('text-center')}>
+            <p className={cn('mb-2 text-gray-500')}>API Key가 존재하지 않습니다.</p>
+            <p className={cn('text-sm text-gray-400')}>
+              아래 버튼을 눌러 새로운 API Key를 생성하세요.
+            </p>
           </div>
           <Button onClick={() => createApiKey()} disabled={isCreatingApiKey} size="lg">
             {isCreatingApiKey ? 'API Key 생성 중...' : 'API Key 생성하기'}
@@ -96,17 +99,21 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
   }
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <code className="break-all font-mono text-sm">{apiKeyData.data.apiKey}</code>
+    <Card className={cn('p-6')}>
+      <div className={cn('flex items-center justify-between gap-4')}>
+        <div className={cn('min-w-0 flex-1')}>
+          <code className={cn('break-all font-mono text-sm')}>{apiKeyData.data.apiKey}</code>
         </div>
-        <div className="flex gap-2">
+        <div className={cn('flex gap-2')}>
           <Button size="icon" variant="outline" onClick={handleRenew}>
-            <RefreshCw className={`h-4 w-4 ${isUpdatingApiKey ? 'animate-spin' : ''}`} />
+            <RefreshCw className={cn(`h-4 w-4 ${isUpdatingApiKey ? 'animate-spin' : ''}`)} />
           </Button>
           <Button size="icon" variant="outline" onClick={handleCopy}>
-            {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+            {copied ? (
+              <Check className={cn('h-4 w-4 text-green-600')} />
+            ) : (
+              <Copy className={cn('h-4 w-4')} />
+            )}
           </Button>
         </div>
       </div>
