@@ -21,13 +21,19 @@ export const getApiKeyRenewable = async (): Promise<ApiKeyRenewableResponse | un
     );
 
     if (!response.ok) {
+      console.error(
+        'Failed to fetch API key renewable status:',
+        response.status,
+        response.statusText,
+      );
       return undefined;
     }
 
     const apiKeyRenewableData = await response.json();
 
     return apiKeyRenewableData;
-  } catch {
+  } catch (error) {
+    console.error('Error in getApiKeyRenewable:', error);
     return undefined;
   }
 };

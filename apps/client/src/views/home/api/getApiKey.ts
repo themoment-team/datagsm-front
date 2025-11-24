@@ -21,13 +21,15 @@ export const getApiKey = async (): Promise<ApiKeyResponse | undefined> => {
     );
 
     if (!response.ok) {
+      console.error('Failed to fetch API key:', response.status, response.statusText);
       return undefined;
     }
 
     const apiKeyData = await response.json();
 
     return apiKeyData;
-  } catch {
+  } catch (error) {
+    console.error('Error in getApiKey:', error);
     return undefined;
   }
 };
