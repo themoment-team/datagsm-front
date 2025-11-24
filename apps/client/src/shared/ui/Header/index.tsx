@@ -16,8 +16,7 @@ const Header = () => {
   const queryClient = useQueryClient();
 
   const handleLogout = () => {
-    queryClient.removeQueries({ queryKey: authQueryKeys.getApiKey() });
-    queryClient.removeQueries({ queryKey: authQueryKeys.getApiKeyRenewable() });
+    queryClient.removeQueries({ queryKey: ['auth', 'api-key'] });
 
     deleteCookie('accessToken');
     deleteCookie('refreshToken');
