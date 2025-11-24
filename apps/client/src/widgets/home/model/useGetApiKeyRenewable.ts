@@ -1,5 +1,5 @@
 import { authQueryKeys, authUrl, get } from '@repo/shared/api';
-import { minutesToMs } from '@repo/shared/lib';
+import { minutesToMs } from '@repo/shared/utils';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
 import { ApiKeyRenewableResponse } from '@/entities/home';

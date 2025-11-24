@@ -3,8 +3,8 @@
 import { useState } from 'react';
 
 import { authQueryKeys } from '@repo/shared/api';
-import { cn } from '@repo/shared/lib';
 import { Button, Card } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Copy, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';

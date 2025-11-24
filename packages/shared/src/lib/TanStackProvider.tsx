@@ -2,7 +2,7 @@
 
 import { PropsWithChildren } from 'react';
 
-import { cn } from '@repo/shared/lib/cn';
+import { cn } from '@repo/shared/utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 

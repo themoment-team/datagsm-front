@@ -1,4 +1,4 @@
-import { cn } from '@repo/shared/lib';
+import { cn } from '@repo/shared/utils';
 
 import { getApiKey, getApiKeyRenewable } from '@/views/home';
 import { ApiKeyCard, ApiKeyHeader } from '@/widgets/home';

@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { authQueryKeys } from '@repo/shared/api';
-import { deleteCookie } from '@repo/shared/lib';
 import { Button } from '@repo/shared/ui';
+import { deleteCookie } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Database, LogOut } from 'lucide-react';
 import { toast } from 'sonner';

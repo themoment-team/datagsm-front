@@ -28,6 +28,10 @@
     "./lib/*": {
       "types": "./src/lib/*.ts",
       "default": "./dist/lib/*.js"
+    },
+    "./utils/*": {
+      "types": "./src/utils/*.ts",
+      "default": "./dist/utils/*.js"
     }
   },
   "typesVersions": {
@@ -46,6 +50,9 @@
       ],
       "lib/*": [
         "./src/lib/*"
+      ],
+      "utils/*": [
+        "./src/utils/*"
       ]
     }
   },

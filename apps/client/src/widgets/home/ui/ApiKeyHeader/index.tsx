@@ -1,4 +1,4 @@
-import { cn } from '@repo/shared/lib';
+import { cn } from '@repo/shared/utils';
 import { Key } from 'lucide-react';
 
 const ApiKeyHeader = () => {
