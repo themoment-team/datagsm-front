@@ -22,6 +22,8 @@ interface ApiKeyCardProps {
   initialApiKeyRenewableData?: ApiKeyRenewableResponse;
 }
 
+const COPIED_STATE_DURATION_MS = 2000;
+
 const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCardProps) => {
   const [copied, setCopied] = useState(false);
 
@@ -69,7 +71,7 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
     navigator.clipboard.writeText(apiKeyData?.data?.apiKey || '');
     setCopied(true);
     toast.success('복사되었습니다.');
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), COPIED_STATE_DURATION_MS);
   };
 
   if (isLoadingApiKey) {
