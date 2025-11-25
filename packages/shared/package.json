@@ -58,6 +58,7 @@
   },
   "license": "MIT",
   "scripts": {
+    "build": "pnpm run build:components && pnpm run build:styles",
     "build:styles": "tailwindcss -i ./src/styles/globals.css -o ./dist/styles/globals.css",
     "build:components": "tsc",
     "check-types": "tsc --noEmit",
