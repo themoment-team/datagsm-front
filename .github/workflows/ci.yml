@@ -36,3 +36,25 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Success Discord Notification
+        uses: sarisia/actions-status-discord@v1.15.5
+        if: success()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          title: '✅ CI 성공'
+          status: success
+          content: 'PR을 확인해주세요.'
+          username: datagsm-front bot
+          color: 4CAF50
+
+      - name: Failure Discord Notification
+        uses: sarisia/actions-status-discord@v1.15.5
+        if: failure()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          title: '❌ CI 실패'
+          content: '에러를 확인해주세요.'
+          status: failure
+          username: datagsm-front bot
+          color: e74c3c
