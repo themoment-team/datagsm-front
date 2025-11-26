@@ -2,7 +2,6 @@
 
 import { PropsWithChildren } from 'react';
 
-import { cn } from '@repo/shared/utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -17,10 +16,8 @@ const TanStackProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className={cn('flex min-h-screen flex-col')}>
-        {children}
-        <ReactQueryDevtools initialIsOpen={false} />
-      </div>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };
