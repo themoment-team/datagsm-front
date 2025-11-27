@@ -26,8 +26,6 @@ export const getApiKeyRenewable = async (): Promise<ApiKeyRenewableResponse | un
 
     const apiKeyRenewableData = await response.json();
 
-    console.log(apiKeyRenewableData);
-
     return apiKeyRenewableData;
   } catch {
     return undefined;

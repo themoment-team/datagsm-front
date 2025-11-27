@@ -26,8 +26,6 @@ export const getApiKey = async (): Promise<ApiKeyResponse | undefined> => {
 
     const apiKeyData = await response.json();
 
-    console.log(apiKeyData);
-
     return apiKeyData;
   } catch {
     return undefined;
