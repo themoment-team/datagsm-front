@@ -5,8 +5,8 @@ import { Toaster } from 'sonner';
 const ToastProvider = ({ children }: PropsWithChildren) => {
   return (
     <>
-      <Toaster position="bottom-right" richColors />
       {children}
+      <Toaster position="bottom-right" richColors />
     </>
   );
 };
