@@ -3,17 +3,24 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { deleteCookie } from '@repo/shared/lib';
 import { Button } from '@repo/shared/ui';
+import { deleteCookie } from '@repo/shared/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Database, LogOut } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Header = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
+    queryClient.removeQueries({ queryKey: ['auth', 'api-key'] });
+
     deleteCookie('accessToken');
     deleteCookie('refreshToken');
+
+    toast.success('로그아웃 되었습니다.');
     router.push('/signin');
   };
 
@@ -36,7 +43,12 @@ const Header = () => {
           <Link href="/docs" className="hover:text-primary text-sm font-medium transition-colors">
             독스
           </Link>
-          <Button variant="ghost" size="sm" onClick={handleLogout} className="cursor-pointer gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLogout}
+            className="cursor-pointer gap-2"
+          >
             <LogOut className="h-4 w-4" />
             로그아웃
           </Button>

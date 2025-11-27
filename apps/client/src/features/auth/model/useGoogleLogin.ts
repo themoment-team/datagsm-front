@@ -2,8 +2,8 @@ import { useRouter } from 'next/navigation';
 
 import { useGoogleLogin as useGoogleLoginBase } from '@react-oauth/google';
 import { authUrl, post } from '@repo/shared/api';
-import { setCookie } from '@repo/shared/lib';
 import { LoginResponse } from '@repo/shared/types';
+import { setCookie } from '@repo/shared/utils';
 import { toast } from 'sonner';
 
 export const useGoogleLogin = () => {

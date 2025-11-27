@@ -1,8 +1,8 @@
 'use client';
 
 import { GoogleIcon } from '@repo/shared/assets';
-import { cn } from '@repo/shared/lib';
 import { Button, Card } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 import { Database } from 'lucide-react';
 
 interface SigninFormProps {

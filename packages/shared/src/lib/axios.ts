@@ -1,7 +1,6 @@
 import { authUrl } from '@repo/shared/api';
+import { deleteCookie, getCookie, setCookie } from '@repo/shared/utils';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-
-import { deleteCookie, getCookie, setCookie } from './cookies';
 
 let isRefreshing = false;
 let refreshQueue: ((token: string) => void)[] = [];
