@@ -107,10 +107,22 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
           <code className={cn('break-all font-mono text-sm')}>{apiKeyData.data.apiKey}</code>
         </div>
         <div className={cn('flex gap-2')}>
-          <Button size="icon" variant="outline" onClick={handleRenew}>
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={handleRenew}
+            disabled={isUpdatingApiKey}
+            className={cn('disabled:opacity-100')}
+          >
             <RefreshCw className={cn(`h-4 w-4 ${isUpdatingApiKey ? 'animate-spin' : ''}`)} />
           </Button>
-          <Button size="icon" variant="outline" onClick={handleCopy}>
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={handleCopy}
+            disabled={copied}
+            className={cn('disabled:opacity-100')}
+          >
             {copied ? (
               <Check className={cn('h-4 w-4 text-green-600')} />
             ) : (
