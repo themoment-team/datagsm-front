@@ -6,30 +6,30 @@ import { ApiKeyResponse } from '@/entities/home';
 
 export const getApiKey = async (): Promise<ApiKeyResponse | undefined> => {
   try {
-    const accessToken = (await cookies()).get('accessToken')?.value;
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('accessToken')?.value;
 
-    const response = await fetch(
-      new URL(authUrl.getApiKey(), process.env.NEXT_PUBLIC_API_BASE_URL),
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-        },
+    const url = new URL(authUrl.getApiKey(), process.env.NEXT_PUBLIC_API_BASE_URL);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+      cache: 'no-store',
+    });
 
     if (!response.ok) {
-      console.error('Failed to fetch API key:', response.status, response.statusText);
       return undefined;
     }
 
     const apiKeyData = await response.json();
 
+    console.log(apiKeyData);
+
     return apiKeyData;
-  } catch (error) {
-    console.error('Error in getApiKey:', error);
+  } catch {
     return undefined;
   }
 };

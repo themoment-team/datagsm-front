@@ -6,34 +6,30 @@ import { ApiKeyRenewableResponse } from '@/entities/home';
 
 export const getApiKeyRenewable = async (): Promise<ApiKeyRenewableResponse | undefined> => {
   try {
-    const accessToken = (await cookies()).get('accessToken')?.value;
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('accessToken')?.value;
 
-    const response = await fetch(
-      new URL(authUrl.getApiKeyRenewable(), process.env.NEXT_PUBLIC_API_BASE_URL),
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-        },
+    const url = new URL(authUrl.getApiKeyRenewable(), process.env.NEXT_PUBLIC_API_BASE_URL);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+      cache: 'no-store',
+    });
 
     if (!response.ok) {
-      console.error(
-        'Failed to fetch API key renewable status:',
-        response.status,
-        response.statusText,
-      );
       return undefined;
     }
 
     const apiKeyRenewableData = await response.json();
 
+    console.log(apiKeyRenewableData);
+
     return apiKeyRenewableData;
-  } catch (error) {
-    console.error('Error in getApiKeyRenewable:', error);
+  } catch {
     return undefined;
   }
 };
