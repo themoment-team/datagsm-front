@@ -1,2 +1,2 @@
 @import 'tailwindcss';
-@import '@repo/shared/styles/globals.css';
+@import '../../../../../packages/shared/src/styles/globals.css';
