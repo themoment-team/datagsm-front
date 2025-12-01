@@ -107,8 +107,8 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(@types/react@19.2.7)(react@19.2.0)
       '@next/mdx':
-        specifier: ^16.0.6
-        version: 16.0.6(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1)
+        specifier: ^15.5.6
+        version: 15.5.6(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1)
       '@repo/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -783,8 +783,8 @@ packages:
       fast-glob: 3.3.1
     dev: true
 
-  /@next/mdx@16.0.6(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1):
-    resolution: {integrity: sha512-NLWJg4mqYHbHr1uyxFIOVuGFn0ACRA0L/JuL8amr8Pos8ZrRQ1/CUw0rUh22D/kPlq5QOyF/vySl9yvuETmDBA==}
+  /@next/mdx@15.5.6(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1):
+    resolution: {integrity: sha512-lyzXcnZWPjYxbkz/5tv1bRlCOjKYX1lFg3LIuoIf9ERTOUBDzkCvUnWjtRsmFRxKv1/6uwpLVQvrJDd54gVDBw==}
     peerDependencies:
       '@mdx-js/loader': '>=0.15.0'
       '@mdx-js/react': '>=0.15.0'
