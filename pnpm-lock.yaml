@@ -48,6 +48,9 @@ importers:
       '@repo/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.2.0)
       next:
         specifier: ^15.4.2
         version: 15.5.6(react-dom@19.2.0)(react@19.2.0)
