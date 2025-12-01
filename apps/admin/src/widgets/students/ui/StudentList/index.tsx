@@ -93,7 +93,7 @@ const StudentList = ({ students }: StudentListProps) => {
               </TableCell>
               <TableCell>{student.email}</TableCell>
               <TableCell>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="cursor-pointer">
                   <Pencil className="h-4 w-4" />
                 </Button>
               </TableCell>

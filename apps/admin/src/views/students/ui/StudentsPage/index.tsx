@@ -30,6 +30,36 @@ const demoStudents: Student[] = [
     dormitoryRoom: 301,
     isLeaveSchool: false,
   },
+  {
+    studentId: 2,
+    name: '김영희',
+    sex: 'WOMAN',
+    email: 'yonghee@gsm.hs.kr',
+    grade: 2,
+    classNum: 2,
+    number: 2,
+    studentNumber: 2202,
+    major: 'SW',
+    role: 'GENERAL_STUDENT',
+    dormitoryFloor: 4,
+    dormitoryRoom: 402,
+    isLeaveSchool: false,
+  },
+  {
+    studentId: 3,
+    name: '김민수',
+    sex: 'MAN',
+    email: 'minsoo@gsm.hs.kr',
+    grade: 3,
+    classNum: 3,
+    number: 3,
+    studentNumber: 3303,
+    major: 'SW',
+    role: 'GENERAL_STUDENT',
+    dormitoryFloor: 5,
+    dormitoryRoom: 503,
+    isLeaveSchool: false,
+  },
 ];
 
 const StudentsPage = () => {
@@ -51,11 +81,11 @@ const StudentsPage = () => {
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl">학생 관리</CardTitle>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="gap-2 bg-transparent">
+                <Button variant="outline" size="sm" className="cursor-pointer gap-2 bg-transparent">
                   <Download className="h-4 w-4" />
                   Excel 다운로드
                 </Button>
-                <Button variant="outline" size="sm" className="gap-2 bg-transparent">
+                <Button variant="outline" size="sm" className="cursor-pointer gap-2 bg-transparent">
                   <Upload className="h-4 w-4" />
                   Excel 업로드
                 </Button>
