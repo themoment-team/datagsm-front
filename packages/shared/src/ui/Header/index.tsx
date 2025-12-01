@@ -9,7 +9,24 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Database, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 
-const Header = () => {
+interface HeaderProps {
+  role?: 'admin' | 'client';
+}
+
+const NAV_LINKS = {
+  client: [
+    { href: '/', label: '메인' },
+    { href: '/docs', label: '독스' },
+  ],
+  admin: [
+    { href: '/student', label: '학생' },
+    { href: '/club', label: '동아리' },
+    { href: '/project', label: '프로젝트' },
+    { href: '/api-key', label: 'API 키' },
+  ],
+};
+
+const Header = ({ role = 'client' }: HeaderProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -26,6 +43,8 @@ const Header = () => {
 
   if (pathname === '/signin') return null;
 
+  const links = NAV_LINKS[role];
+
   return (
     <header className="sticky border-b">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -37,12 +56,15 @@ const Header = () => {
         </Link>
 
         <nav className="flex items-center gap-6">
-          <Link href="/" className="hover:text-primary text-sm font-medium transition-colors">
-            메인
-          </Link>
-          <Link href="/docs" className="hover:text-primary text-sm font-medium transition-colors">
-            독스
-          </Link>
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="hover:text-primary text-sm font-medium transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
           <Button
             variant="outline"
             size="sm"

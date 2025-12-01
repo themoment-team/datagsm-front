@@ -21,7 +21,7 @@ const RootLayout = ({
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
           <TanStackProvider>
             <ToastProvider>
-              <Header />
+              <Header role="client" />
               {children}
             </ToastProvider>
           </TanStackProvider>
