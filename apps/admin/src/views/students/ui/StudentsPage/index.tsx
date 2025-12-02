@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-import { demoStudents } from '@/entities/student';
+import { useGetStudents } from '@/views/students';
 import {
   AddStudentDialog,
   StudentExcelActions,
@@ -15,11 +15,12 @@ import {
 } from '@/widgets/students';
 
 const StudentsPage = () => {
-  const [students] = useState(demoStudents);
   const [gradeFilter, setGradeFilter] = useState<string>('all');
   const [majorFilter, setMajorFilter] = useState<string>('all');
 
-  const filteredStudents = students.filter((student) => {
+  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents();
+
+  const filteredStudents = studentsData?.data.students.filter((student) => {
     if (gradeFilter !== 'all' && student.grade !== Number.parseInt(gradeFilter)) return false;
     if (majorFilter !== 'all' && student.major !== majorFilter) return false;
     return true;
