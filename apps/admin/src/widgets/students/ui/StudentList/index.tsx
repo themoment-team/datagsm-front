@@ -10,57 +10,17 @@ import {
 } from '@repo/shared/ui';
 import { Pencil } from 'lucide-react';
 
-import { Student, StudentMajor, StudentRole, StudentSex } from '@/entities/student';
+import {
+  Student,
+  getMajorLabel,
+  getRoleBadgeVariant,
+  getRoleLabel,
+  getSexLabel,
+} from '@/entities/student';
 
 interface StudentListProps {
-  students: Student[];
+  students?: Student[];
 }
-
-const getRoleBadgeVariant = (role: StudentRole) => {
-  switch (role) {
-    case 'STUDENT_COUNCIL':
-      return 'default';
-    case 'DORMITORY_MANAGER':
-      return 'secondary';
-    default:
-      return 'outline';
-  }
-};
-
-const getRoleLabel = (role: StudentRole) => {
-  switch (role) {
-    case 'STUDENT_COUNCIL':
-      return '학생회';
-    case 'DORMITORY_MANAGER':
-      return '기숙사 관리자';
-    case 'GENERAL_STUDENT':
-      return '일반학생';
-  }
-};
-
-const getMajorLabel = (major: StudentMajor) => {
-  switch (major) {
-    case 'SW':
-      return 'SW개발과';
-    case 'IOT':
-      return '스마트IoT과';
-    case 'AI':
-      return 'AI과';
-    default:
-      return major;
-  }
-};
-
-const getSexLabel = (sex: StudentSex) => {
-  switch (sex) {
-    case 'MAN':
-      return '남';
-    case 'WOMAN':
-      return '여';
-    default:
-      return sex;
-  }
-};
 
 const StudentList = ({ students }: StudentListProps) => {
   return (
@@ -79,7 +39,7 @@ const StudentList = ({ students }: StudentListProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {students.map((student) => (
+          {students?.map((student) => (
             <TableRow key={student.studentId}>
               <TableCell>{student.name}</TableCell>
               <TableCell>{student.studentNumber}</TableCell>
