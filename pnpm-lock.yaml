@@ -59,7 +59,7 @@ importers:
         version: 19.2.1(react@19.2.1)
     devDependencies:
       '@next/eslint-plugin-next':
-        specifier: ^15.5.7
+        specifier: 15.5.7
         version: 15.5.7
       '@repo/eslint-config':
         specifier: workspace:*
@@ -77,11 +77,11 @@ importers:
         specifier: ^22.15.30
         version: 22.19.1
       '@types/react':
-        specifier: ^19.1.4
-        version: 19.2.7
+        specifier: 19.1.4
+        version: 19.1.4
       '@types/react-dom':
-        specifier: ^19.1.4
-        version: 19.2.3(@types/react@19.2.7)
+        specifier: 19.1.4
+        version: 19.1.4(@types/react@19.1.4)
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.22(postcss@8.5.6)
@@ -117,7 +117,7 @@ importers:
         version: 19.2.1(react@19.2.1)
     devDependencies:
       '@next/eslint-plugin-next':
-        specifier: ^15.5.7
+        specifier: 15.5.7
         version: 15.5.7
       '@repo/eslint-config':
         specifier: workspace:*
@@ -135,11 +135,11 @@ importers:
         specifier: ^22.15.30
         version: 22.19.1
       '@types/react':
-        specifier: ^19.1.4
-        version: 19.2.7
+        specifier: 19.1.4
+        version: 19.1.4
       '@types/react-dom':
-        specifier: ^19.1.4
-        version: 19.2.3(@types/react@19.2.7)
+        specifier: 19.1.4
+        version: 19.1.4(@types/react@19.1.4)
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.22(postcss@8.5.6)
@@ -1234,12 +1234,18 @@ packages:
       undici-types: 6.21.0
     dev: true
 
-  /@types/react-dom@19.2.3(@types/react@19.2.7):
-    resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
+  /@types/react-dom@19.1.4(@types/react@19.1.4):
+    resolution: {integrity: sha512-WxYAszDYgsMV31OVyoG4jbAgJI1Gw0Xq9V19zwhy6+hUUJlJIdZ3r/cbdmTqFv++SktQkZ/X+46yGFxp5XJBEg==}
     peerDependencies:
-      '@types/react': ^19.2.0
+      '@types/react': ^19.0.0
     dependencies:
-      '@types/react': 19.2.7
+      '@types/react': 19.1.4
+    dev: true
+
+  /@types/react@19.1.4:
+    resolution: {integrity: sha512-EB1yiiYdvySuIITtD5lhW4yPyJ31RkJkkDw794LaQYrxCSaQV/47y5o1FMC4zF9ZyjUjzJMZwbovEnT5yHTW6g==}
+    dependencies:
+      csstype: 3.2.3
     dev: true
 
   /@types/react@19.2.7:
