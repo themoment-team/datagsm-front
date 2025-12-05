@@ -196,7 +196,7 @@ importers:
     dependencies:
       '@radix-ui/react-slot':
         specifier: ^1.2.3
-        version: 1.2.4(@types/react@19.2.7)(react@19.2.0)
+        version: 1.2.4(@types/react@19.1.4)(react@19.2.1)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -205,10 +205,10 @@ importers:
         version: 2.1.1
       lucide-react:
         specifier: ^0.546.0
-        version: 0.546.0(react@19.2.0)
+        version: 0.546.0(react@19.2.1)
       react:
-        specifier: ^19
-        version: 19.2.0
+        specifier: 19.2.1
+        version: 19.2.1
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.4.0
@@ -226,8 +226,8 @@ importers:
         specifier: ^4.1.5
         version: 4.1.17
       '@types/react':
-        specifier: ^19.1.0
-        version: 19.2.7
+        specifier: 19.1.4
+        version: 19.1.4
       eslint:
         specifier: ^9.33.0
         version: 9.39.1
@@ -955,7 +955,7 @@ packages:
       '@parcel/watcher-win32-x64': 2.5.1
     dev: true
 
-  /@radix-ui/react-compose-refs@1.1.2(@types/react@19.2.7)(react@19.2.0):
+  /@radix-ui/react-compose-refs@1.1.2(@types/react@19.1.4)(react@19.2.1):
     resolution: {integrity: sha512-z4eqJvfiNnFMHIIvXP3CY57y2WJs5g2v3X0zm9mEJkrkNv4rDxu+sg9Jh8EkXyeqBkB7SOcboo9dMVqhyrACIg==}
     peerDependencies:
       '@types/react': '*'
@@ -964,11 +964,11 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 19.2.7
-      react: 19.2.0
+      '@types/react': 19.1.4
+      react: 19.2.1
     dev: false
 
-  /@radix-ui/react-slot@1.2.4(@types/react@19.2.7)(react@19.2.0):
+  /@radix-ui/react-slot@1.2.4(@types/react@19.1.4)(react@19.2.1):
     resolution: {integrity: sha512-Jl+bCv8HxKnlTLVrcDE8zTMJ09R9/ukw4qBs/oZClOfoQk/cOTbDn+NceXfV7j09YPVQUryJPHurafcSg6EVKA==}
     peerDependencies:
       '@types/react': '*'
@@ -977,9 +977,9 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.7)(react@19.2.0)
-      '@types/react': 19.2.7
-      react: 19.2.0
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.1.4)(react@19.2.1)
+      '@types/react': 19.1.4
+      react: 19.2.1
     dev: false
 
   /@react-oauth/google@0.12.2(react-dom@19.2.1)(react@19.2.1):
@@ -1244,12 +1244,6 @@ packages:
 
   /@types/react@19.1.4:
     resolution: {integrity: sha512-EB1yiiYdvySuIITtD5lhW4yPyJ31RkJkkDw794LaQYrxCSaQV/47y5o1FMC4zF9ZyjUjzJMZwbovEnT5yHTW6g==}
-    dependencies:
-      csstype: 3.2.3
-    dev: true
-
-  /@types/react@19.2.7:
-    resolution: {integrity: sha512-MWtvHrGZLFttgeEj28VXHxpmwYbor/ATPYbBfSFZEIRK0ecCFLl2Qo55z52Hss+UV9CRN7trSeq1zbgx7YDWWg==}
     dependencies:
       csstype: 3.2.3
 
@@ -2760,14 +2754,6 @@ packages:
       js-tokens: 4.0.0
     dev: true
 
-  /lucide-react@0.546.0(react@19.2.0):
-    resolution: {integrity: sha512-Z94u6fKT43lKeYHiVyvyR8fT7pwCzDu7RyMPpTvh054+xahSgj4HFQ+NmflvzdXsoAjYGdCguGaFKYuvq0ThCQ==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    dependencies:
-      react: 19.2.0
-    dev: false
-
   /lucide-react@0.546.0(react@19.2.1):
     resolution: {integrity: sha512-Z94u6fKT43lKeYHiVyvyR8fT7pwCzDu7RyMPpTvh054+xahSgj4HFQ+NmflvzdXsoAjYGdCguGaFKYuvq0ThCQ==}
     peerDependencies:
@@ -3160,11 +3146,6 @@ packages:
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: true
-
-  /react@19.2.0:
-    resolution: {integrity: sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ==}
-    engines: {node: '>=0.10.0'}
-    dev: false
 
   /react@19.2.1:
     resolution: {integrity: sha512-DGrYcCWK7tvYMnWh79yrPHt+vdx9tY+1gPZa7nJQtO/p8bLTDaHp4dzwEhQB7pZ4Xe3ok4XKuEPrVuc+wlpkmw==}
