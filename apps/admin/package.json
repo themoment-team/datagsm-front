@@ -17,7 +17,7 @@
     "react-dom": "19.2.1"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^15.5.7",
+    "@next/eslint-plugin-next": "15.5.7",
     "@repo/eslint-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
