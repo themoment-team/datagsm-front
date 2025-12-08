@@ -9,5 +9,6 @@ export * from './Pagination';
 export * from './Select';
 export * from './Table';
 export * from './Textarea';
+export * from './Skeleton';
 export { default as SigninForm } from './SigninForm';
 export { default as Header } from './Header';
