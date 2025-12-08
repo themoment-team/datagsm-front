@@ -1,8 +1,8 @@
-import { Student } from '@/entities/student';
+import { Student, StudentListData } from '@/entities/student';
 
-export const demoStudents: Student[] = [
+const students: Student[] = [
   {
-    studentId: 1,
+    id: 1,
     name: '전준연',
     sex: 'MAN',
     email: 's24070@gsm.hs.kr',
@@ -15,9 +15,24 @@ export const demoStudents: Student[] = [
     dormitoryFloor: 3,
     dormitoryRoom: 316,
     isLeaveSchool: false,
+    majorClub: {
+      id: 1,
+      name: 'AI개발동아리',
+      type: 'MAJOR',
+    },
+    jobClub: {
+      id: 2,
+      name: 'AI연구동아리',
+      type: 'JOB',
+    },
+    autonomousClub: {
+      id: 3,
+      name: '학생회',
+      type: 'AUTONOMOUS',
+    },
   },
   {
-    studentId: 2,
+    id: 2,
     name: '정효주',
     sex: 'WOMAN',
     email: 's24015@gsm.hs.kr',
@@ -30,9 +45,24 @@ export const demoStudents: Student[] = [
     dormitoryFloor: 5,
     dormitoryRoom: 502,
     isLeaveSchool: false,
+    majorClub: {
+      id: 4,
+      name: 'SW개발동아리',
+      type: 'MAJOR',
+    },
+    jobClub: {
+      id: 5,
+      name: '웹개발동아리',
+      type: 'JOB',
+    },
+    autonomousClub: {
+      id: 6,
+      name: '독서동아리',
+      type: 'AUTONOMOUS',
+    },
   },
   {
-    studentId: 3,
+    id: 3,
     name: '김지훈',
     sex: 'MAN',
     email: 's24021@gsm.hs.kr',
@@ -44,6 +74,27 @@ export const demoStudents: Student[] = [
     role: 'DORMITORY_MANAGER',
     dormitoryFloor: 4,
     dormitoryRoom: 410,
-    isLeaveSchool: false,
+    isLeaveSchool: true,
+    majorClub: {
+      id: 7,
+      name: 'IOT개발동아리',
+      type: 'MAJOR',
+    },
+    jobClub: {
+      id: 8,
+      name: '임베디드동아리',
+      type: 'JOB',
+    },
+    autonomousClub: {
+      id: 9,
+      name: '기숙사자치회',
+      type: 'AUTONOMOUS',
+    },
   },
 ];
+
+export const demoStudents: StudentListData = {
+  totalPages: 1,
+  totalElements: students.length,
+  students,
+};

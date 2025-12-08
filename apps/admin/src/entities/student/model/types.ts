@@ -6,8 +6,16 @@ export type StudentMajor = 'SW' | 'IOT' | 'AI';
 
 export type StudentRole = 'GENERAL_STUDENT' | 'STUDENT_COUNCIL' | 'DORMITORY_MANAGER';
 
+export type ClubType = 'MAJOR' | 'JOB' | 'AUTONOMOUS';
+
+export interface Club {
+  id: number;
+  name: string;
+  type: ClubType;
+}
+
 export interface Student {
-  studentId: number;
+  id: number;
   name: string;
   sex: StudentSex;
   email: string;
@@ -20,6 +28,9 @@ export interface Student {
   dormitoryFloor: number;
   dormitoryRoom: number;
   isLeaveSchool: boolean;
+  majorClub: Club;
+  jobClub: Club;
+  autonomousClub: Club;
 }
 
 export interface StudentListData {
