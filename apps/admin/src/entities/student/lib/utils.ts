@@ -24,9 +24,9 @@ export const getRoleLabel = (role: StudentRole) => {
 
 export const getMajorLabel = (major: StudentMajor) => {
   switch (major) {
-    case 'SW':
+    case 'SW_DEVELOPMENT':
       return 'SW개발과';
-    case 'IOT':
+    case 'SMART_IOT':
       return '스마트IoT과';
     case 'AI':
       return 'AI과';

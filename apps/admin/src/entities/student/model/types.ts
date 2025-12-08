@@ -2,7 +2,7 @@ import { ApiResponse } from '@repo/shared/types';
 
 export type StudentSex = 'MAN' | 'WOMAN';
 
-export type StudentMajor = 'SW' | 'IOT' | 'AI';
+export type StudentMajor = 'SW_DEVELOPMENT' | 'SMART_IOT' | 'AI';
 
 export type StudentRole = 'GENERAL_STUDENT' | 'STUDENT_COUNCIL' | 'DORMITORY_MANAGER';
 

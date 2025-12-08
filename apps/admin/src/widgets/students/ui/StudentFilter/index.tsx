@@ -54,10 +54,10 @@ const StudentFilter = ({
             <SelectItem value="all" className="cursor-pointer">
               전체
             </SelectItem>
-            <SelectItem value="SW" className="cursor-pointer">
+            <SelectItem value="SW_DEVELOPMENT" className="cursor-pointer">
               SW개발과
             </SelectItem>
-            <SelectItem value="IOT" className="cursor-pointer">
+            <SelectItem value="SMART_IOT" className="cursor-pointer">
               스마트IoT과
             </SelectItem>
             <SelectItem value="AI" className="cursor-pointer">
