@@ -1,4 +1,5 @@
 import { authUrl } from '@repo/shared/api';
+import { COOKIE_KEYS } from '@repo/shared/constants';
 import { deleteCookie, getCookie, setCookie } from '@repo/shared/utils';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
@@ -17,7 +18,7 @@ const refreshAxiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const token = getCookie('accessToken');
+    const token = getCookie(COOKIE_KEYS.ACCESS_TOKEN);
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -55,7 +56,7 @@ axiosInstance.interceptors.response.use(
 
       isRefreshing = true;
       try {
-        const refreshToken = getCookie('refreshToken');
+        const refreshToken = getCookie(COOKIE_KEYS.REFRESH_TOKEN);
 
         if (!refreshToken) throw new Error('No refresh token');
 
@@ -67,8 +68,8 @@ axiosInstance.interceptors.response.use(
 
         if (!newAccessToken) throw new Error('No new token returned');
 
-        setCookie('accessToken', newAccessToken);
-        setCookie('refreshToken', newRefreshToken);
+        setCookie(COOKIE_KEYS.ACCESS_TOKEN, newAccessToken);
+        setCookie(COOKIE_KEYS.REFRESH_TOKEN, newRefreshToken);
 
         refreshQueue.forEach((cb) => cb(newAccessToken));
         refreshQueue = [];
@@ -79,8 +80,8 @@ axiosInstance.interceptors.response.use(
 
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        deleteCookie('accessToken');
-        deleteCookie('refreshToken');
+        deleteCookie(COOKIE_KEYS.ACCESS_TOKEN);
+        deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
 
         if (typeof window !== 'undefined') {
           window.location.href = '/signin';

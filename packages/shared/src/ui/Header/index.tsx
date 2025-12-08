@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
+import { COOKIE_KEYS } from '@repo/shared/constants';
 import { Button } from '@repo/shared/ui';
 import { deleteCookie } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -34,8 +35,8 @@ const Header = ({ role = 'client' }: HeaderProps) => {
   const handleLogout = () => {
     queryClient.removeQueries({ queryKey: ['auth', 'api-key'] });
 
-    deleteCookie('accessToken');
-    deleteCookie('refreshToken');
+    deleteCookie(COOKIE_KEYS.ACCESS_TOKEN);
+    deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
 
     toast.success('로그아웃 되었습니다.');
     router.push('/signin');
