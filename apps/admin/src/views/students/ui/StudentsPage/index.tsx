@@ -19,14 +19,7 @@ const StudentsPage = () => {
   const [gradeFilter, setGradeFilter] = useState<string>('all');
   const [majorFilter, setMajorFilter] = useState<string>('all');
 
-  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents({
-    initialData: {
-      status: 'OK',
-      code: 200,
-      message: 'OK',
-      data: demoStudents,
-    },
-  });
+  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents({});
 
   const filteredStudents = studentsData?.data.students.filter((student) => {
     if (gradeFilter !== 'all' && student.grade !== Number.parseInt(gradeFilter)) return false;
@@ -56,8 +49,8 @@ const StudentsPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <StudentList students={filteredStudents} />
-              <StudentPagination />
+              <StudentList students={filteredStudents} isLoading={isLoadingStudents} />
+              <StudentPagination isLoading={isLoadingStudents} />
             </div>
           </CardContent>
         </Card>

@@ -5,9 +5,26 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  Skeleton,
 } from '@repo/shared/ui';
 
-const StudentPagination = () => {
+interface StudentPaginationProps {
+  isLoading?: boolean;
+}
+
+const StudentPagination = ({ isLoading }: StudentPaginationProps) => {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <Skeleton className="h-9 w-24" />
+        <Skeleton className="h-9 w-9" />
+        <Skeleton className="h-9 w-9" />
+        <Skeleton className="h-9 w-9" />
+        <Skeleton className="h-9 w-24" />
+      </div>
+    );
+  }
+
   return (
     <div>
       <Pagination>

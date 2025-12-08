@@ -1,6 +1,7 @@
 import {
   Badge,
   Button,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -20,9 +21,10 @@ import {
 
 interface StudentListProps {
   students?: Student[];
+  isLoading?: boolean;
 }
 
-const StudentList = ({ students }: StudentListProps) => {
+const StudentList = ({ students, isLoading }: StudentListProps) => {
   return (
     <div className="overflow-x-auto rounded-md border">
       <Table>
@@ -43,37 +45,78 @@ const StudentList = ({ students }: StudentListProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {students?.map((student) => (
-            <TableRow key={student.id}>
-              <TableCell>{student.name}</TableCell>
-              <TableCell>{getSexLabel(student.sex)}</TableCell>
-              <TableCell>{student.email}</TableCell>
-              <TableCell>{student.studentNumber}</TableCell>
-              <TableCell>{getMajorLabel(student.major)}</TableCell>
-              <TableCell>
-                <Badge variant={getRoleBadgeVariant(student.role)}>
-                  {getRoleLabel(student.role)}
-                </Badge>
-              </TableCell>
-              <TableCell>{student.dormitoryRoom}호</TableCell>
-              <TableCell>{student.majorClub.name}</TableCell>
-              <TableCell>{student.jobClub.name}</TableCell>
-              <TableCell>{student.autonomousClub.name}</TableCell>
-              <TableCell>
-                {student.isLeaveSchool ? (
-                  <X className="bg h-4 w-4 text-red-500" />
-                ) : (
-                  <Check className="h-4 w-4 text-green-500" />
-                )}
-              </TableCell>
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-8" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-12" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-4" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-8 w-8" />
+                  </TableCell>
+                </TableRow>
+              ))
+            : students?.map((student) => (
+                <TableRow key={student.id}>
+                  <TableCell>{student.name}</TableCell>
+                  <TableCell>{getSexLabel(student.sex)}</TableCell>
+                  <TableCell>{student.email}</TableCell>
+                  <TableCell>{student.studentNumber}</TableCell>
+                  <TableCell>{getMajorLabel(student.major)}</TableCell>
+                  <TableCell>
+                    <Badge variant={getRoleBadgeVariant(student.role)}>
+                      {getRoleLabel(student.role)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{student.dormitoryRoom}호</TableCell>
+                  <TableCell>{student.majorClub.name}</TableCell>
+                  <TableCell>{student.jobClub.name}</TableCell>
+                  <TableCell>{student.autonomousClub.name}</TableCell>
+                  <TableCell>
+                    {student.isLeaveSchool ? (
+                      <X className="bg h-4 w-4 text-red-500" />
+                    ) : (
+                      <Check className="h-4 w-4 text-green-500" />
+                    )}
+                  </TableCell>
 
-              <TableCell>
-                <Button variant="ghost" size="icon" className="cursor-pointer">
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+                  <TableCell>
+                    <Button variant="ghost" size="icon" className="cursor-pointer">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
         </TableBody>
       </Table>
     </div>
