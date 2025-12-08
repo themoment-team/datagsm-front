@@ -32,6 +32,10 @@
     "./utils/*": {
       "types": "./src/utils/*.ts",
       "default": "./dist/utils/*.js"
+    },
+    "./constants/*": {
+      "types": "./src/constants/*.ts",
+      "default": "./dist/constants/*.js"
     }
   },
   "typesVersions": {
@@ -53,6 +57,9 @@
       ],
       "utils/*": [
         "./src/utils/*"
+      ],
+      "constants/*": [
+        "./src/constants/*"
       ]
     }
   },

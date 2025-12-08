@@ -1,13 +1,14 @@
 import { cookies } from 'next/headers';
 
 import { authUrl } from '@repo/shared/api';
+import { COOKIE_KEYS } from '@repo/shared/constants';
 
 import { ApiKeyResponse } from '@/entities/home';
 
 export const getApiKey = async (): Promise<ApiKeyResponse | undefined> => {
   try {
     const cookieStore = await cookies();
-    const accessToken = cookieStore.get('accessToken')?.value;
+    const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
     const url = new URL(authUrl.getApiKey(), process.env.NEXT_PUBLIC_API_BASE_URL);
 

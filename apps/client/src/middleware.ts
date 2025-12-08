@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { COOKIE_KEYS } from '@repo/shared/constants';
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const accessToken = request.cookies.get('accessToken')?.value;
+  const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
   if (pathname === '/signin') {
     if (accessToken) {
