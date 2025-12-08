@@ -2,6 +2,7 @@ import { useRouter } from 'next/navigation';
 
 import { useGoogleLogin as useGoogleLoginBase } from '@react-oauth/google';
 import { authUrl, post } from '@repo/shared/api';
+import { COOKIE_KEYS } from '@repo/shared/constants';
 import { LoginResponse } from '@repo/shared/types';
 import { setCookie } from '@repo/shared/utils';
 import { toast } from 'sonner';
@@ -20,8 +21,8 @@ export const useGoogleLogin = () => {
         if (response) {
           const { accessToken, refreshToken } = response.data;
 
-          setCookie('accessToken', accessToken);
-          setCookie('refreshToken', refreshToken);
+          setCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken);
+          setCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken);
 
           toast.success('로그인에 성공했습니다.');
 
