@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-import { students } from '@/entities/student';
+import { StudentListResponse } from '@/entities/student';
 import { useGetStudents } from '@/views/students';
 import {
   AddStudentDialog,
@@ -17,13 +17,14 @@ import {
 
 const PAGE_SIZE = 10;
 
-const StudentsPage = () => {
+interface StudentsPageProps {
+  initialStudentsData?: StudentListResponse;
+}
+
+const StudentsPage = ({ initialStudentsData }: StudentsPageProps) => {
   const [gradeFilter, setGradeFilter] = useState<string>('all');
   const [majorFilter, setMajorFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(0);
-
-  // Mock 데이터 페이지네이션
-  const paginatedStudents = students.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(
     {
@@ -31,16 +32,7 @@ const StudentsPage = () => {
       size: PAGE_SIZE,
     },
     {
-      initialData: {
-        status: 'OK',
-        code: 200,
-        message: 'OK',
-        data: {
-          totalPages: Math.ceil(students.length / PAGE_SIZE),
-          totalElements: students.length,
-          students: paginatedStudents,
-        },
-      },
+      initialData: initialStudentsData,
     },
   );
 
