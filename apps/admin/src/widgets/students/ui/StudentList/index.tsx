@@ -46,7 +46,7 @@ const StudentList = ({ students, isLoading }: StudentListProps) => {
         </TableHeader>
         <TableBody>
           {isLoading
-            ? Array.from({ length: 5 }).map((_, index) => (
+            ? Array.from({ length: 10 }).map((_, index) => (
                 <TableRow key={index}>
                   <TableCell>
                     <Skeleton className="h-4 w-16" />
@@ -99,9 +99,9 @@ const StudentList = ({ students, isLoading }: StudentListProps) => {
                     </Badge>
                   </TableCell>
                   <TableCell>{student.dormitoryRoom}호</TableCell>
-                  <TableCell>{student.majorClub.name}</TableCell>
+                  {/* <TableCell>{student.majorClub.name}</TableCell>
                   <TableCell>{student.jobClub.name}</TableCell>
-                  <TableCell>{student.autonomousClub.name}</TableCell>
+                  <TableCell>{student.autonomousClub.name}</TableCell> */}
                   <TableCell>
                     {student.isLeaveSchool ? (
                       <X className="bg h-4 w-4 text-red-500" />

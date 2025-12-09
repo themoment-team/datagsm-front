@@ -18,7 +18,7 @@ export const clubQueryKeys = {
 } as const;
 
 export const studentQueryKeys = {
-  getStudents: () => ['students', 'list'] as const,
+  getStudents: (page: number, size: number) => ['students', 'list', { page, size }] as const,
   getStudentById: (studentId: string) => ['students', 'detail', studentId] as const,
   patchStudentById: (studentId: string) => ['students', 'update', studentId] as const,
   postStudent: () => ['students', 'create'] as const,

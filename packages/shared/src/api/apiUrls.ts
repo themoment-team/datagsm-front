@@ -20,7 +20,7 @@ export const healthUrl = {
 } as const;
 
 export const studentUrl = {
-  getStudents: () => '/v1/students',
+  getStudents: (page: number, size: number) => `/v1/students?page=${page}&size=${size}`,
   patchStudentById: (studentId: string) => `/v1/students/${studentId}`,
   postStudent: () => '/v1/students',
 } as const;

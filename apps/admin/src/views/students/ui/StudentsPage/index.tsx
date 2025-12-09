@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-import { demoStudents } from '@/entities/student';
 import { useGetStudents } from '@/views/students';
 import {
   AddStudentDialog,
@@ -15,17 +14,25 @@ import {
   StudentPagination,
 } from '@/widgets/students';
 
+const PAGE_SIZE = 10;
+
 const StudentsPage = () => {
   const [gradeFilter, setGradeFilter] = useState<string>('all');
   const [majorFilter, setMajorFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents({});
+  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents({
+    page: currentPage,
+    size: PAGE_SIZE,
+  });
 
   const filteredStudents = studentsData?.data.students.filter((student) => {
     if (gradeFilter !== 'all' && student.grade !== Number.parseInt(gradeFilter)) return false;
     if (majorFilter !== 'all' && student.major !== majorFilter) return false;
     return true;
   });
+
+  const totalPages = studentsData?.data.totalPages ?? 0;
 
   return (
     <div className={cn('bg-background h-[calc(100vh-4.0625rem)]')}>
@@ -50,7 +57,12 @@ const StudentsPage = () => {
           <CardContent>
             <div className="space-y-4">
               <StudentList students={filteredStudents} isLoading={isLoadingStudents} />
-              <StudentPagination isLoading={isLoadingStudents} />
+              <StudentPagination
+                isLoading={isLoadingStudents}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </div>
           </CardContent>
         </Card>
