@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
+import { students } from '@/entities/student';
 import { useGetStudents } from '@/views/students';
 import {
   AddStudentDialog,
@@ -21,10 +22,27 @@ const StudentsPage = () => {
   const [majorFilter, setMajorFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(0);
 
-  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents({
-    page: currentPage,
-    size: PAGE_SIZE,
-  });
+  // Mock 데이터 페이지네이션
+  const paginatedStudents = students.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
+
+  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(
+    {
+      page: currentPage,
+      size: PAGE_SIZE,
+    },
+    {
+      initialData: {
+        status: 'OK',
+        code: 200,
+        message: 'OK',
+        data: {
+          totalPages: Math.ceil(students.length / PAGE_SIZE),
+          totalElements: students.length,
+          students: paginatedStudents,
+        },
+      },
+    },
+  );
 
   const filteredStudents = studentsData?.data.students.filter((student) => {
     if (gradeFilter !== 'all' && student.grade !== Number.parseInt(gradeFilter)) return false;
