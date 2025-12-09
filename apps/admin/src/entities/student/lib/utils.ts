@@ -16,7 +16,7 @@ export const getRoleLabel = (role: StudentRole) => {
     case 'STUDENT_COUNCIL':
       return '학생회';
     case 'DORMITORY_MANAGER':
-      return '기숙사 관리자';
+      return '기자위';
     case 'GENERAL_STUDENT':
       return '일반학생';
   }
