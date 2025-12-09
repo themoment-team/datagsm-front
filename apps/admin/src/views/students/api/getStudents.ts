@@ -2,8 +2,7 @@ import { cookies } from 'next/headers';
 
 import { studentUrl } from '@repo/shared/api';
 import { COOKIE_KEYS } from '@repo/shared/constants';
-
-import { StudentListResponse } from '@/entities/student';
+import { StudentListResponse } from '@repo/shared/types';
 
 const PAGE = 0;
 const SIZE = 10;

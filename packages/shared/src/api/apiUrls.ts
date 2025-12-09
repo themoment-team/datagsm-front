@@ -1,3 +1,10 @@
+import { StudentMajor, StudentRole, StudentSex } from '@repo/shared/types';
+
+const addParams = (key: string, value: string | number | boolean | undefined) => {
+  if (value === undefined) return '';
+  return `&${key}=${value}`;
+};
+
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
   getApiKey: () => '/v1/auth/api-key',
@@ -20,7 +27,17 @@ export const healthUrl = {
 } as const;
 
 export const studentUrl = {
-  getStudents: (page: number, size: number) => `/v1/students?page=${page}&size=${size}`,
+  getStudents: (
+    page: number,
+    size: number,
+    grade?: number,
+    classNum?: number,
+    major?: StudentMajor,
+    sex?: StudentSex,
+    role?: StudentRole,
+    isLeaveSchool?: boolean,
+  ) =>
+    `/v1/students?page=${page}&size=${size}${addParams('grade', grade)}${addParams('classNum', classNum)}${addParams('major', major)}${addParams('sex', sex)}${addParams('role', role)}${addParams('isLeaveSchool', isLeaveSchool)}`,
   patchStudentById: (studentId: string) => `/v1/students/${studentId}`,
   postStudent: () => '/v1/students',
 } as const;

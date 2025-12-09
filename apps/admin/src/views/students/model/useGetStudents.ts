@@ -1,8 +1,7 @@
 import { get, studentQueryKeys, studentUrl } from '@repo/shared/api';
+import { StudentListResponse } from '@repo/shared/types';
 import { minutesToMs } from '@repo/shared/utils';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
-
-import { StudentListResponse } from '@/entities/student';
 
 interface UseGetStudentsParams {
   page: number;

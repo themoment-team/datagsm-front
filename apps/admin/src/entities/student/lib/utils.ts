@@ -1,4 +1,4 @@
-import { StudentMajor, StudentRole, StudentSex } from '../model/types';
+import { StudentMajor, StudentRole, StudentSex } from '@repo/shared/types';
 
 export const getRoleBadgeVariant = (role: StudentRole) => {
   switch (role) {

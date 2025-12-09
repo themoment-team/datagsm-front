@@ -1,4 +1,4 @@
-import { Student, StudentListData } from '@/entities/student';
+import { Student, StudentListData } from '@repo/shared/types';
 
 export const students: Student[] = [
   {

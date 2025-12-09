@@ -1,3 +1,4 @@
+import { Student } from '@repo/shared/types';
 import {
   Badge,
   Button,
@@ -11,13 +12,7 @@ import {
 } from '@repo/shared/ui';
 import { Check, Pencil, X } from 'lucide-react';
 
-import {
-  Student,
-  getMajorLabel,
-  getRoleBadgeVariant,
-  getRoleLabel,
-  getSexLabel,
-} from '@/entities/student';
+import { getMajorLabel, getRoleBadgeVariant, getRoleLabel, getSexLabel } from '@/entities/student';
 
 interface StudentListProps {
   students?: Student[];
