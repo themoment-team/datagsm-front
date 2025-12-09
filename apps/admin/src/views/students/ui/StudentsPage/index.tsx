@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 
+import { StudentListResponse, StudentRole, StudentSex } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-import { StudentListResponse } from '@/entities/student';
 import { useGetStudents } from '@/views/students';
 import {
   AddStudentDialog,
@@ -23,24 +23,28 @@ interface StudentsPageProps {
 
 const StudentsPage = ({ initialStudentsData }: StudentsPageProps) => {
   const [gradeFilter, setGradeFilter] = useState<string>('all');
-  const [majorFilter, setMajorFilter] = useState<string>('all');
+  const [classNumFilter, setClassNumFilter] = useState<string>('all');
+  const [sexFilter, setSexFilter] = useState<string>('all');
+  const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('false');
   const [currentPage, setCurrentPage] = useState(0);
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(
     {
       page: currentPage,
       size: PAGE_SIZE,
+      grade: gradeFilter !== 'all' ? Number.parseInt(gradeFilter) : undefined,
+      classNum: classNumFilter !== 'all' ? Number.parseInt(classNumFilter) : undefined,
+      sex: sexFilter !== 'all' ? (sexFilter as StudentSex) : undefined,
+      role: roleFilter !== 'all' ? (roleFilter as StudentRole) : undefined,
+      isLeaveSchool: statusFilter !== 'all' ? statusFilter === 'true' : undefined,
     },
     {
       initialData: initialStudentsData,
     },
   );
 
-  const filteredStudents = studentsData?.data.students.filter((student) => {
-    if (gradeFilter !== 'all' && student.grade !== Number.parseInt(gradeFilter)) return false;
-    if (majorFilter !== 'all' && student.major !== majorFilter) return false;
-    return true;
-  });
+  const filteredStudents = studentsData?.data.students;
 
   const totalPages = studentsData?.data.totalPages ?? 0;
 
@@ -60,8 +64,14 @@ const StudentsPage = ({ initialStudentsData }: StudentsPageProps) => {
             <StudentFilter
               gradeFilter={gradeFilter}
               setGradeFilter={setGradeFilter}
-              majorFilter={majorFilter}
-              setMajorFilter={setMajorFilter}
+              classNumFilter={classNumFilter}
+              setClassNumFilter={setClassNumFilter}
+              sexFilter={sexFilter}
+              setSexFilter={setSexFilter}
+              roleFilter={roleFilter}
+              setRoleFilter={setRoleFilter}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
             />
           </CardHeader>
           <CardContent>
