@@ -34,6 +34,22 @@ const AddStudentDialog = () => {
             <Input id="name" placeholder="이름 입력" />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="sex">성별</Label>
+            <Select>
+              <SelectTrigger className="cursor-pointer">
+                <SelectValue placeholder="성별 선택" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="MAN" className="cursor-pointer">
+                  남
+                </SelectItem>
+                <SelectItem value="WOMAN" className="cursor-pointer">
+                  여
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="email">이메일</Label>
             <Input id="email" placeholder="example@gsm.hs.kr" />
           </div>
@@ -57,7 +73,7 @@ const AddStudentDialog = () => {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="class">반</Label>
+            <Label htmlFor="classNum">반</Label>
             <Select>
               <SelectTrigger className="cursor-pointer">
                 <SelectValue placeholder="반 선택" />
@@ -69,6 +85,12 @@ const AddStudentDialog = () => {
                 <SelectItem value="2" className="cursor-pointer">
                   2반
                 </SelectItem>
+                <SelectItem value="3" className="cursor-pointer">
+                  3반
+                </SelectItem>
+                <SelectItem value="4" className="cursor-pointer">
+                  4반
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -77,74 +99,39 @@ const AddStudentDialog = () => {
             <Input id="number" type="number" placeholder="번호 입력" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="department">학과</Label>
-            <Select>
-              <SelectTrigger className="cursor-pointer">
-                <SelectValue placeholder="학과 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="SW개발과" className="cursor-pointer">
-                  SW개발과
-                </SelectItem>
-                <SelectItem value="스마트IoT과" className="cursor-pointer">
-                  스마트IoT과
-                </SelectItem>
-                <SelectItem value="AI과" className="cursor-pointer">
-                  AI과
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="dormRoom">기숙사 호실</Label>
-            <Input id="dormRoom" type="number" placeholder="호실 입력" />
-          </div>
-          <div className="space-y-2">
             <Label htmlFor="role">구분</Label>
             <Select>
               <SelectTrigger className="cursor-pointer">
                 <SelectValue placeholder="구분 선택" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="일반학생" className="cursor-pointer">
+                <SelectItem value="GENERAL_STUDENT" className="cursor-pointer">
                   일반학생
                 </SelectItem>
-                <SelectItem value="학생회" className="cursor-pointer">
+                <SelectItem value="STUDENT_COUNCIL" className="cursor-pointer">
                   학생회
                 </SelectItem>
-                <SelectItem value="기자위" className="cursor-pointer">
+                <SelectItem value="DORMITORY_MANAGER" className="cursor-pointer">
                   기자위
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="gender">성별</Label>
-            <Select>
-              <SelectTrigger className="cursor-pointer">
-                <SelectValue placeholder="성별 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="남" className="cursor-pointer">
-                  남
-                </SelectItem>
-                <SelectItem value="여" className="cursor-pointer">
-                  여
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="dormitoryRoomNumber">기숙사 호실</Label>
+            <Input id="dormitoryRoomNumber" type="number" placeholder="호실 입력" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="majorClub">전공 동아리</Label>
-            <Input id="majorClub" placeholder="전공 동아리 입력" />
+            <Label htmlFor="majorClubId">전공 동아리 ID</Label>
+            <Input id="majorClubId" type="number" placeholder="전공 동아리 ID 입력" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="employmentClub">취업 동아리</Label>
-            <Input id="employmentClub" placeholder="취업 동아리 입력" />
+            <Label htmlFor="jobClubId">취업 동아리 ID</Label>
+            <Input id="jobClubId" type="number" placeholder="취업 동아리 ID 입력" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="autonomyClub">자율 동아리</Label>
-            <Input id="autonomyClub" placeholder="자율 동아리 입력" />
+            <Label htmlFor="autonomousClubId">자율 동아리 ID</Label>
+            <Input id="autonomousClubId" type="number" placeholder="자율 동아리 ID 입력" />
           </div>
         </div>
         <div className="flex justify-end">
