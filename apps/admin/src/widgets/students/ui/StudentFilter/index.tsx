@@ -104,7 +104,7 @@ const StudentFilter = ({
       <div className="flex items-center gap-2">
         <Label className="text-sm">역할:</Label>
         <Select value={roleFilter} onValueChange={setRoleFilter}>
-          <SelectTrigger className="w-32 cursor-pointer">
+          <SelectTrigger className="w-24 cursor-pointer">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -127,7 +127,7 @@ const StudentFilter = ({
       <div className="flex items-center gap-2">
         <Label className="text-sm">재학 여부:</Label>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-32 cursor-pointer">
+          <SelectTrigger className="w-24 cursor-pointer">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
