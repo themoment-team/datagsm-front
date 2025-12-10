@@ -2,10 +2,13 @@
 
 import { useState } from 'react';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { StudentListResponse, StudentRole, StudentSex } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+import { useForm, useWatch } from 'react-hook-form';
 
+import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
 import { useGetStudents } from '@/views/students';
 import {
   AddStudentDialog,
@@ -22,22 +25,35 @@ interface StudentsPageProps {
 }
 
 const StudentsPage = ({ initialStudentsData }: StudentsPageProps) => {
-  const [gradeFilter, setGradeFilter] = useState<string>('all');
-  const [classNumFilter, setClassNumFilter] = useState<string>('all');
-  const [sexFilter, setSexFilter] = useState<string>('all');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('false');
   const [currentPage, setCurrentPage] = useState(0);
+
+  const form = useForm<StudentFilterType>({
+    resolver: zodResolver(StudentFilterSchema),
+    defaultValues: {
+      grade: 'all',
+      classNum: 'all',
+      sex: 'all',
+      role: 'all',
+      status: 'all',
+    },
+  });
+
+  const { control } = form;
+
+  const filters = useWatch({
+    control,
+  });
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(
     {
       page: currentPage,
       size: PAGE_SIZE,
-      grade: gradeFilter !== 'all' ? Number.parseInt(gradeFilter) : undefined,
-      classNum: classNumFilter !== 'all' ? Number.parseInt(classNumFilter) : undefined,
-      sex: sexFilter !== 'all' ? (sexFilter as StudentSex) : undefined,
-      role: roleFilter !== 'all' ? (roleFilter as StudentRole) : undefined,
-      isLeaveSchool: statusFilter !== 'all' ? statusFilter === 'true' : undefined,
+      grade: filters.grade !== 'all' ? Number.parseInt(filters.grade as string) : undefined,
+      classNum:
+        filters.classNum !== 'all' ? Number.parseInt(filters.classNum as string) : undefined,
+      sex: filters.sex !== 'all' ? (filters.sex as StudentSex) : undefined,
+      role: filters.role !== 'all' ? (filters.role as StudentRole) : undefined,
+      isLeaveSchool: filters.status !== 'all' ? filters.status === 'true' : undefined,
     },
     {
       initialData: initialStudentsData,
@@ -61,18 +77,7 @@ const StudentsPage = ({ initialStudentsData }: StudentsPageProps) => {
               </div>
             </div>
 
-            <StudentFilter
-              gradeFilter={gradeFilter}
-              setGradeFilter={setGradeFilter}
-              classNumFilter={classNumFilter}
-              setClassNumFilter={setClassNumFilter}
-              sexFilter={sexFilter}
-              setSexFilter={setSexFilter}
-              roleFilter={roleFilter}
-              setRoleFilter={setRoleFilter}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-            />
+            <StudentFilter control={control} />
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
