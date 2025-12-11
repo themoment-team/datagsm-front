@@ -241,7 +241,7 @@ const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
                         선택 안 함
                       </SelectItem>
                       {clubs?.clubs
-                        .filter((club) => club.type === 'MAJOR')
+                        .filter((club) => club.type === 'MAJOR_CLUB')
                         .map((club) => (
                           <SelectItem
                             key={club.id}
@@ -277,7 +277,7 @@ const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
                         선택 안 함
                       </SelectItem>
                       {clubs?.clubs
-                        .filter((club) => club.type === 'JOB')
+                        .filter((club) => club.type === 'JOB_CLUB')
                         .map((club) => (
                           <SelectItem
                             key={club.id}
@@ -313,7 +313,7 @@ const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
                         선택 안 함
                       </SelectItem>
                       {clubs?.clubs
-                        .filter((club) => club.type === 'AUTONOMOUS')
+                        .filter((club) => club.type === 'AUTONOMOUS_CLUB')
                         .map((club) => (
                           <SelectItem
                             key={club.id}

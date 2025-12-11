@@ -103,7 +103,7 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
         />
       </div>
       <div className="flex items-center gap-2">
-        <Label className="text-sm">역할:</Label>
+        <Label className="text-sm">구분:</Label>
         <Controller
           control={control}
           name="role"

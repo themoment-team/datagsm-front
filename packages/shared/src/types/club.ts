@@ -1,6 +1,6 @@
 import { ApiResponse } from '@repo/shared/types';
 
-export type ClubType = 'MAJOR' | 'JOB' | 'AUTONOMOUS';
+export type ClubType = 'MAJOR_CLUB' | 'JOB_CLUB' | 'AUTONOMOUS_CLUB' | null;
 
 export interface Club {
   id: number;
