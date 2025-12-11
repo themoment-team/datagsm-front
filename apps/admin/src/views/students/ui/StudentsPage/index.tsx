@@ -45,21 +45,15 @@ const StudentsPage = ({ initialStudentsData, initialClubsData }: StudentsPagePro
     control,
   });
 
-  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(
-    {
-      page: currentPage,
-      size: PAGE_SIZE,
-      grade: filters.grade !== 'all' ? Number.parseInt(filters.grade as string) : undefined,
-      classNum:
-        filters.classNum !== 'all' ? Number.parseInt(filters.classNum as string) : undefined,
-      sex: filters.sex !== 'all' ? (filters.sex as StudentSex) : undefined,
-      role: filters.role !== 'all' ? (filters.role as StudentRole) : undefined,
-      isLeaveSchool: filters.status !== 'all' ? filters.status === 'true' : undefined,
-    },
-    {
-      initialData: initialStudentsData,
-    },
-  );
+  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents({
+    page: currentPage,
+    size: PAGE_SIZE,
+    grade: filters.grade !== 'all' ? Number.parseInt(filters.grade as string) : undefined,
+    classNum: filters.classNum !== 'all' ? Number.parseInt(filters.classNum as string) : undefined,
+    sex: filters.sex !== 'all' ? (filters.sex as StudentSex) : undefined,
+    role: filters.role !== 'all' ? (filters.role as StudentRole) : undefined,
+    isLeaveSchool: filters.status !== 'all' ? filters.status === 'true' : undefined,
+  });
 
   const filteredStudents = studentsData?.data.students;
 
