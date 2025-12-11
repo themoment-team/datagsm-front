@@ -1,5 +1,5 @@
 import { StudentsPage } from '@/views/students';
-import { getStudents } from '@/views/students/api/getStudents';
+import { getStudents } from '@/views/students/api';
 
 const Students = async () => {
   const [initialStudentsData] = await Promise.all([getStudents()]);

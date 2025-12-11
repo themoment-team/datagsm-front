@@ -1,3 +1,6 @@
+import { useState } from 'react';
+
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,
   Dialog,
@@ -13,11 +16,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/shared/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+
+import { AddStudentSchema, AddStudentType } from '@/entities/student';
+import { useCreateStudent } from '@/views/students';
 
 const AddStudentDialog = () => {
+  const [open, setOpen] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  const { isPending: isCreatingStudent, mutate: createStudent } = useCreateStudent({
+    onSuccess: () => {
+      setOpen(false);
+      reset();
+      toast.success('학생 등록에 성공했습니다.');
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+    },
+    onError: (error) => {
+      console.error('학생 등록 실패:', error);
+      toast.error('학생 등록에 실패했습니다.');
+    },
+  });
+
+  const {
+    control,
+    handleSubmit,
+    register,
+    reset,
+    formState: { errors },
+  } = useForm<AddStudentType>({
+    resolver: zodResolver(AddStudentSchema),
+  });
+
+  const onSubmit: SubmitHandler<AddStudentType> = (data) => {
+    createStudent(data);
+  };
+
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (!v) reset();
+      }}
+    >
       <DialogTrigger asChild>
         <Button size="sm" className="cursor-pointer gap-2">
           <Plus className="h-4 w-4" />
@@ -28,115 +74,208 @@ const AddStudentDialog = () => {
         <DialogHeader>
           <DialogTitle>학생 추가</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-2 gap-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">이름</Label>
-            <Input id="name" placeholder="이름 입력" />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">이름</Label>
+              <Input id="name" placeholder="이름 입력" {...register('name')} />
+              {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="sex">성별</Label>
+              <Controller
+                control={control}
+                name="sex"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="cursor-pointer">
+                      <SelectValue placeholder="성별 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="MAN" className="cursor-pointer">
+                        남
+                      </SelectItem>
+                      <SelectItem value="WOMAN" className="cursor-pointer">
+                        여
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.sex && <p className="text-sm text-red-500">{errors.sex.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">이메일</Label>
+              <Input id="email" placeholder="example@gsm.hs.kr" {...register('email')} />
+              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="grade">학년</Label>
+              <Controller
+                control={control}
+                name="grade"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? String(field.value) : undefined}
+                    onValueChange={(val) => field.onChange(Number(val))}
+                  >
+                    <SelectTrigger className="cursor-pointer">
+                      <SelectValue placeholder="학년 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1" className="cursor-pointer">
+                        1학년
+                      </SelectItem>
+                      <SelectItem value="2" className="cursor-pointer">
+                        2학년
+                      </SelectItem>
+                      <SelectItem value="3" className="cursor-pointer">
+                        3학년
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.grade && <p className="text-sm text-red-500">{errors.grade.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="classNum">반</Label>
+              <Controller
+                control={control}
+                name="classNum"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? String(field.value) : undefined}
+                    onValueChange={(val) => field.onChange(Number(val))}
+                  >
+                    <SelectTrigger className="cursor-pointer">
+                      <SelectValue placeholder="반 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1" className="cursor-pointer">
+                        1반
+                      </SelectItem>
+                      <SelectItem value="2" className="cursor-pointer">
+                        2반
+                      </SelectItem>
+                      <SelectItem value="3" className="cursor-pointer">
+                        3반
+                      </SelectItem>
+                      <SelectItem value="4" className="cursor-pointer">
+                        4반
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.classNum && <p className="text-sm text-red-500">{errors.classNum.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="number">번호</Label>
+              <Input
+                id="number"
+                type="number"
+                placeholder="번호 입력"
+                {...register('number', { valueAsNumber: true })}
+              />
+              {errors.number && <p className="text-sm text-red-500">{errors.number.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="role">구분</Label>
+              <Controller
+                control={control}
+                name="role"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="cursor-pointer">
+                      <SelectValue placeholder="구분 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="GENERAL_STUDENT" className="cursor-pointer">
+                        일반학생
+                      </SelectItem>
+                      <SelectItem value="STUDENT_COUNCIL" className="cursor-pointer">
+                        학생회
+                      </SelectItem>
+                      <SelectItem value="DORMITORY_MANAGER" className="cursor-pointer">
+                        기자위
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="dormitoryRoomNumber">기숙사 호실</Label>
+              <Input
+                id="dormitoryRoomNumber"
+                type="number"
+                placeholder="호실 입력"
+                {...register('dormitoryRoomNumber', { valueAsNumber: true })}
+              />
+              {errors.dormitoryRoomNumber && (
+                <p className="text-sm text-red-500">{errors.dormitoryRoomNumber.message}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="majorClubId">전공 동아리 ID</Label>
+              <Input
+                id="majorClubId"
+                type="number"
+                placeholder="전공 동아리 ID 입력"
+                {...register('majorClubId', {
+                  setValueAs: (v: string) => {
+                    const n = Number(v);
+                    return v === '' || n <= 0 ? null : n;
+                  },
+                })}
+              />
+              {errors.majorClubId && (
+                <p className="text-sm text-red-500">{errors.majorClubId.message}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="jobClubId">취업 동아리 ID</Label>
+              <Input
+                id="jobClubId"
+                type="number"
+                placeholder="취업 동아리 ID 입력"
+                {...register('jobClubId', {
+                  setValueAs: (v: string) => {
+                    const n = Number(v);
+                    return v === '' || n <= 0 ? null : n;
+                  },
+                })}
+              />
+              {errors.jobClubId && (
+                <p className="text-sm text-red-500">{errors.jobClubId.message}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="autonomousClubId">자율 동아리 ID</Label>
+              <Input
+                id="autonomousClubId"
+                type="number"
+                placeholder="자율 동아리 ID 입력"
+                {...register('autonomousClubId', {
+                  setValueAs: (v: string) => {
+                    const n = Number(v);
+                    return v === '' || n <= 0 ? null : n;
+                  },
+                })}
+              />
+              {errors.autonomousClubId && (
+                <p className="text-sm text-red-500">{errors.autonomousClubId.message}</p>
+              )}
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="sex">성별</Label>
-            <Select>
-              <SelectTrigger className="cursor-pointer">
-                <SelectValue placeholder="성별 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="MAN" className="cursor-pointer">
-                  남
-                </SelectItem>
-                <SelectItem value="WOMAN" className="cursor-pointer">
-                  여
-                </SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex justify-end">
+            <Button type="submit" className="cursor-pointer" disabled={isCreatingStudent}>
+              {isCreatingStudent ? '추가 중...' : '추가'}
+            </Button>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">이메일</Label>
-            <Input id="email" placeholder="example@gsm.hs.kr" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="grade">학년</Label>
-            <Select>
-              <SelectTrigger className="cursor-pointer">
-                <SelectValue placeholder="학년 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1" className="cursor-pointer">
-                  1학년
-                </SelectItem>
-                <SelectItem value="2" className="cursor-pointer">
-                  2학년
-                </SelectItem>
-                <SelectItem value="3" className="cursor-pointer">
-                  3학년
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="classNum">반</Label>
-            <Select>
-              <SelectTrigger className="cursor-pointer">
-                <SelectValue placeholder="반 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1" className="cursor-pointer">
-                  1반
-                </SelectItem>
-                <SelectItem value="2" className="cursor-pointer">
-                  2반
-                </SelectItem>
-                <SelectItem value="3" className="cursor-pointer">
-                  3반
-                </SelectItem>
-                <SelectItem value="4" className="cursor-pointer">
-                  4반
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="number">번호</Label>
-            <Input id="number" type="number" placeholder="번호 입력" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="role">구분</Label>
-            <Select>
-              <SelectTrigger className="cursor-pointer">
-                <SelectValue placeholder="구분 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="GENERAL_STUDENT" className="cursor-pointer">
-                  일반학생
-                </SelectItem>
-                <SelectItem value="STUDENT_COUNCIL" className="cursor-pointer">
-                  학생회
-                </SelectItem>
-                <SelectItem value="DORMITORY_MANAGER" className="cursor-pointer">
-                  기자위
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="dormitoryRoomNumber">기숙사 호실</Label>
-            <Input id="dormitoryRoomNumber" type="number" placeholder="호실 입력" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="majorClubId">전공 동아리 ID</Label>
-            <Input id="majorClubId" type="number" placeholder="전공 동아리 ID 입력" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="jobClubId">취업 동아리 ID</Label>
-            <Input id="jobClubId" type="number" placeholder="취업 동아리 ID 입력" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="autonomousClubId">자율 동아리 ID</Label>
-            <Input id="autonomousClubId" type="number" placeholder="자율 동아리 ID 입력" />
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <Button className="cursor-pointer">추가</Button>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
