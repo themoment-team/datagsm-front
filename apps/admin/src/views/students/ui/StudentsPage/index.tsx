@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ClubListResponse, StudentListResponse, StudentRole, StudentSex } from '@repo/shared/types';
+import { ClubListResponse, StudentRole, StudentSex } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
@@ -21,11 +21,10 @@ import {
 const PAGE_SIZE = 10;
 
 interface StudentsPageProps {
-  initialStudentsData?: StudentListResponse;
   initialClubsData?: ClubListResponse;
 }
 
-const StudentsPage = ({ initialStudentsData, initialClubsData }: StudentsPageProps) => {
+const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const form = useForm<StudentFilterType>({
