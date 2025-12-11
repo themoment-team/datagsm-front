@@ -37,6 +37,8 @@ export const studentUrl = {
     isLeaveSchool?: boolean,
   ) =>
     `/v1/students?page=${page}&size=${size}${addParams('grade', grade)}${addParams('classNum', classNum)}${addParams('sex', sex)}${addParams('role', role)}${addParams('isLeaveSchool', isLeaveSchool)}`,
-  patchStudentById: (studentId: string) => `/v1/students/${studentId}`,
+  getStudentExcel: () => '/v1/students/excel/download',
   postStudent: () => '/v1/students',
+  postStudentExcel: () => '/v1/students/excel/upload',
+  patchStudentById: (studentId: string) => `/v1/students/${studentId}`,
 } as const;
