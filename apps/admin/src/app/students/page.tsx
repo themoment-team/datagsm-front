@@ -1,10 +1,13 @@
+import { getClubs } from '@/entities/club';
 import { StudentsPage } from '@/views/students';
 import { getStudents } from '@/views/students/api';
 
 const Students = async () => {
-  const [initialStudentsData] = await Promise.all([getStudents()]);
+  const [initialStudentsData, initialClubsData] = await Promise.all([getStudents(), getClubs()]);
 
-  return <StudentsPage initialStudentsData={initialStudentsData} />;
+  return (
+    <StudentsPage initialStudentsData={initialStudentsData} initialClubsData={initialClubsData} />
+  );
 };
 
 export default Students;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ClubListData } from '@repo/shared/types';
 import {
   Button,
   Dialog,
@@ -24,7 +25,11 @@ import { toast } from 'sonner';
 import { AddStudentSchema, AddStudentType } from '@/entities/student';
 import { useCreateStudent } from '@/views/students';
 
-const AddStudentDialog = () => {
+interface AddStudentDialogProps {
+  clubs?: ClubListData;
+}
+
+const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
   const [open, setOpen] = useState(false);
 
   const queryClient = useQueryClient();
@@ -219,51 +224,108 @@ const AddStudentDialog = () => {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="majorClubId">전공 동아리 ID</Label>
-              <Input
-                id="majorClubId"
-                type="number"
-                placeholder="전공 동아리 ID 입력"
-                {...register('majorClubId', {
-                  setValueAs: (v: string) => {
-                    const n = Number(v);
-                    return v === '' || n <= 0 ? null : n;
-                  },
-                })}
+              <Label htmlFor="majorClubId">전공 동아리</Label>
+              <Controller
+                control={control}
+                name="majorClubId"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? String(field.value) : undefined}
+                    onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
+                  >
+                    <SelectTrigger className="cursor-pointer">
+                      <SelectValue placeholder="전공 동아리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none" className="cursor-pointer text-gray-500">
+                        선택 안 함
+                      </SelectItem>
+                      {clubs?.clubs
+                        .filter((club) => club.type === 'MAJOR')
+                        .map((club) => (
+                          <SelectItem
+                            key={club.id}
+                            value={String(club.id)}
+                            className="cursor-pointer"
+                          >
+                            {club.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
               {errors.majorClubId && (
                 <p className="text-sm text-red-500">{errors.majorClubId.message}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="jobClubId">취업 동아리 ID</Label>
-              <Input
-                id="jobClubId"
-                type="number"
-                placeholder="취업 동아리 ID 입력"
-                {...register('jobClubId', {
-                  setValueAs: (v: string) => {
-                    const n = Number(v);
-                    return v === '' || n <= 0 ? null : n;
-                  },
-                })}
+              <Label htmlFor="jobClubId">취업 동아리</Label>
+              <Controller
+                control={control}
+                name="jobClubId"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? String(field.value) : undefined}
+                    onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
+                  >
+                    <SelectTrigger className="cursor-pointer">
+                      <SelectValue placeholder="취업 동아리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none" className="cursor-pointer text-gray-500">
+                        선택 안 함
+                      </SelectItem>
+                      {clubs?.clubs
+                        .filter((club) => club.type === 'JOB')
+                        .map((club) => (
+                          <SelectItem
+                            key={club.id}
+                            value={String(club.id)}
+                            className="cursor-pointer"
+                          >
+                            {club.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
               {errors.jobClubId && (
                 <p className="text-sm text-red-500">{errors.jobClubId.message}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="autonomousClubId">자율 동아리 ID</Label>
-              <Input
-                id="autonomousClubId"
-                type="number"
-                placeholder="자율 동아리 ID 입력"
-                {...register('autonomousClubId', {
-                  setValueAs: (v: string) => {
-                    const n = Number(v);
-                    return v === '' || n <= 0 ? null : n;
-                  },
-                })}
+              <Label htmlFor="autonomousClubId">자율 동아리</Label>
+              <Controller
+                control={control}
+                name="autonomousClubId"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? String(field.value) : undefined}
+                    onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
+                  >
+                    <SelectTrigger className="cursor-pointer">
+                      <SelectValue placeholder="자율 동아리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none" className="cursor-pointer text-gray-500">
+                        선택 안 함
+                      </SelectItem>
+                      {clubs?.clubs
+                        .filter((club) => club.type === 'AUTONOMOUS')
+                        .map((club) => (
+                          <SelectItem
+                            key={club.id}
+                            value={String(club.id)}
+                            className="cursor-pointer"
+                          >
+                            {club.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
               {errors.autonomousClubId && (
                 <p className="text-sm text-red-500">{errors.autonomousClubId.message}</p>

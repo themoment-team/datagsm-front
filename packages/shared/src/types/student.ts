@@ -1,18 +1,10 @@
-import { ApiResponse } from '@repo/shared/types';
+import { ApiResponse, Club } from '@repo/shared/types';
 
 export type StudentSex = 'MAN' | 'WOMAN';
 
 export type StudentMajor = 'SW_DEVELOPMENT' | 'SMART_IOT' | 'AI';
 
 export type StudentRole = 'GENERAL_STUDENT' | 'STUDENT_COUNCIL' | 'DORMITORY_MANAGER';
-
-export type ClubType = 'MAJOR' | 'JOB' | 'AUTONOMOUS';
-
-export interface Club {
-  id: number;
-  name: string;
-  type: ClubType;
-}
 
 export interface Student {
   id: number;
