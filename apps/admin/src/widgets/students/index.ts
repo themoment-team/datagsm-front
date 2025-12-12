@@ -1,3 +1,4 @@
+export * from './model/useUploadStudentExcel';
 export { default as StudentList } from './ui/StudentList';
 export { default as StudentFilter } from './ui/StudentFilter';
 export { default as AddStudentDialog } from './ui/AddStudentDialog';

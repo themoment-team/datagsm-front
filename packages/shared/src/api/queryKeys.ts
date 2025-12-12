@@ -30,6 +30,7 @@ export const studentQueryKeys = {
   getStudentById: (studentId: string) => ['students', 'detail', studentId] as const,
   patchStudentById: (studentId: string) => ['students', 'update', studentId] as const,
   postStudent: () => ['students', 'create'] as const,
+  postStudentExcel: () => ['students', 'excel', 'upload'] as const,
 } as const;
 
 export const healthQueryKeys = {

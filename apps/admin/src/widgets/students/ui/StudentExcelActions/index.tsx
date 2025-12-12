@@ -1,10 +1,33 @@
+import { useRef } from 'react';
+
 import { studentUrl } from '@repo/shared/api';
 import { Button } from '@repo/shared/ui';
 import { Download, Upload } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { downloadExcel } from '@/shared/utils';
+import { useUploadStudentExcel } from '@/widgets/students';
 
 const StudentExcelActions = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { mutate: uploadExcel } = useUploadStudentExcel({
+    onSuccess: () => {
+      toast.success('Excel 업로드에 성공했습니다.');
+    },
+    onError: () => {
+      toast.error('Excel 업로드에 실패했습니다.');
+    },
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      uploadExcel(file);
+    }
+    e.target.value = '';
+  };
+
   return (
     <>
       <Button
@@ -21,10 +44,22 @@ const StudentExcelActions = () => {
         <Download className="h-4 w-4" />
         Excel 다운로드
       </Button>
-      <Button variant="outline" size="sm" className="cursor-pointer gap-2 bg-transparent">
+      <Button
+        variant="outline"
+        size="sm"
+        className="cursor-pointer gap-2 bg-transparent"
+        onClick={() => fileInputRef.current?.click()}
+      >
         <Upload className="h-4 w-4" />
         Excel 업로드
       </Button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".xlsx,.xls"
+        className="hidden"
+        onChange={handleFileChange}
+      />
     </>
   );
 };
