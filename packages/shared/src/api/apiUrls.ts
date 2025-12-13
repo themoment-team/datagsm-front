@@ -40,5 +40,5 @@ export const studentUrl = {
   getStudentExcel: () => '/v1/students/excel/download',
   postStudent: () => '/v1/students',
   postStudentExcel: () => '/v1/students/excel/upload',
-  patchStudentById: (studentId: string) => `/v1/students/${studentId}`,
+  putStudentById: (studentId: string) => `/v1/students/${studentId}`,
 } as const;
