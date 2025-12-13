@@ -53,8 +53,8 @@ const StudentFormDialog = ({
     onSuccess: () => {
       setOpen(false);
       reset();
-      toast.success('학생 등록에 성공했습니다.');
       queryClient.invalidateQueries({ queryKey: ['students'] });
+      toast.success('학생 등록에 성공했습니다.');
     },
     onError: (error) => {
       console.error('학생 등록 실패:', error);
@@ -65,8 +65,8 @@ const StudentFormDialog = ({
   const { isPending: isUpdating, mutate: updateStudent } = useUpdateStudent(student?.id || 0, {
     onSuccess: () => {
       setOpen(false);
-      toast.success('학생 정보가 수정되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['students'] });
+      toast.success('학생 정보가 수정되었습니다.');
     },
     onError: (error) => {
       console.error('학생 정보 수정 실패:', error);

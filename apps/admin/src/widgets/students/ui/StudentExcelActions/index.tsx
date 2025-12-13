@@ -2,6 +2,7 @@ import { useRef } from 'react';
 
 import { studentUrl } from '@repo/shared/api';
 import { Button } from '@repo/shared/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { Download, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -11,11 +12,15 @@ import { useUploadStudentExcel } from '@/widgets/students';
 const StudentExcelActions = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const queryClient = useQueryClient();
+
   const { mutate: uploadExcel } = useUploadStudentExcel({
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students'] });
       toast.success('Excel 업로드에 성공했습니다.');
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Excel 업로드 실패:', error);
       toast.error('Excel 업로드에 실패했습니다.');
     },
   });
