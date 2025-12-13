@@ -307,7 +307,13 @@ const StudentFormDialog = ({
                 name="majorClubId"
                 render={({ field }) => (
                   <Select
-                    value={field.value ? String(field.value) : undefined}
+                    value={
+                      field.value === null && mode === 'edit'
+                        ? 'none'
+                        : field.value
+                          ? String(field.value)
+                          : undefined
+                    }
                     onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                   >
                     <SelectTrigger className="cursor-pointer">
@@ -343,7 +349,13 @@ const StudentFormDialog = ({
                 name="jobClubId"
                 render={({ field }) => (
                   <Select
-                    value={field.value ? String(field.value) : undefined}
+                    value={
+                      field.value === null && mode === 'edit'
+                        ? 'none'
+                        : field.value
+                          ? String(field.value)
+                          : undefined
+                    }
                     onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                   >
                     <SelectTrigger className="cursor-pointer">
@@ -379,7 +391,13 @@ const StudentFormDialog = ({
                 name="autonomousClubId"
                 render={({ field }) => (
                   <Select
-                    value={field.value ? String(field.value) : undefined}
+                    value={
+                      field.value === null && mode === 'edit'
+                        ? 'none'
+                        : field.value
+                          ? String(field.value)
+                          : undefined
+                    }
                     onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                   >
                     <SelectTrigger className="cursor-pointer">
