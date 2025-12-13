@@ -16,9 +16,9 @@ export const authUrl = {
 } as const;
 
 export const clubUrl = {
-  deleteClubById: (clubId: string) => `/v1/clubs/${clubId}`,
+  deleteClubById: (clubId: number) => `/v1/clubs/${clubId}`,
   getClubs: () => '/v1/clubs',
-  patchClubById: (clubId: string) => `/v1/clubs/${clubId}`,
+  patchClubById: (clubId: number) => `/v1/clubs/${clubId}`,
   postClub: () => '/v1/clubs',
 } as const;
 
@@ -40,5 +40,5 @@ export const studentUrl = {
   getStudentExcel: () => '/v1/students/excel/download',
   postStudent: () => '/v1/students',
   postStudentExcel: () => '/v1/students/excel/upload',
-  putStudentById: (studentId: string) => `/v1/students/${studentId}`,
+  putStudentById: (studentId: number) => `/v1/students/${studentId}`,
 } as const;
