@@ -206,6 +206,9 @@ importers:
       lucide-react:
         specifier: ^0.546.0
         version: 0.546.0(react@19.2.1)
+      next:
+        specifier: 15.5.9
+        version: 15.5.9(react-dom@19.2.1)(react@19.2.1)
       react:
         specifier: 19.2.1
         version: 19.2.1
