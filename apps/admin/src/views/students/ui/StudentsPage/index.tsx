@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ClubListResponse, StudentRole, StudentSex } from '@repo/shared/types';
+import { ClubListResponse, Student, StudentRole, StudentSex } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
@@ -11,9 +11,9 @@ import { useForm, useWatch } from 'react-hook-form';
 import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
 import { useGetStudents } from '@/views/students';
 import {
-  AddStudentDialog,
   StudentExcelActions,
   StudentFilter,
+  StudentFormDialog,
   StudentList,
   StudentPagination,
 } from '@/widgets/students';
@@ -26,6 +26,13 @@ interface StudentsPageProps {
 
 const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  const handleEditStudent = (student: Student) => {
+    setEditingStudent(student);
+    setIsEditDialogOpen(true);
+  };
 
   const form = useForm<StudentFilterType>({
     resolver: zodResolver(StudentFilterSchema),
@@ -67,7 +74,7 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
               <CardTitle className="text-2xl">학생 관리</CardTitle>
               <div className="flex items-center gap-2">
                 <StudentExcelActions />
-                <AddStudentDialog clubs={initialClubsData?.data} />
+                <StudentFormDialog mode="create" clubs={initialClubsData?.data} />
               </div>
             </div>
 
@@ -75,7 +82,11 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <StudentList students={filteredStudents} isLoading={isLoadingStudents} />
+              <StudentList
+                students={filteredStudents}
+                isLoading={isLoadingStudents}
+                onEdit={handleEditStudent}
+              />
               <StudentPagination
                 isLoading={isLoadingStudents}
                 currentPage={currentPage}
@@ -85,6 +96,16 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
             </div>
           </CardContent>
         </Card>
+
+        {editingStudent && (
+          <StudentFormDialog
+            mode="edit"
+            student={editingStudent}
+            clubs={initialClubsData?.data}
+            open={isEditDialogOpen}
+            onOpenChange={setIsEditDialogOpen}
+          />
+        )}
       </main>
     </div>
   );

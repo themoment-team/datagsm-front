@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ClubListData } from '@repo/shared/types';
+import { ClubListData, Student } from '@repo/shared/types';
 import {
   Button,
   Dialog,
@@ -18,23 +18,38 @@ import {
   SelectValue,
 } from '@repo/shared/ui';
 import { useQueryClient } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
+import { Pencil, Plus } from 'lucide-react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { AddStudentSchema, AddStudentType } from '@/entities/student';
-import { useCreateStudent } from '@/views/students';
+import { useCreateStudent, useUpdateStudent } from '@/widgets/students';
 
-interface AddStudentDialogProps {
+interface StudentFormDialogProps {
   clubs?: ClubListData;
+  mode: 'create' | 'edit';
+  student?: Student;
+  trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
-  const [open, setOpen] = useState(false);
+const StudentFormDialog = ({
+  clubs,
+  mode,
+  student,
+  trigger,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+}: StudentFormDialogProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
 
   const queryClient = useQueryClient();
 
-  const { isPending: isCreatingStudent, mutate: createStudent } = useCreateStudent({
+  const { isPending: isCreating, mutate: createStudent } = useCreateStudent({
     onSuccess: () => {
       setOpen(false);
       reset();
@@ -47,6 +62,18 @@ const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
     },
   });
 
+  const { isPending: isUpdating, mutate: updateStudent } = useUpdateStudent(student?.id || 0, {
+    onSuccess: () => {
+      setOpen(false);
+      toast.success('학생 정보가 수정되었습니다.');
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+    },
+    onError: (error) => {
+      console.error('학생 정보 수정 실패:', error);
+      toast.error('학생 정보 수정에 실패했습니다.');
+    },
+  });
+
   const {
     control,
     handleSubmit,
@@ -55,11 +82,66 @@ const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
     formState: { errors },
   } = useForm<AddStudentType>({
     resolver: zodResolver(AddStudentSchema),
+    defaultValues:
+      mode === 'edit' && student
+        ? {
+            name: student.name,
+            sex: student.sex,
+            email: student.email,
+            grade: student.grade,
+            classNum: student.classNum,
+            number: student.number,
+            role: student.role,
+            dormitoryRoomNumber: student.dormitoryRoom,
+            majorClubId: student.majorClub?.id || null,
+            jobClubId: student.jobClub?.id || null,
+            autonomousClubId: student.autonomousClub?.id || null,
+          }
+        : undefined,
   });
 
+  useEffect(() => {
+    if (mode === 'edit' && student && open) {
+      reset({
+        name: student.name,
+        sex: student.sex,
+        email: student.email,
+        grade: student.grade,
+        classNum: student.classNum,
+        number: student.number,
+        role: student.role,
+        dormitoryRoomNumber: student.dormitoryRoom,
+        majorClubId: student.majorClub?.id || null,
+        jobClubId: student.jobClub?.id || null,
+        autonomousClubId: student.autonomousClub?.id || null,
+      });
+    }
+  }, [mode, student, open, reset]);
+
   const onSubmit: SubmitHandler<AddStudentType> = (data) => {
-    createStudent(data);
+    if (mode === 'create') {
+      createStudent(data);
+    } else {
+      updateStudent(data);
+    }
   };
+
+  const isPending = mode === 'create' ? isCreating : isUpdating;
+  const title = mode === 'create' ? '학생 추가' : '학생 정보 수정';
+  const submitText = mode === 'create' ? '추가' : '수정';
+  const loadingText = mode === 'create' ? '추가 중...' : '수정 중...';
+
+  const defaultTrigger =
+    mode === 'create' ? (
+      <Button size="sm" className="cursor-pointer gap-2">
+        <Plus className="h-4 w-4" />
+        학생 추가
+      </Button>
+    ) : (
+      <Button variant="ghost" size="icon" className="cursor-pointer">
+        <Pencil className="h-4 w-4" />
+      </Button>
+    );
 
   return (
     <Dialog
@@ -69,15 +151,10 @@ const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
         if (!v) reset();
       }}
     >
-      <DialogTrigger asChild>
-        <Button size="sm" className="cursor-pointer gap-2">
-          <Plus className="h-4 w-4" />
-          학생 추가
-        </Button>
-      </DialogTrigger>
+      {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>학생 추가</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4 py-4">
@@ -333,8 +410,8 @@ const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button type="submit" className="cursor-pointer" disabled={isCreatingStudent}>
-              {isCreatingStudent ? '추가 중...' : '추가'}
+            <Button type="submit" className="cursor-pointer" disabled={isPending}>
+              {isPending ? loadingText : submitText}
             </Button>
           </div>
         </form>
@@ -343,4 +420,4 @@ const AddStudentDialog = ({ clubs }: AddStudentDialogProps) => {
   );
 };
 
-export default AddStudentDialog;
+export default StudentFormDialog;

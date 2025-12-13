@@ -17,9 +17,10 @@ import { getMajorLabel, getRoleBadgeVariant, getRoleLabel, getSexLabel } from '@
 interface StudentListProps {
   students?: Student[];
   isLoading?: boolean;
+  onEdit?: (student: Student) => void;
 }
 
-const StudentList = ({ students, isLoading }: StudentListProps) => {
+const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
   return (
     <div className="overflow-x-auto rounded-md border">
       <Table>
@@ -106,7 +107,12 @@ const StudentList = ({ students, isLoading }: StudentListProps) => {
                   </TableCell>
 
                   <TableCell>
-                    <Button variant="ghost" size="icon" className="cursor-pointer">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="cursor-pointer"
+                      onClick={() => onEdit?.(student)}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
                   </TableCell>
