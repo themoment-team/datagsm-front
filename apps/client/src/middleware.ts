@@ -24,8 +24,8 @@ export function middleware(request: NextRequest) {
             url.search = refererUrl.search;
             return NextResponse.redirect(url);
           }
-        } catch {
-          // new URL()이 TypeError를 던질 수 있으므로 try-catch가 필요
+        } catch (error) {
+          console.error('잘못된 referer URL:', error);
         }
       }
       url.pathname = '/';
