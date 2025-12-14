@@ -20,7 +20,11 @@ export const downloadExcel = async ({
     });
 
     const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    const dateString = [
+      today.getFullYear(),
+      (today.getMonth() + 1).toString().padStart(2, '0'),
+      today.getDate().toString().padStart(2, '0'),
+    ].join('-');
 
     const blobUrl = window.URL.createObjectURL(response);
     const link = document.createElement('a');
