@@ -94,7 +94,9 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                       {getRoleLabel(student.role)}
                     </Badge>
                   </TableCell>
-                  <TableCell>{student.dormitoryRoom}호</TableCell>
+                  <TableCell>
+                    {student.dormitoryRoom ? `${student.dormitoryRoom}호` : '없음'}
+                  </TableCell>
                   <TableCell>{student.majorClub?.name ?? '없음'}</TableCell>
                   <TableCell>{student.jobClub?.name ?? '없음'}</TableCell>
                   <TableCell>{student.autonomousClub?.name ?? '없음'}</TableCell>

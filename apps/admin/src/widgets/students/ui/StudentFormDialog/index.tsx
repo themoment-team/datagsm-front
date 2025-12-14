@@ -93,6 +93,7 @@ const StudentFormDialog = ({
             number: student.number,
             role: student.role,
             dormitoryRoomNumber: student.dormitoryRoom,
+            isLeaveSchool: student.isLeaveSchool,
             majorClubId: student.majorClub?.id || null,
             jobClubId: student.jobClub?.id || null,
             autonomousClubId: student.autonomousClub?.id || null,
@@ -111,6 +112,7 @@ const StudentFormDialog = ({
         number: student.number,
         role: student.role,
         dormitoryRoomNumber: student.dormitoryRoom,
+        isLeaveSchool: student.isLeaveSchool,
         majorClubId: student.majorClub?.id || null,
         jobClubId: student.jobClub?.id || null,
         autonomousClubId: student.autonomousClub?.id || null,
@@ -426,6 +428,36 @@ const StudentFormDialog = ({
                 <p className="text-sm text-red-500">{errors.autonomousClubId.message}</p>
               )}
             </div>
+            {mode === 'edit' && (
+              <div className="space-y-2">
+                <Label htmlFor="isLeaveSchool">자퇴 여부</Label>
+                <Controller
+                  control={control}
+                  name="isLeaveSchool"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ? 'true' : 'false'}
+                      onValueChange={(val) => field.onChange(val === 'true')}
+                    >
+                      <SelectTrigger className="cursor-pointer">
+                        <SelectValue placeholder="자퇴 여부 선택" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="false" className="cursor-pointer">
+                          재학중
+                        </SelectItem>
+                        <SelectItem value="true" className="cursor-pointer">
+                          자퇴
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.isLeaveSchool && (
+                  <p className="text-sm text-red-500">{errors.isLeaveSchool.message}</p>
+                )}
+              </div>
+            )}
           </div>
           <div className="flex justify-end">
             <Button type="submit" className="cursor-pointer" disabled={isPending}>

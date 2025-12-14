@@ -24,6 +24,7 @@ export const AddStudentSchema = z.object({
     .number({ message: '호실을 입력해주세요.' })
     .min(201, { message: '201호 이상으로 입력해주세요.' })
     .max(518, { message: '518호 이하로 입력해주세요.' }),
+  isLeaveSchool: z.boolean().optional(),
   majorClubId: z.number({ message: '전공 동아리를 선택해주세요.' }).min(1).nullable(),
   jobClubId: z.number({ message: '취업 동아리를 선택해주세요.' }).min(1).nullable(),
   autonomousClubId: z.number({ message: '자율 동아리를 선택해주세요.' }).min(1).nullable(),
