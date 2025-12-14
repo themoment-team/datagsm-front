@@ -1,10 +1,5 @@
 import { StudentRole, StudentSex } from '@repo/shared/types';
 
-const addParams = (key: string, value: string | number | boolean | undefined) => {
-  if (value === undefined) return '';
-  return `&${key}=${value}`;
-};
-
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
   getApiKey: () => '/v1/auth/api-key',
@@ -35,8 +30,20 @@ export const studentUrl = {
     sex?: StudentSex,
     role?: StudentRole,
     isLeaveSchool?: boolean,
-  ) =>
-    `/v1/students?page=${page}&size=${size}${addParams('grade', grade)}${addParams('classNum', classNum)}${addParams('sex', sex)}${addParams('role', role)}${addParams('isLeaveSchool', isLeaveSchool)}`,
+  ) => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString(),
+    });
+
+    if (grade !== undefined) params.append('grade', grade.toString());
+    if (classNum !== undefined) params.append('classNum', classNum.toString());
+    if (sex !== undefined) params.append('sex', sex);
+    if (role !== undefined) params.append('role', role);
+    if (isLeaveSchool !== undefined) params.append('isLeaveSchool', isLeaveSchool.toString());
+
+    return `/v1/students?${params.toString()}`;
+  },
   getStudentExcel: () => '/v1/students/excel/download',
   postStudent: () => '/v1/students',
   postStudentExcel: () => '/v1/students/excel/upload',
