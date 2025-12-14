@@ -67,12 +67,12 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
 
   return (
     <div className={cn('bg-background h-[calc(100vh-4.0625rem)]')}>
-      <main className="container mx-auto px-4 py-8">
+      <main className={cn('container mx-auto px-4 py-8')}>
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl">학생 관리</CardTitle>
-              <div className="flex items-center gap-2">
+            <div className={cn('flex items-center justify-between')}>
+              <CardTitle className={cn('text-2xl')}>학생 관리</CardTitle>
+              <div className={cn('flex items-center gap-2')}>
                 <StudentExcelActions />
                 <StudentFormDialog mode="create" clubs={initialClubsData?.data} />
               </div>
@@ -81,7 +81,7 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
             <StudentFilter control={control} />
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className={cn('space-y-4')}>
               <StudentList
                 students={filteredStudents}
                 isLoading={isLoadingStudents}

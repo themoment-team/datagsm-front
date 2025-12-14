@@ -7,6 +7,7 @@ import {
   PaginationPrevious,
   Skeleton,
 } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 
 interface StudentPaginationProps {
   isLoading: boolean;
@@ -23,12 +24,12 @@ const StudentPagination = ({
 }: StudentPaginationProps) => {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center gap-2">
-        <Skeleton className="h-9 w-24" />
-        <Skeleton className="h-9 w-9" />
-        <Skeleton className="h-9 w-9" />
-        <Skeleton className="h-9 w-9" />
-        <Skeleton className="h-9 w-24" />
+      <div className={cn('flex items-center justify-center gap-2')}>
+        <Skeleton className={cn('h-9 w-24')} />
+        <Skeleton className={cn('h-9 w-9')} />
+        <Skeleton className={cn('h-9 w-9')} />
+        <Skeleton className={cn('h-9 w-9')} />
+        <Skeleton className={cn('h-9 w-24')} />
       </div>
     );
   }
@@ -67,7 +68,9 @@ const StudentPagination = ({
                 e.preventDefault();
                 if (currentPage > 0) onPageChange(currentPage - 1);
               }}
-              className={currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+              className={cn(
+                currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer',
+              )}
             />
           </PaginationItem>
           {pageNumbers.map((pageNum) => (
@@ -79,7 +82,7 @@ const StudentPagination = ({
                   e.preventDefault();
                   onPageChange(pageNum);
                 }}
-                className="cursor-pointer"
+                className={cn('cursor-pointer')}
               >
                 {pageNum + 1}
               </PaginationLink>
@@ -92,9 +95,9 @@ const StudentPagination = ({
                 e.preventDefault();
                 if (currentPage < totalPages - 1) onPageChange(currentPage + 1);
               }}
-              className={
-                currentPage >= totalPages - 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'
-              }
+              className={cn(
+                currentPage >= totalPages - 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer',
+              )}
             />
           </PaginationItem>
         </PaginationContent>

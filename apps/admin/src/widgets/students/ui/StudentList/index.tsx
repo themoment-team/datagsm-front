@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 import { Check, Pencil, X } from 'lucide-react';
 
 import { getMajorLabel, getRoleBadgeVariant, getRoleLabel, getSexLabel } from '@/entities/student';
@@ -22,7 +23,7 @@ interface StudentListProps {
 
 const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
   return (
-    <div className="overflow-x-auto rounded-md border">
+    <div className={cn('overflow-x-auto rounded-md border')}>
       <Table>
         <TableHeader>
           <TableRow>
@@ -37,7 +38,7 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
             <TableHead>취업동아리</TableHead>
             <TableHead>자율동아리</TableHead>
             <TableHead>재학 여부</TableHead>
-            <TableHead className="w-20">수정</TableHead>
+            <TableHead className={cn('w-20')}>수정</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -45,40 +46,40 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
             ? Array.from({ length: 10 }).map((_, index) => (
                 <TableRow key={index}>
                   <TableCell>
-                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className={cn('h-4 w-16')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-8" />
+                    <Skeleton className={cn('h-4 w-8')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className={cn('h-4 w-32')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className={cn('h-4 w-16')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className={cn('h-4 w-24')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-5 w-16 rounded-full" />
+                    <Skeleton className={cn('h-5 w-16 rounded-full')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-12" />
+                    <Skeleton className={cn('h-4 w-12')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className={cn('h-4 w-20')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className={cn('h-4 w-20')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className={cn('h-4 w-20')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-4" />
+                    <Skeleton className={cn('h-4 w-4')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-8 w-8" />
+                    <Skeleton className={cn('h-8 w-8')} />
                   </TableCell>
                 </TableRow>
               ))
@@ -102,9 +103,9 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                   <TableCell>{student.autonomousClub?.name ?? '없음'}</TableCell>
                   <TableCell>
                     {student.isLeaveSchool ? (
-                      <X className="bg h-4 w-4 text-red-500" />
+                      <X className={cn('h-4 w-4 text-red-500')} />
                     ) : (
-                      <Check className="h-4 w-4 text-green-500" />
+                      <Check className={cn('h-4 w-4 text-green-500')} />
                     )}
                   </TableCell>
 
@@ -112,10 +113,10 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="cursor-pointer"
+                      className={cn('cursor-pointer')}
                       onClick={() => onEdit?.(student)}
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className={cn('h-4 w-4')} />
                     </Button>
                   </TableCell>
                 </TableRow>

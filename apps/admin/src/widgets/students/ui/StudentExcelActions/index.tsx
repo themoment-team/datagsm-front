@@ -2,6 +2,7 @@ import { useRef } from 'react';
 
 import { studentUrl } from '@repo/shared/api';
 import { Button } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Download, Upload } from 'lucide-react';
 import { toast } from 'sonner';
@@ -38,7 +39,7 @@ const StudentExcelActions = () => {
       <Button
         variant="outline"
         size="sm"
-        className="cursor-pointer gap-2 bg-transparent"
+        className={cn('cursor-pointer gap-2 bg-transparent')}
         onClick={() =>
           downloadExcel({
             url: studentUrl.getStudentExcel(),
@@ -46,23 +47,23 @@ const StudentExcelActions = () => {
           })
         }
       >
-        <Download className="h-4 w-4" />
+        <Download className={cn('h-4 w-4')} />
         Excel 다운로드
       </Button>
       <Button
         variant="outline"
         size="sm"
-        className="cursor-pointer gap-2 bg-transparent"
+        className={cn('cursor-pointer gap-2 bg-transparent')}
         onClick={() => fileInputRef.current?.click()}
       >
-        <Upload className="h-4 w-4" />
+        <Upload className={cn('h-4 w-4')} />
         Excel 업로드
       </Button>
       <input
         ref={fileInputRef}
         type="file"
         accept=".xlsx,.xls"
-        className="hidden"
+        className={cn('hidden')}
         onChange={handleFileChange}
       />
     </>
