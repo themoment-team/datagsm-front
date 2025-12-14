@@ -51,17 +51,19 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
     control,
   });
 
-  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents({
+  const queryParams = {
     page: currentPage,
     size: PAGE_SIZE,
-    grade: filters.grade !== 'all' ? Number.parseInt(filters.grade as string) : undefined,
-    classNum: filters.classNum !== 'all' ? Number.parseInt(filters.classNum as string) : undefined,
+    grade: filters.grade !== 'all' ? Number(filters.grade) : undefined,
+    classNum: filters.classNum !== 'all' ? Number(filters.classNum) : undefined,
     sex: filters.sex !== 'all' ? (filters.sex as StudentSex) : undefined,
     role: filters.role !== 'all' ? (filters.role as StudentRole) : undefined,
     isLeaveSchool: filters.status !== 'all' ? filters.status === 'true' : undefined,
-  });
+  };
 
-  const filteredStudents = studentsData?.data.students;
+  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(queryParams);
+
+  const students = studentsData?.data.students;
 
   const totalPages = studentsData?.data.totalPages ?? 0;
 
@@ -83,7 +85,7 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
           <CardContent>
             <div className={cn('space-y-4')}>
               <StudentList
-                students={filteredStudents}
+                students={students}
                 isLoading={isLoadingStudents}
                 onEdit={handleEditStudent}
               />
