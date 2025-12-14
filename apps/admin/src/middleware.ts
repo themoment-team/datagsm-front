@@ -28,7 +28,7 @@ export function middleware(request: NextRequest) {
           console.error('잘못된 referer URL:', error);
         }
       }
-      url.pathname = '/';
+      url.pathname = '/students';
       return NextResponse.redirect(url);
     }
 
