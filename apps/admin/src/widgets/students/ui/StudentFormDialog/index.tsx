@@ -63,7 +63,7 @@ const StudentFormDialog = ({
     },
   });
 
-  const { isPending: isUpdating, mutate: updateStudent } = useUpdateStudent(student?.id || 0, {
+  const { isPending: isUpdating, mutate: updateStudent } = useUpdateStudent({
     onSuccess: () => {
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ['students'] });
@@ -125,7 +125,7 @@ const StudentFormDialog = ({
     if (mode === 'create') {
       createStudent(data);
     } else {
-      updateStudent(data);
+      updateStudent({ studentId: student!.id, data });
     }
   };
 
