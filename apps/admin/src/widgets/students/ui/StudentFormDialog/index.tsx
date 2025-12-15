@@ -173,16 +173,12 @@ const StudentFormDialog = ({
                 name="sex"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className={cn('cursor-pointer')}>
+                    <SelectTrigger>
                       <SelectValue placeholder="성별 선택" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="MAN" className={cn('cursor-pointer')}>
-                        남
-                      </SelectItem>
-                      <SelectItem value="WOMAN" className={cn('cursor-pointer')}>
-                        여
-                      </SelectItem>
+                      <SelectItem value="MAN">남</SelectItem>
+                      <SelectItem value="WOMAN">여</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -204,19 +200,13 @@ const StudentFormDialog = ({
                     value={field.value ? String(field.value) : undefined}
                     onValueChange={(val) => field.onChange(Number(val))}
                   >
-                    <SelectTrigger className={cn('cursor-pointer')}>
+                    <SelectTrigger>
                       <SelectValue placeholder="학년 선택" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1" className={cn('cursor-pointer')}>
-                        1학년
-                      </SelectItem>
-                      <SelectItem value="2" className={cn('cursor-pointer')}>
-                        2학년
-                      </SelectItem>
-                      <SelectItem value="3" className={cn('cursor-pointer')}>
-                        3학년
-                      </SelectItem>
+                      <SelectItem value="1">1학년</SelectItem>
+                      <SelectItem value="2">2학년</SelectItem>
+                      <SelectItem value="3">3학년</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -233,22 +223,14 @@ const StudentFormDialog = ({
                     value={field.value ? String(field.value) : undefined}
                     onValueChange={(val) => field.onChange(Number(val))}
                   >
-                    <SelectTrigger className={cn('cursor-pointer')}>
+                    <SelectTrigger>
                       <SelectValue placeholder="반 선택" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1" className={cn('cursor-pointer')}>
-                        1반
-                      </SelectItem>
-                      <SelectItem value="2" className={cn('cursor-pointer')}>
-                        2반
-                      </SelectItem>
-                      <SelectItem value="3" className={cn('cursor-pointer')}>
-                        3반
-                      </SelectItem>
-                      <SelectItem value="4" className={cn('cursor-pointer')}>
-                        4반
-                      </SelectItem>
+                      <SelectItem value="1">1반</SelectItem>
+                      <SelectItem value="2">2반</SelectItem>
+                      <SelectItem value="3">3반</SelectItem>
+                      <SelectItem value="4">4반</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -276,19 +258,13 @@ const StudentFormDialog = ({
                 name="role"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className={cn('cursor-pointer')}>
+                    <SelectTrigger>
                       <SelectValue placeholder="구분 선택" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="GENERAL_STUDENT" className={cn('cursor-pointer')}>
-                        일반학생
-                      </SelectItem>
-                      <SelectItem value="STUDENT_COUNCIL" className={cn('cursor-pointer')}>
-                        학생회
-                      </SelectItem>
-                      <SelectItem value="DORMITORY_MANAGER" className={cn('cursor-pointer')}>
-                        기자위
-                      </SelectItem>
+                      <SelectItem value="GENERAL_STUDENT">일반학생</SelectItem>
+                      <SelectItem value="STUDENT_COUNCIL">학생회</SelectItem>
+                      <SelectItem value="DORMITORY_MANAGER">기자위</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -323,21 +299,17 @@ const StudentFormDialog = ({
                     }
                     onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                   >
-                    <SelectTrigger className={cn('cursor-pointer')}>
+                    <SelectTrigger>
                       <SelectValue placeholder="전공 동아리 선택" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none" className={cn('cursor-pointer text-gray-500')}>
+                      <SelectItem value="none" className={cn('text-gray-500')}>
                         선택 안 함
                       </SelectItem>
                       {clubs?.clubs
                         .filter((club) => club.type === 'MAJOR_CLUB')
                         .map((club) => (
-                          <SelectItem
-                            key={club.id}
-                            value={String(club.id)}
-                            className={cn('cursor-pointer')}
-                          >
+                          <SelectItem key={club.id} value={String(club.id)}>
                             {club.name}
                           </SelectItem>
                         ))}
@@ -365,21 +337,17 @@ const StudentFormDialog = ({
                     }
                     onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                   >
-                    <SelectTrigger className={cn('cursor-pointer')}>
+                    <SelectTrigger>
                       <SelectValue placeholder="취업 동아리 선택" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none" className={cn('cursor-pointer text-gray-500')}>
+                      <SelectItem value="none" className={cn('text-gray-500')}>
                         선택 안 함
                       </SelectItem>
                       {clubs?.clubs
                         .filter((club) => club.type === 'JOB_CLUB')
                         .map((club) => (
-                          <SelectItem
-                            key={club.id}
-                            value={String(club.id)}
-                            className={cn('cursor-pointer')}
-                          >
+                          <SelectItem key={club.id} value={String(club.id)}>
                             {club.name}
                           </SelectItem>
                         ))}
@@ -407,21 +375,17 @@ const StudentFormDialog = ({
                     }
                     onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                   >
-                    <SelectTrigger className={cn('cursor-pointer')}>
+                    <SelectTrigger>
                       <SelectValue placeholder="자율 동아리 선택" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none" className={cn('cursor-pointer text-gray-500')}>
+                      <SelectItem value="none" className={cn('text-gray-500')}>
                         선택 안 함
                       </SelectItem>
                       {clubs?.clubs
                         .filter((club) => club.type === 'AUTONOMOUS_CLUB')
                         .map((club) => (
-                          <SelectItem
-                            key={club.id}
-                            value={String(club.id)}
-                            className={cn('cursor-pointer')}
-                          >
+                          <SelectItem key={club.id} value={String(club.id)}>
                             {club.name}
                           </SelectItem>
                         ))}
@@ -444,16 +408,12 @@ const StudentFormDialog = ({
                       value={field.value ? 'true' : 'false'}
                       onValueChange={(val) => field.onChange(val === 'true')}
                     >
-                      <SelectTrigger className={cn('cursor-pointer')}>
+                      <SelectTrigger>
                         <SelectValue placeholder="자퇴 여부 선택" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="false" className={cn('cursor-pointer')}>
-                          재학중
-                        </SelectItem>
-                        <SelectItem value="true" className={cn('cursor-pointer')}>
-                          자퇴
-                        </SelectItem>
+                        <SelectItem value="false">재학중</SelectItem>
+                        <SelectItem value="true">자퇴</SelectItem>
                       </SelectContent>
                     </Select>
                   )}

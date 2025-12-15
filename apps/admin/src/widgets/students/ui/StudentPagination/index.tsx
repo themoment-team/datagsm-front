@@ -82,7 +82,6 @@ const StudentPagination = ({
                   e.preventDefault();
                   onPageChange(pageNum);
                 }}
-                className={cn('cursor-pointer')}
               >
                 {pageNum + 1}
               </PaginationLink>
