@@ -24,6 +24,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { AddStudentSchema, AddStudentType } from '@/entities/student';
+import { FormErrorMessage } from '@/shared/ui';
 import { useCreateStudent, useUpdateStudent } from '@/widgets/students';
 
 interface StudentFormDialogProps {
@@ -164,7 +165,7 @@ const StudentFormDialog = ({
             <div className={cn('space-y-2')}>
               <Label htmlFor="name">이름</Label>
               <Input id="name" placeholder="이름 입력" {...register('name')} />
-              {errors.name && <p className={cn('text-sm text-red-500')}>{errors.name.message}</p>}
+              <FormErrorMessage error={errors.name} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="sex">성별</Label>
@@ -183,12 +184,12 @@ const StudentFormDialog = ({
                   </Select>
                 )}
               />
-              {errors.sex && <p className={cn('text-sm text-red-500')}>{errors.sex.message}</p>}
+              <FormErrorMessage error={errors.sex} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="email">이메일</Label>
               <Input id="email" placeholder="example@gsm.hs.kr" {...register('email')} />
-              {errors.email && <p className={cn('text-sm text-red-500')}>{errors.email.message}</p>}
+              <FormErrorMessage error={errors.email} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="grade">학년</Label>
@@ -211,7 +212,7 @@ const StudentFormDialog = ({
                   </Select>
                 )}
               />
-              {errors.grade && <p className={cn('text-sm text-red-500')}>{errors.grade.message}</p>}
+              <FormErrorMessage error={errors.grade} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="classNum">반</Label>
@@ -235,9 +236,7 @@ const StudentFormDialog = ({
                   </Select>
                 )}
               />
-              {errors.classNum && (
-                <p className={cn('text-sm text-red-500')}>{errors.classNum.message}</p>
-              )}
+              <FormErrorMessage error={errors.classNum} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="number">번호</Label>
@@ -247,9 +246,7 @@ const StudentFormDialog = ({
                 placeholder="번호 입력"
                 {...register('number', { valueAsNumber: true })}
               />
-              {errors.number && (
-                <p className={cn('text-sm text-red-500')}>{errors.number.message}</p>
-              )}
+              <FormErrorMessage error={errors.number} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="role">구분</Label>
@@ -269,7 +266,7 @@ const StudentFormDialog = ({
                   </Select>
                 )}
               />
-              {errors.role && <p className={cn('text-sm text-red-500')}>{errors.role.message}</p>}
+              <FormErrorMessage error={errors.role} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="dormitoryRoomNumber">기숙사 호실</Label>
@@ -279,9 +276,7 @@ const StudentFormDialog = ({
                 placeholder="호실 입력"
                 {...register('dormitoryRoomNumber', { valueAsNumber: true })}
               />
-              {errors.dormitoryRoomNumber && (
-                <p className={cn('text-sm text-red-500')}>{errors.dormitoryRoomNumber.message}</p>
-              )}
+              <FormErrorMessage error={errors.dormitoryRoomNumber} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="majorClubId">전공 동아리</Label>
@@ -317,9 +312,7 @@ const StudentFormDialog = ({
                   </Select>
                 )}
               />
-              {errors.majorClubId && (
-                <p className={cn('text-sm text-red-500')}>{errors.majorClubId.message}</p>
-              )}
+              <FormErrorMessage error={errors.majorClubId} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="jobClubId">취업 동아리</Label>
@@ -355,9 +348,7 @@ const StudentFormDialog = ({
                   </Select>
                 )}
               />
-              {errors.jobClubId && (
-                <p className={cn('text-sm text-red-500')}>{errors.jobClubId.message}</p>
-              )}
+              <FormErrorMessage error={errors.jobClubId} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="autonomousClubId">자율 동아리</Label>
@@ -393,9 +384,7 @@ const StudentFormDialog = ({
                   </Select>
                 )}
               />
-              {errors.autonomousClubId && (
-                <p className={cn('text-sm text-red-500')}>{errors.autonomousClubId.message}</p>
-              )}
+              <FormErrorMessage error={errors.autonomousClubId} />
             </div>
             {mode === 'edit' && (
               <div className={cn('space-y-2')}>
@@ -418,9 +407,7 @@ const StudentFormDialog = ({
                     </Select>
                   )}
                 />
-                {errors.isLeaveSchool && (
-                  <p className={cn('text-sm text-red-500')}>{errors.isLeaveSchool.message}</p>
-                )}
+                <FormErrorMessage error={errors.isLeaveSchool} />
               </div>
             )}
           </div>
