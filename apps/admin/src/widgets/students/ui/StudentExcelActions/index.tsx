@@ -39,7 +39,7 @@ const StudentExcelActions = () => {
       <Button
         variant="outline"
         size="sm"
-        className={cn('cursor-pointer gap-2 bg-transparent')}
+        className={cn('gap-2 bg-transparent')}
         onClick={() =>
           downloadExcel({
             url: studentUrl.getStudentExcel(),
@@ -53,7 +53,7 @@ const StudentExcelActions = () => {
       <Button
         variant="outline"
         size="sm"
-        className={cn('cursor-pointer gap-2 bg-transparent')}
+        className={cn('gap-2 bg-transparent')}
         onClick={() => fileInputRef.current?.click()}
       >
         <Upload className={cn('h-4 w-4')} />

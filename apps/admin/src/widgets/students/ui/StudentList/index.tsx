@@ -110,12 +110,7 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                   </TableCell>
 
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={cn('cursor-pointer')}
-                      onClick={() => onEdit?.(student)}
-                    >
+                    <Button variant="ghost" size="icon" onClick={() => onEdit?.(student)}>
                       <Pencil className={cn('h-4 w-4')} />
                     </Button>
                   </TableCell>

@@ -136,12 +136,12 @@ const StudentFormDialog = ({
 
   const defaultTrigger =
     mode === 'create' ? (
-      <Button size="sm" className={cn('cursor-pointer gap-2')}>
+      <Button size="sm" className={cn('gap-2')}>
         <Plus className={cn('h-4 w-4')} />
         학생 추가
       </Button>
     ) : (
-      <Button variant="ghost" size="icon" className={cn('cursor-pointer')}>
+      <Button variant="ghost" size="icon">
         <Pencil className={cn('h-4 w-4')} />
       </Button>
     );
@@ -465,7 +465,7 @@ const StudentFormDialog = ({
             )}
           </div>
           <div className={cn('flex justify-end')}>
-            <Button type="submit" className={cn('cursor-pointer')} disabled={isPending}>
+            <Button type="submit" disabled={isPending}>
               {isPending ? loadingText : submitText}
             </Button>
           </div>

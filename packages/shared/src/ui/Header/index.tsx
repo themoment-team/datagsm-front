@@ -53,12 +53,7 @@ const Header = ({ role = 'client' }: HeaderProps) => {
               {link.label}
             </Link>
           ))}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            className={cn('cursor-pointer gap-2')}
-          >
+          <Button variant="outline" size="sm" onClick={handleLogout} className={cn('gap-2')}>
             <LogOut className={cn('h-4 w-4')} />
             로그아웃
           </Button>
