@@ -74,8 +74,8 @@
     "lint": "eslint src --max-warnings 0"
   },
   "peerDependencies": {
-    "react": "19.2.1",
-    "next": "15.5.9"
+    "next": "15.5.9",
+    "react": "19.2.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
@@ -89,7 +89,11 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "^1.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.546.0",

@@ -1,5 +1,6 @@
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
+import { Header } from '@repo/shared/ui';
 import type { Metadata } from 'next';
 
 import '@/shared/styles/globals.css';
@@ -19,7 +20,10 @@ const RootLayout = ({
       <body>
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
           <TanStackProvider>
-            <ToastProvider>{children}</ToastProvider>
+            <ToastProvider>
+              <Header role="admin" />
+              {children}
+            </ToastProvider>
           </TanStackProvider>
         </GoogleOAuthProvider>
       </body>
