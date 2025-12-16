@@ -6,28 +6,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/shared/ui';
+import { Control, Controller } from 'react-hook-form';
+
+import { ClubFilterType } from '@/entities/club';
 
 interface ClubFilterProps {
-  typeFilter: string;
-  onTypeFilterChange: (value: string) => void;
+  control: Control<ClubFilterType>;
 }
 
-export const ClubFilter = ({ typeFilter, onTypeFilterChange }: ClubFilterProps) => {
+export const ClubFilter = ({ control }: ClubFilterProps) => {
   return (
     <div className="mt-4 flex items-center gap-4">
       <div className="flex items-center gap-2">
         <Label className="text-sm">타입:</Label>
-        <Select value={typeFilter} onValueChange={onTypeFilterChange}>
-          <SelectTrigger className="w-24">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">전체</SelectItem>
-            <SelectItem value="전공">전공</SelectItem>
-            <SelectItem value="취업">취업</SelectItem>
-            <SelectItem value="자율">자율</SelectItem>
-          </SelectContent>
-        </Select>
+        <Controller
+          control={control}
+          name="clubType"
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger className="w-24">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">전체</SelectItem>
+                <SelectItem value="MAJOR_CLUB">전공</SelectItem>
+                <SelectItem value="JOB_CLUB">취업</SelectItem>
+                <SelectItem value="AUTONOMOUS_CLUB">자율</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
       </div>
     </div>
   );

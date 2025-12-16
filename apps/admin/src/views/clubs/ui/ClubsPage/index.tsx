@@ -1,9 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ClubType } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
+import { useForm, useWatch } from 'react-hook-form';
 
+import { ClubFilterSchema, ClubFilterType } from '@/entities/club';
+import { useGetClubs } from '@/views/clubs';
 import {
   ClubExcelActions,
   ClubFilter,
@@ -12,28 +19,83 @@ import {
   ClubPagination,
 } from '@/widgets/clubs';
 
-// Demo data
-const demoClubs = [
-  { id: 1, name: 'GSM', type: '전공' },
-  { id: 2, name: 'IoT Lab', type: '전공' },
-  { id: 3, name: 'AI Research', type: '전공' },
-  { id: 4, name: '취창업동아리', type: '취업' },
-  { id: 5, name: '스타트업', type: '취업' },
-  { id: 6, name: '면접준비', type: '취업' },
-  { id: 7, name: '게임개발', type: '자율' },
-  { id: 8, name: '독서', type: '자율' },
-  { id: 9, name: '운동', type: '자율' },
-];
+const PAGE_SIZE = 10;
 
 const ClubsPage = () => {
-  const [clubs] = useState(demoClubs);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const filteredClubs = clubs.filter((club) => {
-    if (typeFilter !== 'all' && club.type !== typeFilter) return false;
-    return true;
+  const getInitialValues = (): ClubFilterType & { page: number } => ({
+    clubType: searchParams.get('clubType') || 'all',
+    page: Number(searchParams.get('page')) || 0,
   });
+
+  const initialValues = getInitialValues();
+
+  const form = useForm<ClubFilterType>({
+    resolver: zodResolver(ClubFilterSchema),
+    defaultValues: {
+      clubType: initialValues.clubType,
+    },
+  });
+
+  const { control } = form;
+
+  const filters = useWatch({
+    control,
+  });
+
+  const currentPage = initialValues.page;
+
+  const updateURL = (newFilters: Partial<ClubFilterType>, newPage?: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    // 필터 업데이트
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (value && value !== 'all') {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+    });
+
+    // 페이지 업데이트
+    if (newPage !== undefined) {
+      if (newPage === 0) {
+        params.delete('page');
+      } else {
+        params.set('page', newPage.toString());
+      }
+    }
+
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  useEffect(() => {
+    const hasChanged = filters.clubType !== initialValues.clubType;
+
+    if (filters && hasChanged) {
+      updateURL(filters, 0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.clubType]);
+
+  const handlePageChange = (page: number) => {
+    updateURL(filters, page);
+  };
+
+  const queryParams = {
+    page: currentPage,
+    size: PAGE_SIZE,
+    clubType: filters.clubType !== 'all' ? (filters.clubType as ClubType) : undefined,
+  };
+
+  const { data: clubsData, isLoading: isLoadingClubs } = useGetClubs(queryParams);
+
+  const clubs = clubsData?.data.clubs || [];
+
+  const totalPages = clubsData?.data.totalPages ?? 0;
 
   return (
     <div className="bg-background h-[calc(100vh-4.0625rem)]">
@@ -48,11 +110,16 @@ const ClubsPage = () => {
               </div>
             </div>
 
-            <ClubFilter typeFilter={typeFilter} onTypeFilterChange={setTypeFilter} />
+            <ClubFilter control={control} />
           </CardHeader>
           <CardContent>
-            <ClubList clubs={filteredClubs} />
-            <ClubPagination currentPage={currentPage} onPageChange={setCurrentPage} />
+            <ClubList clubs={clubs} isLoading={isLoadingClubs} />
+            <ClubPagination
+              isLoading={isLoadingClubs}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </CardContent>
         </Card>
       </main>

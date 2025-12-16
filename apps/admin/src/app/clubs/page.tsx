@@ -1,5 +1,13 @@
+import { Suspense } from 'react';
+
+import { ClubsPage } from '@/views/clubs';
+
 const Clubs = () => {
-  return <div>Clubs Page</div>;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ClubsPage />
+    </Suspense>
+  );
 };
 
 export default Clubs;
