@@ -29,7 +29,7 @@ export const studentQueryKeys = {
   ) => ['students', 'list', { page, size, grade, classNum, sex, role, isLeaveSchool }] as const,
   postStudent: () => ['students', 'create'] as const,
   postStudentExcel: () => ['students', 'excel', 'upload'] as const,
-  putStudentById: (studentId: number) => ['students', 'update', studentId] as const,
+  putStudentById: () => ['students', 'update'] as const,
 } as const;
 
 export const healthQueryKeys = {
