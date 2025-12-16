@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ClubType } from '@repo/shared/types';

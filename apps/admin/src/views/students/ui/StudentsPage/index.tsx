@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Student, StudentRole, StudentSex } from '@repo/shared/types';
