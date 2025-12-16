@@ -11,6 +11,7 @@ import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
+import { useURLFilters } from '@/shared/hooks';
 import { CommonPagination } from '@/shared/ui';
 import { useGetClubs } from '@/views/clubs';
 import { useGetStudents } from '@/views/students';
@@ -24,9 +25,8 @@ import {
 const PAGE_SIZE = 10;
 
 const StudentsPage = () => {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { updateURL } = useURLFilters<StudentFilterType>();
 
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -65,30 +65,6 @@ const StudentsPage = () => {
   });
 
   const currentPage = initialValues.page;
-
-  const updateURL = (newFilters: Partial<StudentFilterType>, newPage?: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    // 필터 업데이트
-    Object.entries(newFilters).forEach(([key, value]) => {
-      if (value && value !== 'all') {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-    });
-
-    // 페이지 업데이트
-    if (newPage !== undefined) {
-      if (newPage === 0) {
-        params.delete('page');
-      } else {
-        params.set('page', newPage.toString());
-      }
-    }
-
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
 
   useEffect(() => {
     // 초기 로드 시에는 URL 업데이트를 건너뜀

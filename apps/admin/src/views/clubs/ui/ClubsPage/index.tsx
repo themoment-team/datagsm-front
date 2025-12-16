@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { ClubFilterSchema, ClubFilterType } from '@/entities/club';
+import { useURLFilters } from '@/shared/hooks';
 import { CommonPagination } from '@/shared/ui';
 import { useGetClubs } from '@/views/clubs';
 import { ClubExcelActions, ClubFilter, ClubFormDialog, ClubList } from '@/widgets/clubs';
@@ -17,9 +18,8 @@ import { ClubExcelActions, ClubFilter, ClubFormDialog, ClubList } from '@/widget
 const PAGE_SIZE = 10;
 
 const ClubsPage = () => {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { updateURL } = useURLFilters<ClubFilterType>();
 
   const getInitialValues = (): ClubFilterType & { page: number } => ({
     clubType: searchParams.get('clubType') || 'all',
@@ -42,30 +42,6 @@ const ClubsPage = () => {
   });
 
   const currentPage = initialValues.page;
-
-  const updateURL = (newFilters: Partial<ClubFilterType>, newPage?: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    // 필터 업데이트
-    Object.entries(newFilters).forEach(([key, value]) => {
-      if (value && value !== 'all') {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-    });
-
-    // 페이지 업데이트
-    if (newPage !== undefined) {
-      if (newPage === 0) {
-        params.delete('page');
-      } else {
-        params.set('page', newPage.toString());
-      }
-    }
-
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
 
   useEffect(() => {
     const hasChanged = filters.clubType !== initialValues.clubType;
