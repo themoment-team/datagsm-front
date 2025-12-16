@@ -1,3 +1,5 @@
+import { StudentRole, StudentSex } from '@repo/shared/types';
+
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
   getApiKey: () => '/v1/auth/api-key',
@@ -9,9 +11,9 @@ export const authUrl = {
 } as const;
 
 export const clubUrl = {
-  deleteClubById: (clubId: string) => `/v1/clubs/${clubId}`,
+  deleteClubById: (clubId: number) => `/v1/clubs/${clubId}`,
   getClubs: () => '/v1/clubs',
-  patchClubById: (clubId: string) => `/v1/clubs/${clubId}`,
+  patchClubById: (clubId: number) => `/v1/clubs/${clubId}`,
   postClub: () => '/v1/clubs',
 } as const;
 
@@ -20,7 +22,30 @@ export const healthUrl = {
 } as const;
 
 export const studentUrl = {
-  getStudents: () => '/v1/students',
-  patchStudentById: (studentId: string) => `/v1/students/${studentId}`,
+  getStudents: (
+    page: number,
+    size: number,
+    grade?: number,
+    classNum?: number,
+    sex?: StudentSex,
+    role?: StudentRole,
+    isLeaveSchool?: boolean,
+  ) => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString(),
+    });
+
+    if (grade !== undefined) params.append('grade', grade.toString());
+    if (classNum !== undefined) params.append('classNum', classNum.toString());
+    if (sex !== undefined) params.append('sex', sex);
+    if (role !== undefined) params.append('role', role);
+    if (isLeaveSchool !== undefined) params.append('isLeaveSchool', isLeaveSchool.toString());
+
+    return `/v1/students?${params.toString()}`;
+  },
+  getStudentExcel: () => '/v1/students/excel/download',
   postStudent: () => '/v1/students',
+  postStudentExcel: () => '/v1/students/excel/upload',
+  putStudentById: (studentId: number) => `/v1/students/${studentId}`,
 } as const;

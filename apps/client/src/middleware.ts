@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { COOKIE_KEYS } from '@repo/shared/constants';
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const accessToken = request.cookies.get('accessToken')?.value;
+  const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
   if (pathname === '/signin') {
     if (accessToken) {
@@ -22,8 +24,8 @@ export function middleware(request: NextRequest) {
             url.search = refererUrl.search;
             return NextResponse.redirect(url);
           }
-        } catch {
-          // new URL()이 TypeError를 던질 수 있으므로 try-catch가 필요
+        } catch (error) {
+          console.error('잘못된 referer URL:', error);
         }
       }
       url.pathname = '/';

@@ -18,10 +18,19 @@ export const clubQueryKeys = {
 } as const;
 
 export const studentQueryKeys = {
-  getStudents: () => ['students', 'list'] as const,
-  getStudentById: (studentId: string) => ['students', 'detail', studentId] as const,
-  patchStudentById: (studentId: string) => ['students', 'update', studentId] as const,
+  getStudents: (
+    page: number,
+    size: number,
+    grade?: number,
+    classNum?: number,
+    sex?: string,
+    role?: string,
+    isLeaveSchool?: boolean,
+  ) => ['students', 'list', { page, size, grade, classNum, sex, role, isLeaveSchool }] as const,
+  getStudentById: (studentId: number) => ['students', 'detail', studentId] as const,
   postStudent: () => ['students', 'create'] as const,
+  postStudentExcel: () => ['students', 'excel', 'upload'] as const,
+  putStudentById: (studentId: number) => ['students', 'update', studentId] as const,
 } as const;
 
 export const healthQueryKeys = {
