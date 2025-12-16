@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ClubType } from '@repo/shared/types';
+import { Club, ClubType } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { useForm, useWatch } from 'react-hook-form';
 
@@ -20,6 +20,14 @@ const PAGE_SIZE = 10;
 const ClubsPage = () => {
   const searchParams = useSearchParams();
   const { updateURL } = useURLFilters<ClubFilterType>();
+
+  const [editingClub, setEditingClub] = useState<Club | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  const handleEditClub = (club: Club) => {
+    setEditingClub(club);
+    setIsEditDialogOpen(true);
+  };
 
   const getInitialValues = (): ClubFilterType & { page: number } => ({
     clubType: searchParams.get('clubType') || 'all',
@@ -77,14 +85,14 @@ const ClubsPage = () => {
               <CardTitle className="text-2xl">동아리 관리</CardTitle>
               <div className="flex items-center gap-2">
                 <ClubExcelActions />
-                <ClubFormDialog />
+                <ClubFormDialog mode="create" />
               </div>
             </div>
 
             <ClubFilter control={control} />
           </CardHeader>
           <CardContent>
-            <ClubList clubs={clubs} isLoading={isLoadingClubs} />
+            <ClubList clubs={clubs} isLoading={isLoadingClubs} onEdit={handleEditClub} />
             <CommonPagination
               isLoading={isLoadingClubs}
               currentPage={currentPage}
@@ -93,6 +101,15 @@ const ClubsPage = () => {
             />
           </CardContent>
         </Card>
+
+        {editingClub && (
+          <ClubFormDialog
+            mode="edit"
+            club={editingClub}
+            open={isEditDialogOpen}
+            onOpenChange={setIsEditDialogOpen}
+          />
+        )}
       </main>
     </div>
   );

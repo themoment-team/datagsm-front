@@ -18,9 +18,10 @@ import { getTypeBadgeVariant, getTypeLabel } from '@/entities/club';
 interface ClubListProps {
   clubs: Club[];
   isLoading?: boolean;
+  onEdit?: (club: Club) => void;
 }
 
-const ClubList = ({ clubs, isLoading }: ClubListProps) => {
+const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
   return (
     <div className={cn('mb-4 overflow-x-auto rounded-md border')}>
       <Table>
@@ -55,7 +56,7 @@ const ClubList = ({ clubs, isLoading }: ClubListProps) => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" onClick={() => onEdit?.(club)}>
                       <Pencil className={cn('h-4 w-4')} />
                     </Button>
                   </TableCell>
