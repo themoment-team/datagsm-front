@@ -1,14 +1,13 @@
 import { ClubType, StudentRole, StudentSex } from '@repo/shared/types';
-import { post } from 'axios';
 
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
   getApiKey: () => '/v1/auth/api-key',
   getApiKeyRenewable: () => '/v1/auth/api-key/renewable',
-  postGoogleLogin: () => '/v1/auth/google',
   postApiKey: () => '/v1/auth/api-key',
-  putApiKey: () => '/v1/auth/api-key',
+  postGoogleLogin: () => '/v1/auth/google',
   putRefresh: () => '/v1/auth/refresh',
+  putApiKey: () => '/v1/auth/api-key',
 } as const;
 
 export const clubUrl = {
@@ -35,19 +34,18 @@ export const healthUrl = {
 
 export const studentUrl = {
   getStudents: (
-    page: number,
-    size: number,
+    page?: number,
+    size?: number,
     grade?: number,
     classNum?: number,
     sex?: StudentSex,
     role?: StudentRole,
     isLeaveSchool?: boolean,
   ) => {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      size: size.toString(),
-    });
+    const params = new URLSearchParams();
 
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
     if (grade !== undefined) params.append('grade', grade.toString());
     if (classNum !== undefined) params.append('classNum', classNum.toString());
     if (sex !== undefined) params.append('sex', sex);
