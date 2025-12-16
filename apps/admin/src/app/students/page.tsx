@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { getClubs } from '@/entities/club';
+import { getClubs } from '@/entities/club/api';
 import { StudentsPage } from '@/views/students';
 
 const Students = async () => {
