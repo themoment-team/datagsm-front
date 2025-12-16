@@ -9,12 +9,12 @@ export const authQueryKeys = {
 } as const;
 
 export const clubQueryKeys = {
-  deleteClubById: (clubId: string) => ['clubs', 'delete', clubId] as const,
+  deleteClubById: () => ['clubs', 'delete'] as const,
   getClubs: (page?: number, size?: number, type?: string) =>
     ['clubs', 'list', { page, size, type }] as const,
   postClub: () => ['clubs', 'create'] as const,
   postClubExcel: () => ['clubs', 'excel', 'upload'] as const,
-  putClubById: (clubId: string) => ['clubs', 'update', clubId] as const,
+  putClubById: () => ['clubs', 'update'] as const,
 } as const;
 
 export const studentQueryKeys = {
