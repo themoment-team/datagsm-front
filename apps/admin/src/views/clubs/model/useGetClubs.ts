@@ -14,8 +14,8 @@ export const useGetClubs = (
   options?: Omit<UseQueryOptions<ClubListResponse>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery({
-    queryKey: clubQueryKeys.getClubs(page, size, clubType ?? undefined),
-    queryFn: () => get<ClubListResponse>(clubUrl.getClubs(page, size, clubType ?? undefined)),
+    queryKey: clubQueryKeys.getClubs(page, size, clubType),
+    queryFn: () => get<ClubListResponse>(clubUrl.getClubs(page, size, clubType)),
     staleTime: minutesToMs(5),
     gcTime: minutesToMs(10),
     refetchOnMount: false,
