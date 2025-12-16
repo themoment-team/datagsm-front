@@ -1,4 +1,4 @@
-import { StudentRole, StudentSex } from '@repo/shared/types';
+import { ClubType, StudentRole, StudentSex } from '@repo/shared/types';
 
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
@@ -12,7 +12,16 @@ export const authUrl = {
 
 export const clubUrl = {
   deleteClubById: (clubId: number) => `/v1/clubs/${clubId}`,
-  getClubs: () => '/v1/clubs',
+  getClubs: (page?: number, size?: number, type?: ClubType) => {
+    const params = new URLSearchParams();
+
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+    if (type != null) params.append('clubType', type);
+
+    const queryString = params.toString();
+    return queryString ? `/v1/clubs?${queryString}` : '/v1/clubs';
+  },
   patchClubById: (clubId: number) => `/v1/clubs/${clubId}`,
   postClub: () => '/v1/clubs',
 } as const;

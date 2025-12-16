@@ -10,7 +10,8 @@ export const authQueryKeys = {
 } as const;
 
 export const clubQueryKeys = {
-  getClubs: () => ['clubs', 'list'] as const,
+  getClubs: (page?: number, size?: number, type?: string) =>
+    ['clubs', 'list', { page, size, type }] as const,
   getClubById: (clubId: string) => ['clubs', 'detail', clubId] as const,
   deleteClubById: (clubId: string) => ['clubs', 'delete', clubId] as const,
   patchClubById: (clubId: string) => ['clubs', 'update', clubId] as const,
