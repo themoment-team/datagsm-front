@@ -1,4 +1,5 @@
 import { ClubType, StudentRole, StudentSex } from '@repo/shared/types';
+import { post } from 'axios';
 
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
@@ -22,8 +23,10 @@ export const clubUrl = {
     const queryString = params.toString();
     return queryString ? `/v1/clubs?${queryString}` : '/v1/clubs';
   },
-  patchClubById: (clubId: number) => `/v1/clubs/${clubId}`,
+  getClubExcel: () => '/v1/clubs/excel/download',
   postClub: () => '/v1/clubs',
+  postClubExcel: () => '/v1/clubs/excel/upload',
+  putClubById: (clubId: number) => `/v1/clubs/${clubId}`,
 } as const;
 
 export const healthUrl = {
