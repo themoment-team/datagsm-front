@@ -5,13 +5,14 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ClubListResponse, Student, StudentRole, StudentSex } from '@repo/shared/types';
+import { Student, StudentRole, StudentSex } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
 import { CommonPagination } from '@/shared/ui';
+import { useGetClubs } from '@/views/clubs';
 import { useGetStudents } from '@/views/students';
 import {
   StudentExcelActions,
@@ -22,11 +23,7 @@ import {
 
 const PAGE_SIZE = 10;
 
-interface StudentsPageProps {
-  initialClubsData?: ClubListResponse;
-}
-
-const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
+const StudentsPage = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -124,6 +121,8 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(queryParams);
 
+  const { data: clubsData, isLoading: isLoadingClubs } = useGetClubs({});
+
   const students = studentsData?.data.students;
 
   const totalPages = studentsData?.data.totalPages ?? 0;
@@ -137,7 +136,11 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
               <CardTitle className={cn('text-2xl')}>학생 관리</CardTitle>
               <div className={cn('flex items-center gap-2')}>
                 <StudentExcelActions />
-                <StudentFormDialog mode="create" clubs={initialClubsData?.data} />
+                <StudentFormDialog
+                  mode="create"
+                  clubs={clubsData?.data}
+                  isLoadingClubs={isLoadingClubs}
+                />
               </div>
             </div>
 
@@ -164,9 +167,10 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
           <StudentFormDialog
             mode="edit"
             student={editingStudent}
-            clubs={initialClubsData?.data}
+            clubs={clubsData?.data}
             open={isEditDialogOpen}
             onOpenChange={setIsEditDialogOpen}
+            isLoadingClubs={isLoadingClubs}
           />
         )}
       </main>
