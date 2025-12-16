@@ -43,10 +43,10 @@ const getTypeLabel = (type: ClubType) => {
   }
 };
 
-export const ClubList = ({ clubs, isLoading }: ClubListProps) => {
+const ClubList = ({ clubs, isLoading }: ClubListProps) => {
   if (isLoading) {
     return (
-      <div className="rounded-md border">
+      <div className="mb-4 rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -74,8 +74,9 @@ export const ClubList = ({ clubs, isLoading }: ClubListProps) => {
       </div>
     );
   }
+
   return (
-    <div className="rounded-md border">
+    <div className="mb-4 rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -103,3 +104,5 @@ export const ClubList = ({ clubs, isLoading }: ClubListProps) => {
     </div>
   );
 };
+
+export default ClubList;

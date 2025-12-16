@@ -1,5 +1,4 @@
-export { ClubExcelActions } from './ui/ClubExcelActions';
-export { ClubFilter } from './ui/ClubFilter';
-export { ClubFormDialog } from './ui/ClubFormDialog';
-export { ClubList } from './ui/ClubList';
-export { ClubPagination } from './ui/ClubPagination';
+export { default as ClubExcelActions } from './ui/ClubExcelActions';
+export { default as ClubFilter } from './ui/ClubFilter';
+export { default as ClubFormDialog } from './ui/ClubFormDialog';
+export { default as ClubList } from './ui/ClubList';

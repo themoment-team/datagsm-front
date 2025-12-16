@@ -11,13 +11,13 @@ import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
+import { CommonPagination } from '@/shared/ui';
 import { useGetStudents } from '@/views/students';
 import {
   StudentExcelActions,
   StudentFilter,
   StudentFormDialog,
   StudentList,
-  StudentPagination,
 } from '@/widgets/students';
 
 const PAGE_SIZE = 10;
@@ -150,7 +150,7 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
                 isLoading={isLoadingStudents}
                 onEdit={handleEditStudent}
               />
-              <StudentPagination
+              <CommonPagination
                 isLoading={isLoadingStudents}
                 currentPage={currentPage}
                 totalPages={totalPages}

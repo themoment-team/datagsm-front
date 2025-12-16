@@ -10,14 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { ClubFilterSchema, ClubFilterType } from '@/entities/club';
+import { CommonPagination } from '@/shared/ui';
 import { useGetClubs } from '@/views/clubs';
-import {
-  ClubExcelActions,
-  ClubFilter,
-  ClubFormDialog,
-  ClubList,
-  ClubPagination,
-} from '@/widgets/clubs';
+import { ClubExcelActions, ClubFilter, ClubFormDialog, ClubList } from '@/widgets/clubs';
 
 const PAGE_SIZE = 10;
 
@@ -114,7 +109,7 @@ const ClubsPage = () => {
           </CardHeader>
           <CardContent>
             <ClubList clubs={clubs} isLoading={isLoadingClubs} />
-            <ClubPagination
+            <CommonPagination
               isLoading={isLoadingClubs}
               currentPage={currentPage}
               totalPages={totalPages}

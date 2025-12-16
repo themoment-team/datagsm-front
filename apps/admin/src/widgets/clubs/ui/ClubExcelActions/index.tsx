@@ -1,7 +1,7 @@
 import { Button } from '@repo/shared/ui';
 import { Download, Upload } from 'lucide-react';
 
-export const ClubExcelActions = () => {
+const ClubExcelActions = () => {
   return (
     <>
       <Button variant="outline" size="sm" className="gap-2 bg-transparent">
@@ -15,3 +15,5 @@ export const ClubExcelActions = () => {
     </>
   );
 };
+
+export default ClubExcelActions;

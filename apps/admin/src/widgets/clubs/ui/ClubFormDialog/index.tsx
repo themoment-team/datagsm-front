@@ -15,7 +15,7 @@ import {
 } from '@repo/shared/ui';
 import { Plus } from 'lucide-react';
 
-export const ClubFormDialog = () => {
+const ClubFormDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -54,3 +54,5 @@ export const ClubFormDialog = () => {
     </Dialog>
   );
 };
+
+export default ClubFormDialog;

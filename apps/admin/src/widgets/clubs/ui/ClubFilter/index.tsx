@@ -14,7 +14,7 @@ interface ClubFilterProps {
   control: Control<ClubFilterType>;
 }
 
-export const ClubFilter = ({ control }: ClubFilterProps) => {
+const ClubFilter = ({ control }: ClubFilterProps) => {
   return (
     <div className="mt-4 flex items-center gap-4">
       <div className="flex items-center gap-2">
@@ -40,3 +40,5 @@ export const ClubFilter = ({ control }: ClubFilterProps) => {
     </div>
   );
 };
+
+export default ClubFilter;
