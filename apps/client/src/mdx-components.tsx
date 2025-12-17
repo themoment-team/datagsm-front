@@ -38,6 +38,10 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
       );
     },
 
+    u: ({ children }) => <span className="underline">{children}</span>,
+
+    em: ({ children }) => <span className="italic">{children}</span>,
+
     img: ({ src, alt }) => (
       <img src={src} alt={alt} className="my-6 w-full rounded-lg" loading="lazy" />
     ),
