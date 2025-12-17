@@ -1,0 +1,185 @@
+### 개요
+
+학생 데이터 OpenAPI는 재학중인 학생 데이터를 간단한 HTTP 요청을 통하여 서비스에 통합할 수
+있도록 돕습니다. 해당 REST API를 호출하여 기본적인 학생 데이터를 획득할 수 있습니다.
+
+### 인증
+
+모든 API 요청은 HTTP 헤더에 API 키를 포함해야 합니다.
+
+```http
+X-API-KEY: your-api-key-here
+```
+
+API 키는 UUID 형식이며, 만료되거나 유효하지 않은 키를 사용할 경우 `401 Unauthorized` 응답을 받게 됩니다.
+
+### 엔드포인트
+
+```http
+GET /api/students
+```
+
+### 권한 범위
+
+`STUDENT_READ` 권한이 필요합니다.
+
+### 요청 파라미터
+
+```text
+| 파라미터        | 타입        | 필수 여부 | 설명                      | 예시                |
+| --------------- | ----------- | --------- | ------------------------- | ------------------- |
+| `studentId`     | Long        | 선택      | 학생 ID                   | `1`                 |
+| `name`          | String      | 선택      | 이름                      | `홍길동`            |
+| `email`         | String      | 선택      | 이메일                    | `student@gsm.hs.kr` |
+| `grade`         | Int         | 선택      | 학년 (1-3)                | `1`                 |
+| `classNum`      | Int         | 선택      | 반 (1-4)                  | `1`                 |
+| `number`        | Int         | 선택      | 번호 (1-18)               | `1`                 |
+| `sex`           | Sex         | 선택      | 성별 (`MAN`, `WOMAN`)     | `MAN`               |
+| `role`          | StudentRole | 선택      | 학생 역할                 | `GENERAL_STUDENT`   |
+| `dormitoryRoom` | Int         | 선택      | 기숙사 호실               | `301`               |
+| `isLeaveSchool` | Boolean     | 선택      | 자퇴 여부                 | `false`             |
+| `page`          | Int         | 선택      | 페이지 번호 (기본값: 0)   | `0`                 |
+| `size`          | Int         | 선택      | 페이지 크기 (기본값: 300) | `300`               |
+```
+
+### 응답 형식
+
+응답은 학생 정보 목록을 포함하며, 각 학생 객체는 다음 필드를 포함합니다.
+
+| 필드             | 타입        | 설명                                       | 예시                |
+| ---------------- | ----------- | ------------------------------------------ | ------------------- |
+| `id`             | Long        | 학생 ID                                    | `1`                 |
+| `name`           | String      | 이름                                       | `홍길동`            |
+| `sex`            | Sex         | 성별                                       | `WOMAN`             |
+| `email`          | String      | 이메일                                     | `student@gsm.hs.kr` |
+| `grade`          | Int         | 학년                                       | `1`                 |
+| `classNum`       | Int         | 반                                         | `1`                 |
+| `number`         | Int         | 번호                                       | `1`                 |
+| `studentNumber`  | Int         | 학번                                       | `1101`              |
+| `major`          | Major       | 전공 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`) | `SW_DEVELOPMENT`    |
+| `role`           | StudentRole | 역할                                       | `GENERAL_STUDENT`   |
+| `dormitoryFloor` | Int?        | 기숙사 층 (nullable)                       | `3`                 |
+| `dormitoryRoom`  | Int?        | 기숙사 호실 (nullable)                     | `301`               |
+| `isLeaveSchool`  | Boolean     | 자퇴 여부                                  | `false`             |
+| `majorClub`      | ClubResDto? | 전공 동아리 (nullable)                     | -                   |
+| `jobClub`        | ClubResDto? | 취업 동아리 (nullable)                     | -                   |
+| `autonomousClub` | ClubResDto? | 자율 동아리 (nullable)                     | -                   |
+
+### 동아리 객체 (ClubResDto)
+
+학생 응답에 포함된 동아리 정보는 다음 필드를 포함합니다.
+
+| 필드   | 타입     | 설명        | 예시           |
+| ------ | -------- | ----------- | -------------- |
+| `id`   | Long     | 동아리 ID   | `1`            |
+| `name` | String   | 동아리 이름 | `SW개발동아리` |
+| `type` | ClubType | 동아리 종류 | `MAJOR_CLUB`   |
+
+**동아리 종류 (ClubType)**
+
+- `MAJOR_CLUB`: 전공동아리
+- `JOB_CLUB`: 취업동아리
+- `AUTONOMOUS_CLUB`: 창체동아리
+
+### 요청 예시
+
+```bash
+curl -X GET "https://api.datagsm.com/api/students?grade=1&classNum=1&page=0&size=50" \
+  -H "X-API-KEY: your-api-key-here"
+
+```
+
+### 응답 예시
+
+```json
+{
+  "students": [
+    {
+      "id": 1,
+      "name": "홍길동",
+      "sex": "MAN",
+      "email": "student@gsm.hs.kr",
+      "grade": 1,
+      "classNum": 1,
+      "number": 1,
+      "studentNumber": 1101,
+      "major": "SW_DEVELOPMENT",
+      "role": "GENERAL_STUDENT",
+      "dormitoryFloor": 3,
+      "dormitoryRoom": 301,
+      "isLeaveSchool": false,
+      "majorClub": {
+        "id": 1,
+        "name": "SW개발동아리",
+        "type": "MAJOR_CLUB"
+      },
+      "jobClub": null,
+      "autonomousClub": null
+    }
+  ],
+  "totalElements": 1,
+  "totalPages": 1,
+  "currentPage": 0
+}
+```
+
+### 오류 응답
+
+| 상태 코드              | 설명                            |
+| ---------------------- | ------------------------------- |
+| `401 Unauthorized`     | API 키가 유효하지 않거나 만료됨 |
+| `403 Forbidden`        | 필요한 권한 범위가 없음         |
+| `429 Too Many Request` | 단위 시간에 너무 많은 사용량    |
+| `400 Bad Request`      | 잘못된 요청 파라미터            |
+
+| 상태 코드              | 설명                            |
+| ---------------------- | ------------------------------- |
+| `401 Unauthorized`     | API 키가 유효하지 않거나 만료됨 |
+| `403 Forbidden`        | 필요한 권한 범위가 없음         |
+| `429 Too Many Request` | 단위 시간에 너무 많은 사용량    |
+| `400 Bad Request`      | 잘못된 요청 파라미터            |
+
+<table className="my-4 w-full table-auto border-collapse border border-gray-300">
+  <thead className="bg-gray-100">
+    <tr>
+      <th className="border border-gray-300 px-4 py-2">상태 코드</th>
+      <th className="border border-gray-300 px-4 py-2">설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="border border-gray-300 px-4 py-2">401 Unauthorized</td>
+      <td className="border border-gray-300 px-4 py-2">API 키가 유효하지 않거나 만료됨</td>
+    </tr>
+    <tr>
+      <td className="border border-gray-300 px-4 py-2">403 Forbidden</td>
+      <td className="border border-gray-300 px-4 py-2">필요한 권한 범위가 없음</td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th>상태 코드</th>
+      <th>설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>401 Unauthorized</td>
+      <td>API 키가 유효하지 않거나 만료됨</td>
+    </tr>
+    <tr>
+      <td>403 Forbidden</td>
+      <td>필요한 권한 범위가 없음</td>
+    </tr>
+  </tbody>
+</table>
+
+| 상태 코드            | 설명                            |
+| -------------------- | ------------------------------- |
+| 401 Unauthorized     | API 키가 유효하지 않거나 만료됨 |
+| 403 Forbidden        | 필요한 권한 범위가 없음         |
+| 429 Too Many Request | 단위 시간에 너무 많은 사용량    |
+| 400 Bad Request      | 잘못된 요청 파라미터            |
