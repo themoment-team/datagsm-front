@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  FormErrorMessage,
   Input,
   Label,
   Select,
@@ -24,7 +25,6 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { AddStudentSchema, AddStudentType } from '@/entities/student';
-import { FormErrorMessage } from '@/shared/ui';
 import { useCreateStudent, useUpdateStudent } from '@/widgets/students';
 
 interface StudentFormDialogProps {
