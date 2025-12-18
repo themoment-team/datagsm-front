@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { cn } from '@repo/shared/utils';
-import { BookOpen, ChevronDown, Code2 } from 'lucide-react';
+import { BookOpen, ChevronDown, Code2, User } from 'lucide-react';
 
 import { useDocsSidebar } from '@/widgets/docs';
 
@@ -35,6 +35,11 @@ const sections: Section[] = [
         href: '/docs/api/student',
       },
     ],
+  },
+  {
+    label: 'OAuth',
+    href: '/docs/oauth',
+    icon: User,
   },
 ];
 
