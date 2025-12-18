@@ -46,6 +46,23 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
       <img src={src} alt={alt} className="my-6 w-full rounded-lg" loading="lazy" />
     ),
 
+    table: ({ children }) => (
+      <table className="my-4 w-full table-auto border-collapse border border-gray-300">
+        {children}
+      </table>
+    ),
+
+    thead: ({ children }) => <thead className="bg-gray-100">{children}</thead>,
+
+    tbody: ({ children }) => <tbody>{children}</tbody>,
+
+    tr: ({ children }) => <tr className="border-b border-gray-300">{children}</tr>,
+
+    th: ({ children }) => (
+      <th className="border border-gray-300 px-4 py-2 text-left font-bold">{children}</th>
+    ),
+
+    td: ({ children }) => <td className="border border-gray-300 px-4 py-2">{children}</td>,
     ...components,
   };
 }
