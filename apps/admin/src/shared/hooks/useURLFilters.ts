@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export const useURLFilters = <T extends Record<string, string | number>>() => {
@@ -5,29 +7,32 @@ export const useURLFilters = <T extends Record<string, string | number>>() => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const updateURL = (newFilters: Partial<T>, newPage?: number) => {
-    const params = new URLSearchParams(searchParams.toString());
+  const updateURL = useCallback(
+    (newFilters: Partial<T>, newPage?: number) => {
+      const params = new URLSearchParams(searchParams.toString());
 
-    // 필터 업데이트
-    Object.entries(newFilters).forEach(([key, value]) => {
-      if (value && value !== 'all') {
-        params.set(key, value);
-      } else {
-        params.delete(key);
+      // 필터 업데이트
+      Object.entries(newFilters).forEach(([key, value]) => {
+        if (value && value !== 'all') {
+          params.set(key, String(value));
+        } else {
+          params.delete(key);
+        }
+      });
+
+      // 페이지 업데이트
+      if (newPage !== undefined) {
+        if (newPage === 0) {
+          params.delete('page');
+        } else {
+          params.set('page', newPage.toString());
+        }
       }
-    });
 
-    // 페이지 업데이트
-    if (newPage !== undefined) {
-      if (newPage === 0) {
-        params.delete('page');
-      } else {
-        params.set('page', newPage.toString());
-      }
-    }
-
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
 
   return { updateURL };
 };
