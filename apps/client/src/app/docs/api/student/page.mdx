@@ -1,5 +1,11 @@
 ### 개요
 
+| 필드   | 타입     | 설명        | 예시           |
+| ------ | -------- | ----------- | -------------- |
+| `id`   | Long     | 동아리 ID   | `1`            |
+| `name` | String   | 동아리 이름 | `SW개발동아리` |
+| `type` | ClubType | 동아리 종류 | `MAJOR_CLUB`   |
+
 학생 데이터 OpenAPI는 재학중인 학생 데이터를 간단한 HTTP 요청을 통하여 서비스에 통합할 수
 있도록 돕습니다. 해당 REST API를 호출하여 기본적인 학생 데이터를 획득할 수 있습니다.
 
@@ -25,7 +31,6 @@ GET /api/students
 
 ### 요청 파라미터
 
-```text
 | 파라미터        | 타입        | 필수 여부 | 설명                      | 예시                |
 | --------------- | ----------- | --------- | ------------------------- | ------------------- |
 | `studentId`     | Long        | 선택      | 학생 ID                   | `1`                 |
@@ -40,7 +45,6 @@ GET /api/students
 | `isLeaveSchool` | Boolean     | 선택      | 자퇴 여부                 | `false`             |
 | `page`          | Int         | 선택      | 페이지 번호 (기본값: 0)   | `0`                 |
 | `size`          | Int         | 선택      | 페이지 크기 (기본값: 300) | `300`               |
-```
 
 ### 응답 형식
 
@@ -125,20 +129,6 @@ curl -X GET "https://api.datagsm.com/api/students?grade=1&classNum=1&page=0&size
 
 ### 오류 응답
 
-| 상태 코드              | 설명                            |
-| ---------------------- | ------------------------------- |
-| `401 Unauthorized`     | API 키가 유효하지 않거나 만료됨 |
-| `403 Forbidden`        | 필요한 권한 범위가 없음         |
-| `429 Too Many Request` | 단위 시간에 너무 많은 사용량    |
-| `400 Bad Request`      | 잘못된 요청 파라미터            |
-
-| 상태 코드              | 설명                            |
-| ---------------------- | ------------------------------- |
-| `401 Unauthorized`     | API 키가 유효하지 않거나 만료됨 |
-| `403 Forbidden`        | 필요한 권한 범위가 없음         |
-| `429 Too Many Request` | 단위 시간에 너무 많은 사용량    |
-| `400 Bad Request`      | 잘못된 요청 파라미터            |
-
 <table className="my-4 w-full table-auto border-collapse border border-gray-300">
   <thead className="bg-gray-100">
     <tr>
@@ -155,31 +145,13 @@ curl -X GET "https://api.datagsm.com/api/students?grade=1&classNum=1&page=0&size
       <td className="border border-gray-300 px-4 py-2">403 Forbidden</td>
       <td className="border border-gray-300 px-4 py-2">필요한 권한 범위가 없음</td>
     </tr>
-  </tbody>
-</table>
-
-<table>
-  <thead>
     <tr>
-      <th>상태 코드</th>
-      <th>설명</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>401 Unauthorized</td>
-      <td>API 키가 유효하지 않거나 만료됨</td>
+      <td className="border border-gray-300 px-4 py-2">429 Too Many Request</td>
+      <td className="border border-gray-300 px-4 py-2">단위 시간에 너무 많은 사용량</td>
     </tr>
     <tr>
-      <td>403 Forbidden</td>
-      <td>필요한 권한 범위가 없음</td>
+      <td className="border border-gray-300 px-4 py-2">400 Bad Request </td>
+      <td className="border border-gray-300 px-4 py-2">잘못된 요청 파라미터</td>
     </tr>
   </tbody>
 </table>
-
-| 상태 코드            | 설명                            |
-| -------------------- | ------------------------------- |
-| 401 Unauthorized     | API 키가 유효하지 않거나 만료됨 |
-| 403 Forbidden        | 필요한 권한 범위가 없음         |
-| 429 Too Many Request | 단위 시간에 너무 많은 사용량    |
-| 400 Bad Request      | 잘못된 요청 파라미터            |
