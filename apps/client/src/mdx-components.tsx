@@ -1,3 +1,4 @@
+import { Link } from 'lucide-react';
 import type { MDXComponents } from 'mdx/types';
 
 export function useMDXComponents(components: MDXComponents = {}): MDXComponents {
@@ -5,7 +6,6 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     h1: ({ children }) => (
       <h1 className="text-primary-linear mb-4 mt-10 text-[2.5rem] font-bold">{children}</h1>
     ),
-
     h2: ({ children }) => (
       <h2 className="text-primary-400 mb-4 mt-10 text-[2rem] font-bold">{children}</h2>
     ),
@@ -63,6 +63,33 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     ),
 
     td: ({ children }) => <td className="border border-gray-300 px-4 py-2">{children}</td>,
+
+    a: ({ href = '', children }) => {
+      const isExternal = href.startsWith('http');
+
+      if (isExternal) {
+        return (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-600 hover:text-primary-800 underline underline-offset-4"
+          >
+            {children}
+          </a>
+        );
+      }
+
+      return (
+        <Link
+          href={href}
+          className="text-primary-600 hover:text-primary-800 underline underline-offset-4"
+        >
+          {children}
+        </Link>
+      );
+    },
+
     ...components,
   };
 }
