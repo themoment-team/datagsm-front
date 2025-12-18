@@ -54,12 +54,10 @@ const ClubsPage = () => {
 
   useEffect(() => {
     const hasChanged = filters.clubType !== initialValues.clubType;
-
-    if (filters && hasChanged) {
+    if (hasChanged) {
       updateURL(filters, 0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.clubType]);
+  }, [filters.clubType, initialValues.clubType, updateURL, filters]);
 
   const handlePageChange = (page: number) => {
     updateURL(filters, page);

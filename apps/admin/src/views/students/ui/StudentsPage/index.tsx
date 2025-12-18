@@ -68,7 +68,6 @@ const StudentsPage = () => {
   const currentPage = initialValues.page;
 
   useEffect(() => {
-    // 초기 로드 시에는 URL 업데이트를 건너뜀
     const hasChanged =
       filters.grade !== initialValues.grade ||
       filters.classNum !== initialValues.classNum ||
@@ -76,11 +75,23 @@ const StudentsPage = () => {
       filters.role !== initialValues.role ||
       filters.status !== initialValues.status;
 
-    if (filters && hasChanged) {
+    if (hasChanged) {
       updateURL(filters, 0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.grade, filters.classNum, filters.sex, filters.role, filters.status]);
+  }, [
+    filters.grade,
+    filters.classNum,
+    filters.sex,
+    filters.role,
+    filters.status,
+    initialValues.grade,
+    initialValues.classNum,
+    initialValues.sex,
+    initialValues.role,
+    initialValues.status,
+    updateURL,
+    filters,
+  ]);
 
   const handlePageChange = (page: number) => {
     updateURL(filters, page);
