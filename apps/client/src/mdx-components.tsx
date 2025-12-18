@@ -73,9 +73,9 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary-600 hover:text-primary-800 underline underline-offset-4"
+            className="text-slate-600 underline underline-offset-4 hover:text-slate-800"
           >
-            {children}
+            {children}↗
           </a>
         );
       }
