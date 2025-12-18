@@ -4,6 +4,7 @@ export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
   getApiKey: () => '/v1/auth/api-key',
   getApiKeyRenewable: () => '/v1/auth/api-key/renewable',
+  getAvailableScope: (userRole: string) => `/v1/auth/scopes?role=${userRole}`,
   postGoogleLogin: () => '/v1/auth/google',
   postApiKey: () => '/v1/auth/api-key',
   putApiKey: () => '/v1/auth/api-key',

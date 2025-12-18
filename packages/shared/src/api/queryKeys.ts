@@ -1,6 +1,8 @@
 export const authQueryKeys = {
   getApiKey: () => ['auth', 'api-key', 'get'] as const,
   getApiKeyRenewable: () => ['auth', 'api-key', 'renewable'] as const,
+  getAvailableScope: (userRole: string) =>
+    ['auth', 'api-key', 'available-scope', userRole] as const,
   deleteApiKey: () => ['auth', 'api-key', 'delete'] as const,
   postApiKey: () => ['auth', 'api-key', 'create'] as const,
   putApiKey: () => ['auth', 'api-key', 'update'] as const,
