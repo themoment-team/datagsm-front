@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
@@ -36,16 +36,17 @@ const StudentsPage = () => {
     setIsEditDialogOpen(true);
   };
 
-  const getInitialValues = (): StudentFilterType & { page: number } => ({
-    grade: searchParams.get('grade') || 'all',
-    classNum: searchParams.get('classNum') || 'all',
-    sex: searchParams.get('sex') || 'all',
-    role: searchParams.get('role') || 'all',
-    status: searchParams.get('status') || 'all',
-    page: Number(searchParams.get('page')) || 0,
-  });
-
-  const initialValues = getInitialValues();
+  const initialValues = useMemo(
+    (): StudentFilterType & { page: number } => ({
+      grade: searchParams.get('grade') || 'all',
+      classNum: searchParams.get('classNum') || 'all',
+      sex: searchParams.get('sex') || 'all',
+      role: searchParams.get('role') || 'all',
+      status: searchParams.get('status') || 'all',
+      page: Number(searchParams.get('page')) || 0,
+    }),
+    [searchParams],
+  );
 
   const form = useForm<StudentFilterType>({
     resolver: zodResolver(StudentFilterSchema),

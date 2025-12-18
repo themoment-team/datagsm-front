@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
@@ -29,12 +29,13 @@ const ClubsPage = () => {
     setIsEditDialogOpen(true);
   };
 
-  const getInitialValues = (): ClubFilterType & { page: number } => ({
-    clubType: searchParams.get('clubType') || 'all',
-    page: Number(searchParams.get('page')) || 0,
-  });
-
-  const initialValues = getInitialValues();
+  const initialValues = useMemo(
+    (): ClubFilterType & { page: number } => ({
+      clubType: searchParams.get('clubType') || 'all',
+      page: Number(searchParams.get('page')) || 0,
+    }),
+    [searchParams],
+  );
 
   const form = useForm<ClubFilterType>({
     resolver: zodResolver(ClubFilterSchema),
