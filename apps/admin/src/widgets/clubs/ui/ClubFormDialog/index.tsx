@@ -103,8 +103,8 @@ const ClubFormDialog = ({
   const onSubmit: SubmitHandler<AddClubType> = (data) => {
     if (mode === 'create') {
       createClub(data);
-    } else {
-      updateClub({ clubId: club!.id, data });
+    } else if (mode === 'edit' && club) {
+      updateClub({ clubId: club.id, data });
     }
   };
 

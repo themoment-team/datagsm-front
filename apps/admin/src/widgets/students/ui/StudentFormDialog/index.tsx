@@ -127,8 +127,8 @@ const StudentFormDialog = ({
   const onSubmit: SubmitHandler<AddStudentType> = (data) => {
     if (mode === 'create') {
       createStudent(data);
-    } else {
-      updateStudent({ studentId: student!.id, data });
+    } else if (mode === 'edit' && student) {
+      updateStudent({ studentId: student.id, data });
     }
   };
 
