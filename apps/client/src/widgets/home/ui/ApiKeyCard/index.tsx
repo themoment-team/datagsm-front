@@ -180,7 +180,7 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
             </div>
             <div className="mb-4 space-y-6">
               {availableKeyScope?.data?.data.map((category) => (
-                <div key={category.description}>
+                <div key={category.title}>
                   <h3 className="mb-2 text-sm font-semibold">{category.title}</h3>
                   <div className="space-y-2">
                     {category.scopes.map((scope) => (

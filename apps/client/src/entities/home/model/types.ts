@@ -22,7 +22,6 @@ export interface AvailableScopeData {
 
 export interface AvailableScopeResponse {
   title: string;
-  description: string;
   scopes: AvailableScopeData[];
 }
 
