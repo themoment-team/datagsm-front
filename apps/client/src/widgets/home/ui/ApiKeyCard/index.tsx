@@ -198,31 +198,34 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
                 API 키로 접근할 수 있는 권한을 선택하세요. 여러 개를 선택할 수 있습니다.
               </p>
             </div>
-            <div className="mb-4 space-y-6">
+            <div className={cn('mb-4 space-y-6')}>
               {availableKeyScope?.data?.data.map((category) => (
                 <div key={category.title}>
-                  <h3 className="mb-2 text-sm font-semibold">{category.title}</h3>
-                  <div className="space-y-2">
+                  <h3 className={cn('mb-2 text-sm font-semibold')}>{category.title}</h3>
+                  <div className={cn('space-y-2')}>
                     {category.scopes.map((scope) => (
                       <div
                         key={scope.scope}
-                        className={`flex items-start gap-3 ${
-                          category.scopes.length > 1 ? getIndentation(scope.scope) : ''
-                        }`}
+                        className={cn(
+                          'flex items-start gap-3',
+                          category.scopes.length > 1 && getIndentation(scope.scope),
+                        )}
                       >
                         <Checkbox
                           id={scope.scope}
                           checked={isScopeChecked(scope.scope)}
                           onCheckedChange={() => handleScopeToggle(scope.scope)}
                         />
-                        <div className="flex-1">
+                        <div className={cn('flex-1')}>
                           <label
                             htmlFor={scope.scope}
-                            className={`cursor-pointer text-sm font-medium leading-none`}
+                            className={cn('cursor-pointer text-sm font-medium leading-none')}
                           >
                             {scope.scope}
                           </label>
-                          <p className="text-muted-foreground mt-1 text-sm">{scope.description}</p>
+                          <p className={cn('text-muted-foreground mt-1 text-sm')}>
+                            {scope.description}
+                          </p>
                         </div>
                       </div>
                     ))}
