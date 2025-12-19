@@ -1,4 +1,6 @@
-import { Link } from 'lucide-react';
+import Image from 'next/image';
+import NextLink from 'next/link';
+
 import type { MDXComponents } from 'mdx/types';
 
 export function useMDXComponents(components: MDXComponents = {}): MDXComponents {
@@ -6,6 +8,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     h1: ({ children }) => (
       <h1 className="text-primary-linear mb-4 mt-10 text-[2.5rem] font-bold">{children}</h1>
     ),
+
     h2: ({ children }) => (
       <h2 className="text-primary-400 mb-4 mt-10 text-[2rem] font-bold">{children}</h2>
     ),
@@ -42,8 +45,15 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
 
     em: ({ children }) => <span className="italic">{children}</span>,
 
-    img: ({ src, alt }) => (
-      <img src={src} alt={alt} className="my-6 w-full rounded-lg" loading="lazy" />
+    img: ({ src = '', alt = '' }) => (
+      <Image
+        src={src}
+        alt={alt}
+        width={1200}
+        height={700}
+        sizes="100vw"
+        className="my-6 h-auto w-full rounded-lg"
+      />
     ),
 
     table: ({ children }) => (
@@ -75,18 +85,18 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
             rel="noopener noreferrer"
             className="text-slate-600 underline underline-offset-4 hover:text-slate-800"
           >
-            {children}↗
+            {children} ↗
           </a>
         );
       }
 
       return (
-        <Link
+        <NextLink
           href={href}
           className="text-primary-600 hover:text-primary-800 underline underline-offset-4"
         >
           {children}
-        </Link>
+        </NextLink>
       );
     },
 
