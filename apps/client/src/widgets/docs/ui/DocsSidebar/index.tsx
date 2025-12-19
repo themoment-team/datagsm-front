@@ -52,7 +52,7 @@ const DocsSidebar = () => {
       sections.map((section) => [section.href, isDescendant(section.href)]),
     );
     setOpenMap(initialOpenMap);
-  }, []);
+  }, [isDescendant]);
 
   const toggle = (href: string) => {
     setOpenMap((prev) => ({
