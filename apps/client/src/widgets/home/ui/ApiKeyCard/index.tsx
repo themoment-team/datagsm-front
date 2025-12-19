@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authQueryKeys } from '@repo/shared/api';
@@ -34,23 +34,8 @@ const COPIED_STATE_DURATION_MS = 2000;
 
 const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCardProps) => {
   const [copied, setCopied] = useState(false);
-  const [selectedScopes, setSelectedScopes] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
-
-  const {
-    handleSubmit,
-    register,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<CreateApiKeyType>({
-    resolver: zodResolver(CreateApiKeySchema),
-    defaultValues: {
-      scopes: [],
-      description: '',
-    },
-  });
 
   const userRole = 'USER';
 
@@ -85,6 +70,20 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
     },
   });
 
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    register,
+    formState: { errors },
+  } = useForm<CreateApiKeyType>({
+    resolver: zodResolver(CreateApiKeySchema),
+    defaultValues: {
+      scopes: apiKeyData?.data?.scopes || [''],
+      description: apiKeyData?.data?.description || '',
+    },
+  });
+
   const buttonText = isCreatingApiKey
     ? 'API 키 생성 중...'
     : apiKeyData?.data?.apiKey
@@ -110,36 +109,34 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
   };
 
   const handleScopeToggle = (scopeId: string) => {
+    const currentScopes = watch('scopes');
+
     // 전체 scope 선택했을때 : ex) student:*
     if (scopeId.endsWith(':*')) {
-      setSelectedScopes((prev) => {
-        const [prefix] = scopeId.split(':');
-        const availableScopes = availableKeyScope?.data?.data ?? [];
-        const relatedScopeIds = availableScopes.flatMap((category) =>
-          category.scopes
-            .map((scope) => scope.scope)
-            .filter((id) => id.startsWith(`${prefix}:`) && !id.endsWith(':*')),
-        );
+      const [prefix] = scopeId.split(':');
+      const availableScopes = availableKeyScope?.data?.data;
+      const relatedScopeIds = availableScopes!.flatMap((category) =>
+        category.scopes
+          .map((scope) => scope.scope)
+          .filter((id) => id.startsWith(`${prefix}:`) && !id.endsWith(':*')),
+      );
 
-        const allSelected = relatedScopeIds.every((id) => prev.includes(id));
-        const nextSelected = allSelected
-          ? prev.filter((id) => !relatedScopeIds.includes(id))
-          : Array.from(new Set([...prev, ...relatedScopeIds]));
+      const allSelected = relatedScopeIds.every((id) => currentScopes.includes(id));
+      const nextSelected = allSelected
+        ? currentScopes.filter((id) => !relatedScopeIds.includes(id))
+        : Array.from(new Set([...currentScopes, ...relatedScopeIds]));
 
-        setValue('scopes', nextSelected, { shouldValidate: true });
-        return nextSelected;
-      });
+      setValue('scopes', nextSelected, { shouldValidate: true });
       return;
     }
 
     // 일반 scope 단일 토글
-    setSelectedScopes((prev) => {
-      const isSelected = prev.includes(scopeId);
-      const nextSelected = isSelected ? prev.filter((id) => id !== scopeId) : [...prev, scopeId];
+    const isSelected = currentScopes.includes(scopeId);
+    const nextSelected = isSelected
+      ? currentScopes.filter((id) => id !== scopeId)
+      : [...currentScopes, scopeId];
 
-      setValue('scopes', nextSelected, { shouldValidate: true });
-      return nextSelected;
-    });
+    setValue('scopes', nextSelected, { shouldValidate: true });
   };
 
   const getIndentation = (level: string) => {
@@ -148,6 +145,8 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
   };
 
   const isScopeChecked = (scopeId: string) => {
+    const currentScopes = watch('scopes');
+
     // 젅체 scope를 선택시 끝나는 scope의 경우, 하위 모든 scope가 선택되어 있는지 확인
     if (scopeId.endsWith(':*')) {
       const [prefix] = scopeId.split(':');
@@ -160,20 +159,15 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
 
       if (relatedScopeIds.length === 0) return false;
 
-      return relatedScopeIds.every((id) => selectedScopes.includes(id));
+      return relatedScopeIds.every((id) => currentScopes.includes(id));
     }
 
-    return selectedScopes.includes(scopeId);
+    return currentScopes.includes(scopeId);
   };
 
-  const onSubmit = () => {
-    console.log();
-    createApiKey({ scopes: watch('scopes'), description: watch('description') });
+  const onSubmit = (data: CreateApiKeyType) => {
+    createApiKey({ scopes: data.scopes, description: data.description });
   };
-
-  useEffect(() => {
-    console.log(selectedScopes);
-  }, [selectedScopes]);
 
   if (isLoadingApiKey || isLoadingKeyScope) {
     return (
@@ -183,18 +177,17 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
     );
   }
 
-  // if (isLoadingKeyScope) {
-  //   return (
-  //     <Card className={cn('p-6')}>
-  //       <div className={cn('text-gray-500')}>API key 범위를 불러오는 중...</div>
-  //     </Card>
-  //   );
-  // }
+  if (isLoadingKeyScope) {
+    return (
+      <Card className={cn('p-6')}>
+        <div className={cn('text-gray-500')}>API key 범위를 불러오는 중...</div>
+      </Card>
+    );
+  }
 
   return (
     <div className={cn('flex flex-col gap-6')}>
       {/** api key 발급/갱신 scope 설정 */}
-
       <Card className={cn('p-6')}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={cn('mb-6 flex flex-col gap-4')}>
@@ -242,7 +235,7 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
                 );
               })}
             </div>
-            <Input placeholder="API의 사용처를 작성해주세요" />
+            <Input placeholder="API의 사용처를 작성해주세요" {...register('description')} />
             <FormErrorMessage
               error={Array.isArray(errors.scopes) ? errors.scopes[0] : errors.scopes}
             />
