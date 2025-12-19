@@ -4,17 +4,16 @@ import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authQueryKeys } from '@repo/shared/api';
-import { Button, Card, Checkbox, FormErrorMessage } from '@repo/shared/ui';
+import { Button, Card, Checkbox, FormErrorMessage, Input } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { Check, Copy, RefreshCw } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import {
   ApiKeyRenewableResponse,
   ApiKeyResponse,
-  AvailableScopeData,
   CreateApiKeySchema,
   CreateApiKeyType,
 } from '@/entities/home';
@@ -41,6 +40,7 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
 
   const {
     handleSubmit,
+    register,
     watch,
     setValue,
     formState: { errors },
@@ -52,7 +52,7 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
     },
   });
 
-  const userRole = 'ADMIN';
+  const userRole = 'USER';
 
   const { data: availableKeyScope, isLoading: isLoadingKeyScope } = useGetAvailableScope(userRole);
 
@@ -116,7 +116,9 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
         const [prefix] = scopeId.split(':');
         const availableScopes = availableKeyScope?.data?.data ?? [];
         const relatedScopeIds = availableScopes.flatMap((category) =>
-          category.scopes.map((scope) => scope.scope).filter((id) => id.startsWith(`${prefix}:`)),
+          category.scopes
+            .map((scope) => scope.scope)
+            .filter((id) => id.startsWith(`${prefix}:`) && !id.endsWith(':*')),
         );
 
         const allSelected = relatedScopeIds.every((id) => prev.includes(id));
@@ -169,6 +171,10 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
     createApiKey({ scopes: watch('scopes'), description: watch('description') });
   };
 
+  useEffect(() => {
+    console.log(selectedScopes);
+  }, [selectedScopes]);
+
   if (isLoadingApiKey || isLoadingKeyScope) {
     return (
       <Card className={cn('p-6')}>
@@ -199,40 +205,44 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
               </p>
             </div>
             <div className={cn('mb-4 space-y-6')}>
-              {availableKeyScope?.data?.data.map((category) => (
-                <div key={category.title}>
-                  <h3 className={cn('mb-2 text-sm font-semibold')}>{category.title}</h3>
-                  <div className={cn('space-y-2')}>
-                    {category.scopes.map((scope) => (
-                      <div
-                        key={scope.scope}
-                        className={cn(
-                          'flex items-start gap-3',
-                          category.scopes.length > 1 && getIndentation(scope.scope),
-                        )}
-                      >
-                        <Checkbox
-                          id={scope.scope}
-                          checked={isScopeChecked(scope.scope)}
-                          onCheckedChange={() => handleScopeToggle(scope.scope)}
-                        />
-                        <div className={cn('flex-1')}>
-                          <label
-                            htmlFor={scope.scope}
-                            className={cn('cursor-pointer text-sm font-medium leading-none')}
-                          >
-                            {scope.scope}
-                          </label>
-                          <p className={cn('text-muted-foreground mt-1 text-sm')}>
-                            {scope.description}
-                          </p>
+              {availableKeyScope?.data?.data.map((category) => {
+                const isScopeOnlyOne = category.scopes.length > 1;
+                return (
+                  <div key={category.title}>
+                    <h3 className={cn('mb-2 text-sm font-semibold')}>{category.title}</h3>
+                    <div className={cn('space-y-2')}>
+                      {category.scopes.map((scope) => (
+                        <div
+                          key={scope.scope}
+                          className={cn(
+                            'flex items-start gap-3',
+                            isScopeOnlyOne && getIndentation(scope.scope),
+                          )}
+                        >
+                          <Checkbox
+                            id={scope.scope}
+                            checked={isScopeChecked(scope.scope)}
+                            onCheckedChange={() => handleScopeToggle(scope.scope)}
+                          />
+                          <div className={cn('flex-1')}>
+                            <label
+                              htmlFor={scope.scope}
+                              className={cn('cursor-pointer text-sm font-medium leading-none')}
+                            >
+                              {scope.scope}
+                            </label>
+                            <p className={cn('text-muted-foreground mt-1 text-sm')}>
+                              {scope.description}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
+            <Input placeholder="API의 사용처를 작성해주세요" />
             <FormErrorMessage
               error={Array.isArray(errors.scopes) ? errors.scopes[0] : errors.scopes}
             />
@@ -263,18 +273,6 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
               <code className={cn('break-all font-mono text-sm')}>{apiKeyData?.data?.apiKey}</code>
             </div>
             <div className={cn('flex gap-2')}>
-              {/**
-              <Button
-              size="icon"
-              variant="outline"
-              onClick={handleCopy}
-              disabled={isUpdatingApiKey}
-              className={cn('disabled:opacity-100')}
-            >
-              <RefreshCw className={cn(`h-4 w-4 ${isUpdatingApiKey ? 'animate-spin' : ''}`)} />
-            </Button>
-             */}
-
               <Button
                 size="icon"
                 variant="outline"
