@@ -52,7 +52,7 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
     },
   });
 
-  const userRole = 'USER';
+  const userRole = 'ADMIN';
 
   const { data: availableKeyScope, isLoading: isLoadingKeyScope } = useGetAvailableScope(userRole);
 
@@ -111,23 +111,24 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
 
   const handleScopeToggle = (scopeId: string) => {
     // 전체 scope 선택했을때 : ex) student:*
-    // if (scopeId.endsWith(':*')) {
-    //   setSelectedScopes((prev) => {
-    //     const [prefix] = scopeId.split(':');
-    //     const relatedScopeIds = availableKeyScope.flatMap((category) =>
-    //       category.scopes.map((scope) => scope.id).filter((id) => id.startsWith(`${prefix}:`)),
-    //     );
+    if (scopeId.endsWith(':*')) {
+      setSelectedScopes((prev) => {
+        const [prefix] = scopeId.split(':');
+        const availableScopes = availableKeyScope?.data?.data ?? [];
+        const relatedScopeIds = availableScopes.flatMap((category) =>
+          category.scopes.map((scope) => scope.scope).filter((id) => id.startsWith(`${prefix}:`)),
+        );
 
-    //     const allSelected = relatedScopeIds.every((id) => prev.includes(id));
-    //     const nextSelected = allSelected
-    //       ? prev.filter((id) => !relatedScopeIds.includes(id))
-    //       : Array.from(new Set([...prev, ...relatedScopeIds]));
+        const allSelected = relatedScopeIds.every((id) => prev.includes(id));
+        const nextSelected = allSelected
+          ? prev.filter((id) => !relatedScopeIds.includes(id))
+          : Array.from(new Set([...prev, ...relatedScopeIds]));
 
-    //     setValue('scopes', nextSelected, { shouldValidate: true });
-    //     return nextSelected;
-    //   });
-    //   return;
-    // }
+        setValue('scopes', nextSelected, { shouldValidate: true });
+        return nextSelected;
+      });
+      return;
+    }
 
     // 일반 scope 단일 토글
     setSelectedScopes((prev) => {
@@ -142,6 +143,25 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
   const getIndentation = (level: string) => {
     if (level.includes(':*')) return 'pl-0';
     return 'pl-6';
+  };
+
+  const isScopeChecked = (scopeId: string) => {
+    // 젅체 scope를 선택시 끝나는 scope의 경우, 하위 모든 scope가 선택되어 있는지 확인
+    if (scopeId.endsWith(':*')) {
+      const [prefix] = scopeId.split(':');
+      const availableScopes = availableKeyScope?.data?.data ?? [];
+      const relatedScopeIds = availableScopes.flatMap((category) =>
+        category.scopes
+          .map((scope) => scope.scope)
+          .filter((id) => id.startsWith(`${prefix}:`) && !id.endsWith(':*')),
+      );
+
+      if (relatedScopeIds.length === 0) return false;
+
+      return relatedScopeIds.every((id) => selectedScopes.includes(id));
+    }
+
+    return selectedScopes.includes(scopeId);
   };
 
   const onSubmit = () => {
@@ -186,19 +206,19 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
                     {category.scopes.map((scope) => (
                       <div
                         key={scope.scope}
-                        className={`flex items-start gap-3 ${getIndentation(scope.scope)}`}
+                        className={`flex items-start gap-3 ${
+                          category.scopes.length > 1 ? getIndentation(scope.scope) : ''
+                        }`}
                       >
                         <Checkbox
                           id={scope.scope}
-                          checked={selectedScopes.includes(scope.scope)}
+                          checked={isScopeChecked(scope.scope)}
                           onCheckedChange={() => handleScopeToggle(scope.scope)}
                         />
                         <div className="flex-1">
                           <label
                             htmlFor={scope.scope}
-                            className={`cursor-pointer text-sm font-medium leading-none ${
-                              selectedScopes.includes(scope.scope) ? 'text-muted-foreground' : ''
-                            }`}
+                            className={`cursor-pointer text-sm font-medium leading-none`}
                           >
                             {scope.scope}
                           </label>
