@@ -28,11 +28,4 @@ export interface AvailableScopeResponse {
 export type getAvailableScopeResponse = ApiResponse<{
   data: AvailableScopeResponse[];
 }>;
-
-export interface ApiKeyRenewableData {
-  renewable: boolean;
-}
-
 export type ApiKeyResponse = ApiResponse<ApiKeyData>;
-
-export type ApiKeyRenewableResponse = ApiResponse<ApiKeyRenewableData>;

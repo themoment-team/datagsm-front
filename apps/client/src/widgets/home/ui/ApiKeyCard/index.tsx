@@ -11,28 +11,21 @@ import { Check, Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import {
-  ApiKeyRenewableResponse,
-  ApiKeyResponse,
-  CreateApiKeySchema,
-  CreateApiKeyType,
-} from '@/entities/home';
+import { ApiKeyResponse, CreateApiKeySchema, CreateApiKeyType } from '@/entities/home';
 import {
   useCreateApiKey,
   useGetApiKey,
-  useGetApiKeyRenewable,
   useGetAvailableScope,
   useUpdateApiKey,
 } from '@/widgets/home';
 
 interface ApiKeyCardProps {
   initialApiKeyData?: ApiKeyResponse;
-  initialApiKeyRenewableData?: ApiKeyRenewableResponse;
 }
 
 const COPIED_STATE_DURATION_MS = 2000;
 
-const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCardProps) => {
+const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
   const [copied, setCopied] = useState(false);
 
   const queryClient = useQueryClient();
@@ -55,9 +48,9 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
     },
   });
 
-  const { data: apiKeyRenewableData } = useGetApiKeyRenewable({
-    initialData: initialApiKeyRenewableData,
-  });
+  // const { data: apiKeyRenewableData } = useGetApiKeyRenewable({
+  //   initialData: initialApiKeyRenewableData,
+  // });
 
   const { isPending: isUpdatingApiKey, mutate: updateApiKey } = useUpdateApiKey({
     onSuccess: () => {
@@ -79,7 +72,7 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
   } = useForm<CreateApiKeyType>({
     resolver: zodResolver(CreateApiKeySchema),
     defaultValues: {
-      scopes: apiKeyData?.data?.scopes || [''],
+      scopes: apiKeyData?.data?.scopes || [],
       description: apiKeyData?.data?.description || '',
     },
   });
@@ -93,11 +86,11 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
         : 'API 키 생성하기';
 
   const handleRenew = () => {
-    const renewable = apiKeyRenewableData?.data?.renewable;
-    if (!renewable) {
-      toast.error('아직 API Key를 갱신할 수 없습니다.');
-      return;
-    }
+    // const renewable = apiKeyRenewableData?.data?.renewable;
+    // if (!renewable) {
+    //   toast.error('아직 API Key를 갱신할 수 없습니다.');
+    //   return;
+    // }
     updateApiKey();
   };
 
@@ -166,6 +159,9 @@ const ApiKeyCard = ({ initialApiKeyData, initialApiKeyRenewableData }: ApiKeyCar
   };
 
   const onSubmit = (data: CreateApiKeyType) => {
+    if (apiKeyData?.data?.apiKey) {
+      handleRenew();
+    }
     createApiKey({ scopes: data.scopes, description: data.description });
   };
 
