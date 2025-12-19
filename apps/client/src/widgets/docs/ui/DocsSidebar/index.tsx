@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
@@ -44,8 +44,15 @@ const sections: Section[] = [
 ];
 
 const DocsSidebar = () => {
-  const { isActive } = useDocsSidebar();
+  const { isActive, isDescendant } = useDocsSidebar();
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const initialOpenMap = Object.fromEntries(
+      sections.map((section) => [section.href, isDescendant(section.href)]),
+    );
+    setOpenMap(initialOpenMap);
+  }, []);
 
   const toggle = (href: string) => {
     setOpenMap((prev) => ({
