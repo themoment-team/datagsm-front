@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Club, ClubType } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { ClubFilterSchema, ClubFilterType } from '@/entities/club';
@@ -76,13 +77,13 @@ const ClubsPage = () => {
   const totalPages = clubsData?.data.totalPages ?? 0;
 
   return (
-    <div className="bg-background h-[calc(100vh-4.0625rem)]">
-      <main className="container mx-auto px-4 py-8">
+    <div className={cn('bg-background h-[calc(100vh-4.0625rem)]')}>
+      <main className={cn('container mx-auto px-4 py-8')}>
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl">동아리 관리</CardTitle>
-              <div className="flex items-center gap-2">
+            <div className={cn('flex items-center justify-between')}>
+              <CardTitle className={cn('text-2xl')}>동아리 관리</CardTitle>
+              <div className={cn('flex items-center gap-2')}>
                 <ClubExcelActions />
                 <ClubFormDialog mode="create" />
               </div>

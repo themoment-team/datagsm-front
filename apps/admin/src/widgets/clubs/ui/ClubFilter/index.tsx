@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 import { Control, Controller } from 'react-hook-form';
 
 import { ClubFilterType } from '@/entities/club';
@@ -16,15 +17,15 @@ interface ClubFilterProps {
 
 const ClubFilter = ({ control }: ClubFilterProps) => {
   return (
-    <div className="mt-4 flex items-center gap-4">
-      <div className="flex items-center gap-2">
-        <Label className="text-sm">타입:</Label>
+    <div className={cn('mt-4 flex items-center gap-4')}>
+      <div className={cn('flex items-center gap-2')}>
+        <Label className={cn('text-sm')}>타입:</Label>
         <Controller
           control={control}
           name="clubType"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className="w-24">
+              <SelectTrigger className={cn('w-24')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
