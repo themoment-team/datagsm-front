@@ -1,5 +1,14 @@
 import { Club } from '@repo/shared/types';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   Badge,
   Button,
   Skeleton,
@@ -11,9 +20,12 @@ import {
   TableRow,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-import { Pencil } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Pencil, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { getTypeBadgeVariant, getTypeLabel } from '@/entities/club';
+import { useDeleteClub } from '@/widgets/clubs';
 
 interface ClubListProps {
   clubs: Club[];
@@ -22,6 +34,19 @@ interface ClubListProps {
 }
 
 const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteClub } = useDeleteClub({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clubs'] });
+      toast.success('동아리가 삭제되었습니다.');
+    },
+    onError: (error) => {
+      console.error('동아리 삭제 실패:', error);
+      toast.error('동아리 삭제에 실패했습니다.');
+    },
+  });
+
   return (
     <div className={cn('mb-4 overflow-x-auto rounded-md border')}>
       <Table>
@@ -29,7 +54,7 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
           <TableRow>
             <TableHead>동아리명</TableHead>
             <TableHead>타입</TableHead>
-            <TableHead className={cn('w-20')}>수정</TableHead>
+            <TableHead className={cn('w-30')}>작업</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -56,9 +81,36 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon" onClick={() => onEdit?.(club)}>
-                      <Pencil className={cn('h-4 w-4')} />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => onEdit?.(club)}>
+                        <Pencil className={cn('h-4 w-4')} />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" title="삭제">
+                            <Trash2 className="text-destructive h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>동아리 삭제</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              정말로 {club.name} 동아리를 삭제하시겠습니까? 이 작업은 되돌릴 수
+                              없습니다.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>취소</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteClub(club.id)}
+                              className="bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white"
+                            >
+                              삭제
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

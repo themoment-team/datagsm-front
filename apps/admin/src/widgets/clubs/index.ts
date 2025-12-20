@@ -5,3 +5,4 @@ export { default as ClubList } from './ui/ClubList';
 export * from './model/useCreateClub';
 export * from './model/useUpdateClub';
 export * from './model/useUploadClubExcel';
+export * from './model/useDeleteClub';
