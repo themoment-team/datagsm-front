@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authQueryKeys } from '@repo/shared/api';
+import { UserRoleType } from '@repo/shared/types';
 import { Button, Card, Checkbox, FormErrorMessage, Input } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -21,16 +22,15 @@ import {
 
 interface ApiKeyCardProps {
   initialApiKeyData?: ApiKeyResponse;
+  userRole: UserRoleType;
 }
 
 const COPIED_STATE_DURATION_MS = 2000;
 
-const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
+const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
   const [copied, setCopied] = useState(false);
 
   const queryClient = useQueryClient();
-
-  const userRole = 'USER';
 
   const { data: availableKeyScope, isLoading: isLoadingKeyScope } = useGetAvailableScope(userRole);
 
