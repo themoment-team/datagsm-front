@@ -11,7 +11,7 @@ import { Check, Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ApiKeyResponse, CreateApiKeySchema, CreateApiKeyType } from '@/entities/home';
+import { ApiKeyResponse, ApiKeySchema, CreateApiKeyType } from '@/entities/home';
 import {
   useCreateApiKey,
   useGetApiKey,
@@ -38,7 +38,11 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
     initialData: initialApiKeyData,
   });
 
-  const { isPending: isCreatingApiKey, mutate: createApiKey } = useCreateApiKey({
+  const {
+    isPending: isCreatingApiKey,
+    mutate: createApiKey,
+    data: createdApiKey,
+  } = useCreateApiKey({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: authQueryKeys.getApiKey() });
       toast.success('API Key가 생성되었습니다.');
@@ -52,10 +56,13 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
   //   initialData: initialApiKeyRenewableData,
   // });
 
-  const { isPending: isUpdatingApiKey, mutate: updateApiKey } = useUpdateApiKey({
+  const {
+    isPending: isUpdatingApiKey,
+    mutate: updateApiKey,
+    data: updatedApiKey,
+  } = useUpdateApiKey({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: authQueryKeys.getApiKey() });
-      queryClient.invalidateQueries({ queryKey: authQueryKeys.getApiKeyRenewable() });
       toast.success('API Key가 갱신되었습니다.');
     },
     onError: () => {
@@ -70,7 +77,7 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
     register,
     formState: { errors },
   } = useForm<CreateApiKeyType>({
-    resolver: zodResolver(CreateApiKeySchema),
+    resolver: zodResolver(ApiKeySchema),
     defaultValues: {
       scopes: apiKeyData?.data?.scopes || [],
       description: apiKeyData?.data?.description || '',
@@ -85,17 +92,11 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
         ? 'API 키 갱신 중...'
         : 'API 키 생성하기';
 
-  const handleRenew = () => {
-    // const renewable = apiKeyRenewableData?.data?.renewable;
-    // if (!renewable) {
-    //   toast.error('아직 API Key를 갱신할 수 없습니다.');
-    //   return;
-    // }
-    updateApiKey();
-  };
+  const apiKey =
+    createdApiKey?.data.apiKey || updatedApiKey?.data.apiKey || apiKeyData?.data?.apiKey || '';
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(apiKeyData?.data?.apiKey || '');
+    navigator.clipboard.writeText(apiKey);
     setCopied(true);
     toast.success('복사되었습니다.');
     setTimeout(() => setCopied(false), COPIED_STATE_DURATION_MS);
@@ -160,9 +161,10 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
 
   const onSubmit = (data: CreateApiKeyType) => {
     if (apiKeyData?.data?.apiKey) {
-      handleRenew();
+      updateApiKey({ scopes: data.scopes, description: data.description });
+    } else {
+      createApiKey({ scopes: data.scopes, description: data.description });
     }
-    createApiKey({ scopes: data.scopes, description: data.description });
   };
 
   if (isLoadingApiKey || isLoadingKeyScope) {
@@ -259,7 +261,7 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
 
           <div className={cn('flex items-center justify-between gap-4')}>
             <div className={cn('min-w-0 flex-1')}>
-              <code className={cn('break-all font-mono text-sm')}>{apiKeyData?.data?.apiKey}</code>
+              <code className={cn('break-all font-mono text-sm')}>{apiKey}</code>
             </div>
             <div className={cn('flex gap-2')}>
               <Button
