@@ -8,12 +8,14 @@ export interface ApiKeyData {
   description: string;
 }
 
-export const CreateApiKeySchema = z.object({
+export const ApiKeySchema = z.object({
   scopes: z.array(z.string()).min(1, { message: '권한 범위를 최소 1개 이상 선택해주세요.' }), // 추후 수정
   description: z.string().min(1, { message: '설명을 입력해주세요.' }),
 });
 
-export type CreateApiKeyType = z.infer<typeof CreateApiKeySchema>;
+export type CreateApiKeyType = z.infer<typeof ApiKeySchema>;
+
+export type UpdateAPiKeyType = z.infer<typeof ApiKeySchema>;
 
 export interface AvailableScopeData {
   scope: string;
