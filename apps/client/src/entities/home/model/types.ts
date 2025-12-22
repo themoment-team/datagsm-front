@@ -13,6 +13,8 @@ export const ApiKeySchema = z.object({
   description: z.string().min(1, { message: '설명을 입력해주세요.' }),
 });
 
+export type ApiKeyType = z.infer<typeof ApiKeySchema>;
+
 export type CreateApiKeyType = z.infer<typeof ApiKeySchema>;
 
 export type UpdateAPiKeyType = z.infer<typeof ApiKeySchema>;

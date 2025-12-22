@@ -11,7 +11,7 @@ import { Check, Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ApiKeyResponse, ApiKeySchema, CreateApiKeyType } from '@/entities/home';
+import { ApiKeyResponse, ApiKeySchema, ApiKeyType } from '@/entities/home';
 import {
   useCreateApiKey,
   useGetApiKey,
@@ -72,7 +72,7 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
     setValue,
     register,
     formState: { errors },
-  } = useForm<CreateApiKeyType>({
+  } = useForm<ApiKeyType>({
     resolver: zodResolver(ApiKeySchema),
     defaultValues: {
       scopes: apiKeyData?.data?.scopes || [],
@@ -157,7 +157,7 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
     return currentScopes.includes(scopeId);
   };
 
-  const onSubmit = (data: CreateApiKeyType) => {
+  const onSubmit = (data: ApiKeyType) => {
     if (apiKeyData?.data?.apiKey) {
       updateApiKey({ scopes: data.scopes, description: data.description });
     } else {
