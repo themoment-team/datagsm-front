@@ -52,10 +52,6 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
     },
   });
 
-  // const { data: apiKeyRenewableData } = useGetApiKeyRenewable({
-  //   initialData: initialApiKeyRenewableData,
-  // });
-
   const {
     isPending: isUpdatingApiKey,
     mutate: updateApiKey,
@@ -94,6 +90,8 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
 
   const apiKey =
     createdApiKey?.data.apiKey || updatedApiKey?.data.apiKey || apiKeyData?.data?.apiKey || '';
+
+  const apiKeyScopes = apiKeyData?.data?.scopes || [];
 
   const handleCopy = () => {
     navigator.clipboard.writeText(apiKey);
@@ -175,14 +173,6 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
     );
   }
 
-  if (isLoadingKeyScope) {
-    return (
-      <Card className={cn('p-6')}>
-        <div className={cn('text-gray-500')}>API key 범위를 불러오는 중...</div>
-      </Card>
-    );
-  }
-
   return (
     <div className={cn('flex flex-col gap-6')}>
       {/** api key 발급/갱신 scope 설정 */}
@@ -233,10 +223,10 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
                 );
               })}
             </div>
-            <Input placeholder="API의 사용처를 작성해주세요" {...register('description')} />
             <FormErrorMessage
               error={Array.isArray(errors.scopes) ? errors.scopes[0] : errors.scopes}
             />
+            <Input placeholder="API의 사용처를 작성해주세요" {...register('description')} />
             <FormErrorMessage error={errors.description} />
             <Button disabled={isCreatingApiKey || isUpdatingApiKey} size="lg" type="submit">
               {buttonText}
@@ -251,7 +241,7 @@ const ApiKeyCard = ({ initialApiKeyData }: ApiKeyCardProps) => {
           <div className="mb-4">
             <p className="text-muted-foreground mb-2 text-sm">현재 발급된 API 키의 권한:</p>
             <div className="flex flex-wrap gap-2">
-              {initialApiKeyData?.data.scopes.map((scope) => (
+              {apiKeyScopes.map((scope) => (
                 <p key={scope} className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
                   {scope}
                 </p>
