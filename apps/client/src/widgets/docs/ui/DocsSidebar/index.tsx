@@ -52,7 +52,8 @@ const DocsSidebar = () => {
       sections.map((section) => [section.href, isDescendant(section.href)]),
     );
     setOpenMap(initialOpenMap);
-  }, [isDescendant]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggle = (href: string) => {
     setOpenMap((prev) => ({
