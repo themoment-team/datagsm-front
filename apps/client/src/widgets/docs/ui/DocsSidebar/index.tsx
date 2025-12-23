@@ -9,7 +9,7 @@ import { BookOpen, ChevronDown, Code2, User } from 'lucide-react';
 
 import { useDocsSidebar } from '@/widgets/docs';
 
-type Section = {
+interface Section {
   label: string;
   href: string;
   icon: React.ElementType;
@@ -17,7 +17,7 @@ type Section = {
     label: string;
     href: string;
   }[];
-};
+}
 
 const sections: Section[] = [
   {
