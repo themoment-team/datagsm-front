@@ -1,35 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ClubListResponse, Student, StudentRole, StudentSex } from '@repo/shared/types';
+import { Student, StudentRole, StudentSex } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
+import { useURLFilters } from '@/shared/hooks';
+import { CommonPagination } from '@/shared/ui';
+import { useGetClubs } from '@/views/clubs';
 import { useGetStudents } from '@/views/students';
 import {
   StudentExcelActions,
   StudentFilter,
   StudentFormDialog,
   StudentList,
-  StudentPagination,
 } from '@/widgets/students';
 
 const PAGE_SIZE = 10;
 
-interface StudentsPageProps {
-  initialClubsData?: ClubListResponse;
-}
-
-const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
+const StudentsPage = () => {
   const searchParams = useSearchParams();
+  const { updateURL } = useURLFilters<StudentFilterType>();
 
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -39,16 +36,17 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
     setIsEditDialogOpen(true);
   };
 
-  const getInitialValues = (): StudentFilterType & { page: number } => ({
-    grade: searchParams.get('grade') || 'all',
-    classNum: searchParams.get('classNum') || 'all',
-    sex: searchParams.get('sex') || 'all',
-    role: searchParams.get('role') || 'all',
-    status: searchParams.get('status') || 'all',
-    page: Number(searchParams.get('page')) || 0,
-  });
-
-  const initialValues = getInitialValues();
+  const initialValues = useMemo(
+    (): StudentFilterType & { page: number } => ({
+      grade: searchParams.get('grade') || 'all',
+      classNum: searchParams.get('classNum') || 'all',
+      sex: searchParams.get('sex') || 'all',
+      role: searchParams.get('role') || 'all',
+      status: searchParams.get('status') || 'all',
+      page: Number(searchParams.get('page')) || 0,
+    }),
+    [searchParams],
+  );
 
   const form = useForm<StudentFilterType>({
     resolver: zodResolver(StudentFilterSchema),
@@ -69,32 +67,7 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
 
   const currentPage = initialValues.page;
 
-  const updateURL = (newFilters: Partial<StudentFilterType>, newPage?: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    // 필터 업데이트
-    Object.entries(newFilters).forEach(([key, value]) => {
-      if (value && value !== 'all') {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-    });
-
-    // 페이지 업데이트
-    if (newPage !== undefined) {
-      if (newPage === 0) {
-        params.delete('page');
-      } else {
-        params.set('page', newPage.toString());
-      }
-    }
-
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
-
   useEffect(() => {
-    // 초기 로드 시에는 URL 업데이트를 건너뜀
     const hasChanged =
       filters.grade !== initialValues.grade ||
       filters.classNum !== initialValues.classNum ||
@@ -102,11 +75,23 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
       filters.role !== initialValues.role ||
       filters.status !== initialValues.status;
 
-    if (filters && hasChanged) {
+    if (hasChanged) {
       updateURL(filters, 0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.grade, filters.classNum, filters.sex, filters.role, filters.status]);
+  }, [
+    filters.grade,
+    filters.classNum,
+    filters.sex,
+    filters.role,
+    filters.status,
+    initialValues.grade,
+    initialValues.classNum,
+    initialValues.sex,
+    initialValues.role,
+    initialValues.status,
+    updateURL,
+    filters,
+  ]);
 
   const handlePageChange = (page: number) => {
     updateURL(filters, page);
@@ -124,6 +109,8 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(queryParams);
 
+  const { data: clubsData, isLoading: isLoadingClubs } = useGetClubs({});
+
   const students = studentsData?.data.students;
 
   const totalPages = studentsData?.data.totalPages ?? 0;
@@ -137,7 +124,11 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
               <CardTitle className={cn('text-2xl')}>학생 관리</CardTitle>
               <div className={cn('flex items-center gap-2')}>
                 <StudentExcelActions />
-                <StudentFormDialog mode="create" clubs={initialClubsData?.data} />
+                <StudentFormDialog
+                  mode="create"
+                  clubs={clubsData?.data}
+                  isLoadingClubs={isLoadingClubs}
+                />
               </div>
             </div>
 
@@ -150,7 +141,7 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
                 isLoading={isLoadingStudents}
                 onEdit={handleEditStudent}
               />
-              <StudentPagination
+              <CommonPagination
                 isLoading={isLoadingStudents}
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -164,9 +155,10 @@ const StudentsPage = ({ initialClubsData }: StudentsPageProps) => {
           <StudentFormDialog
             mode="edit"
             student={editingStudent}
-            clubs={initialClubsData?.data}
+            clubs={clubsData?.data}
             open={isEditDialogOpen}
             onOpenChange={setIsEditDialogOpen}
+            isLoadingClubs={isLoadingClubs}
           />
         )}
       </main>

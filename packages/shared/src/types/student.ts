@@ -20,9 +20,9 @@ export interface Student {
   dormitoryFloor: number;
   dormitoryRoom: number;
   isLeaveSchool: boolean;
-  majorClub: Club;
-  jobClub: Club;
-  autonomousClub: Club;
+  majorClub: Club | null;
+  jobClub: Club | null;
+  autonomousClub: Club | null;
 }
 
 export interface StudentListData {

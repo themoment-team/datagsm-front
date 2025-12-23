@@ -34,6 +34,7 @@ interface StudentFormDialogProps {
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  isLoadingClubs?: boolean;
 }
 
 const StudentFormDialog = ({
@@ -43,6 +44,7 @@ const StudentFormDialog = ({
   trigger,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
+  isLoadingClubs = false,
 }: StudentFormDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
@@ -125,8 +127,8 @@ const StudentFormDialog = ({
   const onSubmit: SubmitHandler<AddStudentType> = (data) => {
     if (mode === 'create') {
       createStudent(data);
-    } else {
-      updateStudent({ studentId: student!.id, data });
+    } else if (mode === 'edit' && student) {
+      updateStudent({ studentId: student.id, data });
     }
   };
 
@@ -137,12 +139,12 @@ const StudentFormDialog = ({
 
   const defaultTrigger =
     mode === 'create' ? (
-      <Button size="sm" className={cn('gap-2')}>
+      <Button size="sm" className={cn('gap-2')} disabled={isLoadingClubs}>
         <Plus className={cn('h-4 w-4')} />
         학생 추가
       </Button>
     ) : (
-      <Button variant="ghost" size="icon">
+      <Button variant="ghost" size="icon" disabled={isLoadingClubs}>
         <Pencil className={cn('h-4 w-4')} />
       </Button>
     );
