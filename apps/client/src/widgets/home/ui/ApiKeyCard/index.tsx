@@ -165,7 +165,7 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
   };
 
   const onSubmit = ({ scopes, description }: ApiKeyType) => {
-    const data = { scopes: scopes, description: description };
+    const data = { scopes, description };
 
     if (apiKeyData?.data?.apiKey) {
       updateApiKey(data);
