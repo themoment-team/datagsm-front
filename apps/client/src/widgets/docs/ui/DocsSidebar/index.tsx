@@ -3,15 +3,18 @@
 import { useState } from 'react';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { cn } from '@repo/shared/utils';
 import { ChevronDown, Menu, X } from 'lucide-react';
 
 import { docsSections } from '@/widgets/docs/config/docsSections';
-import { useDocsSidebar } from '@/widgets/docs/model/useDocsSidebar';
 
 const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
-  const { isActive, isDescendant } = useDocsSidebar();
+  const pathname = usePathname();
+
+  const isActive = (href: string) => pathname === href;
+  const isDescendant = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   const [openMap, setOpenMap] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(docsSections.map((section) => [section.href, isDescendant(section.href)])),
