@@ -32,4 +32,5 @@ export interface AvailableScopeResponse {
 export type getAvailableScopeResponse = ApiResponse<{
   data: AvailableScopeResponse[];
 }>;
+
 export type ApiKeyResponse = ApiResponse<ApiKeyData>;
