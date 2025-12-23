@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Link from 'next/link';
 
@@ -12,15 +12,10 @@ import { useDocsSidebar } from '@/widgets/docs/model/useDocsSidebar';
 
 const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const { isActive, isDescendant } = useDocsSidebar();
-  const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    const initialOpenMap = Object.fromEntries(
-      docsSections.map((section) => [section.href, isDescendant(section.href)]),
-    );
-    setOpenMap(initialOpenMap);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [openMap, setOpenMap] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(docsSections.map((section) => [section.href, isDescendant(section.href)])),
+  );
 
   const toggle = (href: string) => {
     setOpenMap((prev) => ({
@@ -33,34 +28,35 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
     <nav className="space-y-1">
       {docsSections.map(({ label, href, icon: Icon, children }) => {
         const isOpen = openMap[href];
-        const active = isActive(href);
 
         return (
           <div key={href}>
-            <Link
-              href={href}
-              onClick={() => {
-                if (children) toggle(href);
-                onLinkClick?.();
-              }}
+            <div
               className={cn(
                 'flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors',
-                active
+                isActive(href)
                   ? 'bg-primary/10 text-primary font-medium'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
               )}
             >
-              <span className="flex items-center gap-3">
+              <Link href={href} onClick={onLinkClick} className="flex flex-1 items-center gap-3">
                 <Icon className="h-4 w-4" />
                 {label}
-              </span>
+              </Link>
 
               {children && (
-                <ChevronDown
-                  className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')}
-                />
+                <button
+                  type="button"
+                  onClick={() => toggle(href)}
+                  className="p-1"
+                  aria-label={`${label} 토글`}
+                >
+                  <ChevronDown
+                    className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')}
+                  />
+                </button>
               )}
-            </Link>
+            </div>
 
             {children && isOpen && (
               <div className="mt-1 space-y-1 pl-9">
