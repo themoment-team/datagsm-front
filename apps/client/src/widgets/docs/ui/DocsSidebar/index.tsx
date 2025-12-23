@@ -5,43 +5,10 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { cn } from '@repo/shared/utils';
-import { BookOpen, ChevronDown, Code2, User } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
-import { useDocsSidebar } from '@/widgets/docs';
-
-interface Section {
-  label: string;
-  href: string;
-  icon: React.ElementType;
-  children?: {
-    label: string;
-    href: string;
-  }[];
-}
-
-const sections: Section[] = [
-  {
-    label: 'Overview',
-    href: '/docs',
-    icon: BookOpen,
-  },
-  {
-    label: 'OpenAPI',
-    href: '/docs/api',
-    icon: Code2,
-    children: [
-      {
-        label: '학생 데이터 OpenAPI',
-        href: '/docs/api/student',
-      },
-    ],
-  },
-  {
-    label: 'OAuth',
-    href: '/docs/oauth',
-    icon: User,
-  },
-];
+import { docsSections } from '@/widgets/docs/config/docsSections';
+import { useDocsSidebar } from '@/widgets/docs/model/useDocsSidebar';
 
 const DocsSidebar = () => {
   const { isActive, isDescendant } = useDocsSidebar();
@@ -49,7 +16,7 @@ const DocsSidebar = () => {
 
   useEffect(() => {
     const initialOpenMap = Object.fromEntries(
-      sections.map((section) => [section.href, isDescendant(section.href)]),
+      docsSections.map((section) => [section.href, isDescendant(section.href)]),
     );
     setOpenMap(initialOpenMap);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,7 +34,7 @@ const DocsSidebar = () => {
       <h2 className="text-muted-foreground mb-4 text-sm font-semibold">목차</h2>
 
       <nav className="space-y-1">
-        {sections.map(({ label, href, icon: Icon, children }) => {
+        {docsSections.map(({ label, href, icon: Icon, children }) => {
           const isOpen = openMap[href];
           const active = isActive(href);
 
