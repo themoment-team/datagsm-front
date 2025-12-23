@@ -11,7 +11,7 @@ const HomePage = async () => {
       <main className={cn('container mx-auto px-4 py-16')}>
         <div className={cn('mx-auto max-w-2xl')}>
           <ApiKeyHeader />
-          <ApiKeyCard initialApiKeyData={initialApiKeyData} userRole="USER" />
+          <ApiKeyCard initialApiKeyData={initialApiKeyData} userRole="ADMIN" />
         </div>
       </main>
     </div>
