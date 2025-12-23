@@ -182,6 +182,14 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
     );
   }
 
+  if (isUpdatingApiKey) {
+    return (
+      <Card className={cn('p-6')}>
+        <div className={cn('text-gray-500')}>API Key를 갱신하는 중...</div>
+      </Card>
+    );
+  }
+
   return (
     <div className={cn('flex flex-col gap-6')}>
       {/** api key 발급/갱신 scope 설정 */}
