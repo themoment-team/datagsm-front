@@ -12,7 +12,12 @@ import { Check, Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ApiKeyFormSchema, ApiKeyFormType, ApiKeyResponse } from '@/entities/home';
+import {
+  ApiKeyFormSchema,
+  ApiKeyFormType,
+  ApiKeyResponse,
+  AvailableScopeListResponse,
+} from '@/entities/home';
 import {
   useCreateApiKey,
   useGetApiKey,
@@ -22,17 +27,20 @@ import {
 
 interface ApiKeyCardProps {
   initialApiKeyData?: ApiKeyResponse;
+  initialAvailableScope?: AvailableScopeListResponse;
   userRole: UserRoleType;
 }
 
 const COPIED_STATE_DURATION_MS = 2000;
 
-const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
+const ApiKeyCard = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiKeyCardProps) => {
   const [copied, setCopied] = useState(false);
 
   const queryClient = useQueryClient();
 
-  const { data: availableKeyScope, isLoading: isLoadingKeyScope } = useGetAvailableScope(userRole);
+  const { data: availableKeyScope, isLoading: isLoadingKeyScope } = useGetAvailableScope(userRole, {
+    initialData: initialAvailableScope,
+  });
 
   const { data: apiKeyData, isLoading: isLoadingApiKey } = useGetApiKey({
     initialData: initialApiKeyData,
