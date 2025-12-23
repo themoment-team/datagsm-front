@@ -16,7 +16,7 @@ export interface AvailableScopeResponse {
   scopes: AvailableScopeData[];
 }
 
-export type getAvailableScopeResponse = ApiResponse<{
+export type GetAvailableScopeResponse = ApiResponse<{
   data: AvailableScopeResponse[];
 }>;
 
