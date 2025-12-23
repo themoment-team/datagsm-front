@@ -17,7 +17,7 @@ export type ApiKeyType = z.infer<typeof ApiKeySchema>;
 
 export type CreateApiKeyType = z.infer<typeof ApiKeySchema>;
 
-export type UpdateAPiKeyType = z.infer<typeof ApiKeySchema>;
+export type UpdateApiKeyType = z.infer<typeof ApiKeySchema>;
 
 export interface AvailableScopeData {
   scope: string;
