@@ -235,7 +235,7 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
             <FormErrorMessage
               error={Array.isArray(errors.scopes) ? errors.scopes[0] : errors.scopes}
             />
-            <Input placeholder="API의 사용처를 작성해주세요." {...register('description')} />
+            <Input placeholder="설명을 작성해주세요." {...register('description')} />
             <FormErrorMessage error={errors.description} />
             <Button disabled={isCreatingApiKey || isUpdatingApiKey} size="lg" type="submit">
               {buttonText}
