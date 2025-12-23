@@ -196,7 +196,7 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
             </div>
             <div className={cn('mb-4 space-y-6')}>
               {availableKeyScope?.data?.data.map((category) => {
-                const isScopeOnlyOne = category.scopes.length > 1;
+                const hasMultipleScopes = category.scopes.length > 1;
                 return (
                   <div key={category.title}>
                     <h3 className={cn('mb-2 text-sm font-semibold')}>{category.title}</h3>
@@ -206,7 +206,7 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
                           key={scope.scope}
                           className={cn(
                             'flex items-start gap-3',
-                            isScopeOnlyOne && getIndentation(scope.scope),
+                            hasMultipleScopes && getIndentation(scope.scope),
                           )}
                         >
                           <Checkbox
