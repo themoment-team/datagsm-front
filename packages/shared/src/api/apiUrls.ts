@@ -1,20 +1,31 @@
-import { StudentRole, StudentSex } from '@repo/shared/types';
+import { ClubType, StudentRole, StudentSex } from '@repo/shared/types';
 
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
   getApiKey: () => '/v1/auth/api-key',
+  postApiKey: () => '/v1/auth/api-key',
   getAvailableScope: (userRole: string) => `/v1/auth/scopes?role=${userRole}`,
   postGoogleLogin: () => '/v1/auth/google',
-  postApiKey: () => '/v1/auth/api-key',
-  putApiKey: () => '/v1/auth/api-key',
   putRefresh: () => '/v1/auth/refresh',
+  putApiKey: () => '/v1/auth/api-key',
 } as const;
 
 export const clubUrl = {
   deleteClubById: (clubId: number) => `/v1/clubs/${clubId}`,
-  getClubs: () => '/v1/clubs',
-  patchClubById: (clubId: number) => `/v1/clubs/${clubId}`,
+  getClubs: (page?: number, size?: number, type?: ClubType) => {
+    const params = new URLSearchParams();
+
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+    if (type != null) params.append('clubType', type);
+
+    const queryString = params.toString();
+    return queryString ? `/v1/clubs?${queryString}` : '/v1/clubs';
+  },
+  getClubExcel: () => '/v1/clubs/excel/download',
   postClub: () => '/v1/clubs',
+  postClubExcel: () => '/v1/clubs/excel/upload',
+  putClubById: (clubId: number) => `/v1/clubs/${clubId}`,
 } as const;
 
 export const healthUrl = {
@@ -23,19 +34,18 @@ export const healthUrl = {
 
 export const studentUrl = {
   getStudents: (
-    page: number,
-    size: number,
+    page?: number,
+    size?: number,
     grade?: number,
     classNum?: number,
     sex?: StudentSex,
     role?: StudentRole,
     isLeaveSchool?: boolean,
   ) => {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      size: size.toString(),
-    });
+    const params = new URLSearchParams();
 
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
     if (grade !== undefined) params.append('grade', grade.toString());
     if (classNum !== undefined) params.append('classNum', classNum.toString());
     if (sex !== undefined) params.append('sex', sex);
