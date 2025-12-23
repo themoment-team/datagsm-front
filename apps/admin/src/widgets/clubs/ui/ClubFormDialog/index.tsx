@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  FormErrorMessage,
   Input,
   Label,
   Select,
@@ -24,7 +25,6 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { AddClubSchema, AddClubType } from '@/entities/club';
-import { FormErrorMessage } from '@/shared/ui';
 import { useCreateClub, useUpdateClub } from '@/widgets/clubs';
 
 interface ClubFormDialogProps {
