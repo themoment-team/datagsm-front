@@ -57,9 +57,11 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     ),
 
     table: ({ children }) => (
-      <table className="my-4 w-full table-auto border-collapse border border-gray-300">
-        {children}
-      </table>
+      <div className="my-4 overflow-x-auto">
+        <table className="w-full table-auto border-collapse border border-gray-300">
+          {children}
+        </table>
+      </div>
     ),
 
     thead: ({ children }) => <thead className="bg-gray-100">{children}</thead>,
@@ -69,10 +71,14 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     tr: ({ children }) => <tr className="border-b border-gray-300">{children}</tr>,
 
     th: ({ children }) => (
-      <th className="border border-gray-300 px-4 py-2 text-left font-bold">{children}</th>
+      <th className="whitespace-nowrap border border-gray-300 px-4 py-2 text-left font-bold">
+        {children}
+      </th>
     ),
 
-    td: ({ children }) => <td className="border border-gray-300 px-4 py-2">{children}</td>,
+    td: ({ children }) => (
+      <td className="whitespace-nowrap border border-gray-300 px-4 py-2">{children}</td>
+    ),
 
     a: ({ href = '', children }) => {
       const isExternal = href.startsWith('http');
