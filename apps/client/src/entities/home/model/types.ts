@@ -6,6 +6,8 @@ export interface ApiKeyData {
   scopes: string[];
   description: string;
 }
+export type ApiKeyResponse = ApiResponse<ApiKeyData>;
+
 export interface AvailableScopeData {
   scope: string;
   description: string;
@@ -16,8 +18,6 @@ export interface AvailableScopeResponse {
   scopes: AvailableScopeData[];
 }
 
-export type GetAvailableScopeResponse = ApiResponse<{
+export type AvailableScopeListResponse = ApiResponse<{
   data: AvailableScopeResponse[];
 }>;
-
-export type ApiKeyResponse = ApiResponse<ApiKeyData>;
