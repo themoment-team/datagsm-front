@@ -82,10 +82,10 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
 
   const buttonText = isCreatingApiKey
     ? 'API 키 생성 중...'
-    : apiKeyData?.data?.apiKey
-      ? 'API 키 갱신하기'
-      : isUpdatingApiKey
-        ? 'API 키 갱신 중...'
+    : isUpdatingApiKey
+      ? 'API 키 갱신 중...'
+      : apiKeyData?.data?.apiKey
+        ? 'API 키 갱신하기'
         : 'API 키 생성하기';
 
   const apiKey =
@@ -178,14 +178,6 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
     return (
       <Card className={cn('p-6')}>
         <div className={cn('text-gray-500')}>API Key를 불러오는 중...</div>
-      </Card>
-    );
-  }
-
-  if (isUpdatingApiKey) {
-    return (
-      <Card className={cn('p-6')}>
-        <div className={cn('text-gray-500')}>API Key를 갱신하는 중...</div>
       </Card>
     );
   }
