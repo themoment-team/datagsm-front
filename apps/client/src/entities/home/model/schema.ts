@@ -5,8 +5,4 @@ export const ApiKeyFormSchema = z.object({
   description: z.string().min(1, { message: '설명을 입력해주세요.' }),
 });
 
-export type ApiKeyType = z.infer<typeof ApiKeyFormSchema>;
-
-export type CreateApiKeyType = z.infer<typeof ApiKeyFormSchema>;
-
-export type UpdateApiKeyType = z.infer<typeof ApiKeyFormSchema>;
+export type ApiKeyFormType = z.infer<typeof ApiKeyFormSchema>;

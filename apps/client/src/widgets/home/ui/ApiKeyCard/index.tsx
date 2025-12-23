@@ -12,7 +12,7 @@ import { Check, Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ApiKeyFormSchema, ApiKeyResponse, ApiKeyType } from '@/entities/home';
+import { ApiKeyFormSchema, ApiKeyFormType, ApiKeyResponse } from '@/entities/home';
 import {
   useCreateApiKey,
   useGetApiKey,
@@ -72,7 +72,7 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
     setValue,
     register,
     formState: { errors },
-  } = useForm<ApiKeyType>({
+  } = useForm<ApiKeyFormType>({
     resolver: zodResolver(ApiKeyFormSchema),
     defaultValues: {
       scopes: apiKeyData?.data?.scopes || [],
@@ -164,7 +164,7 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
     return 'pl-6';
   };
 
-  const onSubmit = ({ scopes, description }: ApiKeyType) => {
+  const onSubmit = ({ scopes, description }: ApiKeyFormType) => {
     const data = { scopes, description };
 
     if (apiKeyData?.data?.apiKey) {
