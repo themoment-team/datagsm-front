@@ -1,11 +1,12 @@
 import { authQueryKeys, authUrl, get } from '@repo/shared/api';
+import { UserRoleType } from '@repo/shared/types';
 import { minutesToMs } from '@repo/shared/utils';
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { getAvailableScopeResponse } from '@/entities/home';
 
 export const useGetAvailableScope = (
-  userRole: string,
+  userRole: UserRoleType,
   options?: Omit<UseQueryOptions<getAvailableScopeResponse>, 'queryKey' | 'queryFn'>,
 ): UseQueryResult<getAvailableScopeResponse> =>
   useQuery({
