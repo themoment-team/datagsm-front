@@ -145,18 +145,18 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
     );
   };
 
-  const isScopeChecked = (scopeId: string) => {
+  const isScopeChecked = (scope: string) => {
     const currentScopes = watch('scopes');
 
-    // 전체 scope를 선택시 끝나는 scope의 경우
-    if (scopeId.endsWith(':*')) {
-      const prefix = scopeId.split(':')[0];
+    // 전체 scope일 경우 하위 scope 탐색
+    if (scope.endsWith(':*')) {
+      const prefix = scope.split(':')[0];
       const relatedScopes = scopeMap.get(prefix!) ?? [];
 
       return relatedScopes.length > 0 && relatedScopes.every((id) => currentScopes.includes(id));
     }
 
-    return currentScopes.includes(scopeId);
+    return currentScopes.includes(scope);
   };
 
   const getIndentation = (level: string) => {
@@ -244,7 +244,7 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
         </form>
       </Card>
 
-      {/** 현재발급한 api key 조회 */}
+      {/** 현재발급한 api key/scope 조회 */}
       {apiKeyData?.data?.apiKey && (
         <Card className={cn('p-6')}>
           <div className="mb-4">
