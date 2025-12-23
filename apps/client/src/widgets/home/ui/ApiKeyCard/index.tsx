@@ -139,7 +139,7 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
   const isScopeChecked = (scopeId: string) => {
     const currentScopes = watch('scopes');
 
-    // 젅체 scope를 선택시 끝나는 scope의 경우, 하위 모든 scope가 선택되어 있는지 확인
+    // 전체 scope를 선택시 끝나는 scope의 경우, 하위 모든 scope가 선택되어 있는지 확인
     if (scopeId.endsWith(':*')) {
       const [prefix] = scopeId.split(':');
       const availableScopes = availableKeyScope?.data?.data ?? [];
