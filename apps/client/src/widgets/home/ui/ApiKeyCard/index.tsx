@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authQueryKeys } from '@repo/shared/api';
@@ -100,61 +100,68 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
     setTimeout(() => setCopied(false), COPIED_STATE_DURATION_MS);
   };
 
+  const scopeMap = useMemo(() => {
+    const map = new Map<string, string[]>();
+
+    const categories = availableKeyScope?.data?.data || [];
+    categories.forEach((category) => {
+      category.scopes.forEach(({ scope }) => {
+        if (scope.endsWith(':*')) return;
+
+        const prefix = scope.split(':')[0];
+        map.set(prefix!, [...(map.get(prefix!) ?? []), scope]);
+      });
+    });
+
+    return map;
+  }, [availableKeyScope]);
+
   const handleScopeToggle = (scope: string) => {
     const currentScopes = watch('scopes');
 
-    // 전체 scope 선택했을때 : ex) student:*
+    // 전체 scope 선택
     if (scope.endsWith(':*')) {
-      const [prefix] = scope.split(':');
-      const availableScopes = availableKeyScope?.data?.data;
-      const relatedscopes = availableScopes!.flatMap((category) =>
-        category.scopes
-          .map((scope) => scope.scope)
-          .filter((id) => id.startsWith(`${prefix}:`) && !id.endsWith(':*')),
-      );
+      const prefix = scope.split(':')[0];
+      const relatedScopes = scopeMap.get(prefix!) ?? [];
 
-      const allSelected = relatedscopes.every((id) => currentScopes.includes(id));
+      const allSelected =
+        relatedScopes.length > 0 && relatedScopes.every((id) => currentScopes.includes(id));
+
       const nextSelected = allSelected
-        ? currentScopes.filter((id) => !relatedscopes.includes(id))
-        : Array.from(new Set([...currentScopes, ...relatedscopes]));
+        ? currentScopes.filter((id) => !relatedScopes.includes(id))
+        : Array.from(new Set([...currentScopes, ...relatedScopes]));
 
       setValue('scopes', nextSelected, { shouldValidate: true });
       return;
     }
 
     // 일반 scope 단일 토글
-    const isSelected = currentScopes.includes(scope);
-    const nextSelected = isSelected
-      ? currentScopes.filter((id) => id !== scope)
-      : [...currentScopes, scope];
-
-    setValue('scopes', nextSelected, { shouldValidate: true });
-  };
-
-  const getIndentation = (level: string) => {
-    if (level.includes(':*')) return 'pl-0';
-    return 'pl-6';
+    setValue(
+      'scopes',
+      currentScopes.includes(scope)
+        ? currentScopes.filter((id) => id !== scope)
+        : [...currentScopes, scope],
+      { shouldValidate: true },
+    );
   };
 
   const isScopeChecked = (scopeId: string) => {
     const currentScopes = watch('scopes');
 
-    // 전체 scope를 선택시 끝나는 scope의 경우, 하위 모든 scope가 선택되어 있는지 확인
+    // 전체 scope를 선택시 끝나는 scope의 경우
     if (scopeId.endsWith(':*')) {
-      const [prefix] = scopeId.split(':');
-      const availableScopes = availableKeyScope?.data?.data ?? [];
-      const relatedScopeIds = availableScopes.flatMap((category) =>
-        category.scopes
-          .map((scope) => scope.scope)
-          .filter((id) => id.startsWith(`${prefix}:`) && !id.endsWith(':*')),
-      );
+      const prefix = scopeId.split(':')[0];
+      const relatedScopes = scopeMap.get(prefix!) ?? [];
 
-      if (relatedScopeIds.length === 0) return false;
-
-      return relatedScopeIds.every((id) => currentScopes.includes(id));
+      return relatedScopes.length > 0 && relatedScopes.every((id) => currentScopes.includes(id));
     }
 
     return currentScopes.includes(scopeId);
+  };
+
+  const getIndentation = (level: string) => {
+    if (level.includes(':*')) return 'pl-0';
+    return 'pl-6';
   };
 
   const onSubmit = ({ scopes, description }: ApiKeyType) => {
