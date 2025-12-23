@@ -100,33 +100,33 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
     setTimeout(() => setCopied(false), COPIED_STATE_DURATION_MS);
   };
 
-  const handleScopeToggle = (scopeId: string) => {
+  const handleScopeToggle = (scope: string) => {
     const currentScopes = watch('scopes');
 
     // 전체 scope 선택했을때 : ex) student:*
-    if (scopeId.endsWith(':*')) {
-      const [prefix] = scopeId.split(':');
+    if (scope.endsWith(':*')) {
+      const [prefix] = scope.split(':');
       const availableScopes = availableKeyScope?.data?.data;
-      const relatedScopeIds = availableScopes!.flatMap((category) =>
+      const relatedscopes = availableScopes!.flatMap((category) =>
         category.scopes
           .map((scope) => scope.scope)
           .filter((id) => id.startsWith(`${prefix}:`) && !id.endsWith(':*')),
       );
 
-      const allSelected = relatedScopeIds.every((id) => currentScopes.includes(id));
+      const allSelected = relatedscopes.every((id) => currentScopes.includes(id));
       const nextSelected = allSelected
-        ? currentScopes.filter((id) => !relatedScopeIds.includes(id))
-        : Array.from(new Set([...currentScopes, ...relatedScopeIds]));
+        ? currentScopes.filter((id) => !relatedscopes.includes(id))
+        : Array.from(new Set([...currentScopes, ...relatedscopes]));
 
       setValue('scopes', nextSelected, { shouldValidate: true });
       return;
     }
 
     // 일반 scope 단일 토글
-    const isSelected = currentScopes.includes(scopeId);
+    const isSelected = currentScopes.includes(scope);
     const nextSelected = isSelected
-      ? currentScopes.filter((id) => id !== scopeId)
-      : [...currentScopes, scopeId];
+      ? currentScopes.filter((id) => id !== scope)
+      : [...currentScopes, scope];
 
     setValue('scopes', nextSelected, { shouldValidate: true });
   };
@@ -157,11 +157,13 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
     return currentScopes.includes(scopeId);
   };
 
-  const onSubmit = (data: ApiKeyType) => {
+  const onSubmit = ({ scopes, description }: ApiKeyType) => {
+    const data = { scopes: scopes, description: description };
+
     if (apiKeyData?.data?.apiKey) {
-      updateApiKey({ scopes: data.scopes, description: data.description });
+      updateApiKey(data);
     } else {
-      createApiKey({ scopes: data.scopes, description: data.description });
+      createApiKey(data);
     }
   };
 
@@ -226,7 +228,7 @@ const ApiKeyCard = ({ initialApiKeyData, userRole }: ApiKeyCardProps) => {
             <FormErrorMessage
               error={Array.isArray(errors.scopes) ? errors.scopes[0] : errors.scopes}
             />
-            <Input placeholder="API의 사용처를 작성해주세요" {...register('description')} />
+            <Input placeholder="API의 사용처를 작성해주세요." {...register('description')} />
             <FormErrorMessage error={errors.description} />
             <Button disabled={isCreatingApiKey || isUpdatingApiKey} size="lg" type="submit">
               {buttonText}
