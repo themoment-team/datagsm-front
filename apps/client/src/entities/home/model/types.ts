@@ -13,11 +13,11 @@ export interface AvailableScopeData {
   description: string;
 }
 
-export interface AvailableScopeResponse {
+export interface AvailableScopeGroupData {
   title: string;
   scopes: AvailableScopeData[];
 }
 
 export type AvailableScopeListResponse = ApiResponse<{
-  data: AvailableScopeResponse[];
+  data: AvailableScopeGroupData[];
 }>;
