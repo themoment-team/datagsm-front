@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authQueryKeys } from '@repo/shared/api';
@@ -79,14 +79,24 @@ const ApiKeyCard = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     watch,
     setValue,
     register,
+    reset,
     formState: { errors },
   } = useForm<ApiKeyFormType>({
     resolver: zodResolver(ApiKeyFormSchema),
     defaultValues: {
-      scopes: apiKeyData?.data?.scopes || [],
-      description: apiKeyData?.data?.description || '',
+      scopes: [],
+      description: '',
     },
   });
+
+  useEffect(() => {
+    if (apiKeyData?.data) {
+      reset({
+        scopes: apiKeyData.data.scopes || [],
+        description: apiKeyData.data.description || '',
+      });
+    }
+  }, [apiKeyData, reset]);
 
   const buttonText = isCreatingApiKey
     ? 'API 키 생성 중...'
