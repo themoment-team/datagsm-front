@@ -3,12 +3,21 @@ import { ApiResponse } from '@repo/shared/types';
 export interface ApiKeyData {
   apiKey: string;
   expiresAt: string;
+  scopes: string[];
+  description: string;
 }
-
-export interface ApiKeyRenewableData {
-  renewable: boolean;
-}
-
 export type ApiKeyResponse = ApiResponse<ApiKeyData>;
 
-export type ApiKeyRenewableResponse = ApiResponse<ApiKeyRenewableData>;
+export interface AvailableScopeData {
+  scope: string;
+  description: string;
+}
+
+export interface AvailableScopeGroupData {
+  title: string;
+  scopes: AvailableScopeData[];
+}
+
+export type AvailableScopeListResponse = ApiResponse<{
+  list: AvailableScopeGroupData[];
+}>;

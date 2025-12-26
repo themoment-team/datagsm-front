@@ -1,12 +1,15 @@
+import { UserRoleType } from '@repo/shared/types';
 import { cn } from '@repo/shared/utils';
 
-import { getApiKey, getApiKeyRenewable } from '@/views/home';
+import { getApiKey, getAvailableScope } from '@/views/home';
 import { ApiKeyCard, ApiKeyHeader } from '@/widgets/home';
 
 const HomePage = async () => {
-  const [initialApiKeyData, initialApiKeyRenewableData] = await Promise.all([
+  const userRole: UserRoleType = 'USER';
+
+  const [initialApiKeyData, initialAvailableScope] = await Promise.all([
     getApiKey(),
-    getApiKeyRenewable(),
+    getAvailableScope(userRole),
   ]);
 
   return (
@@ -16,7 +19,8 @@ const HomePage = async () => {
           <ApiKeyHeader />
           <ApiKeyCard
             initialApiKeyData={initialApiKeyData}
-            initialApiKeyRenewableData={initialApiKeyRenewableData}
+            initialAvailableScope={initialAvailableScope}
+            userRole={userRole}
           />
         </div>
       </main>

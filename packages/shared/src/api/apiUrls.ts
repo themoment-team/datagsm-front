@@ -1,9 +1,9 @@
-import { ClubType, StudentRole, StudentSex } from '@repo/shared/types';
+import { ClubType, StudentRole, StudentSex, UserRoleType } from '@repo/shared/types';
 
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
   getApiKey: () => '/v1/auth/api-key',
-  getApiKeyRenewable: () => '/v1/auth/api-key/renewable',
+  getAvailableScope: (userRole: UserRoleType) => `/v1/auth/scopes?role=${userRole}`,
   postApiKey: () => '/v1/auth/api-key',
   postGoogleLogin: () => '/v1/auth/google',
   putRefresh: () => '/v1/auth/refresh',
