@@ -121,7 +121,7 @@ const ApiKeyCard = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
   const scopeMap = useMemo(() => {
     const map = new Map<string, string[]>();
 
-    const categories = availableKeyScope?.data?.data || [];
+    const categories = availableKeyScope?.data?.list || [];
     categories.forEach((category) => {
       category.scopes.forEach(({ scope }) => {
         if (scope.endsWith(':*')) return;
@@ -213,7 +213,7 @@ const ApiKeyCard = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
               </p>
             </div>
             <div className={cn('mb-4 space-y-6')}>
-              {availableKeyScope?.data?.data.map((category) => {
+              {availableKeyScope?.data?.list.map((category) => {
                 const hasMultipleScopes = category.scopes.length > 1;
                 return (
                   <div key={category.title}>

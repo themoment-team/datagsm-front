@@ -19,5 +19,5 @@ export interface AvailableScopeGroupData {
 }
 
 export type AvailableScopeListResponse = ApiResponse<{
-  data: AvailableScopeGroupData[];
+  list: AvailableScopeGroupData[];
 }>;
