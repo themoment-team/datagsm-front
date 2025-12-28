@@ -9,19 +9,19 @@ import {
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-interface StudentPaginationProps {
+interface CommonPaginationProps {
   isLoading: boolean;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
-const StudentPagination = ({
+export const CommonPagination = ({
   isLoading,
   currentPage,
   totalPages,
   onPageChange,
-}: StudentPaginationProps) => {
+}: CommonPaginationProps) => {
   if (isLoading) {
     return (
       <div className={cn('flex items-center justify-center gap-2')}>
@@ -104,5 +104,3 @@ const StudentPagination = ({
     </div>
   );
 };
-
-export default StudentPagination;

@@ -4,8 +4,8 @@ import { minutesToMs } from '@repo/shared/utils';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
 interface UseGetStudentsParams {
-  page: number;
-  size: number;
+  page?: number;
+  size?: number;
   grade?: number;
   classNum?: number;
   sex?: StudentSex;

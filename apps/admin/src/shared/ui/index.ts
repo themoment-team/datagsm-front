@@ -1,1 +1,1 @@
-export { default as FormErrorMessage } from './FormErrorMessage';
+export { CommonPagination } from './CommonPagination';
