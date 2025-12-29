@@ -6,4 +6,66 @@ OpenAPI 사용 시 가장 중요한 요소는 필요한 데이터의 파악과 �
 
 ### API 키 발급
 
-API 키 발급 페이지에서 필요한 권한 범위를 설정하여 API 키를 발급받을 수 있습니다. 발급 시 최소 권한 원칙에 따라 서비스 운영에 필요한 최소한의 권한만 선택하십시오. API 키는 30일마다 갱신이 필요하며, 권한 범위를 수정하려면 기존 API 키를 폐기하고 새로 발급해야 합니다. API 키 생성 시 설명을 추가하면 해당 키의 용도를 명확히 관리할 수 있습니다.
+API 키 발급 페이지에서 필요한 권한 범위를 설정하여 API 키를 발급받을 수 있습니다. 발급 시 최소 권한 원칙에 따라 서비스 운영에 필요한 최소한의 권한만 선택하십시오. API 키는 30일마다 갱신이 필요하며, 권한 범위를 수정하려면 기존 API 키를 폐기하고 새로 발급해야 합니다. API 키 생성 시 설명을 추가하면 해당 키의 용도를 명확히 관리할 수 있습니다. 권한 범위는 두 부분으로 나뉘어 있습니다.
+
+![권한 범위 구조](/docs/scope_structure.png)
+
+해당 권한 범위 설정에서 언더바(**`_`**)로 구분된 각 항목은 해당하는 데이터 종류와 이를 조회할 수 있는 권한을 의미합니다.
+<br></br>
+다음과 같은 권한 범위 설정이 존재하며, 필요한 항목을 선택하여 API 키를 발급받을 수 있습니다.
+
+| 권한 범위 설정       | 설명                       |
+| -------------------- | -------------------------- |
+| `STUDENT_READ`        | 학생 데이터 조회 권한      |
+| `STUDENT_WRITE`       | 학생 데이터 수정 권한      |
+| `CLUB_READ`           | 동아리 데이터 조회 권한    |
+| `CLUB_WRITE`          | 동아리 데이터 수정 권한    |
+| `PROJECT_READ`        | 프로젝트 데이터 조회 권한  |
+| `PROJECT_WRITE`       | 프로젝트 데이터 수정 권한  |
+| `NEIS_READ`         | NEIS 데이터 조회 권한     |
+
+### 공통 사항
+OpenAPI는 RESTful API로 설계되어 있으며, HTTP 메서드(`GET`, `POST` 등)를 사용하여 데이터를 조회하거나 수정할 수 있습니다. 모든 요청에는 발급받은 API 키를 헤더에 포함시켜야 합니다.
+
+```http
+X-API-KEY: your-api-key-here
+```
+
+API 키는 UUID 형식이며, 만료되거나 유효하지 않은 키를 사용할 경우 `401 Unauthorized` 응답을 받게 됩니다.
+
+API 키는 각각의 요청량 제한(Rate Limit)이 적용됩니다. 이를 초과 시 `429 Too Many Requests` 응답이 반환됩니다. 필요한 경우 더 높은 요청량 제한을 위해 지원팀에 문의할 수 있습니다.
+
+모든 응답은 JSON 형식으로 반환되며, 오류 발생 시 적절한 HTTP 상태 코드와 함께 오류 메시지가 포함됩니다.
+
+### 반환 가능한 상태 코드
+| 상태 코드              | 설명                              |
+| ---------------------- | --------------------------------- |
+| `200 OK`              | 요청이 성공적으로 처리됨         |
+| `401 Unauthorized`     | API 키가 유효하지 않거나 만료됨   |
+| `403 Forbidden`        | 필요한 권한 범위가 없음           |
+| `429 Too Many Request` | 단위 시간에 너무 많은 요청량 발생 |
+| `400 Bad Request`      | 잘못된 요청 파라미터              |
+| `500 Internal Server Error` | 서버 내부 오류 발생          |
+
+### API 키 관리 권장 사항
+더모먼트팀은 다음과 같은 API 키 관리 방법을 권장합니다.
+- **최소 권한 원칙**: 서비스 운영에 필요한 최소한의 권한만 부여합니다.
+- **정기 갱신**: API 키를 정기적으로 갱신하여 보안을 강화합니다.
+- **안전한 저장**: API 키를 안전하게 저장하고, 공개 저장소에 노출되지 않도록 주의합니다.
+- **불필요한 키 폐기**: 더 이상 사용하지 않는 API 키는 즉시 폐기합니다.
+
+### 캐싱 전략
+OpenAPI를 효율적으로 사용하기 위해 적절한 캐싱 전략을 적용하는 것이 중요합니다. 자주 변경되지 않는 데이터는 클라이언트 측에서 캐싱하여 불필요한 API 호출을 줄일 수 있습니다. HTTP 캐싱 헤더(`ETag`, `Cache-Control` 등)를 활용하여 데이터의 신선도를 관리할 수 있습니다.
+<br></br>
+다음은 Spring Boot에서 `ETag`를 활용한 캐싱 예제입니다.
+```java
+@GetMapping("/students/{id}")
+public ResponseEntity<Student> getStudent(@PathVariable Long id, @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
+    Student student = studentService.getStudentById(id);
+    String eTag = generateETag(student);
+    if (ifNoneMatch != null && ifNoneMatch.equals(eTag)) {
+        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).eTag(eTag).build();
+    }
+    return ResponseEntity.ok().eTag(eTag).body(student);
+}
+```
