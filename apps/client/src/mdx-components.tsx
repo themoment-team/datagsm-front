@@ -3,6 +3,8 @@ import NextLink from 'next/link';
 
 import type { MDXComponents } from 'mdx/types';
 
+import CodeTabs, { CodeTab } from '@/widgets/docs/ui/CodeTabs';
+
 export function useMDXComponents(components: MDXComponents = {}): MDXComponents {
   return {
     h1: ({ children }) => (
@@ -105,6 +107,9 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
         </NextLink>
       );
     },
+
+    CodeTabs,
+    CodeTab,
 
     ...components,
   };
