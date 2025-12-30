@@ -1,0 +1,252 @@
+# NEIS 데이터 OpenAPI
+
+### 개요
+
+NEIS 데이터 OpenAPI는 나이스(NEIS)에서 제공하는 급식 정보와 학사일정 정보를 간단한 HTTP 요청을 통하여 서비스에 통합할 수 있도록 돕습니다. 해당 REST API를 호출하여 기본적인 급식 및 학사일정 데이터를 획득할 수 있습니다.
+
+### 인증
+
+모든 API 요청은 HTTP 헤더에 API 키를 포함해야 합니다.
+
+```http
+X-API-KEY: your-api-key-here
+```
+
+API 키는 UUID 형식이며, 만료되거나 유효하지 않은 키를 사용할 경우 `401 Unauthorized` 응답을 받게 됩니다.
+
+### 권한 범위
+
+`NEIS_READ` 권한이 필요합니다.
+
+## 급식 정보 API
+
+### 엔드포인트
+
+```http
+GET /api/neis/meals
+```
+
+### 요청 파라미터
+
+| 파라미터   | 타입        | 필수 여부 | 설명                                       | 예시         |
+| ---------- | ----------- | --------- | ------------------------------------------ | ------------ |
+| `date`     | `LocalDate` | 선택      | 특정 날짜의 급식 정보 조회 (ISO 8601 형식) | `2025-12-15` |
+| `fromDate` | `LocalDate` | 선택      | 조회 시작 날짜 (ISO 8601 형식)             | `2025-12-01` |
+| `toDate`   | `LocalDate` | 선택      | 조회 종료 날짜 (ISO 8601 형식)             | `2025-12-31` |
+
+**날짜 파라미터 사용 규칙:**
+
+- `date`: 특정 날짜의 급식 정보만 조회
+- `fromDate`와 `toDate`: 기간 범위 내의 급식 정보 조회
+- 파라미터를 생략하면 오늘 날짜 기준으로 조회
+
+### 응답 형식
+
+응답은 급식 정보 목록을 포함하며, 각 급식 객체는 다음 필드를 포함합니다.
+
+| 필드              | 타입           | 설명                          | 예시                                         |
+| ----------------- | -------------- | ----------------------------- | -------------------------------------------- |
+| `mealId`          | `String`       | 급식 ID                       | `7430310_20251215_2`                         |
+| `schoolCode`      | `String`       | 학교 코드                     | `7430310`                                    |
+| `schoolName`      | `String`       | 학교명                        | `광주소프트웨어마이스터고등학교`             |
+| `officeCode`      | `String`       | 시도교육청 코드               | `G10`                                        |
+| `officeName`      | `String`       | 시도교육청명                  | `광주광역시교육청`                           |
+| `mealDate`        | `LocalDate`    | 급식 날짜                     | `2025-12-15`                                 |
+| `mealType`        | `MealType`     | 급식 타입                     | `LUNCH`                                      |
+| `mealMenu`        | `List<String>` | 급식 메뉴 목록                | `["쌀밥", "김치찌개", "돈까스", "배추김치"]` |
+| `mealAllergyInfo` | `List<String>` | 알레르기 정보 목록 (nullable) | `["1", "2", "5", "6"]`                       |
+| `mealCalories`    | `String`       | 칼로리 정보 (nullable)        | `650.8 Kcal`                                 |
+| `originInfo`      | `String`       | 원산지 정보 (nullable)        | `쌀:국내산 돼지고기:국내산 배추김치:국내산`  |
+| `nutritionInfo`   | `String`       | 영양 정보 (nullable)          | `단백질:25.0g 지방:15.0g 탄수화물:90.0g`     |
+| `mealServeCount`  | `Int`          | 급식 인원수 (nullable)        | `450`                                        |
+
+**급식 타입 (MealType)**
+
+- `BREAKFAST`: 조식
+- `LUNCH`: 중식
+- `DINNER`: 석식
+
+### 요청 예시
+
+```bash
+# 특정 날짜 조회
+curl -X GET "https://api.datagsm.com/api/neis/meals?date=2025-12-15" \
+  -H "X-API-KEY: your-api-key-here"
+
+# 기간 범위 조회
+curl -X GET "https://api.datagsm.com/api/neis/meals?fromDate=2025-12-01&toDate=2025-12-31" \
+  -H "X-API-KEY: your-api-key-here"
+```
+
+### 응답 예시
+
+```json
+[
+  {
+    "mealId": "7430310_20251215_2",
+    "schoolCode": "7430310",
+    "schoolName": "광주소프트웨어마이스터고등학교",
+    "officeCode": "G10",
+    "officeName": "광주광역시교육청",
+    "mealDate": "2025-12-15",
+    "mealType": "LUNCH",
+    "mealMenu": ["쌀밥", "김치찌개", "돈까스", "배추김치"],
+    "mealAllergyInfo": ["1", "2", "5", "6"],
+    "mealCalories": "650.8 Kcal",
+    "originInfo": "쌀:국내산 돼지고기:국내산 배추김치:국내산",
+    "nutritionInfo": "단백질:25.0g 지방:15.0g 탄수화물:90.0g",
+    "mealServeCount": 450
+  }
+]
+```
+
+---
+
+## 학사일정 정보 API
+
+### 엔드포인트
+
+```http
+GET /api/neis/schedules
+```
+
+### 요청 파라미터
+
+| 파라미터   | 타입        | 필수 여부 | 설명                                           | 예시         |
+| ---------- | ----------- | --------- | ---------------------------------------------- | ------------ |
+| `date`     | `LocalDate` | 선택      | 특정 날짜의 학사일정 정보 조회 (ISO 8601 형식) | `2025-12-15` |
+| `fromDate` | `LocalDate` | 선택      | 조회 시작 날짜 (ISO 8601 형식)                 | `2025-12-01` |
+| `toDate`   | `LocalDate` | 선택      | 조회 종료 날짜 (ISO 8601 형식)                 | `2025-12-31` |
+
+**날짜 파라미터 사용 규칙:**
+
+- `date`: 특정 날짜의 학사일정 정보만 조회
+- `fromDate`와 `toDate`: 기간 범위 내의 학사일정 정보 조회
+- 파라미터를 생략하면 오늘 날짜 기준으로 조회
+
+### 응답 형식
+
+응답은 학사일정 정보 목록을 포함하며, 각 학사일정 객체는 다음 필드를 포함합니다.
+
+| 필드               | 타입        | 설명                                      | 예시                             |
+| ------------------ | ----------- | ----------------------------------------- | -------------------------------- |
+| `scheduleId`       | `String`    | 학사일정 ID                               | `7430310_20251215`               |
+| `schoolCode`       | `String`    | 학교 코드                                 | `7430310`                        |
+| `schoolName`       | `String`    | 학교명                                    | `광주소프트웨어마이스터고등학교` |
+| `officeCode`       | `String`    | 시도교육청 코드                           | `G10`                            |
+| `officeName`       | `String`    | 시도교육청명                              | `광주광역시교육청`               |
+| `scheduleDate`     | `LocalDate` | 학사일정 날짜                             | `2025-12-15`                     |
+| `academicYear`     | `String`    | 학년도                                    | `2025`                           |
+| `eventName`        | `String`    | 행사명                                    | `기말고사`                       |
+| `eventContent`     | `String`    | 행사내용 (nullable)                       | `2025학년도 2학기 기말고사`      |
+| `dayCategory`      | `String`    | 수업공제일명 (공휴일/휴업일 등, nullable) | `휴업일`                         |
+| `schoolCourseType` | `String`    | 학교과정명 (nullable)                     | `고등학교`                       |
+| `dayNightType`     | `String`    | 주야과정명 (nullable)                     | `주간`                           |
+| `targetGrades`     | `List<Int>` | 해당 학년 목록                            | `[1, 2, 3]`                      |
+
+### 요청 예시
+
+```bash
+# 특정 날짜 조회
+curl -X GET "https://api.datagsm.com/api/neis/schedules?date=2025-12-15" \
+  -H "X-API-KEY: your-api-key-here"
+
+# 기간 범위 조회
+curl -X GET "https://api.datagsm.com/api/neis/schedules?fromDate=2025-12-01&toDate=2025-12-31" \
+  -H "X-API-KEY: your-api-key-here"
+```
+
+### 응답 예시
+
+```json
+[
+  {
+    "scheduleId": "7430310_20251215",
+    "schoolCode": "7430310",
+    "schoolName": "광주소프트웨어마이스터고등학교",
+    "officeCode": "G10",
+    "officeName": "광주광역시교육청",
+    "scheduleDate": "2025-12-15",
+    "academicYear": "2025",
+    "eventName": "기말고사",
+    "eventContent": "2025학년도 2학기 기말고사",
+    "dayCategory": null,
+    "schoolCourseType": "고등학교",
+    "dayNightType": "주간",
+    "targetGrades": [1, 2, 3]
+  }
+]
+```
+
+---
+
+## 오류 응답
+
+| 상태 코드              | 설명                              |
+| ---------------------- | --------------------------------- |
+| `401 Unauthorized`     | API 키가 유효하지 않거나 만료됨   |
+| `403 Forbidden`        | 필요한 권한 범위가 없음           |
+| `429 Too Many Request` | 단위 시간에 너무 많은 요청량 발생 |
+| `400 Bad Request`      | 잘못된 요청 파라미터              |
+
+---
+
+## 사용 예제
+
+다음은 Node.js Express 환경에서 급식 정보 및 학사일정을 조회하는 예제입니다.
+
+### 급식 정보 조회
+
+```javascript
+const express = require('express');
+const app = express();
+const axios = require('axios');
+
+app.get('/meals', async (req, res) => {
+  try {
+    const { date, fromDate, toDate } = req.query;
+    const response = await axios.get(`https://api.datagsm.com/api/neis/meals`, {
+      headers: {
+        'X-API-KEY': 'your-api-key-here',
+      },
+      params: { date, fromDate, toDate },
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ message: error.message });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+```
+
+### 학사일정 조회
+
+```javascript
+const express = require('express');
+const app = express();
+const axios = require('axios');
+
+app.get('/schedules', async (req, res) => {
+  try {
+    const { date, fromDate, toDate } = req.query;
+    const response = await axios.get(`https://api.datagsm.com/api/neis/schedules`, {
+      headers: {
+        'X-API-KEY': 'your-api-key-here',
+      },
+      params: { date, fromDate, toDate },
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ message: error.message });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+```
+
+위 예제에서는 Express 서버를 설정하고, 날짜 파라미터를 통해 급식 정보 및 학사일정 데이터를 조회하는 엔드포인트를 구현하였습니다. `axios`를 사용하여 OpenAPI에 요청을 보내고, 응답 데이터를 클라이언트에 반환합니다.
