@@ -59,7 +59,7 @@ const CodeTabs = ({ children }: CodeTabsProps) => {
         <div className="flex">
           {tabs.map((tab, index) => (
             <button
-              key={index}
+              key={tab.props.label}
               onClick={() => setActiveTab(index)}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === index
@@ -81,7 +81,7 @@ const CodeTabs = ({ children }: CodeTabsProps) => {
       </div>
       <div>
         {tabs.map((tab, index) => (
-          <div key={index} className={activeTab === index ? 'block' : 'hidden'}>
+          <div key={tab.props.label} className={activeTab === index ? 'block' : 'hidden'}>
             <pre className="my-0 overflow-x-auto rounded-b-lg bg-gray-900 p-4 text-sm text-gray-100">
               <code className={`language-${tab.props.language}`}>
                 {String(tab.props.code).trim()}
