@@ -12,8 +12,8 @@ interface CodeTabsProps {
   children: ReactNode;
 }
 
-export const CodeTab = ({ code }: CodeTabProps) => {
-  return <>{code}</>;
+export const CodeTab = (_props: CodeTabProps) => {
+  return null;
 };
 
 const CodeTabs = ({ children }: CodeTabsProps) => {
