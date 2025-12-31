@@ -16,8 +16,7 @@ export const CodeTab = () => null;
 
 const CodeTabs = ({ children }: CodeTabsProps) => {
   const tabs = Children.toArray(children).filter(
-    (child): child is React.ReactElement<CodeTabProps> =>
-      isValidElement(child) && typeof child === 'object' && child !== null && 'props' in child,
+    (child): child is React.ReactElement<CodeTabProps> => isValidElement(child),
   );
 
   const [activeTab, setActiveTab] = useState(0);
