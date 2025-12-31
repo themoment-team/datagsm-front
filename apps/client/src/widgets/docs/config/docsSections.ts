@@ -25,6 +25,14 @@ export const docsSections: DocsSection[] = [
         label: '학생 데이터 OpenAPI',
         href: '/docs/api/student',
       },
+      {
+        label: '동아리 데이터 OpenAPI',
+        href: '/docs/api/club',
+      },
+      {
+        label: 'NEIS 데이터 OpenAPI',
+        href: '/docs/api/neis',
+      },
     ],
   },
   {
