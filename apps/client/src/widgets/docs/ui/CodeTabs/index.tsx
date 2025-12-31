@@ -34,17 +34,22 @@ const CodeTabs = ({ children }: CodeTabsProps) => {
   const handleCopy = async () => {
     const code = tabs[activeTab]?.props.code;
     if (code) {
-      await navigator.clipboard.writeText(String(code).trim());
-      setCopied(true);
+      try {
+        await navigator.clipboard.writeText(String(code).trim());
+        setCopied(true);
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
 
-      timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
+          setCopied(false);
+          timeoutRef.current = null;
+        }, 2000);
+      } catch (err) {
+        console.error('코드를 클립보드에 복사하는 데 실패했습니다:', err);
         setCopied(false);
-        timeoutRef.current = null;
-      }, 2000);
+      }
     }
   };
 
