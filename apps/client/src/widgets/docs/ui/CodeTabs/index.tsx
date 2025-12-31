@@ -12,9 +12,7 @@ interface CodeTabsProps {
   children: ReactNode;
 }
 
-export const CodeTab = (_props: CodeTabProps) => {
-  return null;
-};
+export const CodeTab = () => null;
 
 const CodeTabs = ({ children }: CodeTabsProps) => {
   const tabs = Children.toArray(children).filter(
