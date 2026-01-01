@@ -30,6 +30,10 @@ export const docsSections: DocsSection[] = [
         href: '/docs/api/club',
       },
       {
+        label: '프로젝트 데이터 OpenAPI',
+        href: '/docs/api/project',
+      },
+      {
         label: 'NEIS 데이터 OpenAPI',
         href: '/docs/api/neis',
       },
