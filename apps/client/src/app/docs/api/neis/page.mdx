@@ -44,27 +44,21 @@ GET /v1/neis/meals
 
 응답은 급식 정보 목록을 포함하며, 각 급식 객체는 다음 필드를 포함합니다.
 
-| 필드              | 타입           | 설명                          | 예시                                         |
-| ----------------- | -------------- | ----------------------------- | -------------------------------------------- |
-| `mealId`          | `String`       | 급식 ID                       | `7430310_20251215_2`                         |
-| `schoolCode`      | `String`       | 학교 코드                     | `7430310`                                    |
-| `schoolName`      | `String`       | 학교명                        | `광주소프트웨어마이스터고등학교`             |
-| `officeCode`      | `String`       | 시도교육청 코드               | `G10`                                        |
-| `officeName`      | `String`       | 시도교육청명                  | `광주광역시교육청`                           |
-| `mealDate`        | `LocalDate`    | 급식 날짜                     | `2025-12-15`                                 |
-| `mealType`        | `MealType`     | 급식 타입                     | `LUNCH`                                      |
-| `mealMenu`        | `List<String>` | 급식 메뉴 목록                | `["쌀밥", "김치찌개", "돈까스", "배추김치"]` |
-| `mealAllergyInfo` | `List<String>` | 알레르기 정보 목록 (nullable) | `["1", "2", "5", "6"]`                       |
-| `mealCalories`    | `String`       | 칼로리 정보 (nullable)        | `650.8 Kcal`                                 |
-| `originInfo`      | `String`       | 원산지 정보 (nullable)        | `쌀:국내산 돼지고기:국내산 배추김치:국내산`  |
-| `nutritionInfo`   | `String`       | 영양 정보 (nullable)          | `단백질:25.0g 지방:15.0g 탄수화물:90.0g`     |
-| `mealServeCount`  | `Int`          | 급식 인원수 (nullable)        | `450`                                        |
-
-**급식 타입 (MealType)**
-
-- `BREAKFAST`: 조식
-- `LUNCH`: 중식
-- `DINNER`: 석식
+| 필드              | 타입           | 설명                                       | 예시                                         |
+| ----------------- | -------------- | ------------------------------------------ | -------------------------------------------- |
+| `mealId`          | `String`       | 급식 ID                                    | `7430310_20251215_2`                         |
+| `schoolCode`      | `String`       | 학교 코드                                  | `7430310`                                    |
+| `schoolName`      | `String`       | 학교명                                     | `광주소프트웨어마이스터고등학교`             |
+| `officeCode`      | `String`       | 시도교육청 코드                            | `G10`                                        |
+| `officeName`      | `String`       | 시도교육청명                               | `광주광역시교육청`                           |
+| `mealDate`        | `LocalDate`    | 급식 날짜                                  | `2025-12-15`                                 |
+| `mealType`        | `MealType`     | 급식 타입(`BREACKFAST`, `LUNCH`, `DINNER`) | `LUNCH`                                      |
+| `mealMenu`        | `List<String>` | 급식 메뉴 목록                             | `["쌀밥", "김치찌개", "돈까스", "배추김치"]` |
+| `mealAllergyInfo` | `List<String>` | 알레르기 정보 목록 (nullable)              | `["1", "2", "5", "6"]`                       |
+| `mealCalories`    | `String`       | 칼로리 정보 (nullable)                     | `650.8 Kcal`                                 |
+| `originInfo`      | `String`       | 원산지 정보 (nullable)                     | `쌀:국내산 돼지고기:국내산 배추김치:국내산`  |
+| `nutritionInfo`   | `String`       | 영양 정보 (nullable)                       | `단백질:25.0g 지방:15.0g 탄수화물:90.0g`     |
+| `mealServeCount`  | `Int`          | 급식 인원수 (nullable)                     | `450`                                        |
 
 ### 요청 예시
 
