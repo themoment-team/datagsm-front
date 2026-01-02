@@ -19,6 +19,10 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
       <h3 className="text-primary-400 mb-2 mt-8 text-[1.5rem] font-bold">{children}</h3>
     ),
 
+    h4: ({ children }) => (
+      <h4 className="text-primary-400 mb-2 mt-6 text-[1.25rem] font-bold">{children}</h4>
+    ),
+
     ul: ({ children }) => <ul className="my-4 list-disc pl-6">{children}</ul>,
 
     li: ({ children }) => <li className="mb-2 leading-relaxed">{children}</li>,
