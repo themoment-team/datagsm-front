@@ -144,32 +144,72 @@ curl -X GET "https://api.datagsm.com/v1/students?grade=1&classNum=1&page=0&size=
 
 ### 사용 예제
 
-다음은 Node.js Express 환경에서 학생 데이터를 조회하는 예제입니다.
+다음은 여러 언어에서 학생 데이터를 조회하는 예제입니다.
 
-```javascript
-const express = require('express');
-const app = express();
-const axios = require('axios');
+<CodeTabs>
+  <CodeTab label="JavaScript" language="javascript" code={`const axios = require('axios');
 
-app.get('/students/:id', async (req, res) => {
+async function getStudents(studentId) {
   try {
-    const response = await axios.get(`https://api.datagsm.com/v1/students`, {
+    const response = await axios.get('https://api.datagsm.com/v1/students', {
       headers: {
         'X-API-KEY': 'your-api-key-here',
       },
       params: {
-        studentId: req.params.id,
+        studentId: studentId,
       },
     });
-    res.json(response.data);
+    return response.data;
   } catch (error) {
-    res.status(error.response?.status || 500).json({ message: error.message });
+    console.error('Error:', error.message);
+    throw error;
   }
-});
+}`} />
+  <CodeTab label="Python" language="python" code={`import requests
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
-```
+def get_student(student_id):
+    try:
+        response = requests.get(
+            'https://api.datagsm.com/v1/students',
+            headers={'X-API-KEY': 'your-api-key-here'},
+            params={'studentId': student_id}
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f'Error: {e}')
+        raise`} />
+  <CodeTab label="Java" language="java" code={`import java.net.http.*;
+import java.net.URI;
 
-위 예제에서는 Express 서버를 설정하고, 특정 학생 ID로 학생 데이터를 조회하는 엔드포인트를 구현하였습니다. `axios`를 사용하여 OpenAPI에 요청을 보내고, 응답 데이터를 클라이언트에 반환합니다.
+public class StudentAPI {
+    public static String getStudents(Long studentId) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://api.datagsm.com/v1/students?studentId=" + studentId))
+            .header("X-API-KEY", "your-api-key-here")
+            .GET()
+            .build();
+
+        HttpResponse<String> response = client.send(request,
+            HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
+}`} />
+  <CodeTab label="Kotlin" language="kotlin" code={`import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.net.URI
+
+fun getStudents(studentId: Long): String {
+    val client = HttpClient.newHttpClient()
+    val request = HttpRequest.newBuilder()
+        .uri(URI.create("https://api.datagsm.com/v1/students?studentId=\${studentId}"))
+        .header("X-API-KEY", "your-api-key-here")
+        .GET()
+        .build()
+
+    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+    return response.body()
+}`} />
+</CodeTabs>
