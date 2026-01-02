@@ -17,25 +17,36 @@ export const docsSections: DocsSection[] = [
     icon: BookOpen,
   },
   {
-    label: 'OpenAPI',
+    label: 'OpenAPI - HTTP',
     href: '/docs/api',
     icon: Code2,
     children: [
       {
         label: '학생 데이터 OpenAPI',
-        href: '/docs/api/student',
+        href: '/docs/api/http/student',
       },
       {
         label: '동아리 데이터 OpenAPI',
-        href: '/docs/api/club',
+        href: '/docs/api/http/club',
       },
       {
         label: '프로젝트 데이터 OpenAPI',
-        href: '/docs/api/project',
+        href: '/docs/api/http/project',
       },
       {
         label: 'NEIS 데이터 OpenAPI',
-        href: '/docs/api/neis',
+        href: '/docs/api/http/neis',
+      },
+    ],
+  },
+  {
+    label: 'OpenAPI - SDK',
+    href: '/docs/api/sdk',
+    icon: Code2,
+    children: [
+      {
+        label: '학생 데이터 SDK',
+        href: '/docs/api/sdk/java',
       },
     ],
   },
