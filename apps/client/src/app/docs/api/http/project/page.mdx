@@ -141,7 +141,7 @@ curl -X GET "https://api.datagsm.com/v1/projects?clubId=1&page=0&size=50" \
 <CodeTabs>
   <CodeTab label="JavaScript" language="javascript" code={`const axios = require('axios');
 
-async function getProject(projectId) {
+async function getProjects(projectId) {
   try {
     const response = await axios.get('https://api.datagsm.com/v1/projects', {
       headers: {
@@ -177,7 +177,7 @@ def get_project(project_id):
 import java.net.URI;
 
 public class ProjectAPI {
-    public static String getProject(Long projectId) throws Exception {
+    public static String getProjects(Long projectId) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("https://api.datagsm.com/v1/projects?projectId=" + projectId))
@@ -196,7 +196,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.URI
 
-fun getProject(projectId: Long): String {
+fun getProjects(projectId: Long): String {
     val client = HttpClient.newHttpClient()
     val request = HttpRequest.newBuilder()
         .uri(URI.create("https://api.datagsm.com/v1/projects?projectId=\${projectId}"))
