@@ -76,8 +76,8 @@ DataGsmClient client = DataGsmClient.builder("your-api-key-here").build();
 
 // 커스텀 Base URL 설정 (선택사항)
 DataGsmClient client = DataGsmClient.builder("your-api-key-here")
-    .baseUrl("https://api.datagsm.com")
-    .build();`} />
+.baseUrl("https://api.datagsm.com")
+.build();`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient
 
@@ -86,8 +86,8 @@ val client = DataGsmClient.builder("your-api-key-here").build()
 
 // 커스텀 Base URL 설정 (선택사항)
 val client = DataGsmClient.builder("your-api-key-here")
-    .baseUrl("https://api.datagsm.com")
-    .build()`} />
+.baseUrl("https://api.datagsm.com")
+.build()`} />
 
 </CodeTabs>
 
@@ -103,17 +103,17 @@ import team.themoment.datagsm.sdk.openapi.model.*;
 
 // 요청 파라미터 설정
 StudentApi.StudentRequest request = new StudentApi.StudentRequest()
-    .grade(1)        // 1학년
-    .classNum(1)     // 1반
-    .page(0)         // 첫 번째 페이지
-    .size(50);       // 페이지당 50명
+.grade(1) // 1학년
+.classNum(1) // 1반
+.page(0) // 첫 번째 페이지
+.size(50); // 페이지당 50명
 
 // API 호출
 StudentResponse response = client.students().getStudents(request);
 
 // 결과 처리
 for (Student student : response.getStudents()) {
-    System.out.printf("%s - %s%n", student.getName(), student.getEmail());
+System.out.printf("%s - %s%n", student.getName(), student.getEmail());
 }`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.client.StudentApi
@@ -121,17 +121,17 @@ import team.themoment.datagsm.sdk.openapi.model.*
 
 // 요청 파라미터 설정
 val request = StudentApi.StudentRequest()
-    .grade(1)        // 1학년
-    .classNum(1)     // 1반
-    .page(0)         // 첫 번째 페이지
-    .size(50)        // 페이지당 50명
+.grade(1) // 1학년
+.classNum(1) // 1반
+.page(0) // 첫 번째 페이지
+.size(50) // 페이지당 50명
 
 // API 호출
 val response = client.students().getStudents(request)
 
 // 결과 처리
 response.students.forEach { student ->
-    println("\${student.name} - \${student.email}")
+println("\${student.name} - \${student.email}")
 }`} />
 
 </CodeTabs>
@@ -145,16 +145,16 @@ import java.time.LocalDate;
 
 // 오늘 날짜의 급식 조회
 NeisApi.MealRequest request = new NeisApi.MealRequest()
-    .date(LocalDate.now());
+.date(LocalDate.now());
 
 List<Meal> meals = client.neis().getMeals(request);
 
 // 급식 정보 출력
 for (Meal meal : meals) {
-    System.out.println(meal.getMealType() + ":");
-    for (String menu : meal.getMealMenu()) {
-        System.out.println("  - " + menu);
-    }
+System.out.println(meal.getMealType() + ":");
+for (String menu : meal.getMealMenu()) {
+System.out.println(" - " + menu);
+}
 }`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.client.NeisApi
@@ -163,16 +163,16 @@ import java.time.LocalDate
 
 // 오늘 날짜의 급식 조회
 val request = NeisApi.MealRequest()
-    .date(LocalDate.now())
+.date(LocalDate.now())
 
 val meals = client.neis().getMeals(request)
 
 // 급식 정보 출력
 meals.forEach { meal ->
-    println("\${meal.mealType}:")
-    meal.mealMenu.forEach { menu ->
-        println("  - \$menu")
-    }
+println("\${meal.mealType}:")
+meal.mealMenu.forEach { menu ->
+println(" - \$menu")
+}
 }`} />
 
 </CodeTabs>
@@ -542,9 +542,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
-        // try-with-resources로 자동 리소스 관리
-        try (DataGsmClient client = DataGsmClient.builder("your-api-key-here").build()) {
+public static void main(String[] args) {
+// try-with-resources로 자동 리소스 관리
+try (DataGsmClient client = DataGsmClient.builder("your-api-key-here").build()) {
 
             // 학생 정보 조회
             StudentResponse students = client.students().getStudents(
@@ -581,6 +581,7 @@ public class Main {
             e.printStackTrace();
         }
     }
+
 }`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient
@@ -589,8 +590,8 @@ import team.themoment.datagsm.sdk.openapi.model.*
 import java.time.LocalDate
 
 fun main() {
-    // use 함수로 자동 리소스 관리
-    DataGsmClient.builder("your-api-key-here").build().use { client ->
+// use 함수로 자동 리소스 관리
+DataGsmClient.builder("your-api-key-here").build().use { client ->
 
         // 학생 정보 조회
         val students = client.students().getStudents(
@@ -618,6 +619,7 @@ fun main() {
             }
         }
     }
+
 }`} />
 
 </CodeTabs>
@@ -645,6 +647,7 @@ API 키는 민감한 정보이므로 절대 코드에 직접 하드코딩하지 
             // API 사용
         }
     }
+
 }`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`fun main() {
@@ -659,6 +662,7 @@ API 키는 민감한 정보이므로 절대 코드에 직접 하드코딩하지 
     DataGsmClient.builder(apiKey).build().use { client ->
         // API 사용
     }
+
 }`} />
 
 </CodeTabs>

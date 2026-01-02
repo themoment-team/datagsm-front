@@ -8,14 +8,14 @@
 
 ### SDK 사용의 이점
 
-| 이점 | 설명 |
-|------|------|
-| **타입 안전성** | 강타입 시스템으로 컴파일 타임에 오류를 검출하여 런타임 에러를 방지합니다. |
-| **에러 처리 간소화** | HTTP 상태 코드를 의미 있는 예외로 변환하여 명확한 에러 핸들링을 지원합니다. |
+| 이점                    | 설명                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------- |
+| **타입 안전성**         | 강타입 시스템으로 컴파일 타임에 오류를 검출하여 런타임 에러를 방지합니다.        |
+| **에러 처리 간소화**    | HTTP 상태 코드를 의미 있는 예외로 변환하여 명확한 에러 핸들링을 지원합니다.      |
 | **보일러플레이트 제거** | HTTP 클라이언트 설정, 헤더 관리, JSON 직렬화 등 반복 작업을 자동으로 처리합니다. |
-| **일관된 인터페이스** | 모든 엔드포인트에 대해 일관된 패턴을 제공하여 학습 곡선을 낮춥니다. |
-| **자동 리소스 관리** | 리소스 누수를 자동으로 방지하는 메커니즘을 제공합니다. |
-| **IDE 지원** | 자동완성, 타입 체킹, 인라인 문서 등 IDE 기능을 최대한 활용할 수 있습니다. |
+| **일관된 인터페이스**   | 모든 엔드포인트에 대해 일관된 패턴을 제공하여 학습 곡선을 낮춥니다.              |
+| **자동 리소스 관리**    | 리소스 누수를 자동으로 방지하는 메커니즘을 제공합니다.                           |
+| **IDE 지원**            | 자동완성, 타입 체킹, 인라인 문서 등 IDE 기능을 최대한 활용할 수 있습니다.        |
 
 ### 상세 비교
 
@@ -112,89 +112,38 @@ List<Meal> meals = client.neis().getMeals(request);
 
 DataGSM OpenAPI는 다양한 프로그래밍 언어에 대한 공식 SDK를 제공합니다. 각 언어별 SDK는 해당 언어의 관습과 패턴을 따르며, 동일한 기능을 제공합니다.
 
-| 언어 | 최소 버전 | 빌드 도구 | 주요 특징 | 문서 |
-|------|----------|----------|----------|------|
-| **Java** | JDK 17 | Gradle, Maven | 타입 안전성, AutoCloseable, 빌더 패턴 | [Java SDK 문서](/docs/api/sdk/java) |
-| **Kotlin** | JDK 17 | Gradle, Maven | Java SDK와 완벽 호환, DSL 지원, Coroutine 통합 | [Java SDK 문서](/docs/api/sdk/java) |
-| **Python** | 3.8+ | pip | 타입 힌팅, 컨텍스트 매니저, async/await 지원 | 준비 중 |
-| **JavaScript/TypeScript** | Node.js 16+ | npm, yarn, pnpm | 완전한 TypeScript 지원, Promise 기반 | 준비 중 |
-
-#### 언어별 코드 스타일 비교
-
-<CodeTabs>
-  <CodeTab label="Java" language="java" code={`// Java - 빌더 패턴과 명시적 타입
-try (DataGsmClient client = DataGsmClient.builder(apiKey).build()) {
-    StudentResponse students = client.students().getStudents(
-        new StudentApi.StudentRequest()
-            .grade(1)
-            .classNum(1)
-    );
-    students.getStudents().forEach(student ->
-        System.out.println(student.getName())
-    );
-}`} />
-
-  <CodeTab label="Kotlin" language="kotlin" code={`// Kotlin - 간결한 구문과 DSL 스타일
-DataGsmClient.builder(apiKey).build().use { client ->
-    val students = client.students().getStudents(
-        StudentApi.StudentRequest()
-            .grade(1)
-            .classNum(1)
-    )
-    students.students.forEach { student ->
-        println(student.name)
-    }
-}`} />
-
-  <CodeTab label="Python" language="python" code={`# Python - 컨텍스트 매니저와 타입 힌팅 (예정)
-with DataGsmClient(api_key=api_key) as client:
-    students: StudentResponse = client.students.get_students(
-        grade=1,
-        class_num=1
-    )
-    for student in students.students:
-        print(student.name)`} />
-
-  <CodeTab label="TypeScript" language="typescript" code={`// TypeScript - Promise 기반과 완전한 타입 지원 (예정)
-const client = new DataGsmClient({ apiKey });
-try {
-    const students: StudentResponse = await client.students.getStudents({
-        grade: 1,
-        classNum: 1
-    });
-    students.students.forEach(student =>
-        console.log(student.name)
-    );
-} finally {
-    await client.close();
-}`} />
-</CodeTabs>
+| 언어                      | 최소 버전   | 빌드 도구       | 주요 특징                                      | 문서                                |
+| ------------------------- | ----------- | --------------- | ---------------------------------------------- | ----------------------------------- |
+| **Java**                  | JDK 17      | Gradle, Maven   | 타입 안전성, AutoCloseable, 빌더 패턴          | [Java SDK 문서](/docs/api/sdk/java) |
+| **Kotlin**                | JDK 17      | Gradle, Maven   | Java SDK와 완벽 호환, DSL 지원, Coroutine 통합 | [Java SDK 문서](/docs/api/sdk/java) |
+| **Python**                | 3.8+        | pip             | 타입 힌팅, 컨텍스트 매니저, async/await 지원   | 준비 중                             |
+| **JavaScript/TypeScript** | Node.js 16+ | npm, yarn, pnpm | 완전한 TypeScript 지원, Promise 기반           | 준비 중                             |
 
 ### SDK vs 직접 HTTP 호출 비교
 
-| 특성 | SDK 사용 | 직접 HTTP 호출 |
-|------|---------|---------------|
-| **타입 안전성** | ✅ 컴파일 타임에 타입 체크 | ❌ 런타임 에러 가능성 높음 |
-| **에러 처리** | ✅ 구체적인 예외 타입 제공 | ⚠️ 수동으로 상태 코드 파싱 필요 |
-| **코드 간결성** | ✅ 간결하고 읽기 쉬운 코드 | ❌ 많은 보일러플레이트 코드 |
-| **유지보수성** | ✅ API 변경 시 자동으로 반영 | ❌ 수동으로 업데이트 필요 |
-| **학습 곡선** | ✅ 문서화된 인터페이스와 IDE 지원 | ⚠️ API 스펙을 직접 학습 |
-| **리소스 관리** | ✅ 자동으로 리소스 정리 | ⚠️ 수동으로 관리 필요 |
-| **개발 속도** | ✅ 빠른 개발 및 프로토타이핑 | ⚠️ 설정과 구현에 시간 소요 |
-| **디버깅** | ✅ 명확한 에러 메시지와 스택 트레이스 | ⚠️ 원시 HTTP 응답 분석 필요 |
+| 특성            | SDK 사용                              | 직접 HTTP 호출                  |
+| --------------- | ------------------------------------- | ------------------------------- |
+| **타입 안전성** | ✅ 컴파일 타임에 타입 체크            | ❌ 런타임 에러 가능성 높음      |
+| **에러 처리**   | ✅ 구체적인 예외 타입 제공            | ⚠️ 수동으로 상태 코드 파싱 필요 |
+| **코드 간결성** | ✅ 간결하고 읽기 쉬운 코드            | ❌ 많은 보일러플레이트 코드     |
+| **유지보수성**  | ✅ API 변경 시 자동으로 반영          | ❌ 수동으로 업데이트 필요       |
+| **학습 곡선**   | ✅ 문서화된 인터페이스와 IDE 지원     | ⚠️ API 스펙을 직접 학습         |
+| **리소스 관리** | ✅ 자동으로 리소스 정리               | ⚠️ 수동으로 관리 필요           |
+| **개발 속도**   | ✅ 빠른 개발 및 프로토타이핑          | ⚠️ 설정과 구현에 시간 소요      |
+| **디버깅**      | ✅ 명확한 에러 메시지와 스택 트레이스 | ⚠️ 원시 HTTP 응답 분석 필요     |
 
 ### 주요 기능
 
 SDK는 DataGSM API의 모든 기능을 지원합니다:
 
-| 기능 | 설명 | 지원 API |
-|------|------|---------|
-| **학생 데이터 조회** | 재학생 정보를 학년, 반, 번호, 전공 등으로 조회 | `client.students()` |
-| **동아리 데이터 조회** | 전공동아리, 취업동아리, 창체동아리 정보 조회 | `client.clubs()` |
-| **프로젝트 데이터 조회** | 학생들의 프로젝트 및 포트폴리오 정보 조회 | `client.projects()` |
-| **NEIS 데이터 조회** | 급식, 학사일정 등 나이스 시스템 데이터 조회 | `client.neis()` |
-| **페이지네이션** | 대용량 데이터를 효율적으로 처리하는 페이징 지원 | 모든 API |
-| **필터링** | 다양한 조건으로 데이터를 필터링 | 모든 API |
+| 기능                     | 설명                                            | 지원 API            |
+| ------------------------ | ----------------------------------------------- | ------------------- |
+| **학생 데이터 조회**     | 재학생 정보를 학년, 반, 번호, 전공 등으로 조회  | `client.students()` |
+| **동아리 데이터 조회**   | 전공동아리, 취업동아리, 창체동아리 정보 조회    | `client.clubs()`    |
+| **프로젝트 데이터 조회** | 학생들의 프로젝트 및 포트폴리오 정보 조회       | `client.projects()` |
+| **NEIS 데이터 조회**     | 급식, 학사일정 등 나이스 시스템 데이터 조회     | `client.neis()`     |
+| **페이지네이션**         | 대용량 데이터를 효율적으로 처리하는 페이징 지원 | 모든 API            |
+| **필터링**               | 다양한 조건으로 데이터를 필터링                 | 모든 API            |
 
 ### 시작하기
 
