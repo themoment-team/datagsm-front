@@ -45,7 +45,7 @@ export const docsSections: DocsSection[] = [
     icon: Code2,
     children: [
       {
-        label: '학생 데이터 SDK',
+        label: 'Java / Kotlin SDK',
         href: '/docs/api/sdk/java',
       },
     ],
