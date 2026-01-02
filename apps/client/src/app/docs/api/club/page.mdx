@@ -17,7 +17,7 @@ API 키는 UUID 형식이며, 만료되거나 유효하지 않은 키를 사용�
 ### 엔드포인트
 
 ```http
-GET /api/clubs
+GET /v1/clubs
 ```
 
 ### 권한 범위
@@ -70,16 +70,10 @@ GET /api/clubs
 | `major`         | `Major`  | 학과 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`) | `SW_DEVELOPMENT`   |
 | `sex`           | `Sex`    | 성별 (`MAN`, `WOMAN`)                      | `MAN`              |
 
-**동아리 종류 (ClubType)**
-
-- `MAJOR_CLUB`: 전공동아리
-- `JOB_CLUB`: 취업동아리
-- `AUTONOMOUS_CLUB`: 창체동아리
-
 ### 요청 예시
 
 ```bash
-curl -X GET "https://api.datagsm.com/api/clubs?clubType=MAJOR_CLUB&page=0&size=50" \
+curl -X GET "https://api.datagsm.com/v1/clubs?clubType=MAJOR_CLUB&page=0&size=50" \
   -H "X-API-KEY: your-api-key-here"
 ```
 
@@ -137,7 +131,7 @@ const axios = require('axios');
 
 app.get('/clubs/:id', async (req, res) => {
   try {
-    const response = await axios.get(`https://api.datagsm.com/api/clubs`, {
+    const response = await axios.get(`https://api.datagsm.com/v1/clubs`, {
       headers: {
         'X-API-KEY': 'your-api-key-here',
       },
