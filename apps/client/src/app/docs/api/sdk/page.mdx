@@ -26,7 +26,9 @@ SDK는 강타입 언어의 장점을 활용하여 컴파일 타임에 오류를 
 ```java
 // ✅ SDK 사용 - 컴파일 타임에 타입 체크
 StudentResponse students = client.students().getStudents(
-    new StudentApi.StudentRequest().grade(1).classNum(1)
+    new StudentApi.StudentRequest()
+        .grade(1)
+        .classNum(1)
 );
 Student firstStudent = students.getStudents().get(0);
 String name = firstStudent.getName(); // 타입 안전하며 IDE 자동완성 지원
@@ -77,7 +79,8 @@ HTTP 클라이언트 설정, 헤더 관리, JSON 직렬화/역직렬화 등 반�
 // ✅ SDK 사용 - 단 3줄로 API 호출 완료
 DataGsmClient client = DataGsmClient.builder("your-api-key").build();
 List<Meal> meals = client.neis().getMeals(
-    new NeisApi.MealRequest().date(LocalDate.now())
+    new NeisApi.MealRequest()
+        .date(LocalDate.now())
 );
 
 // ❌ 직접 HTTP 호출 - 많은 보일러플레이트 코드 필요
