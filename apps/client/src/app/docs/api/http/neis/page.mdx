@@ -244,6 +244,19 @@ public class NeisAPI {
             HttpResponse.BodyHandlers.ofString());
         return response.body();
     }
+
+    public static String getSchedules(String date) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://api.datagsm.com/v1/neis/schedules?date=" + date))
+            .header("X-API-KEY", "your-api-key-here")
+            .GET()
+            .build();
+
+        HttpResponse<String> response = client.send(request,
+            HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
 }
 `} />
   <CodeTab label="Kotlin" language="kotlin" code={`import java.net.http.HttpClient
@@ -304,23 +317,9 @@ def get_schedules(date):
         print(f'Error: {e}')
         raise
 `} />
-  <CodeTab label="Java" language="java" code={`import java.net.http.*;
-import java.net.URI;
-
-public class NeisAPI {
-    public static String getSchedules(String date) throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://api.datagsm.com/v1/neis/schedules?date=" + date))
-            .header("X-API-KEY", "your-api-key-here")
-            .GET()
-            .build();
-
-        HttpResponse<String> response = client.send(request,
-            HttpResponse.BodyHandlers.ofString());
-        return response.body();
-    }
-}
+  <CodeTab label="Java" language="java" code={`// NeisAPI 클래스는 위 급식 정보 조회 섹션에 정의되어 있습니다.
+// getMeals()와 getSchedules() 메서드를 모두 포함합니다.
+NeisAPI.getSchedules("2025-12-15")
 `} />
   <CodeTab label="Kotlin" language="kotlin" code={`import java.net.http.HttpClient
 import java.net.http.HttpRequest
