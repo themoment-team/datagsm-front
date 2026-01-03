@@ -1,18 +1,6 @@
 import { BookOpen, Code2, User } from 'lucide-react';
 
-export interface DocsSection {
-  label: string;
-  href: string;
-  icon: React.ElementType;
-  children?: {
-    label: string;
-    href: string;
-    children?: {
-      label: string;
-      href: string;
-    }[];
-  }[];
-}
+import { DocsSection } from './types';
 
 export const docsSections: DocsSection[] = [
   {

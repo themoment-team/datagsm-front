@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@repo/shared/utils';
 import { ChevronDown, Menu, X } from 'lucide-react';
 
-import { docsSections } from '@/widgets/docs/config/docsSections';
+import { docsSections } from '../../model/constants';
 
 const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const pathname = usePathname();
