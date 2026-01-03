@@ -16,9 +16,18 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const isActive = (href: string) => pathname === href;
   const isDescendant = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
-  const [openMap, setOpenMap] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(docsSections.map((section) => [section.href, isDescendant(section.href)])),
-  );
+  const [openMap, setOpenMap] = useState<Record<string, boolean>>(() => {
+    const map: Record<string, boolean> = {};
+    docsSections.forEach((section) => {
+      map[section.href] = isDescendant(section.href);
+      if (section.children) {
+        section.children.forEach((child) => {
+          map[child.href] = isDescendant(child.href);
+        });
+      }
+    });
+    return map;
+  });
 
   const toggle = (href: string) => {
     setOpenMap((prev) => ({
@@ -62,22 +71,67 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
             </div>
 
             {children && isOpen && (
-              <div className="mt-1 space-y-1 pl-9">
-                {children.map((child) => (
-                  <Link
-                    key={child.href}
-                    href={child.href}
-                    onClick={onLinkClick}
-                    className={cn(
-                      'block rounded-md px-3 py-1.5 text-sm transition-colors',
-                      isActive(child.href)
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                    )}
-                  >
-                    {child.label}
-                  </Link>
-                ))}
+              <div className="mt-1 space-y-1 pl-6">
+                {children.map((child) => {
+                  const isChildOpen = openMap[child.href];
+
+                  return (
+                    <div key={child.href}>
+                      <div
+                        className={cn(
+                          'flex items-center justify-between rounded-md px-3 py-1.5 text-sm transition-colors',
+                          isActive(child.href)
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                        )}
+                      >
+                        <Link
+                          href={child.href}
+                          onClick={onLinkClick}
+                          className="flex flex-1 items-center"
+                        >
+                          {child.label}
+                        </Link>
+
+                        {child.children && (
+                          <button
+                            type="button"
+                            onClick={() => toggle(child.href)}
+                            className="p-1"
+                            aria-label={`${child.label} 토글`}
+                          >
+                            <ChevronDown
+                              className={cn(
+                                'h-4 w-4 transition-transform',
+                                isChildOpen && 'rotate-180',
+                              )}
+                            />
+                          </button>
+                        )}
+                      </div>
+
+                      {child.children && isChildOpen && (
+                        <div className="mt-1 space-y-1 pl-6">
+                          {child.children.map((grandChild) => (
+                            <Link
+                              key={grandChild.href}
+                              href={grandChild.href}
+                              onClick={onLinkClick}
+                              className={cn(
+                                'block rounded-md px-3 py-1.5 text-sm transition-colors',
+                                isActive(grandChild.href)
+                                  ? 'bg-primary/10 text-primary'
+                                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                              )}
+                            >
+                              {grandChild.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

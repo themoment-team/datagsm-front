@@ -7,6 +7,10 @@ export interface DocsSection {
   children?: {
     label: string;
     href: string;
+    children?: {
+      label: string;
+      href: string;
+    }[];
   }[];
 }
 
@@ -17,36 +21,41 @@ export const docsSections: DocsSection[] = [
     icon: BookOpen,
   },
   {
-    label: 'OpenAPI - HTTP',
+    label: 'OpenAPI',
     href: '/docs/api',
     icon: Code2,
     children: [
       {
-        label: '학생 데이터 OpenAPI',
-        href: '/docs/api/http/student',
+        label: 'HTTP',
+        href: '/docs/api/http',
+        children: [
+          {
+            label: '학생 데이터 OpenAPI',
+            href: '/docs/api/http/student',
+          },
+          {
+            label: '동아리 데이터 OpenAPI',
+            href: '/docs/api/http/club',
+          },
+          {
+            label: '프로젝트 데이터 OpenAPI',
+            href: '/docs/api/http/project',
+          },
+          {
+            label: 'NEIS 데이터 OpenAPI',
+            href: '/docs/api/http/neis',
+          },
+        ],
       },
       {
-        label: '동아리 데이터 OpenAPI',
-        href: '/docs/api/http/club',
-      },
-      {
-        label: '프로젝트 데이터 OpenAPI',
-        href: '/docs/api/http/project',
-      },
-      {
-        label: 'NEIS 데이터 OpenAPI',
-        href: '/docs/api/http/neis',
-      },
-    ],
-  },
-  {
-    label: 'OpenAPI - SDK',
-    href: '/docs/api/sdk',
-    icon: Code2,
-    children: [
-      {
-        label: 'Java / Kotlin SDK',
-        href: '/docs/api/sdk/java',
+        label: 'SDK',
+        href: '/docs/api/sdk',
+        children: [
+          {
+            label: 'Java / Kotlin SDK',
+            href: '/docs/api/sdk/java',
+          },
+        ],
       },
     ],
   },
