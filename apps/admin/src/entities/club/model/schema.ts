@@ -11,6 +11,7 @@ export const AddClubSchema = z.object({
   type: z.enum(['MAJOR_CLUB', 'JOB_CLUB', 'AUTONOMOUS_CLUB'], {
     message: '동아리 타입을 선택해주세요.',
   }),
+  leaderId: z.number({ message: '동아리 부장을 선택해주세요.' }).min(1),
 });
 
 export type AddClubType = z.infer<typeof AddClubSchema>;
