@@ -14,6 +14,7 @@ import { ClubFilterSchema, ClubFilterType } from '@/entities/club';
 import { useURLFilters } from '@/shared/hooks';
 import { CommonPagination } from '@/shared/ui';
 import { useGetClubs } from '@/views/clubs';
+import { useGetStudents } from '@/views/students';
 import { ClubExcelActions, ClubFilter, ClubFormDialog, ClubList } from '@/widgets/clubs';
 
 const PAGE_SIZE = 10;
@@ -72,6 +73,8 @@ const ClubsPage = () => {
 
   const { data: clubsData, isLoading: isLoadingClubs } = useGetClubs(queryParams);
 
+  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents({});
+
   const clubs = clubsData?.data.clubs || [];
 
   const totalPages = clubsData?.data.totalPages ?? 0;
@@ -85,7 +88,11 @@ const ClubsPage = () => {
               <CardTitle className={cn('text-2xl')}>동아리 관리</CardTitle>
               <div className={cn('flex items-center gap-2')}>
                 <ClubExcelActions />
-                <ClubFormDialog mode="create" />
+                <ClubFormDialog
+                  mode="create"
+                  students={studentsData?.data.students}
+                  isLoadingStudents={isLoadingStudents}
+                />
               </div>
             </div>
 
@@ -106,8 +113,10 @@ const ClubsPage = () => {
           <ClubFormDialog
             mode="edit"
             club={editingClub}
+            students={studentsData?.data.students}
             open={isEditDialogOpen}
             onOpenChange={setIsEditDialogOpen}
+            isLoadingStudents={isLoadingStudents}
           />
         )}
       </main>

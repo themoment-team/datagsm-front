@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Club } from '@repo/shared/types';
+import { Club, Student } from '@repo/shared/types';
 import {
   Button,
   Dialog,
@@ -30,17 +30,21 @@ import { useCreateClub, useUpdateClub } from '@/widgets/clubs';
 interface ClubFormDialogProps {
   mode: 'create' | 'edit';
   club?: Club;
+  students?: Student[];
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  isLoadingStudents?: boolean;
 }
 
 const ClubFormDialog = ({
   mode,
   club,
+  students,
   trigger,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
+  isLoadingStudents = false,
 }: ClubFormDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
@@ -87,6 +91,7 @@ const ClubFormDialog = ({
         ? {
             name: club.name,
             type: club.type,
+            leaderId: club.leader.id,
           }
         : undefined,
   });
@@ -96,6 +101,7 @@ const ClubFormDialog = ({
       reset({
         name: club.name,
         type: club.type,
+        leaderId: club.leader.id,
       });
     }
   }, [mode, club, open, reset]);
@@ -115,12 +121,12 @@ const ClubFormDialog = ({
 
   const defaultTrigger =
     mode === 'create' ? (
-      <Button size="sm" className={cn('gap-2')}>
+      <Button size="sm" className={cn('gap-2')} disabled={isLoadingStudents}>
         <Plus className={cn('h-4 w-4')} />
         동아리 추가
       </Button>
     ) : (
-      <Button variant="ghost" size="icon">
+      <Button variant="ghost" size="icon" disabled={isLoadingStudents}>
         <Pencil className={cn('h-4 w-4')} />
       </Button>
     );
@@ -164,6 +170,31 @@ const ClubFormDialog = ({
                 )}
               />
               <FormErrorMessage error={errors.type} />
+            </div>
+            <div className={cn('space-y-2')}>
+              <Label htmlFor="leaderId">부장</Label>
+              <Controller
+                control={control}
+                name="leaderId"
+                render={({ field }) => (
+                  <Select
+                    value={field.value?.toString()}
+                    onValueChange={(value) => field.onChange(Number(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="부장 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {students?.map((student) => (
+                        <SelectItem key={student.id} value={student.id.toString()}>
+                          {student.studentNumber} {student.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FormErrorMessage error={errors.leaderId} />
             </div>
           </div>
           <div className={cn('flex justify-end')}>
