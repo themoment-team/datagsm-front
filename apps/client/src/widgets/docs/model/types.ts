@@ -1,13 +1,9 @@
-export interface DocsSection {
+export interface DocsSectionItem {
   label: string;
   href: string;
+  children?: DocsSectionItem[];
+}
+
+export interface DocsSection extends DocsSectionItem {
   icon: React.ElementType;
-  children?: {
-    label: string;
-    href: string;
-    children?: {
-      label: string;
-      href: string;
-    }[];
-  }[];
 }
