@@ -9,6 +9,7 @@ import { cn } from '@repo/shared/utils';
 import { ChevronDown, Menu, X } from 'lucide-react';
 
 import { docsSections } from '../../model/constants';
+import { DocsSectionItem } from '../../model/types';
 
 const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const pathname = usePathname();
@@ -17,16 +18,17 @@ const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const isDescendant = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   const [openMap, setOpenMap] = useState<Record<string, boolean>>(() => {
-    const map: Record<string, boolean> = {};
-    docsSections.forEach((section) => {
-      map[section.href] = isDescendant(section.href);
-      if (section.children) {
-        section.children.forEach((child) => {
-          map[child.href] = isDescendant(child.href);
-        });
-      }
-    });
-    return map;
+    const initialMap: Record<string, boolean> = {};
+    const buildMap = (items: DocsSectionItem[]) => {
+      items.forEach((item) => {
+        if (item.children) {
+          initialMap[item.href] = isDescendant(item.href);
+          buildMap(item.children);
+        }
+      });
+    };
+    buildMap(docsSections);
+    return initialMap;
   });
 
   const toggle = (href: string) => {
