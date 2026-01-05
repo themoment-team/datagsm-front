@@ -54,6 +54,7 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
           <TableRow>
             <TableHead>동아리명</TableHead>
             <TableHead>타입</TableHead>
+            <TableHead>부장</TableHead>
             <TableHead className={cn('w-30')}>작업</TableHead>
           </TableRow>
         </TableHeader>
@@ -68,6 +69,9 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
                     <Skeleton className={cn('h-5 w-16')} />
                   </TableCell>
                   <TableCell>
+                    <Skeleton className={cn('h-4 w-24')} />
+                  </TableCell>
+                  <TableCell>
                     <Skeleton className={cn('h-8 w-8')} />
                   </TableCell>
                 </TableRow>
@@ -79,6 +83,9 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
                     <Badge variant={getTypeBadgeVariant(club.type)}>
                       {getTypeLabel(club.type)}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {club.leader.studentNumber} {club.leader.name}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
