@@ -26,46 +26,48 @@ GET /v1/clubs
 
 ### 요청 파라미터
 
-| 파라미터                      | 타입       | 필수 여부 | 설명                                                      | 예시           |
-| ----------------------------- | ---------- | --------- | --------------------------------------------------------- | -------------- |
-| `clubId`                      | `Long`     | 선택      | 동아리 ID                                                 | `1`            |
-| `clubName`                    | `String`   | 선택      | 동아리 이름                                               | `SW개발동아리` |
-| `clubType`                    | `ClubType` | 선택      | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB`   |
-| `page`                        | `Int`      | 선택      | 페이지 번호 (기본값: 0)                                   | `0`            |
-| `size`                        | `Int`      | 선택      | 페이지 크기 (기본값: 100)                                 | `100`          |
-| `includeLeaderInParticipants` | `Boolean`  | 선택      | 부장을 부원 목록에 포함할지 여부                          | `false`        |
+| 파라미터                          | 타입              | 필수 여부 | 설명                                                   | 예시           |
+|-------------------------------|-----------------|-------|------------------------------------------------------|--------------|
+| `clubId`                      | `Long`          | 선택    | 동아리 ID                                               | `1`          |
+| `clubName`                    | `String`        | 선택    | 동아리 이름                                               | `SW개발동아리`    |
+| `clubType`                    | `ClubType`      | 선택    | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
+| `page`                        | `Int`           | 선택    | 페이지 번호 (기본값: 0)                                      | `0`          |
+| `size`                        | `Int`           | 선택    | 페이지 크기 (기본값: 100)                                    | `100`        |
+| `includeLeaderInParticipants` | `Boolean`       | 선택    | 부장을 부원 목록에 포함할지 여부                                   | `false`      |
+| `sortBy`                      | `ClubSortBy`    | 선택    | 정렬 기준 (ID, NAME, TYPE)                               | `NAME`       |
+| `sortDirection`               | `SortDirection` | 선택    | 정렬 방향 (ASC, DESC) (기본값: ASC)                         | `ASC`        |
 
 ### 응답 형식
 
 응답은 동아리 정보 목록을 포함하며, 각 동아리 객체는 다음 필드를 포함합니다.
 
-| 필드            | 타입            | 설명           | 예시 |
-| --------------- | --------------- | -------------- | ---- |
+| 필드              | 타입              | 설명       | 예시   |
+|-----------------|-----------------|----------|------|
 | `totalPages`    | `Integer`       | 전체 페이지 수 | `1`  |
 | `totalElements` | `Integer`       | 전체 동아리 수 | `10` |
-| `clubs`         | `List<ClubDto>` | 동아리 목록    | -    |
+| `clubs`         | `List<ClubDto>` | 동아리 목록   | -    |
 
 ### 동아리 객체 (ClubDto)
 
 각 동아리 객체는 다음 필드를 포함합니다.
 
-| 필드           | 타입                       | 설명                                                      | 예시           |
-| -------------- | -------------------------- | --------------------------------------------------------- | -------------- |
-| `id`           | `Long`                     | 동아리 ID                                                 | `1`            |
-| `name`         | `String`                   | 동아리 이름                                               | `SW개발동아리` |
-| `type`         | `ClubType`                 | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB`   |
-| `leader`       | `ParticipantInfoDto`       | 동아리 부장 정보                                          | -              |
-| `participants` | `List<ParticipantInfoDto>` | 동아리 부원 목록                                          | -              |
+| 필드             | 타입                         | 설명                                                   | 예시           |
+|----------------|----------------------------|------------------------------------------------------|--------------|
+| `id`           | `Long`                     | 동아리 ID                                               | `1`          |
+| `name`         | `String`                   | 동아리 이름                                               | `SW개발동아리`    |
+| `type`         | `ClubType`                 | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
+| `leader`       | `ParticipantInfoDto`       | 동아리 부장 정보                                            | -            |
+| `participants` | `List<ParticipantInfoDto>` | 동아리 부원 목록                                            | -            |
 
 ### 부원 정보 객체 (ParticipantInfoDto)
 
 동아리 응답에 포함된 부장 및 부원 정보는 다음 필드를 포함합니다.
 
-| 필드            | 타입     | 설명                                       | 예시               |
-| --------------- | -------- | ------------------------------------------ | ------------------ |
+| 필드              | 타입       | 설명                                       | 예시                 |
+|-----------------|----------|------------------------------------------|--------------------|
 | `id`            | `Long`   | 학생 ID                                    | `1`                |
-| `name`          | `String` | 학생 이름                                  | `홍길동`           |
-| `email`         | `String` | 학생 이메일                                | `s24080@gsm.hs.kr` |
+| `name`          | `String` | 학생 이름                                    | `홍길동`              |
+| `email`         | `String` | 학생 이메일                                   | `s24080@gsm.hs.kr` |
 | `studentNumber` | `Int`    | 학번                                       | `1201`             |
 | `major`         | `Major`  | 학과 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`) | `SW_DEVELOPMENT`   |
 | `sex`           | `Sex`    | 성별 (`MAN`, `WOMAN`)                      | `MAN`              |
@@ -74,6 +76,14 @@ GET /v1/clubs
 
 ```bash
 curl -X GET "https://api.datagsm.com/v1/clubs?clubType=MAJOR_CLUB&page=0&size=50" \
+  -H "X-API-KEY: your-api-key-here"
+```
+
+#### 정렬을 포함한 요청 예시
+
+```bash
+# 동아리 이름 순으로 정렬
+curl -X GET "https://api.datagsm.com/v1/clubs?sortBy=NAME&sortDirection=ASC&page=0&size=50" \
   -H "X-API-KEY: your-api-key-here"
 ```
 
@@ -113,12 +123,12 @@ curl -X GET "https://api.datagsm.com/v1/clubs?clubType=MAJOR_CLUB&page=0&size=50
 
 ### 오류 응답
 
-| 상태 코드               | 설명                              |
-| ----------------------- | --------------------------------- |
-| `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨   |
-| `403 Forbidden`         | 필요한 권한 범위가 없음           |
+| 상태 코드                   | 설명                  |
+|-------------------------|---------------------|
+| `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
+| `403 Forbidden`         | 필요한 권한 범위가 없음       |
 | `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
-| `400 Bad Request`       | 잘못된 요청 파라미터              |
+| `400 Bad Request`       | 잘못된 요청 파라미터         |
 
 ### 사용 예제
 

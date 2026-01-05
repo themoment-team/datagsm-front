@@ -28,11 +28,11 @@ GET /v1/neis/meals
 
 ### 요청 파라미터
 
-| 파라미터   | 타입        | 필수 여부 | 설명                                       | 예시         |
-| ---------- | ----------- | --------- | ------------------------------------------ | ------------ |
-| `date`     | `LocalDate` | 선택      | 특정 날짜의 급식 정보 조회 (ISO 8601 형식) | `2025-12-15` |
-| `fromDate` | `LocalDate` | 선택      | 조회 시작 날짜 (ISO 8601 형식)             | `2025-12-01` |
-| `toDate`   | `LocalDate` | 선택      | 조회 종료 날짜 (ISO 8601 형식)             | `2025-12-31` |
+| 파라미터       | 타입          | 필수 여부 | 설명                            | 예시           |
+|------------|-------------|-------|-------------------------------|--------------|
+| `date`     | `LocalDate` | 선택    | 특정 날짜의 급식 정보 조회 (ISO 8601 형식) | `2025-12-15` |
+| `fromDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)        | `2025-12-01` |
+| `toDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)        | `2025-12-31` |
 
 **날짜 파라미터 사용 규칙:**
 
@@ -44,21 +44,21 @@ GET /v1/neis/meals
 
 응답은 급식 정보 목록을 포함하며, 각 급식 객체는 다음 필드를 포함합니다.
 
-| 필드              | 타입           | 설명                                       | 예시                                         |
-| ----------------- | -------------- | ------------------------------------------ | -------------------------------------------- |
-| `mealId`          | `String`       | 급식 ID                                    | `7430310_20251215_2`                         |
-| `schoolCode`      | `String`       | 학교 코드                                  | `7430310`                                    |
-| `schoolName`      | `String`       | 학교명                                     | `광주소프트웨어마이스터고등학교`             |
-| `officeCode`      | `String`       | 시도교육청 코드                            | `G10`                                        |
-| `officeName`      | `String`       | 시도교육청명                               | `광주광역시교육청`                           |
-| `mealDate`        | `LocalDate`    | 급식 날짜                                  | `2025-12-15`                                 |
-| `mealType`        | `MealType`     | 급식 타입(`BREACKFAST`, `LUNCH`, `DINNER`) | `LUNCH`                                      |
-| `mealMenu`        | `List<String>` | 급식 메뉴 목록                             | `["쌀밥", "김치찌개", "돈까스", "배추김치"]` |
-| `mealAllergyInfo` | `List<String>` | 알레르기 정보 목록 (nullable)              | `["1", "2", "5", "6"]`                       |
-| `mealCalories`    | `String`       | 칼로리 정보 (nullable)                     | `650.8 Kcal`                                 |
-| `originInfo`      | `String`       | 원산지 정보 (nullable)                     | `쌀:국내산 돼지고기:국내산 배추김치:국내산`  |
-| `nutritionInfo`   | `String`       | 영양 정보 (nullable)                       | `단백질:25.0g 지방:15.0g 탄수화물:90.0g`     |
-| `mealServeCount`  | `Int`          | 급식 인원수 (nullable)                     | `450`                                        |
+| 필드                | 타입             | 설명                                     | 예시                              |
+|-------------------|----------------|----------------------------------------|---------------------------------|
+| `mealId`          | `String`       | 급식 ID                                  | `7430310_20251215_2`            |
+| `schoolCode`      | `String`       | 학교 코드                                  | `7430310`                       |
+| `schoolName`      | `String`       | 학교명                                    | `광주소프트웨어마이스터고등학교`               |
+| `officeCode`      | `String`       | 시도교육청 코드                               | `G10`                           |
+| `officeName`      | `String`       | 시도교육청명                                 | `광주광역시교육청`                      |
+| `mealDate`        | `LocalDate`    | 급식 날짜                                  | `2025-12-15`                    |
+| `mealType`        | `MealType`     | 급식 타입(`BREACKFAST`, `LUNCH`, `DINNER`) | `LUNCH`                         |
+| `mealMenu`        | `List<String>` | 급식 메뉴 목록                               | `["쌀밥", "김치찌개", "돈까스", "배추김치"]` |
+| `mealAllergyInfo` | `List<String>` | 알레르기 정보 목록 (nullable)                  | `["1", "2", "5", "6"]`          |
+| `mealCalories`    | `String`       | 칼로리 정보 (nullable)                      | `650.8 Kcal`                    |
+| `originInfo`      | `String`       | 원산지 정보 (nullable)                      | `쌀:국내산 돼지고기:국내산 배추김치:국내산`       |
+| `nutritionInfo`   | `String`       | 영양 정보 (nullable)                       | `단백질:25.0g 지방:15.0g 탄수화물:90.0g` |
+| `mealServeCount`  | `Int`          | 급식 인원수 (nullable)                      | `450`                           |
 
 ### 요청 예시
 
@@ -106,11 +106,11 @@ GET /v1/neis/schedules
 
 ### 요청 파라미터
 
-| 파라미터   | 타입        | 필수 여부 | 설명                                           | 예시         |
-| ---------- | ----------- | --------- | ---------------------------------------------- | ------------ |
-| `date`     | `LocalDate` | 선택      | 특정 날짜의 학사일정 정보 조회 (ISO 8601 형식) | `2025-12-15` |
-| `fromDate` | `LocalDate` | 선택      | 조회 시작 날짜 (ISO 8601 형식)                 | `2025-12-01` |
-| `toDate`   | `LocalDate` | 선택      | 조회 종료 날짜 (ISO 8601 형식)                 | `2025-12-31` |
+| 파라미터       | 타입          | 필수 여부 | 설명                              | 예시           |
+|------------|-------------|-------|---------------------------------|--------------|
+| `date`     | `LocalDate` | 선택    | 특정 날짜의 학사일정 정보 조회 (ISO 8601 형식) | `2025-12-15` |
+| `fromDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)          | `2025-12-01` |
+| `toDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)          | `2025-12-31` |
 
 **날짜 파라미터 사용 규칙:**
 
@@ -122,21 +122,21 @@ GET /v1/neis/schedules
 
 응답은 학사일정 정보 목록을 포함하며, 각 학사일정 객체는 다음 필드를 포함합니다.
 
-| 필드               | 타입        | 설명                                      | 예시                             |
-| ------------------ | ----------- | ----------------------------------------- | -------------------------------- |
-| `scheduleId`       | `String`    | 학사일정 ID                               | `7430310_20251215`               |
-| `schoolCode`       | `String`    | 학교 코드                                 | `7430310`                        |
-| `schoolName`       | `String`    | 학교명                                    | `광주소프트웨어마이스터고등학교` |
-| `officeCode`       | `String`    | 시도교육청 코드                           | `G10`                            |
-| `officeName`       | `String`    | 시도교육청명                              | `광주광역시교육청`               |
-| `scheduleDate`     | `LocalDate` | 학사일정 날짜                             | `2025-12-15`                     |
-| `academicYear`     | `String`    | 학년도                                    | `2025`                           |
-| `eventName`        | `String`    | 행사명                                    | `기말고사`                       |
-| `eventContent`     | `String`    | 행사내용 (nullable)                       | `2025학년도 2학기 기말고사`      |
-| `dayCategory`      | `String`    | 수업공제일명 (공휴일/휴업일 등, nullable) | `휴업일`                         |
-| `schoolCourseType` | `String`    | 학교과정명 (nullable)                     | `고등학교`                       |
-| `dayNightType`     | `String`    | 주야과정명 (nullable)                     | `주간`                           |
-| `targetGrades`     | `List<Int>` | 해당 학년 목록                            | `[1, 2, 3]`                      |
+| 필드                 | 타입          | 설명                           | 예시                 |
+|--------------------|-------------|------------------------------|--------------------|
+| `scheduleId`       | `String`    | 학사일정 ID                      | `7430310_20251215` |
+| `schoolCode`       | `String`    | 학교 코드                        | `7430310`          |
+| `schoolName`       | `String`    | 학교명                          | `광주소프트웨어마이스터고등학교`  |
+| `officeCode`       | `String`    | 시도교육청 코드                     | `G10`              |
+| `officeName`       | `String`    | 시도교육청명                       | `광주광역시교육청`         |
+| `scheduleDate`     | `LocalDate` | 학사일정 날짜                      | `2025-12-15`       |
+| `academicYear`     | `String`    | 학년도                          | `2025`             |
+| `eventName`        | `String`    | 행사명                          | `기말고사`             |
+| `eventContent`     | `String`    | 행사내용 (nullable)              | `2025학년도 2학기 기말고사` |
+| `dayCategory`      | `String`    | 수업공제일명 (공휴일/휴업일 등, nullable) | `휴업일`              |
+| `schoolCourseType` | `String`    | 학교과정명 (nullable)             | `고등학교`             |
+| `dayNightType`     | `String`    | 주야과정명 (nullable)             | `주간`               |
+| `targetGrades`     | `List<Int>` | 해당 학년 목록                     | `[1, 2, 3]`        |
 
 ### 요청 예시
 
@@ -176,12 +176,12 @@ curl -X GET "https://api.datagsm.com/v1/neis/schedules?fromDate=2025-12-01&toDat
 
 ## 공통 오류 응답
 
-| 상태 코드               | 설명                              |
-| ----------------------- | --------------------------------- |
-| `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨   |
-| `403 Forbidden`         | 필요한 권한 범위가 없음           |
+| 상태 코드                   | 설명                  |
+|-------------------------|---------------------|
+| `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
+| `403 Forbidden`         | 필요한 권한 범위가 없음       |
 | `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
-| `400 Bad Request`       | 잘못된 요청 파라미터              |
+| `400 Bad Request`       | 잘못된 요청 파라미터         |
 
 ---
 
