@@ -31,9 +31,11 @@ GET /v1/clubs
 | `clubId`                      | `Long`     | 선택    | 동아리 ID                                               | `1`          |
 | `clubName`                    | `String`   | 선택    | 동아리 이름                                               | `SW개발동아리`    |
 | `clubType`                    | `ClubType` | 선택    | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
-| `page`                        | `Int`      | 선택    | 페이지 번호 (기본값: 0)                                      | `0`          |
-| `size`                        | `Int`      | 선택    | 페이지 크기 (기본값: 100)                                    | `100`        |
-| `includeLeaderInParticipants` | `Boolean`  | 선택    | 부장을 부원 목록에 포함할지 여부                                   | `false`      |
+| `page`                        | `Int`           | 선택    | 페이지 번호 (기본값: 0)           | `0`          |
+| `size`                        | `Int`           | 선택    | 페이지 크기 (기본값: 100)          | `100`        |
+| `includeLeaderInParticipants` | `Boolean`       | 선택    | 부장을 부원 목록에 포함할지 여부        | `false`      |
+| `sortBy`                      | `ClubSortBy`    | 선택    | 정렬 기준 (ID, NAME, TYPE)     | `NAME`       |
+| `sortDirection`               | `SortDirection` | 선택    | 정렬 방향 (ASC, DESC) (기본값: ASC) | `ASC`        |
 
 ### 응답 형식
 
@@ -74,6 +76,14 @@ GET /v1/clubs
 
 ```bash
 curl -X GET "https://api.datagsm.com/v1/clubs?clubType=MAJOR_CLUB&page=0&size=50" \
+  -H "X-API-KEY: your-api-key-here"
+```
+
+#### 정렬을 포함한 요청 예시
+
+```bash
+# 동아리 이름 순으로 정렬
+curl -X GET "https://api.datagsm.com/v1/clubs?sortBy=NAME&sortDirection=ASC&page=0&size=50" \
   -H "X-API-KEY: your-api-key-here"
 ```
 

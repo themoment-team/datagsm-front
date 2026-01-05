@@ -30,9 +30,11 @@ GET /v1/projects
 |---------------|----------|-------|-------------------|----------------|
 | `projectId`   | `Long`   | 선택    | 프로젝트 ID           | `1`            |
 | `projectName` | `String` | 선택    | 프로젝트 이름           | `DataGSM 프로젝트` |
-| `clubId`      | `Long`   | 선택    | 동아리 ID            | `1`            |
-| `page`        | `Int`    | 선택    | 페이지 번호 (기본값: 0)   | `0`            |
-| `size`        | `Int`    | 선택    | 페이지 크기 (기본값: 100) | `100`          |
+| `clubId`        | `Long`          | 선택    | 동아리 ID                  | `1`    |
+| `page`          | `Int`           | 선택    | 페이지 번호 (기본값: 0)          | `0`    |
+| `size`          | `Int`           | 선택    | 페이지 크기 (기본값: 100)        | `100`  |
+| `sortBy`        | `ProjectSortBy` | 선택    | 정렬 기준 (ID, NAME)         | `NAME` |
+| `sortDirection` | `SortDirection` | 선택    | 정렬 방향 (ASC, DESC) (기본값: ASC) | `ASC`  |
 
 ### 응답 형식
 
@@ -83,6 +85,14 @@ GET /v1/projects
 
 ```bash
 curl -X GET "https://api.datagsm.com/v1/projects?clubId=1&page=0&size=50" \
+  -H "X-API-KEY: your-api-key-here"
+```
+
+#### 정렬을 포함한 요청 예시
+
+```bash
+# 프로젝트 이름 순으로 정렬
+curl -X GET "https://api.datagsm.com/v1/projects?sortBy=NAME&sortDirection=ASC&page=0&size=50" \
   -H "X-API-KEY: your-api-key-here"
 ```
 

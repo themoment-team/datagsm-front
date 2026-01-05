@@ -39,8 +39,10 @@ GET /v1/students
 | `role`          | `StudentRole` | 선택    | 학생 역할               | `GENERAL_STUDENT`   |
 | `dormitoryRoom` | `Int`         | 선택    | 기숙사 호실              | `301`               |
 | `isLeaveSchool` | `Boolean`     | 선택    | 자퇴 여부               | `false`             |
-| `page`          | `Int`         | 선택    | 페이지 번호 (기본값: 0)     | `0`                 |
-| `size`          | `Int`         | 선택    | 페이지 크기 (기본값: 300)   | `300`               |
+| `page`          | `Int`           | 선택    | 페이지 번호 (기본값: 0)                                                                                               | `0`                |
+| `size`          | `Int`           | 선택    | 페이지 크기 (기본값: 300)                                                                                              | `300`              |
+| `sortBy`        | `StudentSortBy` | 선택    | 정렬 기준 (ID, NAME, EMAIL, STUDENT_NUMBER, GRADE, CLASS_NUM, NUMBER, MAJOR, ROLE, SEX, DORMITORY_ROOM, IS_LEAVE_SCHOOL) | `STUDENT_NUMBER`   |
+| `sortDirection` | `SortDirection` | 선택    | 정렬 방향 (ASC, DESC) (기본값: ASC)                                                                                     | `ASC`              |
 
 ### 응답 형식
 
@@ -90,6 +92,18 @@ GET /v1/students
 
 ```bash
 curl -X GET "https://api.datagsm.com/v1/students?grade=1&classNum=1&page=0&size=50" \
+  -H "X-API-KEY: your-api-key-here"
+```
+
+#### 정렬을 포함한 요청 예시
+
+```bash
+# 학번 순으로 정렬
+curl -X GET "https://api.datagsm.com/v1/students?sortBy=STUDENT_NUMBER&sortDirection=ASC&page=0&size=50" \
+  -H "X-API-KEY: your-api-key-here"
+
+# 이름 역순으로 정렬
+curl -X GET "https://api.datagsm.com/v1/students?sortBy=NAME&sortDirection=DESC&page=0&size=50" \
   -H "X-API-KEY: your-api-key-here"
 ```
 
