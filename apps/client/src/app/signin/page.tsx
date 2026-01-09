@@ -1,7 +1,7 @@
-import { SigninPage } from '@/views/signin';
+import { SignInPage } from '@/views/signin';
 
-const Signin = () => {
-  return <SigninPage />;
+const SignIn = () => {
+  return <SignInPage />;
 };
 
-export default Signin;
+export default SignIn;
