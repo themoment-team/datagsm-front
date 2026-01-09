@@ -29,7 +29,8 @@ const Header = ({ role = 'client' }: HeaderProps) => {
     router.push('/signin');
   };
 
-  if (pathname === '/signin') return null;
+  const PUBLIC_ROUTES = ['/signin', '/signup'];
+  if (PUBLIC_ROUTES.includes(pathname)) return null;
 
   const links = NAV_LINKS[role];
 

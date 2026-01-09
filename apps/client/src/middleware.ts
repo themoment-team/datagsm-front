@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { COOKIE_KEYS } from '@repo/shared/constants';
 
+const PUBLIC_ROUTES = ['/signin', '/signup'];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
-  if (pathname === '/signin') {
+  if (PUBLIC_ROUTES.includes(pathname)) {
     if (accessToken) {
       const referer = request.headers.get('referer');
       const url = request.nextUrl.clone();
@@ -17,7 +19,7 @@ export function middleware(request: NextRequest) {
 
           if (
             refererUrl.origin === url.origin &&
-            refererUrl.pathname !== '/signin' &&
+            !PUBLIC_ROUTES.includes(refererUrl.pathname) &&
             refererUrl.pathname.startsWith('/')
           ) {
             url.pathname = refererUrl.pathname;
