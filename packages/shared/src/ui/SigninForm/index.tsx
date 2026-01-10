@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-
 import Link from 'next/link';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SignInFormSchema, SignInFormType } from '@repo/shared/types';
 import {
   Button,
   Card,
@@ -12,19 +12,31 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  FormErrorMessage,
   Input,
   Label,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { Database } from 'lucide-react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-const SignInForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+interface SignInFormProps {
+  onSubmit: (data: SignInFormType) => void;
+  isPending?: boolean;
+  signupHref?: string;
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Sign in with:', { email, password });
+const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormType>({
+    resolver: zodResolver(SignInFormSchema),
+  });
+
+  const handleFormSubmit: SubmitHandler<SignInFormType> = (data) => {
+    onSubmit(data);
   };
 
   return (
@@ -43,7 +55,7 @@ const SignInForm = () => {
         </div>
       </CardHeader>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <CardContent className={cn('space-y-4')}>
           <div className={cn('space-y-2')}>
             <Label htmlFor="email">이메일</Label>
@@ -51,10 +63,10 @@ const SignInForm = () => {
               id="email"
               type="email"
               placeholder="example@gsm.hs.kr"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              {...register('email')}
+              disabled={isPending}
             />
+            <FormErrorMessage error={errors.email} />
           </div>
 
           <div className={cn('space-y-2')}>
@@ -63,24 +75,31 @@ const SignInForm = () => {
               id="password"
               type="password"
               placeholder="비밀번호를 입력하세요"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              {...register('password')}
+              disabled={isPending}
             />
+            <FormErrorMessage error={errors.password} />
           </div>
         </CardContent>
 
         <CardFooter className={cn('mt-6 flex flex-col space-y-4')}>
-          <Button type="submit" className={cn('w-full')} size="lg">
-            로그인
+          <Button
+            type="submit"
+            className={cn('w-full', isPending && 'cursor-not-allowed')}
+            size="lg"
+            disabled={isPending}
+          >
+            {isPending ? '로그인 중...' : '로그인'}
           </Button>
 
-          <p className={cn('text-muted-foreground text-center text-sm')}>
-            계정이 없으신가요?{' '}
-            <Link href="/signup" className={cn('text-primary font-medium hover:underline')}>
-              회원가입
-            </Link>
-          </p>
+          {signupHref && (
+            <p className={cn('text-muted-foreground text-center text-sm')}>
+              계정이 없으신가요?{' '}
+              <Link href={signupHref} className={cn('text-primary font-medium hover:underline')}>
+                회원가입
+              </Link>
+            </p>
+          )}
         </CardFooter>
       </form>
     </Card>

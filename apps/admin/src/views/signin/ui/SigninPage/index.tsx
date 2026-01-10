@@ -1,7 +1,8 @@
 'use client';
 
-import { SignInForm } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+
+import { SignInForm } from '@/widgets/signin';
 
 const SignInPage = () => {
   return (
