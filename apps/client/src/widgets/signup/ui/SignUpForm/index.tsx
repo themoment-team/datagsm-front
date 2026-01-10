@@ -19,7 +19,7 @@ import {
   Label,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-import { Check, Database } from 'lucide-react';
+import { Database } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -104,25 +104,29 @@ const SignUpForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-y-4 text-center">
-        <div className="bg-primary/10 mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full">
-          <Database className="text-primary h-8 w-8" />
+    <Card className={cn('w-full max-w-md')}>
+      <CardHeader className={cn('space-y-4 text-center')}>
+        <div
+          className={cn(
+            'bg-primary/10 mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full',
+          )}
+        >
+          <Database className={cn('text-primary h-8 w-8')} />
         </div>
         <div>
-          <CardTitle className="text-3xl">회원가입</CardTitle>
-          <CardDescription className="mt-2">
+          <CardTitle className={cn('text-3xl')}>회원가입</CardTitle>
+          <CardDescription className={cn('mt-2')}>
             @gsm.hs.kr 도메인 계정만 사용 가능합니다
           </CardDescription>
         </div>
       </CardHeader>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
+        <CardContent className={cn('space-y-4')}>
+          <div className={cn('space-y-2')}>
             <Label htmlFor="email">이메일</Label>
-            <div className="flex gap-2">
-              <div className="flex-1 space-y-1">
+            <div className={cn('flex gap-2')}>
+              <div className={cn('flex-1 space-y-2')}>
                 <Input
                   id="email"
                   type="email"
@@ -135,36 +139,38 @@ const SignUpForm = () => {
               <Button
                 type="button"
                 onClick={handleSendCode}
-                className="whitespace-nowrap"
+                className={cn(
+                  'whitespace-nowrap',
+                  (isSendingCode || codeSent || !emailValue) && 'cursor-not-allowed',
+                )}
                 disabled={isSendingCode || codeSent || !emailValue}
               >
                 {isSendingCode ? '전송 중...' : codeSent ? '전송됨' : '인증번호'}
               </Button>
             </div>
-            <div className="relative">
+            <div className={cn('space-y-2', !codeSent && 'cursor-not-allowed')}>
               <Input
                 id="code"
                 type="text"
                 placeholder="메일로 받은 인증번호를 입력하세요"
                 {...register('code')}
                 disabled={!codeSent}
-                className={cn(isCodeVerified && 'pr-10')}
               />
-              {isCodeVerified && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <Check className="h-5 w-5 text-green-600" />
-                </div>
+              {isCheckingCode && (
+                <p className={cn('text-muted-foreground text-sm')}>인증번호 확인 중...</p>
               )}
+              {isCodeVerified && (
+                <p className={cn('text-sm text-green-600')}>인증번호가 확인되었습니다.</p>
+              )}
+              {!isCodeVerified && <FormErrorMessage error={errors.code} />}
             </div>
-            {isCheckingCode && <p className="text-muted-foreground text-xs">인증번호 확인 중...</p>}
-            <FormErrorMessage error={errors.code} />
           </div>
 
-          <div className="space-y-2">
+          <div className={cn('space-y-2')}>
             <Label htmlFor="password">비밀번호</Label>
             <Input
-              className="w-full"
-              disabled={isSigningUp || !codeSent || !isCodeVerified}
+              className={cn('w-full')}
+              disabled={isSigningUp}
               id="password"
               type="password"
               placeholder="비밀번호를 입력하세요"
@@ -174,14 +180,19 @@ const SignUpForm = () => {
           </div>
         </CardContent>
 
-        <CardFooter className="mt-6 flex flex-col space-y-4">
-          <Button type="submit" className="w-full" size="lg" disabled={isSigningUp || !codeSent}>
+        <CardFooter className={cn('mt-6 flex flex-col space-y-4')}>
+          <Button
+            type="submit"
+            className={cn('w-full', (isSigningUp || !codeSent) && 'cursor-not-allowed')}
+            size="lg"
+            disabled={isSigningUp || !codeSent}
+          >
             {isSigningUp ? '처리 중...' : '회원가입'}
           </Button>
 
-          <p className="text-muted-foreground text-center text-sm">
+          <p className={cn('text-muted-foreground text-center text-sm')}>
             이미 계정이 있으신가요?{' '}
-            <Link href="/signin" className="text-primary font-medium hover:underline">
+            <Link href="/signin" className={cn('text-primary font-medium hover:underline')}>
               로그인
             </Link>
           </p>

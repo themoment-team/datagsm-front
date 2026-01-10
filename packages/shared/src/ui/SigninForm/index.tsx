@@ -28,20 +28,24 @@ const SignInForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-y-4 text-center">
-        <div className="bg-primary/10 mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full">
-          <Database className="text-primary h-8 w-8" />
+    <Card className={cn('w-full max-w-md')}>
+      <CardHeader className={cn('space-y-4 text-center')}>
+        <div
+          className={cn(
+            'bg-primary/10 mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full',
+          )}
+        >
+          <Database className={cn('text-primary h-8 w-8')} />
         </div>
         <div>
-          <CardTitle className="text-3xl">로그인</CardTitle>
-          <CardDescription className="mt-2">Data GSM 계정으로 로그인하세요</CardDescription>
+          <CardTitle className={cn('text-3xl')}>로그인</CardTitle>
+          <CardDescription className={cn('mt-2')}>Data GSM 계정으로 로그인하세요</CardDescription>
         </div>
       </CardHeader>
 
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
+        <CardContent className={cn('space-y-4')}>
+          <div className={cn('space-y-2')}>
             <Label htmlFor="email">이메일</Label>
             <Input
               id="email"
@@ -53,7 +57,7 @@ const SignInForm = () => {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className={cn('space-y-2')}>
             <Label htmlFor="password">비밀번호</Label>
             <Input
               id="password"
@@ -66,14 +70,14 @@ const SignInForm = () => {
           </div>
         </CardContent>
 
-        <CardFooter className="mt-6 flex flex-col space-y-4">
-          <Button type="submit" className="w-full" size="lg">
+        <CardFooter className={cn('mt-6 flex flex-col space-y-4')}>
+          <Button type="submit" className={cn('w-full')} size="lg">
             로그인
           </Button>
 
-          <p className="text-muted-foreground text-center text-sm">
+          <p className={cn('text-muted-foreground text-center text-sm')}>
             계정이 없으신가요?{' '}
-            <Link href="/signup" className="text-primary font-medium hover:underline">
+            <Link href="/signup" className={cn('text-primary font-medium hover:underline')}>
               회원가입
             </Link>
           </p>
