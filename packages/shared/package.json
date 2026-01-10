@@ -36,6 +36,10 @@
     "./constants/*": {
       "types": "./src/constants/*.ts",
       "default": "./dist/constants/*.js"
+    },
+    "./hooks": {
+      "types": "./src/hooks/index.ts",
+      "default": "./dist/hooks/index.js"
     }
   },
   "typesVersions": {
@@ -90,6 +94,7 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -99,6 +104,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.546.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.1.13"
   }
 }
