@@ -15,8 +15,8 @@ export const SignUpFormSchema = z.object({
     }),
   code: z
     .string()
-    .min(1, { message: '인증번호를 입력해주세요.' })
-    .length(8, { message: '인증번호는 8자리입니다.' }),
+    .min(1, { message: '인증 코드를 입력해주세요.' })
+    .length(8, { message: '인증 코드는 8자리입니다.' }),
 });
 
 export type SignUpFormType = z.infer<typeof SignUpFormSchema>;

@@ -88,40 +88,57 @@ const SignUpForm = () => {
       localStorage.setItem(STORAGE_KEY, timestamp.toString());
       setCodeSent(true);
       setRemainingTime(RESEND_COOLDOWN_MS / 1000);
-      toast.success('인증번호가 이메일로 전송되었습니다.');
+      toast.success('인증 코드가 이메일로 전송되었습니다.');
     },
     onError: () => {
-      toast.error('인증번호 전송에 실패했습니다.');
+      toast.error('인증 코드 전송에 실패했습니다.');
     },
   });
 
-  const {
-    data: checkResult,
-    isLoading: isCheckingCode,
-    isError: isCheckError,
-  } = useCheckEmailCode(emailValue || '', debouncedCode || '', {
+  const { data: checkResult } = useCheckEmailCode(emailValue, debouncedCode, {
     enabled: codeSent && !!debouncedCode && debouncedCode.length === 8,
   });
 
   useEffect(() => {
-    if (checkResult?.status === 'OK') {
-      setIsCodeVerified(true);
-      if (!isCodeVerified) {
-        toast.success('인증번호가 확인되었습니다.');
-      }
-    } else if (isCheckError) {
-      setIsCodeVerified(false);
-      toast.error('인증번호가 일치하지 않습니다.');
+    switch (checkResult?.code) {
+      case 200:
+        setIsCodeVerified(true);
+        if (!isCodeVerified) {
+          toast.success('인증 코드가 확인되었습니다.');
+        }
+        break;
+      case 400:
+        setIsCodeVerified(false);
+        toast.error('인증 코드를 입력해주세요.');
+        break;
+      case 404:
+        setIsCodeVerified(false);
+        toast.error('인증 코드가 일치하지 않습니다.');
+        break;
     }
-  }, [checkResult, isCheckError, isCodeVerified]);
+  }, [checkResult, isCodeVerified]);
 
   const { mutate: signUp, isPending: isSigningUp } = useSignUp({
     onSuccess: () => {
       toast.success('회원가입이 완료되었습니다. 로그인해주세요.');
       router.push('/signin');
     },
-    onError: () => {
-      toast.error('회원가입에 실패했습니다.');
+    onError: (error: any) => {
+      const statusCode = error?.response?.data?.code;
+
+      switch (statusCode) {
+        case 400:
+          toast.error('입력 정보를 확인해주세요.');
+          break;
+        case 404:
+          toast.error('인증 코드가 일치하지 않습니다.');
+          break;
+        case 409:
+          toast.error('이미 존재하는 계정입니다.');
+          break;
+        default:
+          toast.error('회원가입에 실패했습니다.');
+      }
     },
   });
 
@@ -140,11 +157,12 @@ const SignUpForm = () => {
   };
 
   const canResend = remainingTime === 0;
-  const isButtonDisabled = isSendingCode || !emailValue || (codeSent && !canResend);
+  const isButtonDisabled =
+    isSendingCode || !emailValue || (codeSent && !canResend) || isCodeVerified;
 
   const onSubmit: SubmitHandler<SignUpFormType> = (data) => {
     if (!isCodeVerified) {
-      toast.error('인증번호를 확인해주세요.');
+      toast.error('인증 코드를 확인해주세요.');
       return;
     }
     signUp(data);
@@ -179,7 +197,7 @@ const SignUpForm = () => {
                   type="email"
                   placeholder="example@gsm.hs.kr"
                   {...register('email')}
-                  disabled={remainingTime > 0}
+                  disabled={remainingTime > 0 || isCodeVerified}
                 />
                 <FormErrorMessage error={errors.email} />
               </div>
@@ -195,22 +213,19 @@ const SignUpForm = () => {
                     ? `재전송 (${formatTime(remainingTime)})`
                     : codeSent && canResend
                       ? '재전송'
-                      : '인증번호'}
+                      : '인증 코드'}
               </Button>
             </div>
             <div className={cn('space-y-2', !codeSent && 'cursor-not-allowed')}>
               <Input
                 id="code"
                 type="text"
-                placeholder="메일로 받은 인증번호를 입력하세요"
+                placeholder="메일로 받은 인증 코드를 입력하세요"
                 {...register('code')}
-                disabled={!codeSent}
+                disabled={!codeSent || isCodeVerified}
               />
-              {isCheckingCode && (
-                <p className={cn('text-muted-foreground text-sm')}>인증번호 확인 중...</p>
-              )}
               {isCodeVerified && (
-                <p className={cn('text-sm text-green-600')}>인증번호가 확인되었습니다.</p>
+                <p className={cn('text-sm text-green-600')}>인증 코드가 확인되었습니다.</p>
               )}
               {!isCodeVerified && <FormErrorMessage error={errors.code} />}
             </div>
