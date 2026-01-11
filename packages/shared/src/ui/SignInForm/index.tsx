@@ -35,9 +35,7 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps
     resolver: zodResolver(SignInFormSchema),
   });
 
-  const handleFormSubmit: SubmitHandler<SignInFormType> = (data) => {
-    onSubmit(data);
-  };
+  const handleFormSubmit = handleSubmit(onSubmit);
 
   return (
     <Card className={cn('w-full max-w-md')}>
@@ -55,7 +53,7 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps
         </div>
       </CardHeader>
 
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form onSubmit={handleFormSubmit}>
         <CardContent className={cn('space-y-4')}>
           <div className={cn('space-y-2')}>
             <Label htmlFor="email">이메일</Label>
