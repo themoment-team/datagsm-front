@@ -18,7 +18,7 @@ import {
   Input,
   Label,
 } from '@repo/shared/ui';
-import { cn } from '@repo/shared/utils';
+import { cn, minutesToMs } from '@repo/shared/utils';
 import { Database } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -27,9 +27,13 @@ import { SignUpFormSchema, SignUpFormType } from '@/entities/signup';
 import { useDebounce } from '@/shared/hooks';
 import { useCheckEmailCode, useSendEmailCode, useSignUp } from '@/widgets/signup';
 
+const RESEND_COOLDOWN_MS = minutesToMs(5);
+const STORAGE_KEY = 'email_verification_timestamp';
+
 const SignUpForm = () => {
   const [codeSent, setCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(0);
   const router = useRouter();
 
   const {
@@ -47,9 +51,43 @@ const SignUpForm = () => {
   const emailValue = watch('email');
   const debouncedCode = useDebounce(codeValue, 1000);
 
+  // 페이지 로드 시 localStorage에서 마지막 전송 시간 확인
+  useEffect(() => {
+    const lastSentTime = localStorage.getItem(STORAGE_KEY);
+    if (lastSentTime) {
+      const elapsed = Date.now() - parseInt(lastSentTime, 10);
+      if (elapsed < RESEND_COOLDOWN_MS) {
+        setCodeSent(true);
+        setRemainingTime(Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000));
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+  }, []);
+
+  // 남은 시간 카운트다운
+  useEffect(() => {
+    if (remainingTime > 0) {
+      const timer = setInterval(() => {
+        setRemainingTime((prev) => {
+          if (prev <= 1) {
+            localStorage.removeItem(STORAGE_KEY);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [remainingTime]);
+
   const { mutate: sendEmailCode, isPending: isSendingCode } = useSendEmailCode({
     onSuccess: () => {
+      const timestamp = Date.now();
+      localStorage.setItem(STORAGE_KEY, timestamp.toString());
       setCodeSent(true);
+      setRemainingTime(RESEND_COOLDOWN_MS / 1000);
       toast.success('인증번호가 이메일로 전송되었습니다.');
     },
     onError: () => {
@@ -95,6 +133,15 @@ const SignUpForm = () => {
     sendEmailCode({ email });
   };
 
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const canResend = remainingTime === 0;
+  const isButtonDisabled = isSendingCode || !emailValue || (codeSent && !canResend);
+
   const onSubmit: SubmitHandler<SignUpFormType> = (data) => {
     if (!isCodeVerified) {
       toast.error('인증번호를 확인해주세요.');
@@ -132,20 +179,23 @@ const SignUpForm = () => {
                   type="email"
                   placeholder="example@gsm.hs.kr"
                   {...register('email')}
-                  disabled={codeSent}
+                  disabled={remainingTime > 0}
                 />
                 <FormErrorMessage error={errors.email} />
               </div>
               <Button
                 type="button"
                 onClick={handleSendCode}
-                className={cn(
-                  'whitespace-nowrap',
-                  (isSendingCode || codeSent || !emailValue) && 'cursor-not-allowed',
-                )}
-                disabled={isSendingCode || codeSent || !emailValue}
+                className={cn('whitespace-nowrap', isButtonDisabled && 'cursor-not-allowed')}
+                disabled={isButtonDisabled}
               >
-                {isSendingCode ? '전송 중...' : codeSent ? '전송됨' : '인증번호'}
+                {isSendingCode
+                  ? '전송 중...'
+                  : codeSent && !canResend
+                    ? `재전송 (${formatTime(remainingTime)})`
+                    : codeSent && canResend
+                      ? '재전송'
+                      : '인증번호'}
               </Button>
             </div>
             <div className={cn('space-y-2', !codeSent && 'cursor-not-allowed')}>
