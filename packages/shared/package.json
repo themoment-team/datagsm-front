@@ -14,8 +14,8 @@
       "default": "./dist/ui/*.js"
     },
     "./assets/*": {
-      "types": "./src/assets/*",
-      "default": "./dist/assets/*"
+      "types": "./src/assets/*.ts",
+      "default": "./dist/assets/*.js"
     },
     "./api/*": {
       "types": "./src/api/*.ts",
@@ -38,8 +38,8 @@
       "default": "./dist/constants/*.js"
     },
     "./hooks": {
-      "types": "./src/hooks/index.ts",
-      "default": "./dist/hooks/index.js"
+      "types": "./src/hooks/*.ts",
+      "default": "./dist/hooks/*.js"
     }
   },
   "typesVersions": {
@@ -64,6 +64,9 @@
       ],
       "constants/*": [
         "./src/constants/*"
+      ],
+      "hooks": [
+        "./src/hooks/*"
       ]
     }
   },
