@@ -123,8 +123,9 @@ const SignUpForm = () => {
       toast.success('회원가입이 완료되었습니다. 로그인해주세요.');
       router.push('/signin');
     },
-    onError: (error: any) => {
-      const statusCode = error?.response?.data?.code;
+    onError: (error: unknown) => {
+      const errorResponse = error as { response?: { data?: { code?: number } } };
+      const statusCode = errorResponse?.response?.data?.code;
 
       switch (statusCode) {
         case 400:
