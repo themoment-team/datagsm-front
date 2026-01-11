@@ -6,11 +6,7 @@ import { SignInForm } from '@/widgets/signin';
 
 const SignInPage = () => {
   return (
-    <div
-      className={cn(
-        'bg-background flex h-[calc(100vh-4.0625rem)] items-center justify-center px-4',
-      )}
-    >
+    <div className={cn('bg-background flex min-h-screen items-center justify-center px-4')}>
       <SignInForm />
     </div>
   );
