@@ -90,8 +90,20 @@ const SignUpForm = () => {
       setRemainingTime(RESEND_COOLDOWN_MS / 1000);
       toast.success('인증 코드가 이메일로 전송되었습니다.');
     },
-    onError: () => {
-      toast.error('인증 코드 전송에 실패했습니다.');
+    onError: (error: unknown) => {
+      const errorResponse = error as { response?: { data?: { code?: number } } };
+      const statusCode = errorResponse?.response?.data?.code;
+
+      switch (statusCode) {
+        case 400:
+          toast.error('이메일 형식을 확인해주세요.');
+          break;
+        case 409:
+          toast.error('이미 해당 이메일을 가진 계정이 존재합니다.');
+          break;
+        default:
+          toast.error('인증 코드 전송에 실패했습니다.');
+      }
     },
   });
 
