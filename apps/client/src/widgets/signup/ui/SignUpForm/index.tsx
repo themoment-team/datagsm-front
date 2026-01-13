@@ -53,6 +53,7 @@ const SignUpForm = () => {
   const passwordValue = watch('password');
   const debouncedCode = useDebounce(codeValue, 1000);
   const lastCheckedCode = useRef('');
+  const hasShownExpiredToast = useRef(false);
 
   const isFormValid = SignUpFormSchema.safeParse({
     email: emailValue,
@@ -85,7 +86,10 @@ const SignUpForm = () => {
             setIsCodeVerified(false);
             lastCheckedCode.current = '';
             setValue('code', '');
-            toast.error('인증 시간이 만료되었습니다. 다시 인증해주세요.');
+            if (!hasShownExpiredToast.current) {
+              hasShownExpiredToast.current = true;
+              toast.error('인증 시간이 만료되었습니다. 다시 인증해주세요.');
+            }
             return 0;
           }
           return prev - 1;
@@ -102,6 +106,7 @@ const SignUpForm = () => {
       localStorage.setItem(STORAGE_KEY, timestamp.toString());
       setCodeSent(true);
       setRemainingTime(RESEND_COOLDOWN_MS / 1000);
+      hasShownExpiredToast.current = false;
       toast.success('인증 코드가 이메일로 전송되었습니다.');
     },
     onError: (error: unknown) => {
