@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -43,13 +43,22 @@ const SignUpForm = () => {
     getValues,
     trigger,
     watch,
+    setValue,
   } = useForm<SignUpFormType>({
     resolver: zodResolver(SignUpFormSchema),
   });
 
   const codeValue = watch('code');
   const emailValue = watch('email');
+  const passwordValue = watch('password');
   const debouncedCode = useDebounce(codeValue, 1000);
+  const lastCheckedCode = useRef('');
+
+  const isFormValid = SignUpFormSchema.safeParse({
+    email: emailValue,
+    password: passwordValue,
+    code: codeValue,
+  }).success;
 
   // 페이지 로드 시 localStorage에서 마지막 전송 시간 확인
   useEffect(() => {
@@ -70,8 +79,13 @@ const SignUpForm = () => {
     if (remainingTime > 0) {
       const timer = setInterval(() => {
         setRemainingTime((prev) => {
-          if (prev <= 1) {
+          if (prev === 1) {
             localStorage.removeItem(STORAGE_KEY);
+            setCodeSent(false);
+            setIsCodeVerified(false);
+            lastCheckedCode.current = '';
+            setValue('code', '');
+            toast.error('인증 시간이 만료되었습니다. 다시 인증해주세요.');
             return 0;
           }
           return prev - 1;
@@ -80,7 +94,7 @@ const SignUpForm = () => {
 
       return () => clearInterval(timer);
     }
-  }, [remainingTime]);
+  }, [remainingTime, setValue]);
 
   const { mutate: sendEmailCode, isPending: isSendingCode } = useSendEmailCode({
     onSuccess: () => {
@@ -107,28 +121,42 @@ const SignUpForm = () => {
     },
   });
 
-  const { data: checkResult } = useCheckEmailCode(emailValue, debouncedCode, {
-    enabled: codeSent && !!debouncedCode && debouncedCode.length === 8,
+  const { mutate: checkEmailCode } = useCheckEmailCode({
+    onSuccess: () => {
+      setIsCodeVerified(true);
+      toast.success('인증 코드가 확인되었습니다.');
+    },
+    onError: (error: unknown) => {
+      const errorResponse = error as { response?: { data?: { code?: number } } };
+      const statusCode = errorResponse?.response?.data?.code;
+
+      switch (statusCode) {
+        case 400:
+          setIsCodeVerified(false);
+          toast.error('인증 코드가 일치하지 않습니다.');
+          break;
+        case 404:
+          setIsCodeVerified(false);
+          toast.error('인증 코드가 만료되었거나 존재하지 않습니다.');
+          break;
+        default:
+          setIsCodeVerified(false);
+          toast.error('인증 코드 확인에 실패했습니다.');
+      }
+    },
   });
 
   useEffect(() => {
-    switch (checkResult?.code) {
-      case 200:
-        setIsCodeVerified(true);
-        if (!isCodeVerified) {
-          toast.success('인증 코드가 확인되었습니다.');
-        }
-        break;
-      case 400:
-        setIsCodeVerified(false);
-        toast.error('인증 코드를 입력해주세요.');
-        break;
-      case 404:
-        setIsCodeVerified(false);
-        toast.error('인증 코드가 일치하지 않습니다.');
-        break;
+    if (
+      codeSent &&
+      debouncedCode &&
+      debouncedCode.length === 8 &&
+      lastCheckedCode.current !== debouncedCode
+    ) {
+      lastCheckedCode.current = debouncedCode;
+      checkEmailCode({ email: emailValue, code: debouncedCode });
     }
-  }, [checkResult, isCodeVerified]);
+  }, [codeSent, debouncedCode, emailValue, checkEmailCode]);
 
   const { mutate: signUp, isPending: isSigningUp } = useSignUp({
     onSuccess: () => {
@@ -144,7 +172,7 @@ const SignUpForm = () => {
           toast.error('입력 정보를 확인해주세요.');
           break;
         case 404:
-          toast.error('인증 코드가 일치하지 않습니다.');
+          toast.error('인증 코드가 만료되었거나 존재하지 않습니다.');
           break;
         case 409:
           toast.error('이미 존재하는 계정입니다.');
@@ -175,7 +203,7 @@ const SignUpForm = () => {
 
   const onSubmit: SubmitHandler<SignUpFormType> = (data) => {
     if (!isCodeVerified) {
-      toast.error('인증 코드를 확인해주세요.');
+      toast.error('이메일 인증을 완료해주세요.');
       return;
     }
     signUp(data);
@@ -261,9 +289,12 @@ const SignUpForm = () => {
         <CardFooter className={cn('mt-6 flex flex-col space-y-4')}>
           <Button
             type="submit"
-            className={cn('w-full', (isSigningUp || !codeSent) && 'cursor-not-allowed')}
+            className={cn(
+              'w-full',
+              (isSigningUp || !isCodeVerified || !isFormValid) && 'cursor-not-allowed',
+            )}
             size="lg"
-            disabled={isSigningUp || !codeSent}
+            disabled={isSigningUp || !isCodeVerified || !isFormValid}
           >
             {isSigningUp ? '처리 중...' : '회원가입'}
           </Button>

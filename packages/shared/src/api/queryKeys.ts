@@ -1,8 +1,7 @@
 import { UserRoleType } from '../types';
 
 export const accountQueryKeys = {
-  getEmailCheck: (email: string, code: string) =>
-    ['account', 'email', 'check', email, code] as const,
+  postEmailCheck: () => ['account', 'email', 'check'] as const,
   postEmailSend: () => ['account', 'email', 'send'] as const,
   postSignup: () => ['account', 'signup'] as const,
 } as const;
