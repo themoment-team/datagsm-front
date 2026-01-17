@@ -17,6 +17,10 @@ export const authUrl = {
   putApiKey: () => '/v1/auth/api-key',
 } as const;
 
+export const oauthUrl = {
+  postOAuthCode: () => '/v1/oauth/code',
+} as const;
+
 export const clubUrl = {
   deleteClubById: (clubId: number) => `/v1/clubs/${clubId}`,
   getClubs: (page?: number, size?: number, type?: ClubType) => {

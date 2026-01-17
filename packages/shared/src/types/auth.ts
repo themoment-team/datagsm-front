@@ -20,3 +20,16 @@ export const SignInFormSchema = z.object({
 });
 
 export type SignInFormType = z.infer<typeof SignInFormSchema>;
+
+export interface OAuthCodeRequest {
+  email: string;
+  password: string;
+  clientId: string;
+  redirectUrl: string;
+}
+
+interface OAuthCodeResponseData {
+  code: string;
+}
+
+export type OAuthCodeResponse = ApiResponse<OAuthCodeResponseData>;
