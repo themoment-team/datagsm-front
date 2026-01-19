@@ -1,13 +1,17 @@
 'use client';
 
+import { useRef } from 'react';
+
 import { useRouter } from 'next/navigation';
 
 import { COOKIE_KEYS } from '@repo/shared/constants';
-import { useRequestOAuthCode, useSignIn } from '@repo/shared/hooks';
+import { useSignIn } from '@repo/shared/hooks';
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
 import { setCookie } from '@repo/shared/utils';
 import { toast } from 'sonner';
+
+import { useRequestOAuthCode } from '../../model/useRequestOAuthCode';
 
 interface SignInFormProps {
   clientId: string | null;
@@ -16,6 +20,7 @@ interface SignInFormProps {
 
 const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
   const router = useRouter();
+  const formDataRef = useRef<SignInFormType | null>(null);
 
   const isOAuthMode = clientId !== null && redirectUri !== null;
 
@@ -32,14 +37,19 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
 
       switch (statusCode) {
         case 400:
-          toast.error('잘못된 요청입니다.');
+          toast.error('잘못된 요청입니다. 홈으로 이동합니다.');
           break;
         case 404:
-          toast.error('존재하지 않는 클라이언트입니다.');
+          toast.error('존재하지 않는 클라이언트입니다. 홈으로 이동합니다.');
           break;
         default:
-          toast.error('OAuth 인증에 실패했습니다.');
+          toast.error('OAuth 인증에 실패했습니다. 홈으로 이동합니다.');
       }
+
+      // OAuth 실패 시 홈으로 이동 (로그인은 이미 성공한 상태)
+      setTimeout(() => {
+        router.push('/');
+      }, 1500);
     },
   });
 
@@ -51,13 +61,13 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
       }
 
       // OAuth 모드라면 자동으로 코드 발급
-      if (isOAuthMode) {
+      if (isOAuthMode && formDataRef.current) {
         toast.success('로그인에 성공했습니다. 리디렉션 중...');
         // 로그인 성공 후 OAuth 코드 발급
         setTimeout(() => {
           requestOAuthCode({
-            email: '',
-            password: '',
+            email: formDataRef.current!.email,
+            password: formDataRef.current!.password,
             clientId: clientId!,
             redirectUrl: redirectUri!,
           });
@@ -88,13 +98,9 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
   });
 
   const handleSubmit = (data: SignInFormType) => {
-    if (isOAuthMode) {
-      // OAuth 모드: 로그인 후 자동으로 코드 발급
-      signIn(data);
-    } else {
-      // 일반 모드: 로그인 후 홈으로 이동
-      signIn(data);
-    }
+    // OAuth 모드를 위해 폼 데이터 저장
+    formDataRef.current = data;
+    signIn(data);
   };
 
   return (
