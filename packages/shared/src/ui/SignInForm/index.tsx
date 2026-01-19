@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,7 +19,7 @@ import {
   Label,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-import { Database } from 'lucide-react';
+import { Database, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 interface SignInFormProps {
@@ -27,6 +29,8 @@ interface SignInFormProps {
 }
 
 const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -69,13 +73,31 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps
 
           <div className={cn('space-y-2')}>
             <Label htmlFor="password">비밀번호</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="비밀번호를 입력하세요"
-              {...register('password')}
-              disabled={isPending}
-            />
+            <div className={cn('relative')}>
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="비밀번호를 입력하세요"
+                {...register('password')}
+                disabled={isPending}
+                className={cn('pr-10')}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className={cn(
+                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
+                  isPending && 'cursor-not-allowed opacity-50',
+                )}
+                disabled={isPending}
+              >
+                {showPassword ? (
+                  <EyeOff className={cn('h-4 w-4')} />
+                ) : (
+                  <Eye className={cn('h-4 w-4')} />
+                )}
+              </button>
+            </div>
             <FormErrorMessage error={errors.password} />
           </div>
         </CardContent>
