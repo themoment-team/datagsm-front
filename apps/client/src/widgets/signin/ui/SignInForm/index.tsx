@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -22,8 +22,17 @@ interface SignInFormProps {
 const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
   const router = useRouter();
   const formDataRef = useRef<SignInFormType | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const isOAuthMode = clientId !== null && redirectUri !== null;
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
 
   const { mutate: requestOAuthCode, isPending: isRequestingOAuthCode } = useRequestOAuthCode({
     onSuccess: (response) => {
@@ -48,7 +57,7 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
       }
 
       // OAuth 실패 시 홈으로 이동 (로그인은 이미 성공한 상태)
-      setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         router.push('/');
       }, 1500);
     },
@@ -65,7 +74,7 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
       if (isOAuthMode && formDataRef.current) {
         toast.success('로그인에 성공했습니다. 리디렉션 중...');
         // 로그인 성공 후 OAuth 코드 발급
-        setTimeout(() => {
+        timerRef.current = setTimeout(() => {
           requestOAuthCode({
             email: formDataRef.current!.email,
             password: formDataRef.current!.password,
