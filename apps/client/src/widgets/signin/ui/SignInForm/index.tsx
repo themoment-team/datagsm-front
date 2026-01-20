@@ -9,6 +9,7 @@ import { useSignIn } from '@repo/shared/hooks';
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
 import { setCookie } from '@repo/shared/utils';
+import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 import { useRequestOAuthCode } from '../../model/useRequestOAuthCode';
@@ -32,8 +33,8 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
       }
     },
     onError: (error: unknown) => {
-      const errorResponse = error as { response?: { data?: { code?: number } } };
-      const statusCode = errorResponse?.response?.data?.code;
+      const statusCode =
+        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
 
       switch (statusCode) {
         case 400:
@@ -78,8 +79,8 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
       }
     },
     onError: (error: unknown) => {
-      const errorResponse = error as { response?: { data?: { code?: number } } };
-      const statusCode = errorResponse?.response?.data?.code;
+      const statusCode =
+        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
 
       switch (statusCode) {
         case 400:
