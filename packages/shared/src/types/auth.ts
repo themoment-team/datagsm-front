@@ -13,6 +13,7 @@ export const SignInFormSchema = z.object({
   email: z
     .string()
     .min(1, { message: '이메일을 입력해주세요.' })
+    .pipe(z.email({ message: '올바른 이메일 형식이 아닙니다.' }))
     .refine((email) => email.endsWith('@gsm.hs.kr'), {
       message: '@gsm.hs.kr 도메인 계정만 사용 가능합니다.',
     }),
