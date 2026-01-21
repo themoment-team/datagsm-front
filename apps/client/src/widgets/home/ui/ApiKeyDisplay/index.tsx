@@ -55,7 +55,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
               <Button
                 size="icon"
                 variant="outline"
-                onClick={() => copy(apiKeyData?.data?.apiKey || '')}
+                onClick={() => copy(apiKeyData.data.apiKey)}
                 disabled={copied}
                 className={cn('disabled:opacity-100')}
               >
