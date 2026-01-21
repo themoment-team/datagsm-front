@@ -1,11 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-
+import { useCopyToClipboard } from '@repo/shared/hooks';
 import { Button, Card } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { Check, Copy } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { ApiKeyResponse } from '@/entities/home';
 
@@ -15,21 +13,12 @@ interface ApiKeyDisplayProps {
   initialApiKeyData?: ApiKeyResponse;
 }
 
-const COPIED_STATE_DURATION_MS = 2000;
-
 const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopyToClipboard();
 
   const { data: apiKeyData, isLoading: isLoadingApiKey } = useGetApiKey({
     initialData: initialApiKeyData,
   });
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(apiKeyData?.data?.apiKey || '');
-    setCopied(true);
-    toast.success('복사되었습니다.');
-    setTimeout(() => setCopied(false), COPIED_STATE_DURATION_MS);
-  };
 
   if (isLoadingApiKey) {
     return (
@@ -66,7 +55,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
               <Button
                 size="icon"
                 variant="outline"
-                onClick={handleCopy}
+                onClick={() => copy(apiKeyData?.data?.apiKey || '')}
                 disabled={copied}
                 className={cn('disabled:opacity-100')}
               >
