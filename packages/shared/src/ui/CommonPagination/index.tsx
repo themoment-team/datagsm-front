@@ -16,7 +16,7 @@ interface CommonPaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export const CommonPagination = ({
+const CommonPagination = ({
   isLoading,
   currentPage,
   totalPages,
@@ -104,3 +104,5 @@ export const CommonPagination = ({
     </div>
   );
 };
+
+export default CommonPagination;
