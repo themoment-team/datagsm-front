@@ -66,3 +66,21 @@ export const studentUrl = {
   postStudentExcel: () => '/v1/students/excel/upload',
   putStudentById: (studentId: number) => `/v1/students/${studentId}`,
 } as const;
+
+export const clientUrl = {
+  getClients: () => '/v1/clients',
+  postClient: () => '/v1/clients',
+  deleteClientById: (clientId: number) => `/v1/clients/${clientId}`,
+  patchClientById: (clientId: number) => `/v1/clients/${clientId}`,
+  getClientsSearch: (page?: number, size?: number, clientName?: string) => {
+    const params = new URLSearchParams();
+
+    if (clientName !== undefined) params.append('clientName', clientName);
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+
+    const queryString = params.toString();
+    return queryString ? `/v1/clients/search?${queryString}` : '/v1/clients/search';
+  },
+  getAvailableScopes: () => '/v1/clients/available-scopes',
+} as const;
