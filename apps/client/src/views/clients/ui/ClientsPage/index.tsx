@@ -39,7 +39,7 @@ import {
   TableHeader,
   TableRow,
 } from '@repo/shared/ui';
-import { Check, Copy, Pencil, Plus, Trash2, X } from 'lucide-react';
+import { AlertTriangle, Check, Copy, Pencil, Plus, Trash2, X } from 'lucide-react';
 
 const SCOPE_CATEGORIES = [
   {
@@ -141,6 +141,13 @@ const ClientsPage = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<(typeof demoClients)[0] | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [createdClient, setCreatedClient] = useState<{
+    name: string;
+    clientId: string;
+    clientSecret: string;
+  } | null>(null);
+  const [copiedSecret, setCopiedSecret] = useState(false);
 
   // Form state for add/edit
   const [formName, setFormName] = useState('');
@@ -192,6 +199,27 @@ const ClientsPage = () => {
     navigator.clipboard.writeText(clientId);
     setCopiedId(clientId);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleCopySecret = (secret: string) => {
+    navigator.clipboard.writeText(secret);
+    setCopiedSecret(true);
+    setTimeout(() => setCopiedSecret(false), 2000);
+  };
+
+  const handleCreateClient = () => {
+    // Simulate server response with generated client ID and secret
+    const newClientId = `gsm_client_${Math.random().toString(36).substring(2, 18)}`;
+    const newClientSecret = `gsm_secret_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+
+    setCreatedClient({
+      name: formName,
+      clientId: newClientId,
+      clientSecret: newClientSecret,
+    });
+
+    setIsAddDialogOpen(false);
+    setIsSuccessDialogOpen(true);
   };
 
   return (
@@ -305,8 +333,8 @@ const ClientsPage = () => {
                   </div>
                   <div className="flex justify-end">
                     <Button
-                      onClick={() => setIsAddDialogOpen(false)}
-                      disabled={formScopes.length === 0}
+                      onClick={handleCreateClient}
+                      disabled={formScopes.length === 0 || !formName.trim()}
                     >
                       추가
                     </Button>
@@ -387,9 +415,9 @@ const ClientsPage = () => {
                               <AlertDialogHeader>
                                 <AlertDialogTitle>클라이언트 삭제</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  정말로 "{client.name}" 클라이언트를 삭제하시겠습니까? 이 작업은
-                                  되돌릴 수 없으며, 해당 클라이언트를 사용하는 모든 서비스에서
-                                  인증이 실패합니다.
+                                  정말로 &quot;{client.name}&quot; 클라이언트를 삭제하시겠습니까? 이
+                                  작업은 되돌릴 수 없으며, 해당 클라이언트를 사용하는 모든
+                                  서비스에서 인증이 실패합니다.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
@@ -431,6 +459,82 @@ const ClientsPage = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Success Dialog - Client Created */}
+        <Dialog open={isSuccessDialogOpen} onOpenChange={setIsSuccessDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-green-500" />
+                클라이언트 생성 완료
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950">
+                <div className="flex gap-3">
+                  <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+                  <div className="text-sm text-amber-800 dark:text-amber-200">
+                    <p className="font-semibold">중요: 클라이언트 시크릿을 안전하게 저장하세요</p>
+                    <p className="mt-1 text-amber-700 dark:text-amber-300">
+                      클라이언트 시크릿은 이 창을 닫으면 다시 확인할 수 없습니다. 반드시 복사하여
+                      안전한 곳에 보관하세요.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-muted-foreground text-xs">클라이언트 이름</Label>
+                  <p className="font-medium">{createdClient?.name}</p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-muted-foreground text-xs">클라이언트 ID</Label>
+                  <div className="flex items-center gap-2">
+                    <code className="bg-muted flex-1 break-all rounded px-3 py-2 font-mono text-sm">
+                      {createdClient?.clientId}
+                    </code>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => createdClient && handleCopyClientId(createdClient.clientId)}
+                    >
+                      {copiedId === createdClient?.clientId ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-muted-foreground text-xs">클라이언트 시크릿</Label>
+                  <div className="flex items-center gap-2">
+                    <code className="bg-muted flex-1 break-all rounded px-3 py-2 font-mono text-sm">
+                      {createdClient?.clientSecret}
+                    </code>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => createdClient && handleCopySecret(createdClient.clientSecret)}
+                    >
+                      {copiedSecret ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button onClick={() => setIsSuccessDialogOpen(false)}>확인</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Edit Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
