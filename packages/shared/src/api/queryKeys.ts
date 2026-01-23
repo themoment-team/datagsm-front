@@ -17,6 +17,10 @@ export const authQueryKeys = {
   putApiKey: () => ['auth', 'api-key', 'update'] as const,
 } as const;
 
+export const oauthQueryKeys = {
+  postOAuthCode: () => ['oauth', 'code'] as const,
+} as const;
+
 export const clubQueryKeys = {
   deleteClubById: () => ['clubs', 'delete'] as const,
   getClubs: (page?: number, size?: number, type?: string) =>

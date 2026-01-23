@@ -1,4 +1,4 @@
-import { axiosInstance } from '@repo/shared/lib';
+import { axiosInstance, oauthAxiosInstance } from '@repo/shared/lib';
 
 export const del = async <T>(...args: Parameters<typeof axiosInstance.delete>) =>
   await axiosInstance.delete<T, T>(...args);
@@ -14,3 +14,6 @@ export const post = async <T>(...args: Parameters<typeof axiosInstance.post>) =>
 
 export const put = async <T>(...args: Parameters<typeof axiosInstance.put>) =>
   await axiosInstance.put<T, T>(...args);
+
+export const oauthPost = async <T>(...args: Parameters<typeof oauthAxiosInstance.post>) =>
+  await oauthAxiosInstance.post<T, T>(...args);

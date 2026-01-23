@@ -16,6 +16,11 @@ const refreshAxiosInstance = axios.create({
   timeout: 10000,
 });
 
+export const oauthAxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_OAUTH_BASE_URL,
+  timeout: 10000,
+});
+
 axiosInstance.interceptors.request.use(
   async (config) => {
     const token = getCookie(COOKIE_KEYS.ACCESS_TOKEN);
@@ -95,4 +100,15 @@ axiosInstance.interceptors.response.use(
 
     return Promise.reject(error);
   },
+);
+
+oauthAxiosInstance.interceptors.response.use(
+  (response) => {
+    if (response.status >= 200 && response.status < 300) {
+      return response.data;
+    }
+
+    return Promise.reject(response.data);
+  },
+  (error: AxiosError) => Promise.reject(error),
 );
