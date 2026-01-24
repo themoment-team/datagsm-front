@@ -21,9 +21,12 @@ import {
   TableRow,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Check, Copy, Pencil, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Client } from '@/entities/clients';
+import { useDeleteClient } from '@/widgets/clients';
 
 interface ClientListProps {
   clients?: Client[];
@@ -31,17 +34,21 @@ interface ClientListProps {
   copiedId: string | null;
   onCopyClientId: (clientId: string) => void;
   onEdit: (client: Client) => void;
-  onDelete: (clientId: string) => void;
 }
 
-const ClientList = ({
-  clients,
-  isLoading,
-  copiedId,
-  onCopyClientId,
-  onEdit,
-  onDelete,
-}: ClientListProps) => {
+const ClientList = ({ clients, isLoading, copiedId, onCopyClientId, onEdit }: ClientListProps) => {
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteClient } = useDeleteClient({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast.success('클라이언트가 삭제되었습니다.');
+    },
+    onError: () => {
+      toast.error('클라이언트 삭제에 실패했습니다.');
+    },
+  });
+
   return (
     <div className={cn('rounded-md border')}>
       <Table>
@@ -138,7 +145,7 @@ const ClientList = ({
                         <AlertDialogFooter>
                           <AlertDialogCancel>취소</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => onDelete(client.id)}
+                            onClick={() => deleteClient(client.id)}
                             className={cn('bg-destructive text-destructive-foreground')}
                           >
                             삭제

@@ -50,11 +50,6 @@ const ClientsPage = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleDelete = (clientId: string) => {
-    // TODO: API 연결
-    console.log('Delete client:', clientId);
-  };
-
   const handleCreateClient = (data: { name: string; redirectUrls: string[]; scopes: string[] }) => {
     // 임시: 생성 로직은 나중에 구현
     console.log('Create client:', data);
@@ -94,7 +89,6 @@ const ClientsPage = () => {
               copiedId={copiedId}
               onCopyClientId={handleCopyClientId}
               onEdit={handleEdit}
-              onDelete={handleDelete}
             />
 
             {/* Pagination */}
