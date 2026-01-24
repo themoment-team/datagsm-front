@@ -68,7 +68,15 @@ export const studentUrl = {
 } as const;
 
 export const clientUrl = {
-  getClients: () => '/v1/clients',
+  getClients: (page?: number, size?: number) => {
+    const params = new URLSearchParams();
+
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+
+    const queryString = params.toString();
+    return queryString ? `/v1/clients?${queryString}` : '/v1/clients';
+  },
   postClient: () => '/v1/clients',
   deleteClientById: (clientId: string) => `/v1/clients/${clientId}`,
   patchClientById: (clientId: string) => `/v1/clients/${clientId}`,

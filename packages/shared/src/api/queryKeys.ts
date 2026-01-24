@@ -46,7 +46,7 @@ export const healthQueryKeys = {
 } as const;
 
 export const clientQueryKeys = {
-  getClients: () => ['clients', 'list'] as const,
+  getClients: (page?: number, size?: number) => ['clients', 'list', { page, size }] as const,
   postClient: () => ['clients', 'create'] as const,
   deleteClientById: () => ['clients', 'delete'] as const,
   patchClientById: () => ['clients', 'update'] as const,
