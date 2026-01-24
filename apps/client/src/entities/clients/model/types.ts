@@ -8,8 +8,9 @@ export interface Client {
 }
 
 export interface ClientListData {
-  clients: Client[];
+  totalPages: number;
   totalElements: number;
+  clients: Client[];
 }
 
 export type ClientListResponse = ApiResponse<ClientListData>;

@@ -1,56 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
+import { useSearchParams } from 'next/navigation';
+
+import { useURLFilters } from '@repo/shared/hooks';
 import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-import { Client, CreatedClient } from '@/entities/clients';
-import ClientFormDialog from '@/widgets/clients/ui/ClientFormDialog';
-import ClientList from '@/widgets/clients/ui/ClientList';
-import ClientSuccessDialog from '@/widgets/clients/ui/ClientSuccessDialog';
+import { Client } from '@/entities/clients';
+import { useGetClients } from '@/views/clients';
+import { ClientFormDialog, ClientList, ClientSuccessDialog } from '@/widgets/clients';
 
-// Demo data
-const demoClients: Client[] = [
-  {
-    id: 1,
-    name: 'GSM 포털',
-    clientId: 'gsm_client_a1b2c3d4e5f6g7h8',
-    redirectUrls: ['https://portal.gsm.hs.kr/callback', 'https://portal.gsm.hs.kr/auth/callback'],
-    scopes: ['student:read', 'club:read', 'neis:read'],
-  },
-  {
-    id: 2,
-    name: '학사 관리 시스템',
-    clientId: 'gsm_client_i9j0k1l2m3n4o5p6',
-    redirectUrls: ['https://admin.gsm.hs.kr/oauth/callback'],
-    scopes: ['student:*', 'club:*'],
-  },
-  {
-    id: 3,
-    name: '모바일 앱',
-    clientId: 'gsm_client_q7r8s9t0u1v2w3x4',
-    redirectUrls: ['gsm-app://callback', 'https://app.gsm.hs.kr/auth'],
-    scopes: ['student:read', 'neis:read'],
-  },
-  {
-    id: 4,
-    name: '동아리 관리',
-    clientId: 'gsm_client_y5z6a7b8c9d0e1f2',
-    redirectUrls: ['https://club.gsm.hs.kr/oauth/redirect'],
-    scopes: ['club:read', 'project:read'],
-  },
-];
+const PAGE_SIZE = 10;
 
 const ClientsPage = () => {
-  const [clients] = useState<Client[]>(demoClients);
-  const [currentPage, setCurrentPage] = useState(0);
+  const searchParams = useSearchParams();
+  const { updateURL } = useURLFilters<{ page: number }>();
+
+  const initialValues = useMemo(
+    () => ({
+      page: Number(searchParams.get('page')) || 0,
+    }),
+    [searchParams],
+  );
+
+  const currentPage = initialValues.page;
+
+  const { data: clientsData, isLoading } = useGetClients({
+    page: currentPage,
+    size: PAGE_SIZE,
+  });
+
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
-  const [createdClient, setCreatedClient] = useState<CreatedClient | null>(null);
+  const [createdClient, setCreatedClient] = useState<Client | null>(null);
 
   const handleCopyClientId = (clientId: string) => {
     navigator.clipboard.writeText(clientId);
@@ -63,28 +50,26 @@ const ClientsPage = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleDelete = (clientId: number) => {
+  const handleDelete = (clientId: string) => {
     // TODO: API 연결
     console.log('Delete client:', clientId);
   };
 
   const handleCreateClient = (data: { name: string; redirectUrls: string[]; scopes: string[] }) => {
-    // Simulate server response with generated client ID and secret
-    const newClientId = `gsm_client_${Math.random().toString(36).substring(2, 18)}`;
-    const newClientSecret = `gsm_secret_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
-
-    setCreatedClient({
-      name: data.name,
-      clientId: newClientId,
-      clientSecret: newClientSecret,
-    });
-
-    setIsSuccessDialogOpen(true);
+    // 임시: 생성 로직은 나중에 구현
+    console.log('Create client:', data);
   };
 
   const handleUpdateClient = (data: { name: string; redirectUrls: string[]; scopes: string[] }) => {
-    // TODO: API 연결
+    // 임시: 수정 로직은 나중에 구현
     console.log('Update client:', editingClient?.id, data);
+  };
+
+  const clients = clientsData?.data.clients || [];
+  const totalPages = clientsData?.data.totalPages || 0;
+
+  const handlePageChange = (page: number) => {
+    updateURL({}, page);
   };
 
   return (
@@ -105,6 +90,7 @@ const ClientsPage = () => {
           <CardContent>
             <ClientList
               clients={clients}
+              isLoading={isLoading}
               copiedId={copiedId}
               onCopyClientId={handleCopyClientId}
               onEdit={handleEdit}
@@ -114,10 +100,10 @@ const ClientsPage = () => {
             {/* Pagination */}
             <div className={cn('mt-4')}>
               <CommonPagination
-                isLoading={false}
+                isLoading={isLoading}
                 currentPage={currentPage}
-                totalPages={Math.ceil(clients.length / 10)}
-                onPageChange={setCurrentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
               />
             </div>
           </CardContent>
