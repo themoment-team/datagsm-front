@@ -8,7 +8,7 @@ import { useURLFilters } from '@repo/shared/hooks';
 import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-import { Client } from '@/entities/clients';
+import { Client, CreateClientData } from '@/entities/clients';
 import { useGetClients } from '@/views/clients';
 import { ClientFormDialog, ClientList, ClientSuccessDialog } from '@/widgets/clients';
 
@@ -37,7 +37,7 @@ const ClientsPage = () => {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
-  const [createdClient, setCreatedClient] = useState<Client | null>(null);
+  const [createdClient, setCreatedClient] = useState<CreateClientData | null>(null);
 
   const handleCopyClientId = (clientId: string) => {
     navigator.clipboard.writeText(clientId);
@@ -50,14 +50,9 @@ const ClientsPage = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleCreateClient = (data: { name: string; redirectUrls: string[]; scopes: string[] }) => {
-    // 임시: 생성 로직은 나중에 구현
-    console.log('Create client:', data);
-  };
-
-  const handleUpdateClient = (data: { name: string; redirectUrls: string[]; scopes: string[] }) => {
-    // 임시: 수정 로직은 나중에 구현
-    console.log('Update client:', editingClient?.id, data);
+  const handleCreateSuccess = (data: CreateClientData) => {
+    setCreatedClient(data);
+    setIsSuccessDialogOpen(true);
   };
 
   const clients = clientsData?.data.clients || [];
@@ -78,7 +73,7 @@ const ClientsPage = () => {
                 mode="create"
                 open={isAddDialogOpen}
                 onOpenChange={setIsAddDialogOpen}
-                onSubmit={handleCreateClient}
+                onCreateSuccess={handleCreateSuccess}
               />
             </div>
           </CardHeader>
@@ -114,7 +109,6 @@ const ClientsPage = () => {
           client={editingClient ?? undefined}
           open={isEditDialogOpen}
           onOpenChange={setIsEditDialogOpen}
-          onSubmit={handleUpdateClient}
         />
       </main>
     </div>

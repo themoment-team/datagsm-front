@@ -5,3 +5,4 @@ export * from './model/useCreateClient';
 export * from './model/useUpdateClient';
 export * from './model/useDeleteClient';
 export * from './model/useGetAvailableScopes';
+export * from './model/useClientScopeSelection';

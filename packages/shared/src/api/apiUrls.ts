@@ -10,7 +10,7 @@ export const accountUrl = {
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
   getApiKey: () => '/v1/auth/api-key',
-  getAvailableScope: (userRole: UserRoleType) => `/v1/auth/scopes?role=${userRole}`,
+  getAvailableScope: (userRole: UserRoleType) => `/v1/auth/available-scopes?role=${userRole}`,
   postApiKey: () => '/v1/auth/api-key',
   postLogin: () => '/v1/auth/login',
   putRefresh: () => '/v1/auth/refresh',

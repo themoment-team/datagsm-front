@@ -6,12 +6,12 @@ import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, Label } from 
 import { cn } from '@repo/shared/utils';
 import { AlertTriangle, Check, Copy } from 'lucide-react';
 
-import { CreatedClient } from '@/entities/clients';
+import { CreateClientData } from '@/entities/clients';
 
 interface ClientSuccessDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  client: CreatedClient | null;
+  client: CreateClientData | null;
 }
 
 const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialogProps) => {
