@@ -17,7 +17,7 @@ import {
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { Pencil, Plus, X } from 'lucide-react';
+import { Loader2, Pencil, Plus, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -137,13 +137,21 @@ const ClientFormDialog = ({
 
   const defaultTrigger =
     mode === 'create' ? (
-      <Button size="sm" className={cn('gap-2')}>
-        <Plus className={cn('h-4 w-4')} />
+      <Button size="sm" className={cn('gap-2')} disabled={isLoadingScopes}>
+        {isLoadingScopes ? (
+          <Loader2 className={cn('h-4 w-4 animate-spin')} />
+        ) : (
+          <Plus className={cn('h-4 w-4')} />
+        )}
         클라이언트 추가
       </Button>
     ) : (
-      <Button variant="ghost" size="icon">
-        <Pencil className={cn('h-4 w-4')} />
+      <Button variant="ghost" size="icon" disabled={isLoadingScopes}>
+        {isLoadingScopes ? (
+          <Loader2 className={cn('h-4 w-4 animate-spin')} />
+        ) : (
+          <Pencil className={cn('h-4 w-4')} />
+        )}
       </Button>
     );
 
@@ -227,50 +235,44 @@ const ClientFormDialog = ({
                 클라이언트가 접근할 수 있는 권한을 선택하세요.
               </p>
               <div className={cn('mt-2 space-y-4 rounded-md border p-4')}>
-                {isLoadingScopes ? (
-                  <div className={cn('text-muted-foreground py-2 text-center text-xs')}>
-                    권한 정보를 불러오는 중...
-                  </div>
-                ) : (
-                  availableScopes?.data?.list.map((category) => {
-                    const hasMultipleScopes = category.scopes.length > 1;
-                    return (
-                      <div key={category.title}>
-                        <h4 className={cn('text-muted-foreground mb-2 text-xs font-semibold')}>
-                          {category.title}
-                        </h4>
-                        <div className={cn('space-y-2')}>
-                          {category.scopes.map((scope) => (
-                            <div
-                              key={scope.scope}
-                              className={cn(
-                                'flex items-start gap-3',
-                                hasMultipleScopes && getIndentation(scope.scope),
-                              )}
-                            >
-                              <Checkbox
-                                id={`${mode}-${scope.scope}`}
-                                checked={isScopeChecked(scope.scope)}
-                                onCheckedChange={() => handleScopeToggle(scope.scope)}
-                              />
-                              <div className={cn('flex-1')}>
-                                <label
-                                  htmlFor={`${mode}-${scope.scope}`}
-                                  className={cn('cursor-pointer text-sm font-medium leading-none')}
-                                >
-                                  {scope.scope}
-                                </label>
-                                <p className={cn('text-muted-foreground mt-0.5 text-xs')}>
-                                  {scope.description}
-                                </p>
-                              </div>
+                {availableScopes?.data?.list.map((category) => {
+                  const hasMultipleScopes = category.scopes.length > 1;
+                  return (
+                    <div key={category.title}>
+                      <h4 className={cn('text-muted-foreground mb-2 text-xs font-semibold')}>
+                        {category.title}
+                      </h4>
+                      <div className={cn('space-y-2')}>
+                        {category.scopes.map((scope) => (
+                          <div
+                            key={scope.scope}
+                            className={cn(
+                              'flex items-start gap-3',
+                              hasMultipleScopes && getIndentation(scope.scope),
+                            )}
+                          >
+                            <Checkbox
+                              id={`${mode}-${scope.scope}`}
+                              checked={isScopeChecked(scope.scope)}
+                              onCheckedChange={() => handleScopeToggle(scope.scope)}
+                            />
+                            <div className={cn('flex-1')}>
+                              <label
+                                htmlFor={`${mode}-${scope.scope}`}
+                                className={cn('cursor-pointer text-sm font-medium leading-none')}
+                              >
+                                {scope.scope}
+                              </label>
+                              <p className={cn('text-muted-foreground mt-0.5 text-xs')}>
+                                {scope.description}
+                              </p>
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        ))}
                       </div>
-                    );
-                  })
-                )}
+                    </div>
+                  );
+                })}
               </div>
               <FormErrorMessage
                 error={Array.isArray(errors.scopes) ? errors.scopes[0] : errors.scopes}
