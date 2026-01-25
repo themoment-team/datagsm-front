@@ -86,7 +86,7 @@ const ClientFormDialog = ({
     resolver: zodResolver(ClientFormSchema),
     defaultValues: {
       name: '',
-      redirectUrls: [''],
+      redirectUrls: [{ url: '' }],
       scopes: [],
     },
   });
@@ -104,29 +104,35 @@ const ClientFormDialog = ({
   });
 
   useEffect(() => {
-    if (mode === 'edit' && client && open) {
+    if (!open) return;
+
+    if (mode === 'edit' && client) {
       reset({
         name: client.name,
-        redirectUrls: [...client.redirectUrl],
+        redirectUrls: client.redirectUrl.map((url) => ({ url })),
         scopes: [...client.scopes],
       });
-    } else if (mode === 'create' && open) {
+    } else if (mode === 'create') {
       reset({
         name: '',
-        redirectUrls: [''],
+        redirectUrls: [{ url: '' }],
         scopes: [],
       });
     }
   }, [mode, client, open, reset]);
 
   const onSubmit = (data: ClientFormType) => {
+    const formattedData = {
+      ...data,
+      redirectUrls: data.redirectUrls.map((item) => item.url),
+    };
+
     if (mode === 'create') {
-      createClient(data);
+      createClient(formattedData);
     } else if (mode === 'edit' && client) {
-      const { name, redirectUrls } = data;
       updateClient({
         clientId: client.id,
-        data: { name, redirectUrls },
+        data: formattedData,
       });
     }
   };
@@ -195,7 +201,7 @@ const ClientFormDialog = ({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => append('')}
+                onClick={() => append({ url: '' })}
                 className={cn('h-8')}
               >
                 <Plus className={cn('mr-1 h-3 w-3')} />
@@ -208,7 +214,7 @@ const ClientFormDialog = ({
                   <div className={cn('flex items-center gap-2')}>
                     <Input
                       placeholder="https://example.com/callback"
-                      {...register(`redirectUrls.${index}` as const)}
+                      {...register(`redirectUrls.${index}.url` as const)}
                     />
                     {fields.length > 1 && (
                       <Button
@@ -221,7 +227,7 @@ const ClientFormDialog = ({
                       </Button>
                     )}
                   </div>
-                  <FormErrorMessage error={errors.redirectUrls?.[index]} />
+                  <FormErrorMessage error={errors.redirectUrls?.[index]?.url} />
                 </div>
               ))}
               {errors.redirectUrls?.root && <FormErrorMessage error={errors.redirectUrls.root} />}
