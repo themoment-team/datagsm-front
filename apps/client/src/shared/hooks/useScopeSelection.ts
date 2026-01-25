@@ -1,20 +1,36 @@
 import { useMemo } from 'react';
 
-import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
-import { AvailableScopesResponse, ClientFormType } from '@/entities/clients';
-
-interface UseClientScopeSelectionParams {
-  availableScopes?: AvailableScopesResponse;
-  watch: UseFormWatch<ClientFormType>;
-  setValue: UseFormSetValue<ClientFormType>;
+export interface ScopeItem {
+  scope: string;
+  description?: string;
 }
 
-export const useClientScopeSelection = ({
+export interface ScopeCategory {
+  title: string;
+  scopes: ScopeItem[];
+}
+
+export interface ScopeSelectionData {
+  data?: {
+    list: ScopeCategory[];
+  };
+}
+
+interface UseScopeSelectionParams<T extends FieldValues> {
+  availableScopes?: ScopeSelectionData;
+  watch: UseFormWatch<T>;
+  setValue: UseFormSetValue<T>;
+  fieldName: Path<T>;
+}
+
+export const useScopeSelection = <T extends FieldValues>({
   availableScopes,
   watch,
   setValue,
-}: UseClientScopeSelectionParams) => {
+  fieldName,
+}: UseScopeSelectionParams<T>) => {
   const scopeMap = useMemo(() => {
     const map = new Map<string, string[]>();
 
@@ -32,7 +48,7 @@ export const useClientScopeSelection = ({
   }, [availableScopes]);
 
   const handleScopeToggle = (scope: string) => {
-    const currentScopes = watch('scopes');
+    const currentScopes = (watch(fieldName) as string[]) || [];
 
     // 전체 scope 선택
     if (scope.endsWith(':*')) {
@@ -46,22 +62,25 @@ export const useClientScopeSelection = ({
         ? currentScopes.filter((id) => !relatedScopes.includes(id))
         : Array.from(new Set([...currentScopes, ...relatedScopes]));
 
-      setValue('scopes', nextSelected, { shouldValidate: true });
+      setValue(fieldName, nextSelected as PathValue<T, Path<T>>, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
       return;
     }
 
     // 일반 scope 단일 토글
     setValue(
-      'scopes',
-      currentScopes.includes(scope)
+      fieldName,
+      (currentScopes.includes(scope)
         ? currentScopes.filter((id) => id !== scope)
-        : [...currentScopes, scope],
-      { shouldValidate: true },
+        : [...currentScopes, scope]) as PathValue<T, Path<T>>,
+      { shouldValidate: true, shouldDirty: true },
     );
   };
 
   const isScopeChecked = (scope: string) => {
-    const currentScopes = watch('scopes');
+    const currentScopes = (watch(fieldName) as string[]) || [];
 
     // 전체 scope일 경우 하위 scope 탐색
     if (scope.endsWith(':*')) {

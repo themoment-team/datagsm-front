@@ -22,12 +22,8 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Client, ClientFormSchema, ClientFormType, CreateClientData } from '@/entities/clients';
-import {
-  useClientScopeSelection,
-  useCreateClient,
-  useGetAvailableScopes,
-  useUpdateClient,
-} from '@/widgets/clients';
+import { useScopeSelection } from '@/shared/hooks';
+import { useCreateClient, useGetAvailableScopes, useUpdateClient } from '@/widgets/clients';
 
 interface ClientFormDialogProps {
   mode: 'create' | 'edit';
@@ -58,7 +54,6 @@ const ClientFormDialog = ({
   const { isPending: isCreating, mutate: createClient } = useCreateClient({
     onSuccess: (data) => {
       setOpen(false);
-      reset();
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       toast.success('클라이언트가 생성되었습니다.');
       onCreateSuccess?.(data.data);
@@ -101,10 +96,11 @@ const ClientFormDialog = ({
     name: 'redirectUrls' as never,
   });
 
-  const { handleScopeToggle, isScopeChecked, getIndentation } = useClientScopeSelection({
+  const { handleScopeToggle, isScopeChecked, getIndentation } = useScopeSelection({
     availableScopes,
     watch,
     setValue,
+    fieldName: 'scopes',
   });
 
   useEffect(() => {

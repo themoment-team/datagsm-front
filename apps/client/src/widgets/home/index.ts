@@ -6,4 +6,3 @@ export * from './model/useDeleteApiKey';
 export * from './model/useGetApiKey';
 export * from './model/useUpdateApiKey';
 export * from './model/useGetAvailableScope';
-export * from './model/useScopeSelection';

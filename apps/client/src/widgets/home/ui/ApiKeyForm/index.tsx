@@ -17,11 +17,11 @@ import {
   ApiKeyResponse,
   AvailableScopeListResponse,
 } from '@/entities/home';
+import { useScopeSelection } from '@/shared/hooks';
 import {
   useCreateApiKey,
   useGetApiKey,
   useGetAvailableScope,
-  useScopeSelection,
   useUpdateApiKey,
 } from '@/widgets/home';
 
@@ -97,9 +97,10 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
         : 'API 키 생성하기';
 
   const { handleScopeToggle, isScopeChecked, getIndentation } = useScopeSelection({
-    availableKeyScope,
+    availableScopes: availableKeyScope,
     watch,
     setValue,
+    fieldName: 'scopes',
   });
 
   const onSubmit = ({ scopes, description }: ApiKeyFormType) => {
