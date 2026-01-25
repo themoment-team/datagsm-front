@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { clientQueryKeys } from '@repo/shared/api';
 import {
   Button,
   Checkbox,
