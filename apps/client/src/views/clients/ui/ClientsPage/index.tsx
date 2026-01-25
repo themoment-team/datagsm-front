@@ -32,7 +32,6 @@ const ClientsPage = () => {
     size: PAGE_SIZE,
   });
 
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -69,12 +68,7 @@ const ClientsPage = () => {
           <CardHeader>
             <div className={cn('flex items-center justify-between')}>
               <CardTitle className={cn('text-2xl')}>OAuth 클라이언트 관리</CardTitle>
-              <ClientFormDialog
-                mode="create"
-                open={isAddDialogOpen}
-                onOpenChange={setIsAddDialogOpen}
-                onCreateSuccess={handleCreateSuccess}
-              />
+              <ClientFormDialog mode="create" onCreateSuccess={handleCreateSuccess} />
             </div>
           </CardHeader>
           <CardContent>
