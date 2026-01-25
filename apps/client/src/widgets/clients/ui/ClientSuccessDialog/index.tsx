@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
+import { useCopyToClipboard } from '@repo/shared/hooks';
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, Label } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { AlertTriangle, Check, Copy } from 'lucide-react';
@@ -15,20 +14,12 @@ interface ClientSuccessDialogProps {
 }
 
 const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialogProps) => {
-  const [copiedId, setCopiedId] = useState(false);
-  const [copiedSecret, setCopiedSecret] = useState(false);
-
-  const handleCopyClientId = (clientId: string) => {
-    navigator.clipboard.writeText(clientId);
-    setCopiedId(true);
-    setTimeout(() => setCopiedId(false), 2000);
-  };
-
-  const handleCopySecret = (secret: string) => {
-    navigator.clipboard.writeText(secret);
-    setCopiedSecret(true);
-    setTimeout(() => setCopiedSecret(false), 2000);
-  };
+  const { copied: copiedId, copy: copyClientId } = useCopyToClipboard({
+    successMessage: '클라이언트 ID가 복사되었습니다.',
+  });
+  const { copied: copiedSecret, copy: copySecret } = useCopyToClipboard({
+    successMessage: '클라이언트 시크릿이 복사되었습니다.',
+  });
 
   if (!client) return null;
 
@@ -75,11 +66,7 @@ const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialog
                 >
                   {client.clientId}
                 </code>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleCopyClientId(client.clientId)}
-                >
+                <Button variant="outline" size="icon" onClick={() => copyClientId(client.clientId)}>
                   {copiedId ? (
                     <Check className={cn('h-4 w-4 text-green-500')} />
                   ) : (
@@ -100,7 +87,7 @@ const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialog
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => handleCopySecret(client.clientSecret)}
+                  onClick={() => copySecret(client.clientSecret)}
                 >
                   {copiedSecret ? (
                     <Check className={cn('h-4 w-4 text-green-500')} />

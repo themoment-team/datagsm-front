@@ -34,15 +34,8 @@ const ClientsPage = () => {
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [createdClient, setCreatedClient] = useState<CreateClientData | null>(null);
-
-  const handleCopyClientId = (clientId: string) => {
-    navigator.clipboard.writeText(clientId);
-    setCopiedId(clientId);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
 
   const handleEdit = (client: Client) => {
     setEditingClient(client);
@@ -72,13 +65,7 @@ const ClientsPage = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <ClientList
-              clients={clients}
-              isLoading={isLoading}
-              copiedId={copiedId}
-              onCopyClientId={handleCopyClientId}
-              onEdit={handleEdit}
-            />
+            <ClientList clients={clients} isLoading={isLoading} onEdit={handleEdit} />
 
             {/* Pagination */}
             <div className={cn('mt-4')}>

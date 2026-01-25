@@ -1,5 +1,6 @@
 'use client';
 
+import { useCopyToClipboard } from '@repo/shared/hooks';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,12 +32,97 @@ import { useDeleteClient } from '@/widgets/clients';
 interface ClientListProps {
   clients?: Client[];
   isLoading?: boolean;
-  copiedId: string | null;
-  onCopyClientId: (clientId: string) => void;
   onEdit: (client: Client) => void;
 }
 
-const ClientList = ({ clients, isLoading, copiedId, onCopyClientId, onEdit }: ClientListProps) => {
+interface ClientListItemProps {
+  client: Client;
+  onEdit: (client: Client) => void;
+  onDelete: (id: string) => void;
+}
+
+const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
+  const { copied, copy } = useCopyToClipboard({
+    successMessage: '클라이언트 ID가 복사되었습니다.',
+  });
+
+  return (
+    <TableRow>
+      <TableCell className={cn('font-medium')}>{client.name}</TableCell>
+      <TableCell>
+        <div className={cn('flex items-center gap-2')}>
+          <code className={cn('bg-muted rounded px-2 py-1 font-mono text-xs')}>{client.id}</code>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn('h-6 w-6')}
+            onClick={() => copy(client.id)}
+          >
+            {copied ? (
+              <Check className={cn('h-3 w-3 text-green-500')} />
+            ) : (
+              <Copy className={cn('h-3 w-3')} />
+            )}
+          </Button>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className={cn('flex flex-wrap gap-1')}>
+          {client.redirectUrl.map((url, index) => (
+            <Badge key={index} variant="secondary" className={cn('font-mono text-xs')}>
+              {url}
+            </Badge>
+          ))}
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className={cn('flex flex-wrap gap-1')}>
+          {client.scopes.map((scope, index) => (
+            <Badge key={index} variant="outline" className={cn('text-xs')}>
+              {scope}
+            </Badge>
+          ))}
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className={cn('flex items-center gap-1')}>
+          <Button variant="ghost" size="icon" onClick={() => onEdit(client)}>
+            <Pencil className={cn('h-4 w-4')} />
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" title="삭제">
+                <Trash2 className={cn('text-destructive h-4 w-4')} />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>클라이언트 삭제</AlertDialogTitle>
+                <AlertDialogDescription>
+                  정말로 &apos;{client.name}&apos; 클라이언트를 삭제하시겠습니까? 이 작업은 되돌릴
+                  수 없습니다.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>취소</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onDelete(client.id)}
+                  className={cn(
+                    'bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white',
+                  )}
+                >
+                  삭제
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+};
+
+const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
   const queryClient = useQueryClient();
 
   const { mutate: deleteClient } = useDeleteClient({
@@ -84,80 +170,12 @@ const ClientList = ({ clients, isLoading, copiedId, onCopyClientId, onEdit }: Cl
             ))
           ) : clients && clients.length > 0 ? (
             clients.map((client) => (
-              <TableRow key={client.id}>
-                <TableCell className={cn('font-medium')}>{client.name}</TableCell>
-                <TableCell>
-                  <div className={cn('flex items-center gap-2')}>
-                    <code className={cn('bg-muted rounded px-2 py-1 font-mono text-xs')}>
-                      {client.id}
-                    </code>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={cn('h-6 w-6')}
-                      onClick={() => onCopyClientId(client.id)}
-                    >
-                      {copiedId === client.id ? (
-                        <Check className={cn('h-3 w-3 text-green-500')} />
-                      ) : (
-                        <Copy className={cn('h-3 w-3')} />
-                      )}
-                    </Button>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className={cn('flex flex-wrap gap-1')}>
-                    {client.redirectUrl.map((url, index) => (
-                      <Badge key={index} variant="secondary" className={cn('font-mono text-xs')}>
-                        {url}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className={cn('flex flex-wrap gap-1')}>
-                    {client.scopes.map((scope, index) => (
-                      <Badge key={index} variant="outline" className={cn('text-xs')}>
-                        {scope}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className={cn('flex items-center gap-1')}>
-                    <Button variant="ghost" size="icon" onClick={() => onEdit(client)}>
-                      <Pencil className={cn('h-4 w-4')} />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" title="삭제">
-                          <Trash2 className={cn('text-destructive h-4 w-4')} />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>클라이언트 삭제</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            정말로 &apos;{client.name}&apos; 클라이언트를 삭제하시겠습니까? 이
-                            작업은 되돌릴 수 없습니다.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>취소</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => deleteClient(client.id)}
-                            className={cn(
-                              'bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white',
-                            )}
-                          >
-                            삭제
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </TableCell>
-              </TableRow>
+              <ClientListItem
+                key={client.id}
+                client={client}
+                onEdit={onEdit}
+                onDelete={(id) => deleteClient(id)}
+              />
             ))
           ) : (
             <TableRow>
