@@ -14,6 +14,13 @@
 | **표준 프로토콜**    | REST 아키텍처와 HTTP 표준을 따르므로 익숙하고 예측 가능합니다.                  |
 | **유연한 통합**     | 웹, 모바일, 서버, IoT 등 다양한 환경에서 통합할 수 있습니다.                   |
 
+### 기본 URL
+모든 API 요청은 다음 기본 URL을 사용합니다:
+
+```
+https://openapi.data.hellogsm.com
+```
+
 ### 공통 응답 구조
 
 모든 성공 응답은 다음과 같은 구조로 래핑되어 반환됩니다.
@@ -61,7 +68,7 @@ API 키는 UUID 형식이며, 30일마다 갱신이 필요합니다. 만료되�
 다음은 cURL을 사용하여 학생 정보를 조회하는 예시입니다.
 
 ```bash
-curl -X GET "https://api.datagsm.com/v1/students?grade=1&classNum=1" \
+curl -X GET "https://openapi.data.hellogsm.com/v1/students?grade=1&classNum=1" \
   -H "X-API-KEY: your-api-key-here"
 ```
 
