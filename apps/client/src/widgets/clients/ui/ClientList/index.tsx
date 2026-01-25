@@ -138,15 +138,17 @@ const ClientList = ({ clients, isLoading, copiedId, onCopyClientId, onEdit }: Cl
                         <AlertDialogHeader>
                           <AlertDialogTitle>클라이언트 삭제</AlertDialogTitle>
                           <AlertDialogDescription>
-                            정말로 '{client.name}' 클라이언트를 삭제하시겠습니까? 이 작업은 되돌릴
-                            수 없습니다.
+                            정말로 &apos;{client.name}&apos; 클라이언트를 삭제하시겠습니까? 이
+                            작업은 되돌릴 수 없습니다.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>취소</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => deleteClient(client.id)}
-                            className={cn('bg-destructive text-destructive-foreground')}
+                            className={cn(
+                              'bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white',
+                            )}
                           >
                             삭제
                           </AlertDialogAction>
