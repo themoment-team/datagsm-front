@@ -1,6 +1,8 @@
 'use client';
 
-import { Children, type ReactNode, isValidElement, useEffect, useRef, useState } from 'react';
+import { Children, type ReactNode, isValidElement, useState } from 'react';
+
+import { useCopyToClipboard } from '@repo/shared/hooks';
 
 interface CodeTabProps {
   label: string;
@@ -20,36 +22,12 @@ const CodeTabs = ({ children }: CodeTabsProps) => {
   );
 
   const [activeTab, setActiveTab] = useState(0);
-  const [copied, setCopied] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { copied, copy } = useCopyToClipboard();
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  const handleCopy = async () => {
+  const handleCopy = () => {
     const code = tabs[activeTab]?.props.code;
     if (code) {
-      try {
-        await navigator.clipboard.writeText(String(code).trim());
-        setCopied(true);
-
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-
-        timeoutRef.current = setTimeout(() => {
-          setCopied(false);
-          timeoutRef.current = null;
-        }, 2000);
-      } catch (err) {
-        console.error('코드를 클립보드에 복사하는 데 실패했습니다:', err);
-        setCopied(false);
-      }
+      copy(String(code).trim());
     }
   };
 

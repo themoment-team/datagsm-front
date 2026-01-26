@@ -48,3 +48,11 @@ export const studentQueryKeys = {
 export const healthQueryKeys = {
   getHealth: () => ['health', 'check'] as const,
 } as const;
+
+export const clientQueryKeys = {
+  getClients: (page?: number, size?: number) => ['clients', 'list', { page, size }] as const,
+  postClient: () => ['clients', 'create'] as const,
+  deleteClientById: () => ['clients', 'delete'] as const,
+  patchClientById: () => ['clients', 'update'] as const,
+  getAvailableScopes: () => ['clients', 'available-scopes'] as const,
+} as const;

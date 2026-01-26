@@ -1,6 +1,7 @@
 export const NAV_LINKS = {
   client: [
     { href: '/', label: '메인' },
+    { href: '/clients', label: '클라이언트' },
     { href: '/docs', label: '독스' },
   ],
   admin: [

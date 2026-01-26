@@ -10,7 +10,7 @@ export const accountUrl = {
 export const authUrl = {
   deleteApiKey: () => '/v1/auth/api-key',
   getApiKey: () => '/v1/auth/api-key',
-  getAvailableScope: (userRole: UserRoleType) => `/v1/auth/scopes?role=${userRole}`,
+  getAvailableScope: (userRole: UserRoleType) => `/v1/auth/available-scopes?role=${userRole}`,
   postApiKey: () => '/v1/auth/api-key',
   postLogin: () => '/v1/auth/login',
   putRefresh: () => '/v1/auth/refresh',
@@ -69,4 +69,30 @@ export const studentUrl = {
   postStudent: () => '/v1/students',
   postStudentExcel: () => '/v1/students/excel/upload',
   putStudentById: (studentId: number) => `/v1/students/${studentId}`,
+} as const;
+
+export const clientUrl = {
+  getClients: (page?: number, size?: number) => {
+    const params = new URLSearchParams();
+
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+
+    const queryString = params.toString();
+    return queryString ? `/v1/clients?${queryString}` : '/v1/clients';
+  },
+  postClient: () => '/v1/clients',
+  deleteClientById: (clientId: string) => `/v1/clients/${clientId}`,
+  patchClientById: (clientId: string) => `/v1/clients/${clientId}`,
+  getClientsSearch: (page?: number, size?: number, clientName?: string) => {
+    const params = new URLSearchParams();
+
+    if (clientName !== undefined) params.append('clientName', clientName);
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+
+    const queryString = params.toString();
+    return queryString ? `/v1/clients/search?${queryString}` : '/v1/clients/search';
+  },
+  getAvailableScopes: () => '/v1/clients/available-scopes',
 } as const;

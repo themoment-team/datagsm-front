@@ -1,1 +1,0 @@
-export { CommonPagination } from './CommonPagination';

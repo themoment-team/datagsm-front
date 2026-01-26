@@ -5,14 +5,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useURLFilters } from '@repo/shared/hooks';
 import { Student, StudentRole, StudentSex } from '@repo/shared/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
+import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
-import { useURLFilters } from '@/shared/hooks';
-import { CommonPagination } from '@/shared/ui';
 import { useGetClubs } from '@/views/clubs';
 import { useGetStudents } from '@/views/students';
 import {
