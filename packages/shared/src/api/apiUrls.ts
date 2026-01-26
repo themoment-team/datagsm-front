@@ -1,20 +1,21 @@
 import { ClubType, StudentRole, StudentSex, UserRoleType } from '@repo/shared/types';
 
 export const accountUrl = {
-  getMy: () => '/v1/account/my',
-  getEmailCheck: () => '/v1/account/email/check',
-  postSignup: () => '/v1/account/signup',
-  postEmailSend: () => '/v1/account/email/send',
+  getMy: () => '/v1/accounts/my',
+  getEmailCheck: () => '/v1/accounts/email/check',
+  postSignup: () => '/v1/accounts/signup',
+  postEmailSend: () => '/v1/accounts/email/send',
 } as const;
 
 export const authUrl = {
-  deleteApiKey: () => '/v1/auth/api-key',
-  getApiKey: () => '/v1/auth/api-key',
-  getAvailableScope: (userRole: UserRoleType) => `/v1/auth/available-scopes?role=${userRole}`,
-  postApiKey: () => '/v1/auth/api-key',
-  postLogin: () => '/v1/auth/login',
+  deleteApiKey: () => '/v1/auth/api-keys/my',
+  getApiKey: () => '/v1/auth/api-keys/my',
+  getAvailableScope: (userRole: UserRoleType) =>
+    `/v1/auth/api-keys/available-scopes?role=${userRole}`,
+  postApiKey: () => '/v1/auth/api-keys/my',
+  postLogin: () => '/v1/auth/signin',
   putRefresh: () => '/v1/auth/refresh',
-  putApiKey: () => '/v1/auth/api-key',
+  putApiKey: () => '/v1/auth/api-keys/my',
 } as const;
 
 export const oauthUrl = {
@@ -79,7 +80,7 @@ export const clientUrl = {
     if (size !== undefined) params.append('size', size.toString());
 
     const queryString = params.toString();
-    return queryString ? `/v1/clients?${queryString}` : '/v1/clients';
+    return queryString ? `/v1/clients/my?${queryString}` : '/v1/clients/my';
   },
   postClient: () => '/v1/clients',
   deleteClientById: (clientId: string) => `/v1/clients/${clientId}`,
@@ -92,7 +93,7 @@ export const clientUrl = {
     if (size !== undefined) params.append('size', size.toString());
 
     const queryString = params.toString();
-    return queryString ? `/v1/clients/search?${queryString}` : '/v1/clients/search';
+    return queryString ? `/v1/clients?${queryString}` : '/v1/clients';
   },
   getAvailableScopes: () => '/v1/clients/available-scopes',
 } as const;
