@@ -8,14 +8,14 @@ export const accountUrl = {
 } as const;
 
 export const authUrl = {
-  deleteApiKey: () => '/v1/auth/api-keys',
-  getApiKey: () => '/v1/auth/api-keys',
+  deleteApiKey: () => '/v1/auth/api-keys/my',
+  getApiKey: () => '/v1/auth/api-keys/my',
   getAvailableScope: (userRole: UserRoleType) =>
     `/v1/auth/api-keys/available-scopes?role=${userRole}`,
-  postApiKey: () => '/v1/auth/api-keys',
+  postApiKey: () => '/v1/auth/api-keys/my',
   postLogin: () => '/v1/auth/signin',
   putRefresh: () => '/v1/auth/refresh',
-  putApiKey: () => '/v1/auth/api-keys',
+  putApiKey: () => '/v1/auth/api-keys/my',
 } as const;
 
 export const oauthUrl = {
