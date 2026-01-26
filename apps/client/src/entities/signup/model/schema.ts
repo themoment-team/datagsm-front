@@ -19,6 +19,10 @@ export const SignUpFormSchema = z.object({
     .string()
     .min(1, { message: '인증 코드를 입력해주세요.' })
     .length(8, { message: '인증 코드는 8자리입니다.' }),
+  privacyAgreed: z.boolean().refine((val) => val === true, {
+    message: '개인정보 처리방침에 동의해주세요.',
+  }),
 });
 
 export type SignUpFormType = z.infer<typeof SignUpFormSchema>;
+export type SignUpRequestType = Omit<SignUpFormType, 'privacyAgreed'>;
