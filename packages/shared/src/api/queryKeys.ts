@@ -1,20 +1,20 @@
 import { UserRoleType } from '../types';
 
 export const accountQueryKeys = {
-  postEmailCheck: () => ['account', 'email', 'check'] as const,
-  postEmailSend: () => ['account', 'email', 'send'] as const,
-  postSignup: () => ['account', 'signup'] as const,
+  postEmailCheck: () => ['accounts', 'email', 'check'] as const,
+  postEmailSend: () => ['accounts', 'email', 'send'] as const,
+  postSignup: () => ['accounts', 'signup'] as const,
 } as const;
 
 export const authQueryKeys = {
-  deleteApiKey: () => ['auth', 'api-key', 'delete'] as const,
-  getApiKey: () => ['auth', 'api-key', 'get'] as const,
+  deleteApiKey: () => ['auth', 'api-keys', 'delete'] as const,
+  getApiKey: () => ['auth', 'api-keys', 'get'] as const,
   getAvailableScope: (userRole: UserRoleType) =>
-    ['auth', 'api-key', 'available-scope', userRole] as const,
-  postApiKey: () => ['auth', 'api-key', 'create'] as const,
-  postLogin: () => ['auth', 'login'] as const,
+    ['auth', 'api-keys', 'available-scope', userRole] as const,
+  postApiKey: () => ['auth', 'api-keys', 'create'] as const,
+  postLogin: () => ['auth', 'signin'] as const,
   putRefresh: () => ['auth', 'refresh'] as const,
-  putApiKey: () => ['auth', 'api-key', 'update'] as const,
+  putApiKey: () => ['auth', 'api-keys', 'update'] as const,
 } as const;
 
 export const oauthQueryKeys = {
