@@ -412,12 +412,15 @@ const SignUpForm = () => {
                     />
                   );
                 }
-                if (line.startsWith('- ')) {
+                const trimmedLine = line.trimStart();
+                const isNested = line.startsWith('  ');
+
+                if (trimmedLine.startsWith('- ')) {
                   return (
                     <li
                       key={index}
-                      className={cn('ml-8')}
-                      dangerouslySetInnerHTML={{ __html: line.replace('- ', '') }}
+                      className={cn(isNested ? 'ml-14' : 'ml-8')}
+                      dangerouslySetInnerHTML={{ __html: trimmedLine.substring(2) }}
                     />
                   );
                 }
