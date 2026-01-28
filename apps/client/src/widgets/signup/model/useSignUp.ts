@@ -3,16 +3,16 @@ import { BaseApiResponse } from '@repo/shared/types';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { SignUpFormType } from '@/entities/signup';
+import { SignUpRequestType } from '@/entities/signup';
 
 export const useSignUp = (
   options?: Omit<
-    UseMutationOptions<BaseApiResponse, AxiosError, SignUpFormType>,
+    UseMutationOptions<BaseApiResponse, AxiosError, SignUpRequestType>,
     'mutationKey' | 'mutationFn'
   >,
 ) =>
   useMutation({
     mutationKey: accountQueryKeys.postSignup(),
-    mutationFn: (data: SignUpFormType) => post<BaseApiResponse>(accountUrl.postSignup(), data),
+    mutationFn: (data: SignUpRequestType) => post<BaseApiResponse>(accountUrl.postSignup(), data),
     ...options,
   });
