@@ -51,9 +51,8 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     code: ({ children, className }) => {
       const match = /language-(\w+)/.exec(className || '');
       const language = match ? match[1] : '';
-      const isBlock = className?.includes('language-');
 
-      if (isBlock && language) {
+      if (language) {
         return (
           <SyntaxHighlighter
             language={language}
