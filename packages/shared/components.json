@@ -13,7 +13,7 @@
   "iconLibrary": "lucide",
   "aliases": {
     "components": "@repo/shared/ui",
-    "utils": "@repo/shared/lib/cn.ts",
+    "utils": "@repo/shared/utils/cn.ts",
     "ui": "@repo/shared/ui",
     "lib": "@repo/shared/lib",
     "hooks": "@repo/shared/hooks"

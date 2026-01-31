@@ -1,4 +1,4 @@
-import HomePage from '@/views/home/ui/HomePage';
+import { HomePage } from '@/views/home';
 
 const Home = () => {
   return <HomePage />;

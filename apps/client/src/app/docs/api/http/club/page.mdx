@@ -1,0 +1,223 @@
+# 동아리 데이터 OpenAPI
+
+### 개요
+
+동아리 데이터 OpenAPI는 재학생들이 소속된 동아리 데이터를 간단한 HTTP 요청을 통하여 서비스에 통합할 수 있도록 돕습니다. 해당 REST API를 호출하여 기본적인 동아리 데이터를 획득할 수 있습니다.
+
+### 인증
+
+모든 API 요청은 HTTP 헤더에 API 키를 포함해야 합니다.
+
+```http
+X-API-KEY: your-api-key-here
+```
+
+API 키는 UUID 형식이며, 만료되거나 유효하지 않은 키를 사용할 경우 `401 Unauthorized` 응답을 받게 됩니다.
+
+### 엔드포인트
+
+```http
+GET /v1/clubs
+```
+
+### 권한 범위
+
+`CLUB_READ` 권한이 필요합니다.
+
+### 요청 파라미터
+
+| 파라미터                          | 타입              | 필수 여부 | 설명                                                   | 예시           |
+|-------------------------------|-----------------|-------|------------------------------------------------------|--------------|
+| `clubId`                      | `Long`          | 선택    | 동아리 ID                                               | `1`          |
+| `clubName`                    | `String`        | 선택    | 동아리 이름                                               | `SW개발동아리`    |
+| `clubType`                    | `ClubType`      | 선택    | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
+| `page`                        | `Int`           | 선택    | 페이지 번호 (기본값: 0)                                      | `0`          |
+| `size`                        | `Int`           | 선택    | 페이지 크기 (기본값: 100)                                    | `100`        |
+| `includeLeaderInParticipants` | `Boolean`       | 선택    | 부장을 부원 목록에 포함할지 여부                                   | `false`      |
+| `sortBy`                      | `ClubSortBy`    | 선택    | 정렬 기준 (ID, NAME, TYPE)                               | `NAME`       |
+| `sortDirection`               | `SortDirection` | 선택    | 정렬 방향 (ASC, DESC) (기본값: ASC)                         | `ASC`        |
+
+### 응답 형식
+
+모든 성공 응답은 다음과 같은 구조로 반환됩니다.
+
+| 필드        | 타입       | 설명            | 예시    |
+|-----------|----------|---------------|-------|
+| `status`  | `String` | HTTP 상태 메시지   | `OK`  |
+| `code`    | `Int`    | HTTP 상태 코드    | `200` |
+| `message` | `String` | 응답 메시지        | `OK`  |
+| `data`    | `Object` | 동아리 정보 목록 데이터 | -     |
+
+#### data 객체
+
+`data` 필드는 다음 필드를 포함합니다.
+
+| 필드              | 타입              | 설명       | 예시   |
+|-----------------|-----------------|----------|------|
+| `totalPages`    | `Int`           | 전체 페이지 수 | `1`  |
+| `totalElements` | `Long`          | 전체 동아리 수 | `10` |
+| `clubs`         | `List<ClubDto>` | 동아리 목록   | -    |
+
+### 동아리 객체 (ClubDto)
+
+각 동아리 객체는 다음 필드를 포함합니다.
+
+| 필드             | 타입                         | 설명                                                   | 예시           |
+|----------------|----------------------------|------------------------------------------------------|--------------|
+| `id`           | `Long`                     | 동아리 ID                                               | `1`          |
+| `name`         | `String`                   | 동아리 이름                                               | `SW개발동아리`    |
+| `type`         | `ClubType`                 | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
+| `leader`       | `ParticipantInfoDto`       | 동아리 부장 정보                                            | -            |
+| `participants` | `List<ParticipantInfoDto>` | 동아리 부원 목록                                            | -            |
+
+### 부원 정보 객체 (ParticipantInfoDto)
+
+동아리 응답에 포함된 부장 및 부원 정보는 다음 필드를 포함합니다.
+
+| 필드              | 타입       | 설명                                       | 예시                 |
+|-----------------|----------|------------------------------------------|--------------------|
+| `id`            | `Long`   | 학생 ID                                    | `1`                |
+| `name`          | `String` | 학생 이름                                    | `홍길동`              |
+| `email`         | `String` | 학생 이메일                                   | `s24080@gsm.hs.kr` |
+| `studentNumber` | `Int`    | 학번                                       | `1201`             |
+| `major`         | `Major`  | 학과 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`) | `SW_DEVELOPMENT`   |
+| `sex`           | `Sex`    | 성별 (`MAN`, `WOMAN`)                      | `MAN`              |
+
+### 요청 예시
+
+```bash
+curl -X GET "https://api.datagsm.com/v1/clubs?clubType=MAJOR_CLUB&page=0&size=50" \
+  -H "X-API-KEY: your-api-key-here"
+```
+
+#### 정렬을 포함한 요청 예시
+
+```bash
+# 동아리 이름 순으로 정렬
+curl -X GET "https://api.datagsm.com/v1/clubs?sortBy=NAME&sortDirection=ASC&page=0&size=50" \
+  -H "X-API-KEY: your-api-key-here"
+```
+
+### 응답 예시
+
+```json
+{
+  "status": "OK",
+  "code": 200,
+  "message": "OK",
+  "data": {
+    "totalPages": 1,
+    "totalElements": 1,
+    "clubs": [
+      {
+        "id": 1,
+        "name": "SW개발동아리",
+        "type": "MAJOR_CLUB",
+        "leader": {
+          "id": 1,
+          "name": "홍길동",
+          "email": "s24080@gsm.hs.kr",
+          "studentNumber": 1201,
+          "major": "SW_DEVELOPMENT",
+          "sex": "MAN"
+        },
+        "participants": [
+          {
+            "id": 2,
+            "name": "김철수",
+            "email": "s24081@gsm.hs.kr",
+            "studentNumber": 1202,
+            "major": "SW_DEVELOPMENT",
+            "sex": "MAN"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 오류 응답
+
+| 상태 코드                   | 설명                  |
+|-------------------------|---------------------|
+| `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
+| `403 Forbidden`         | 필요한 권한 범위가 없음       |
+| `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
+| `400 Bad Request`       | 잘못된 요청 파라미터         |
+
+### 사용 예제
+
+다음은 여러 언어에서 동아리 데이터를 조회하는 예제입니다.
+
+<CodeTabs>
+  <CodeTab label="JavaScript" language="javascript" code={`const axios = require('axios');
+
+async function getClubs(clubId) {
+  try {
+    const response = await axios.get('https://api.datagsm.com/v1/clubs', {
+      headers: {
+        'X-API-KEY': 'your-api-key-here',
+      },
+      params: {
+        clubId: clubId,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error;
+  }
+}
+`} />
+  <CodeTab label="Python" language="python" code={`import requests
+
+def get_club(club_id):
+    try:
+        response = requests.get(
+            'https://api.datagsm.com/v1/clubs',
+            headers={'X-API-KEY': 'your-api-key-here'},
+            params={'clubId': club_id}
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f'Error: {e}')
+        raise
+`} />
+  <CodeTab label="Java" language="java" code={`import java.net.http.*;
+import java.net.URI;
+
+public class ClubAPI {
+    public static String getClubs(Long clubId) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://api.datagsm.com/v1/clubs?clubId=" + clubId))
+            .header("X-API-KEY", "your-api-key-here")
+            .GET()
+            .build();
+
+        HttpResponse<String> response = client.send(request,
+            HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
+}
+`} />
+  <CodeTab label="Kotlin" language="kotlin" code={`import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.net.URI
+
+fun getClubs(clubId: Long): String {
+    val client = HttpClient.newHttpClient()
+    val request = HttpRequest.newBuilder()
+        .uri(URI.create("https://api.datagsm.com/v1/clubs?clubId=\${clubId}"))
+        .header("X-API-KEY", "your-api-key-here")
+        .GET()
+        .build()
+
+    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+    return response.body()
+}
+`} />
+</CodeTabs>

@@ -1,7 +1,7 @@
-import HomePage from '@/views/home/ui/HomePage';
+import { redirect } from 'next/navigation';
 
 const Home = () => {
-  return <HomePage />;
+  redirect('/students');
 };
 
 export default Home;

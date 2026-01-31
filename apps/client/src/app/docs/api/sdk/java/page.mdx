@@ -1,0 +1,724 @@
+# DataGSM OpenAPI SDK Java / Kotlin
+
+### 개요
+
+**DataGSM OpenAPI SDK Java**는 DataGSM API를 Java 및 Kotlin 애플리케이션에서 쉽고 안전하게 사용할 수 있도록 설계된 공식 클라이언트 라이브러리입니다.
+
+이 SDK를 사용하면 복잡한 HTTP 요청을 직접 작성할 필요 없이, 타입 안전한 인터페이스를 통해 학생, 동아리, 프로젝트, NEIS 데이터에 접근할 수 있습니다.
+
+### 주요 특징
+
+| 특징                 | 설명                                            |
+|--------------------|-----------------------------------------------|
+| **타입 안전성**         | 강타입 시스템으로 컴파일 타임에 오류를 검출하여 런타임 에러를 방지합니다.     |
+| **Kotlin 완벽 호환**   | Java와 Kotlin 프로젝트 모두에서 자연스럽게 사용할 수 있습니다.      |
+| **빌더 패턴**          | 직관적이고 유연한 API 요청 구성을 지원합니다.                   |
+| **자동 리소스 관리**      | `AutoCloseable` 구현으로 리소스 누수를 자동으로 방지합니다.      |
+| **구체적인 예외 처리**     | HTTP 상태 코드별 전용 예외 타입을 제공하여 정확한 에러 핸들링이 가능합니다. |
+| **검증된 HTTP 클라이언트** | OkHttp 기반으로 안정적이고 효율적인 통신을 보장합니다.             |
+
+### 시스템 요구사항
+
+| 항목         | 최소 버전  | 권장 버전     |
+|------------|--------|-----------|
+| **Java**   | JDK 17 | JDK 21 이상 |
+| **Gradle** | 7.0    | 최신 버전     |
+| **Maven**  | 3.6    | 최신 버전     |
+
+## 설치
+
+프로젝트 빌드 도구에 맞는 의존성을 추가하세요.
+
+<CodeTabs>
+  <CodeTab label="Gradle (Kotlin DSL)" language="kotlin" code={`dependencies {
+    implementation("com.github.themoment-team:datagsm-openapi-sdk-java:1.0.0")
+}
+
+repositories {
+    maven { url = uri("https://jitpack.io") }
+}`} />
+
+  <CodeTab label="Gradle (Groovy)" language="groovy" code={`dependencies {
+    implementation 'com.github.themoment-team:datagsm-openapi-sdk-java:1.0.0'
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+}`} />
+
+  <CodeTab label="Maven" language="xml" code={`<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>com.github.themoment-team</groupId>
+        <artifactId>datagsm-openapi-sdk-java</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</dependencies>`} />
+</CodeTabs>
+
+## 빠른 시작
+
+### 1. 클라이언트 초기화
+
+먼저 `DataGsmClient` 인스턴스를 생성합니다. API 키는 필수 파라미터입니다.
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient;
+
+// 기본 설정으로 클라이언트 생성
+DataGsmClient client = DataGsmClient.builder("your-api-key-here").build();
+
+// 커스텀 Base URL 설정 (선택사항)
+DataGsmClient clientWithCustomUrl = DataGsmClient.builder("your-api-key-here")
+    .baseUrl("https://api.datagsm.com")
+    .build();`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient
+
+// 기본 설정으로 클라이언트 생성
+val client = DataGsmClient.builder("your-api-key-here").build()
+
+// 커스텀 Base URL 설정 (선택사항)
+val clientWithCustomUrl = DataGsmClient.builder("your-api-key-here")
+    .baseUrl("https://api.datagsm.com")
+    .build()`} />
+
+</CodeTabs>
+
+### 2. API 호출 예제
+
+클라이언트를 생성한 후, 다양한 API를 호출할 수 있습니다.
+
+#### 학생 정보 조회
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.client.StudentApi;
+import team.themoment.datagsm.sdk.openapi.model.*;
+
+// 요청 파라미터 설정
+StudentApi.StudentRequest request = new StudentApi.StudentRequest()
+    .grade(1) // 1학년
+    .classNum(1) // 1반
+    .page(0) // 첫 번째 페이지
+    .size(50); // 페이지당 50명
+
+// API 호출
+StudentResponse response = client.students().getStudents(request);
+
+// 결과 처리
+for (Student student : response.getStudents()) {
+    System.out.printf("%s - %s%n", student.getName(), student.getEmail());
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.client.StudentApi
+import team.themoment.datagsm.sdk.openapi.model.*
+
+// 요청 파라미터 설정
+val request = StudentApi.StudentRequest()
+    .grade(1) // 1학년
+    .classNum(1) // 1반
+    .page(0) // 첫 번째 페이지
+    .size(50) // 페이지당 50명
+
+// API 호출
+val response = client.students().getStudents(request)
+
+// 결과 처리
+response.students.forEach { student ->
+    println("\${student.name} - \${student.email}")
+}`} />
+
+</CodeTabs>
+
+#### 급식 정보 조회
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.client.NeisApi;
+import team.themoment.datagsm.sdk.openapi.model.*;
+import java.time.LocalDate;
+
+// 오늘 날짜의 급식 조회
+NeisApi.MealRequest request = new NeisApi.MealRequest()
+    .date(LocalDate.now());
+
+List<Meal> meals = client.neis().getMeals(request);
+
+// 급식 정보 출력
+for (Meal meal : meals) {
+    System.out.println(meal.getMealType() + ":");
+    for (String menu : meal.getMealMenu()) {
+        System.out.println(" - " + menu);
+    }
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.client.NeisApi
+import team.themoment.datagsm.sdk.openapi.model.*
+import java.time.LocalDate
+
+// 오늘 날짜의 급식 조회
+val request = NeisApi.MealRequest()
+    .date(LocalDate.now())
+
+val meals = client.neis().getMeals(request)
+
+// 급식 정보 출력
+meals.forEach { meal ->
+    println("\${meal.mealType}:")
+    meal.mealMenu.forEach { menu ->
+        println(" - \$menu")
+    }
+}`} />
+
+</CodeTabs>
+
+## API 레퍼런스
+
+SDK는 다음과 같은 API 클라이언트를 제공합니다.
+
+### 학생 API
+
+**`client.students()`** - 학생 데이터 조회 및 관리
+
+| 메서드                 | 설명                       | 반환 타입         |
+| ---------------------- | -------------------------- | ----------------- |
+| `getStudents(request)` | 조건에 맞는 학생 목록 조회 | `StudentResponse` |
+| `getStudent(id)`       | 특정 학생의 상세 정보 조회 | `Student`         |
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`// 학생 목록 조회
+StudentResponse students = client.students().getStudents(request);
+
+// 특정 학생 조회
+Student student = client.students().getStudent(1L);`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`// 학생 목록 조회
+val students = client.students().getStudents(request)
+
+// 특정 학생 조회
+val student = client.students().getStudent(1L)`} />
+
+</CodeTabs>
+
+### 동아리 API
+
+**`client.clubs()`** - 동아리 데이터 조회 및 관리
+
+| 메서드              | 설명                         | 반환 타입      |
+| ------------------- | ---------------------------- | -------------- |
+| `getClubs(request)` | 조건에 맞는 동아리 목록 조회 | `ClubResponse` |
+| `getClub(id)`       | 특정 동아리의 상세 정보 조회 | `ClubDetail`   |
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`// 동아리 목록 조회
+ClubResponse clubs = client.clubs().getClubs(request);
+
+// 특정 동아리 조회
+ClubDetail club = client.clubs().getClub(1L);`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`// 동아리 목록 조회
+val clubs = client.clubs().getClubs(request)
+
+// 특정 동아리 조회
+val club = client.clubs().getClub(1L)`} />
+
+</CodeTabs>
+
+### 프로젝트 API
+
+**`client.projects()`** - 프로젝트 데이터 조회 및 관리
+
+| 메서드                 | 설명                           | 반환 타입         |
+| ---------------------- | ------------------------------ | ----------------- |
+| `getProjects(request)` | 조건에 맞는 프로젝트 목록 조회 | `ProjectResponse` |
+| `getProject(id)`       | 특정 프로젝트의 상세 정보 조회 | `Project`         |
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`// 프로젝트 목록 조회
+ProjectResponse projects = client.projects().getProjects(request);
+
+// 특정 프로젝트 조회
+Project project = client.projects().getProject(1L);`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`// 프로젝트 목록 조회
+val projects = client.projects().getProjects(request)
+
+// 특정 프로젝트 조회
+val project = client.projects().getProject(1L)`} />
+
+</CodeTabs>
+
+### NEIS API
+
+**`client.neis()`** - 나이스 교육정보시스템 데이터 조회
+
+| 메서드                  | 설명           | 반환 타입        |
+| ----------------------- | -------------- | ---------------- |
+| `getMeals(request)`     | 급식 정보 조회 | `List<Meal>`     |
+| `getSchedules(request)` | 학사일정 조회  | `List<Schedule>` |
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`// 급식 정보 조회
+List<Meal> meals = client.neis().getMeals(request);
+
+// 학사일정 조회
+List<Schedule> schedules = client.neis().getSchedules(request);`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`// 급식 정보 조회
+val meals = client.neis().getMeals(request)
+
+// 학사일정 조회
+val schedules = client.neis().getSchedules(request)`} />
+
+</CodeTabs>
+
+## 예외 처리
+
+SDK는 HTTP 상태 코드별로 구체적인 예외 타입을 제공합니다.
+
+### 예외 종류
+
+| 예외 타입               | HTTP 상태 | 발생 상황                      | 권장 처리 방법                         |
+| ----------------------- | --------- | ------------------------------ | -------------------------------------- |
+| `UnauthorizedException` | 401       | API 키 유효하지 않음 또는 만료 | API 키 갱신 또는 재발급                |
+| `ForbiddenException`    | 403       | 필요한 권한 부족               | 권한 범위 확인 및 요청                 |
+| `BadRequestException`   | 400       | 잘못된 요청 파라미터           | 요청 파라미터 검증                     |
+| `RateLimitException`    | 429       | Rate limit 초과                | 재시도 로직 구현 (Exponential Backoff) |
+| `ServerErrorException`  | 500       | 서버 내부 오류                 | 잠시 후 재시도 또는 관리자 문의        |
+| `DataGsmException`      | 기타      | 기타 API 오류                  | 에러 메시지 확인 후 적절한 처리        |
+
+### 예외 처리 예제
+
+<CodeTabs>
+  <CodeTab
+    label="Java"
+    language="java"
+    code={`try {
+    StudentResponse students = client.students().getStudents(request);
+    // 성공적인 응답 처리
+} catch (UnauthorizedException e) {
+    // API 키 갱신 필요
+    logger.error("API key expired or invalid", e);
+    renewApiKey();
+} catch (ForbiddenException e) {
+    // 권한 부족
+    logger.warn("Insufficient permissions", e);
+    notifyUserAboutPermissions();
+} catch (RateLimitException e) {
+    // Rate limit 초과 - 적절한 재시도 로직 구현 필요
+    logger.warn("Rate limit exceeded", e);
+    // 실제로는 exponential backoff 등의 재시도 전략 구현 권장
+} catch (BadRequestException e) {
+    // 잘못된 요청 파라미터
+    logger.error("Invalid request parameters: {}", e.getMessage());
+    validateParameters();
+} catch (ServerErrorException e) {
+    // 서버 오류
+    logger.error("Server error occurred", e);
+    notifyAdmin();
+} catch (DataGsmException e) {
+    // 기타 예외
+    logger.error("API error: {}", e.getMessage(), e);
+}`}
+  />
+  <CodeTab
+    label="Kotlin"
+    language="kotlin"
+    code={`try {
+    val students = client.students().getStudents(request)
+    // 성공적인 응답 처리
+} catch (e: UnauthorizedException) {
+    // API 키 갱신 필요
+    logger.error("API key expired or invalid", e)
+    renewApiKey()
+} catch (e: ForbiddenException) {
+    // 권한 부족
+    logger.warn("Insufficient permissions", e)
+    notifyUserAboutPermissions()
+} catch (e: RateLimitException) {
+    // Rate limit 초과 - 적절한 재시도 로직 구현 필요
+    logger.warn("Rate limit exceeded", e)
+    // 실제로는 exponential backoff 등의 재시도 전략 구현 권장
+} catch (e: BadRequestException) {
+    // 잘못된 요청 파라미터
+    logger.error("Invalid request parameters: \${e.message}")
+    validateParameters()
+} catch (e: ServerErrorException) {
+    // 서버 오류
+    logger.error("Server error occurred", e)
+    notifyAdmin()
+} catch (e: DataGsmException) {
+    // 기타 예외
+    logger.error("API error: \${e.message}", e)
+}`}
+  />
+</CodeTabs>
+
+## 리소스 관리
+
+SDK는 `AutoCloseable` 인터페이스를 구현하여 자동 리소스 정리를 지원합니다.
+
+### Try-with-resources 사용
+
+<CodeTabs>
+  <CodeTab
+    label="Java"
+    language="java"
+    code={`// Java의 try-with-resources 사용
+try (DataGsmClient client = DataGsmClient.builder("your-api-key").build()) {
+    StudentResponse students = client.students().getStudents(request);
+    // 클라이언트 사용
+} // 블록이 끝나면 자동으로 리소스 정리`}
+  />
+  <CodeTab
+    label="Kotlin"
+    language="kotlin"
+    code={`// Kotlin의 use 함수 사용
+DataGsmClient.builder("your-api-key").build().use { client ->
+    val students = client.students().getStudents(request)
+    // 클라이언트 사용
+} // 블록이 끝나면 자동으로 리소스 정리`}
+  />
+</CodeTabs>
+
+## Spring Boot 프로젝트에서 사용하기
+
+Spring Boot 애플리케이션에서는 `DataGsmClient`를 Bean으로 등록하여 의존성 주입 방식으로 사용할 수 있습니다.
+
+### Configuration 클래스 작성
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`package com.example.config;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import team.themoment.datagsm.sdk.openapi.DataGsmClient;
+
+@Configuration
+public class DataGsmConfig {
+
+    @Bean
+    @ConfigurationProperties(prefix = "datagsm.api")
+    public DataGsmProperties dataGsmProperties() {
+        return new DataGsmProperties();
+    }
+
+    @Bean
+    public DataGsmClient dataGsmClient(DataGsmProperties properties) {
+        return DataGsmClient.builder(properties.getKey())
+            .baseUrl(properties.getBaseUrl())
+            .build();
+    }
+
+    public static class DataGsmProperties {
+        private String key;
+        private String baseUrl;
+
+        public String getKey() { return key; }
+        public void setKey(String key) { this.key = key; }
+        public String getBaseUrl() { return baseUrl; }
+        public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
+    }
+
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`package com.example.config
+
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import team.themoment.datagsm.sdk.openapi.DataGsmClient
+
+@Configuration
+class DataGsmConfig {
+
+    @Bean
+    @ConfigurationProperties(prefix = "datagsm.api")
+    fun dataGsmProperties() = DataGsmProperties()
+
+    @Bean
+    fun dataGsmClient(properties: DataGsmProperties): DataGsmClient {
+        return DataGsmClient.builder(properties.key)
+            .baseUrl(properties.baseUrl)
+            .build()
+    }
+
+}
+
+data class DataGsmProperties(
+var key: String = "",
+var baseUrl: String = ""
+)`} />
+
+</CodeTabs>
+
+### 프로파일 설정
+
+```yaml
+datagsm:
+  api:
+    key: ${DATAGSM_API_KEY} # 환경 변수에서 로드
+    base-url: https://api.datagsm.com
+```
+
+### Service 클래스에서 사용
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`package com.example.service;
+
+import org.springframework.stereotype.Service;
+import team.themoment.datagsm.sdk.openapi.DataGsmClient;
+import team.themoment.datagsm.sdk.openapi.client.StudentApi;
+import team.themoment.datagsm.sdk.openapi.model.*;
+
+import java.util.List;
+
+@Service
+public class SchoolDataService {
+
+    private final DataGsmClient dataGsmClient;
+
+    public SchoolDataService(DataGsmClient dataGsmClient) {
+        this.dataGsmClient = dataGsmClient;
+    }
+
+    public List<Student> getStudentsByClass(int grade, int classNum) {
+        StudentResponse response = dataGsmClient.students().getStudents(
+            new StudentApi.StudentRequest()
+                .grade(grade)
+                .classNum(classNum)
+                .size(50)
+        );
+        return response.getStudents();
+    }
+
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`package com.example.service
+
+import org.springframework.stereotype.Service
+import team.themoment.datagsm.sdk.openapi.DataGsmClient
+import team.themoment.datagsm.sdk.openapi.client.StudentApi
+import team.themoment.datagsm.sdk.openapi.model.*
+
+@Service
+class SchoolDataService(
+    // 생성자 주입 (권장)
+    private val dataGsmClient: DataGsmClient
+) {
+
+    fun getStudentsByClass(grade: Int, classNum: Int): List<Student> {
+        val response = dataGsmClient.students().getStudents(
+            StudentApi.StudentRequest()
+                .grade(grade)
+                .classNum(classNum)
+                .size(50)
+        )
+        return response.students
+    }
+
+}`} />
+
+</CodeTabs>
+
+## 일반 Java 프로젝트에서 사용하기
+
+Spring Boot를 사용하지 않는 일반 Java 애플리케이션에서는 직접 클라이언트를 생성하여 사용합니다.
+
+### 전체 예제
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient;
+import team.themoment.datagsm.sdk.openapi.client.*;
+import team.themoment.datagsm.sdk.openapi.model.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        // try-with-resources로 자동 리소스 관리
+        try (DataGsmClient client = DataGsmClient.builder("your-api-key-here").build()) {
+
+            // 학생 정보 조회
+            StudentResponse students = client.students().getStudents(
+                new StudentApi.StudentRequest()
+                    .grade(1)
+                    .classNum(1)
+                    .size(10)
+            );
+
+            // 결과 출력
+            for (Student student : students.getStudents()) {
+                System.out.printf("%s (%s) - %s%n",
+                    student.getName(),
+                    student.getStudentNumber(),
+                    student.getEmail()
+                );
+            }
+
+            // 급식 정보 조회
+            List<Meal> meals = client.neis().getMeals(
+                new NeisApi.MealRequest().date(LocalDate.now())
+            );
+
+            // 급식 출력
+            for (Meal meal : meals) {
+                System.out.println(meal.getMealType() + ":");
+                for (String menu : meal.getMealMenu()) {
+                    System.out.println("  - " + menu);
+                }
+            }
+
+        } catch (UnauthorizedException e) {
+            System.err.println("인증 오류: API 키가 유효하지 않습니다.");
+            e.printStackTrace();
+        } catch (RateLimitException e) {
+            System.err.println("요청 제한 초과: 잠시 후 다시 시도해주세요.");
+            e.printStackTrace();
+        } catch (DataGsmException e) {
+            System.err.println("API 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("예상치 못한 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient
+import team.themoment.datagsm.sdk.openapi.client.*
+import team.themoment.datagsm.sdk.openapi.model.*
+import java.time.LocalDate
+
+fun main() {
+    // use 함수로 자동 리소스 관리
+    DataGsmClient.builder("your-api-key-here").build().use { client ->
+
+        // 학생 정보 조회
+        val students = client.students().getStudents(
+            StudentApi.StudentRequest()
+                .grade(1)
+                .classNum(1)
+                .size(10)
+        )
+
+        // 결과 출력
+        students.students.forEach { student ->
+            println("\${student.name} (\${student.studentNumber}) - \${student.email}")
+        }
+
+        // 급식 정보 조회
+        val meals = client.neis().getMeals(
+            NeisApi.MealRequest().date(LocalDate.now())
+        )
+
+        // 급식 출력
+        meals.forEach { meal ->
+            println("\${meal.mealType}:")
+            meal.mealMenu.forEach { menu ->
+                println("  - \$menu")
+            }
+        }
+    }
+
+}`} />
+
+</CodeTabs>
+
+## 보안
+
+### API 키 관리
+
+API 키는 민감한 정보이므로 절대 코드에 직접 하드코딩하지 마세요. 환경 변수나 설정 파일을 통해 안전하게 관리하세요.
+
+#### 환경 변수 사용 (권장)
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`public class Main {
+    public static void main(String[] args) {
+        // 환경 변수에서 API 키 로드
+        String apiKey = System.getenv("DATAGSM_API_KEY");
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            System.err.println("환경 변수 DATAGSM_API_KEY가 설정되지 않았습니다.");
+            System.exit(1);
+        }
+
+        try (DataGsmClient client = DataGsmClient.builder(apiKey).build()) {
+            // API 사용
+        }
+    }
+
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`fun main() {
+    // 환경 변수에서 API 키 로드
+    val apiKey = System.getenv("DATAGSM_API_KEY")
+
+    if (apiKey.isNullOrEmpty()) {
+        println("환경 변수 DATAGSM_API_KEY가 설정되지 않았습니다.")
+        return
+    }
+
+    DataGsmClient.builder(apiKey).build().use { client ->
+        // API 사용
+    }
+
+}`} />
+
+</CodeTabs>
+
+#### 환경 변수 설정 방법
+
+**Linux/macOS**
+
+```bash
+export DATAGSM_API_KEY="your-api-key-here"
+java -jar your-application.jar
+```
+
+**Windows (PowerShell)**
+
+```powershell
+$env:DATAGSM_API_KEY="your-api-key-here"
+java -jar your-application.jar
+```
+
+## 문제 해결
+
+### 자주 발생하는 문제
+
+#### 401 Unauthorized 오류
+
+**원인**: API 키가 유효하지 않거나 만료됨
+
+**해결 방법**:
+
+- API 키가 올바르게 설정되었는지 확인
+- API 키가 만료되지 않았는지 확인
+- 필요시 새로운 API 키 발급
+
+#### 403 Forbidden 오류
+
+**원인**: 요청한 API에 대한 권한이 없음
+
+**해결 방법**:
+
+- API 키의 권한 범위(Scope) 확인
+- 필요한 권한이 부여되었는지 확인
+- 권한 추가가 필요한 경우 관리자에게 문의
+
+## 추가 리소스
+
+- **GitHub 저장소**: [DataGSM OpenAPI SDK Java](https://github.com/themoment-team/datagsm-openapi-sdk-java)
+- **이슈 트래커**: [GitHub Issues](https://github.com/themoment-team/datagsm-openapi-sdk-java/issues)
+
+문의사항이나 버그 리포트는 GitHub Issues를 통해 제출해 주세요.

@@ -1,1 +1,3 @@
-@import '@repo/shared/styles/globals.css';
+@import 'tailwindcss';
+@source "../../../../../packages/shared/src";
+@import '../../../../../packages/shared/src/styles/globals.css';
