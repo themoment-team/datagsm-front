@@ -2,6 +2,8 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 
 import type { MDXComponents } from 'mdx/types';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 import CodeTabs, { CodeTab } from '@/widgets/docs/ui/CodeTabs';
 
@@ -27,17 +29,27 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
 
     li: ({ children }) => <li className="mb-2 leading-relaxed">{children}</li>,
 
-    pre: ({ children }) => (
-      <pre className="my-6 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100">
-        {children}
-      </pre>
-    ),
+    pre: ({ children }) => <div className="my-6">{children}</div>,
 
     code: ({ children, className }) => {
+      const match = /language-(\w+)/.exec(className || '');
+      const language = match ? match[1] : '';
       const isBlock = className?.includes('language-');
 
-      if (isBlock) {
-        return <code className={className}>{children}</code>;
+      if (isBlock && language) {
+        return (
+          <SyntaxHighlighter
+            language={language}
+            style={vscDarkPlus}
+            customStyle={{
+              margin: 0,
+              borderRadius: '0.5rem',
+              fontSize: '0.875rem',
+            }}
+          >
+            {String(children).replace(/\n$/, '')}
+          </SyntaxHighlighter>
+        );
       }
 
       return (

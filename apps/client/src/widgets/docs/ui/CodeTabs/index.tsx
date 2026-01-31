@@ -3,6 +3,8 @@
 import { Children, type ReactNode, isValidElement, useState } from 'react';
 
 import { useCopyToClipboard } from '@repo/shared/hooks';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 interface CodeTabProps {
   label: string;
@@ -60,11 +62,17 @@ const CodeTabs = ({ children }: CodeTabsProps) => {
       <div>
         {tabs.map((tab, index) => (
           <div key={tab.props.label} className={activeTab === index ? 'block' : 'hidden'}>
-            <pre className="my-0 overflow-x-auto rounded-b-lg bg-gray-900 p-4 text-sm text-gray-100">
-              <code className={`language-${tab.props.language}`}>
-                {String(tab.props.code).trim()}
-              </code>
-            </pre>
+            <SyntaxHighlighter
+              language={tab.props.language}
+              style={vscDarkPlus}
+              customStyle={{
+                margin: 0,
+                borderRadius: '0 0 0.5rem 0.5rem',
+                fontSize: '0.875rem',
+              }}
+            >
+              {String(tab.props.code).trim()}
+            </SyntaxHighlighter>
           </div>
         ))}
       </div>
