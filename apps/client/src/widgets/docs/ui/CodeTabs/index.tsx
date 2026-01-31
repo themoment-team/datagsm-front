@@ -4,6 +4,8 @@ import { Children, type ReactNode, isValidElement, useState } from 'react';
 
 import { useCopyToClipboard } from '@repo/shared/hooks';
 
+import { CodeBlock } from '@/shared/ui';
+
 interface CodeTabProps {
   label: string;
   language: string;
@@ -60,11 +62,14 @@ const CodeTabs = ({ children }: CodeTabsProps) => {
       <div>
         {tabs.map((tab, index) => (
           <div key={tab.props.label} className={activeTab === index ? 'block' : 'hidden'}>
-            <pre className="my-0 overflow-x-auto rounded-b-lg bg-gray-900 p-4 text-sm text-gray-100">
-              <code className={`language-${tab.props.language}`}>
-                {String(tab.props.code).trim()}
-              </code>
-            </pre>
+            <CodeBlock
+              language={tab.props.language}
+              customStyle={{
+                borderRadius: '0 0 0.5rem 0.5rem',
+              }}
+            >
+              {String(tab.props.code).trim()}
+            </CodeBlock>
           </div>
         ))}
       </div>

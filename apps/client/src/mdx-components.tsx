@@ -5,6 +5,8 @@ import type { MDXComponents } from 'mdx/types';
 
 import CodeTabs, { CodeTab } from '@/widgets/docs/ui/CodeTabs';
 
+import { CodeBlock } from './shared/ui';
+
 export function useMDXComponents(components: MDXComponents = {}): MDXComponents {
   return {
     h1: ({ children }) => (
@@ -27,17 +29,14 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
 
     li: ({ children }) => <li className="mb-2 leading-relaxed">{children}</li>,
 
-    pre: ({ children }) => (
-      <pre className="my-6 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100">
-        {children}
-      </pre>
-    ),
+    pre: ({ children }) => <div className="my-6">{children}</div>,
 
     code: ({ children, className }) => {
-      const isBlock = className?.includes('language-');
+      const match = /language-(\w+)/.exec(className || '');
+      const language = match ? match[1] : '';
 
-      if (isBlock) {
-        return <code className={className}>{children}</code>;
+      if (language) {
+        return <CodeBlock language={language}>{String(children).replace(/\n$/, '')}</CodeBlock>;
       }
 
       return (
