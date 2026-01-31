@@ -2,27 +2,10 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 
 import type { MDXComponents } from 'mdx/types';
-import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
-import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
-import http from 'react-syntax-highlighter/dist/esm/languages/prism/http';
-import java from 'react-syntax-highlighter/dist/esm/languages/prism/java';
-import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
-import json from 'react-syntax-highlighter/dist/esm/languages/prism/json';
-import kotlin from 'react-syntax-highlighter/dist/esm/languages/prism/kotlin';
-import powershell from 'react-syntax-highlighter/dist/esm/languages/prism/powershell';
-import python from 'react-syntax-highlighter/dist/esm/languages/prism/python';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import CodeTabs, { CodeTab } from '@/widgets/docs/ui/CodeTabs';
 
-SyntaxHighlighter.registerLanguage('http', http);
-SyntaxHighlighter.registerLanguage('javascript', javascript);
-SyntaxHighlighter.registerLanguage('json', json);
-SyntaxHighlighter.registerLanguage('bash', bash);
-SyntaxHighlighter.registerLanguage('python', python);
-SyntaxHighlighter.registerLanguage('java', java);
-SyntaxHighlighter.registerLanguage('kotlin', kotlin);
-SyntaxHighlighter.registerLanguage('powershell', powershell);
+import { CodeBlock } from './shared/ui';
 
 export function useMDXComponents(components: MDXComponents = {}): MDXComponents {
   return {
@@ -53,19 +36,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
       const language = match ? match[1] : '';
 
       if (language) {
-        return (
-          <SyntaxHighlighter
-            language={language}
-            style={vscDarkPlus}
-            customStyle={{
-              margin: 0,
-              borderRadius: '0.5rem',
-              fontSize: '0.875rem',
-            }}
-          >
-            {String(children).replace(/\n$/, '')}
-          </SyntaxHighlighter>
-        );
+        return <CodeBlock language={language}>{String(children).replace(/\n$/, '')}</CodeBlock>;
       }
 
       return (
