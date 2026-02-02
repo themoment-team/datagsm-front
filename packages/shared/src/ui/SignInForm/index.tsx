@@ -84,6 +84,7 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps
               />
               <button
                 type="button"
+                aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                 onClick={() => setShowPassword(!showPassword)}
                 className={cn(
                   'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',

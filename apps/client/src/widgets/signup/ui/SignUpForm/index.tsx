@@ -21,7 +21,7 @@ import {
 import { Checkbox, Dialog, DialogContent, DialogHeader, DialogTitle } from '@repo/shared/ui';
 import { cn, minutesToMs } from '@repo/shared/utils';
 import { AxiosError } from 'axios';
-import { Database } from 'lucide-react';
+import { Database, Eye, EyeOff } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -40,6 +40,7 @@ const SignUpForm = () => {
   const [remainingTime, setRemainingTime] = useState(0);
   const [isPrivacyDialogOpen, setIsPrivacyDialogOpen] = useState(false);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -320,14 +321,32 @@ const SignUpForm = () => {
 
           <div className={cn('space-y-2')}>
             <Label htmlFor="password">비밀번호</Label>
-            <Input
-              className={cn('w-full')}
-              disabled={isSigningUp}
-              id="password"
-              type="password"
-              placeholder="비밀번호를 입력하세요"
-              {...register('password')}
-            />
+            <div className={cn('relative')}>
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="비밀번호를 입력하세요"
+                {...register('password')}
+                disabled={isSigningUp}
+                className={cn('pr-10')}
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                onClick={() => setShowPassword(!showPassword)}
+                className={cn(
+                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
+                  isSigningUp && 'cursor-not-allowed opacity-50',
+                )}
+                disabled={isSigningUp}
+              >
+                {showPassword ? (
+                  <EyeOff className={cn('h-4 w-4')} />
+                ) : (
+                  <Eye className={cn('h-4 w-4')} />
+                )}
+              </button>
+            </div>
             <FormErrorMessage error={errors.password} />
           </div>
 
