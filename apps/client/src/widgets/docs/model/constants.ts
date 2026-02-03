@@ -43,6 +43,10 @@ export const docsSections: DocsSection[] = [
             label: 'Java / Kotlin SDK',
             href: '/docs/api/sdk/java',
           },
+          {
+            label: 'Python SDK',
+            href: '/docs/api/sdk/python',
+          },
         ],
       },
     ],
