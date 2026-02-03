@@ -197,6 +197,7 @@ SDK는 HTTP 상태 코드별로 구체적인 예외 타입을 제공합니다.
 ### 예외 처리 예제
 
 ```python
+import logging
 from datagsm_openapi import DataGsmClient
 from datagsm_openapi.exceptions import (
     UnauthorizedException,
@@ -206,6 +207,8 @@ from datagsm_openapi.exceptions import (
     ServerErrorException,
     DataGsmException
 )
+
+logger = logging.getLogger(__name__)
 
 try:
     with DataGsmClient(api_key="your-api-key") as client:
