@@ -1,0 +1,161 @@
+# DataGSM OAuth SDK for JavaScript
+
+### 개요
+
+**datagsm-oauth-sdk-javascript**는 React 애플리케이션에서 DataGSM OAuth 인증을 쉽고 빠르게 연동할 수 있도록 돕는 공식 SDK입니다.
+
+이 라이브러리를 사용하면 복잡한 OAuth 리디렉션 흐름을 직접 구현할 필요 없이, 제공되는 React 컴포넌트와 Hook을 통해 간편하게 로그인 기능을 구현할 수 있습니다.
+
+### 주요 특징
+
+| 특징 | 설명 |
+| --- | --- |
+| **간편한 연동** | `OAuthProvider`와 `OAuthLoginButton` 컴포넌트만으로 빠르게 로그인 UI를 구성할 수 있습니다. |
+| **React Hook 지원** | `useOAuth` Hook을 제공하여 커스텀 로그인 버튼이나 로직을 유연하게 작성할 수 있습니다. |
+| **TypeScript 지원** | 모든 컴포넌트와 Hook은 TypeScript로 작성되어 타입 안정성을 보장합니다. |
+| **최소한의 설정** | `clientId`와 `redirectUri`만 설정하면 즉시 사용할 수 있습니다. |
+
+### 시스템 요구사항
+
+| 항목 | 최소 버전 | 권장 버전 | 
+| --- | --- | --- |
+| **React** | 16.8.x | 18.x 이상|
+| **Node.js** | 18.x | 20.x 이상|
+
+## 설치
+
+<CodeTabs>
+  <CodeTab label="npm" language="bash" code={`npm install datagsm-oauth-sdk-javascript`} />
+
+  <CodeTab label="yarn" language="bash" code={`yarn add datagsm-oauth-sdk-javascript`} />
+
+  <CodeTab label="pnpm" language="bash" code={`pnpm add datagsm-oauth-sdk-javascript`} />
+</CodeTabs>
+
+## 빠른 시작
+
+### 1. OAuthProvider 설정
+
+애플리케이션의 최상단 (예: `App.js`)을 `OAuthProvider`로 감싸고,
+[DataGSM](https://datagsm-front-client.vercel.app/clients)에서 발급받은 `clientId`와 로그인 성공 후 리다이렉트될 `redirectUri`를 props로 전달합니다.
+
+```javascript
+// src/main.jsx
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { OAuthProvider } from 'datagsm-oauth-sdk-javascript';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(
+  <React.StrictMode>
+    <OAuthProvider
+      clientId="YOUR_CLIENT_ID"
+      redirectUri="YOUR_REDIRECT_URI"
+    >
+      <App />
+    </OAuthProvider>
+  </React.StrictMode>
+);
+```
+
+| Prop | 타입 | 필수 여부 | 설명 |
+| --- | --- | --- | --- |
+| `clientId` | `string` | YES | DataGSM에서 발급받은 클라이언트 ID |
+| `redirectUri` | `string` | YES | 로그인 성공 후 리디렉션될 URI |
+| `children` | `ReactNode` | YES | `OAuthProvider`의 하위에 렌더링될 React 컴포넌트 |
+
+### 2. 로그인 버튼 사용
+
+`OAuthLoginButton` 컴포넌트를 사용하여 로그인 버튼을 렌더링할 수 있습니다. 버튼을 클릭하면 자동으로 DataGSM 로그인 페이지로 리다이렉션됩니다.
+
+```javascript
+// src/App.jsx
+
+import { OAuthLoginButton } from 'datagsm-oauth-sdk-javascript';
+
+function App() {
+  return (
+    <div>
+      <OAuthLoginButton />
+    </div>
+  );
+}
+
+export default App;
+```
+
+기본 문구는 "Data GSM 로그인"이며, `children`을 통해 커스텀할 수 있습니다.
+
+```javascript
+<OAuthLoginButton>
+  <span>🚀</span>
+  <span>DataGSM 계정으로 시작하기</span>
+</OAuthLoginButton>
+```
+
+`OAuthLoginButton`은 표준 HTML `<button>` 태그의 모든 속성을 지원하며, 추가적으로 다음을 props로 받습니다.
+
+| Prop | 타입 | 필수 여부 | 설명 |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | 아니오 | 버튼 내부에 렌더링될 내용. 기본값은 "Data GSM 로그인"입니다. |
+| `onClick` | `(event) => void` | 아니오 | 기본 `login` 함수 호출 전에 실행할 커스텀 클릭 핸들러. |
+
+
+### useOAuth Hook 사용하기
+
+디자인 시스템에 맞는 커스텀 버튼을 만들거나, 로그인 기능을 버튼 클릭 외의 다른 액션과 연결하고 싶을 때는 `useOAuth` Hook을 사용할 수 있습니다.
+
+```javascript
+// src/components/CustomLoginButton.jsx
+
+import { useOAuth } from 'datagsm-oauth-sdk-javascript';
+import './CustomLoginButton.css'; // 직접 만든 스타일
+
+function CustomLoginButton() {
+  const { login, clientId, redirectUri } = useOAuth();
+
+  const handleLogin = () => {
+    // 로그인 전후로 필요한 로직을 추가할 수 있습니다.
+    console.log('로그인을 시도합니다...', clientId, redirectUri);
+    login();
+  };
+
+  return (
+    <button className="my-custom-button" onClick={handleLogin}>
+      커스텀 로그인 버튼
+    </button>
+  );
+}
+
+export default CustomLoginButton;
+```
+
+`useOAuth` Hook은 다음 값을 포함하는 객체를 반환합니다.
+
+| 반환 값 | 타입 | 설명 |
+| --- | --- | --- |
+| `login` | `() => void` | 호출 시 DataGSM OAuth 로그인 페이지로 리디렉션하는 함수 |
+| `clientId` | `string` | `OAuthProvider`에 전달된 클라이언트 ID |
+| `redirectUri` | `string` | `OAuthProvider`에 전달된 리디렉션 URI |
+
+**주의:** `useOAuth` Hook과 `OAuthLoginButton` 컴포넌트는 반드시 `OAuthProvider` 하위에서 사용해야 합니다.
+
+## 문제 해결
+
+#### Error: useOAuth must be used within OAuthProvider
+
+**원인**: `useOAuth` Hook이나 `OAuthLoginButton` 컴포넌트가 `OAuthProvider`의 자식 컴포넌트로 렌더링되지 않았습니다.
+
+**해결 방법**:
+1. 애플리케이션의 최상위 컴포넌트가 `OAuthProvider`로 감싸져 있는지 확인하세요.
+2. `useOAuth` 또는 `OAuthLoginButton`을 사용하는 컴포넌트가 `OAuthProvider`의 하위 트리에서 렌더링되는지 확인하세요.
+
+## 추가 리소스
+
+- **GitHub 저장소**: [datagsm-oauth-sdk-javascript](https://github.com/themoment-team/datagsm-oauth-sdk-javascript)
+- **이슈 트래커**: [GitHub Issues](https://github.com/themoment-team/datagsm-oauth-sdk-javascript/issues)
+
+문의사항이나 버그 리포트는 GitHub Issues를 통해 제출해 주세요.
