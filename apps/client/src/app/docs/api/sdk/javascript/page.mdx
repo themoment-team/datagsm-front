@@ -188,7 +188,120 @@ try {
 }
 ```
 
-## 보안 가이드
+## Node.js 및 브라우저에서 사용하기
+
+JavaScript 또는 TypeScript 프로젝트에서 `DataGsmClient`를 사용하여 데이터를 조회하는 전체 예제입니다.
+
+### 전체 예제
+
+<CodeTabs>
+  <CodeTab label="JavaScript" language="javascript" code={`
+import {
+    DataGsmClient,
+    UnauthorizedError,
+    RateLimitError,
+    DataGsmError,
+} from 'datagsm-openapi-sdk-javascript';
+
+async function main() {
+    const client = new DataGsmClient({
+      apiKey: 'your-api-key-here',
+    });
+
+    try {
+      // 학생 정보 조회
+      const { data: studentData } = await client.students().getStudents({
+        grade: 1,
+        classNum: 1,
+        size: 10,
+      });
+      // 결과 출력
+      studentData.students.forEach((student) => {
+        console.log(
+          \`\${student.name} (\${student.studentNumber}) - \${student.email}\`,
+        );
+      });
+
+      // 급식 정보 조회
+      const { data: meals } = await client.neis().getMeals({
+        date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+      });
+      // 급식 출력
+      meals.forEach((meal) => {
+        console.log(\`\${meal.mealType}:\`);
+        meal.mealMenu.forEach((menu) => console.log(\`  - \${menu}\`));
+      });
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        console.error('인증 오류: API 키가 유효하지 않습니다.');
+      } else if (error instanceof RateLimitError) {
+        console.error('요청 제한 초과: 잠시 후 다시 시도해주세요.');
+      } else if (error instanceof DataGsmError) {
+        console.error(\`API 에러 발생 (\${error.statusCode}): \${error.message}\`);
+      } else {
+        console.error('알 수 없는 오류가 발생했습니다.', error);
+      }
+    }
+}
+
+main();
+`} />
+
+  <CodeTab label="TypeScript" language="typescript" code={`
+import {
+    DataGsmClient,
+    UnauthorizedError,
+    RateLimitError,
+    DataGsmError,
+    type Student,
+    type Meal,
+} from 'datagsm-openapi-sdk-javascript';
+
+async function main(): Promise<void> {
+    const client = new DataGsmClient({
+      apiKey: 'your-api-key-here',
+    });
+
+    try {
+      // 학생 정보 조회
+      const { data: studentData } = await client.students().getStudents({
+        grade: 1,
+        classNum: 1,
+        size: 10,
+      });
+      // 결과 출력
+      studentData.students.forEach((student: Student) => {
+        console.log(\`\${student.name} (\${student.studentNumber}) - \${student.email}\`);
+      });
+
+      // 급식 정보 조회
+      const { data: meals } = await client.neis().getMeals({
+        date: new Date().toISOString().split('T')[0],
+      });
+      // 급식 출력
+      meals.forEach((meal: Meal) => {
+        console.log(\`\${meal.mealType}:\`);
+        meal.mealMenu.forEach((menu: string) => console.log(\`  - \${menu}\`));
+      });
+    } catch (error: unknown) {
+      if (error instanceof UnauthorizedError) {
+        console.error('인증 오류: API 키가 유효하지 않습니다.');
+      } else if (error instanceof RateLimitError) {
+        console.error('요청 제한 초과: 잠시 후 다시 시도해주세요.');
+      } else if (error instanceof DataGsmError) {
+        console.error(\`API 에러 발생 (\${error.statusCode}): \${error.message}\`);
+      } else {
+        console.error('알 수 없는 오류가 발생했습니다.', error);
+      }
+    }
+}
+
+main();
+`} />
+
+</CodeTabs>
+
+## 보안
 
 ### API 키 관리
 
