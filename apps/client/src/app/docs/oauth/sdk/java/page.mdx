@@ -651,41 +651,54 @@ import team.themoment.datagsm.sdk.oauth.exception.*
 import team.themoment.datagsm.sdk.oauth.model.*
 
 fun main() {
-    // use 함수로 자동 리소스 관리
-    DataGsmClient.builder("your-client-secret").build().use { client ->
+    try {
+        // use 함수로 자동 리소스 관리
+        DataGsmClient.builder("your-client-secret").build().use { client ->
 
-        // 1. Authorization Code로 토큰 교환
-        val authCode = "authorization_code_from_callback"
-        val tokenResponse = client.exchangeToken(authCode)
+            // 1. Authorization Code로 토큰 교환
+            val authCode = "authorization_code_from_callback"
+            val tokenResponse = client.exchangeToken(authCode)
 
-        println("Access Token 발급 완료")
+            println("Access Token 발급 완료")
 
-        // 2. 사용자 정보 조회
-        val userInfo = client.getUserInfo(tokenResponse.accessToken)
+            // 2. 사용자 정보 조회
+            val userInfo = client.getUserInfo(tokenResponse.accessToken)
 
-        println("사용자 ID: \${userInfo.id}")
-        println("이메일: \${userInfo.email}")
-        println("역할: \${userInfo.role}")
+            println("사용자 ID: \${userInfo.id}")
+            println("이메일: \${userInfo.email}")
+            println("역할: \${userInfo.role}")
 
-        // 3. 학생 정보 조회 (학생인 경우)
-        if (userInfo.isStudent) {
-            val student = userInfo.student
-            println("이름: \${student.name}")
-            println("학번: \${student.studentNumber}")
-            println("학년/반/번호: \${student.grade}학년 \${student.classNum}반 \${student.number}번")
-            println("전공: \${student.major}")
+            // 3. 학생 정보 조회 (학생인 경우)
+            if (userInfo.isStudent) {
+                val student = userInfo.student
+                println("이름: \${student.name}")
+                println("학번: \${student.studentNumber}")
+                println("학년/반/번호: \${student.grade}학년 \${student.classNum}반 \${student.number}번")
+                println("전공: \${student.major}")
 
-            // 동아리 정보
-            student.majorClub?.let { club ->
-                println("전공동아리: \${club.name}")
+                // 동아리 정보
+                student.majorClub?.let { club ->
+                    println("전공동아리: \${club.name}")
+                }
             }
+
+            // 4. 토큰 갱신
+            val newToken = client.refreshToken(tokenResponse.refreshToken)
+            println("토큰 갱신 완료")
         }
-
-        // 4. 토큰 갱신
-        val newToken = client.refreshToken(tokenResponse.refreshToken)
-        println("토큰 갱신 완료")
+    } catch (e: UnauthorizedException) {
+        System.err.println("인증 오류: 토큰이 유효하지 않습니다.")
+        e.printStackTrace()
+    } catch (e: RateLimitException) {
+        System.err.println("요청 제한 초과: 잠시 후 다시 시도해주세요.")
+        e.printStackTrace()
+    } catch (e: DataGsmException) {
+        System.err.println("API 오류 발생: \${e.message}")
+        e.printStackTrace()
+    } catch (e: Exception) {
+        System.err.println("예상치 못한 오류 발생: \${e.message}")
+        e.printStackTrace()
     }
-
 }`} />
 
 </CodeTabs>
