@@ -39,7 +39,7 @@
 
 먼저 `DataGsmClient` 인스턴스를 생성합니다. API 키는 필수 파라미터입니다.
 
-```javascript
+```typescript
 import { DataGsmClient } from 'datagsm-openapi-sdk-javascript';
 
 // 기본 설정으로 클라이언트 생성
@@ -125,7 +125,7 @@ const advancedClient = new DataGsmClient({
 | :--------------------- | :------------------------- | :----------------------------- |
 | `getStudents(request)` | 조건에 맞는 학생 목록 조회 | `Promise<GetStudentsResponse>` |
 
-```javascript
+```typescript
 const students = await client.students().getStudents({
   grade: 1,
   page: 0,
@@ -141,7 +141,7 @@ const students = await client.students().getStudents({
 | :------------------ | :--------------------------- | :-------------------------- |
 | `getClubs(request)` | 조건에 맞는 동아리 목록 조회 | `Promise<GetClubsResponse>` |
 
-```javascript
+```typescript
 const clubs = await client.clubs().getClubs({
   clubType: 'MAJOR_CLUB',
 });
@@ -155,7 +155,7 @@ const clubs = await client.clubs().getClubs({
 | :--------------------- | :----------------------------- | :----------------------------- |
 | `getProjects(request)` | 조건에 맞는 프로젝트 목록 조회 | `Promise<GetProjectsResponse>` |
 
-```javascript
+```typescript
 const projects = await client.projects().getProjects({
   projectName: 'DataGSM',
 });
@@ -170,7 +170,7 @@ const projects = await client.projects().getProjects({
 | `getMeals(request)`     | 급식 정보 조회 | `Promise<GetMealsResponse>`     |
 | `getSchedules(request)` | 학사일정 조회  | `Promise<GetSchedulesResponse>` |
 
-```javascript
+```typescript
 // 학사일정 조회
 const schedules = await client.neis().getSchedules({
   fromDate: '2026-03-01',
@@ -196,7 +196,7 @@ SDK는 발생한 오류 상황에 맞는 전용 에러 클래스를 제공합니
 
 ### 예외 처리 예제
 
-```javascript
+```typescript
 import { DataGsmError, RateLimitError, UnauthorizedError } from 'datagsm-openapi-sdk-javascript';
 
 try {
@@ -227,7 +227,7 @@ API 키는 절대 클라이언트 측 JavaScript(브라우저) 코드에 직접 
 DATAGSM_API_KEY=your_secret_api_key
 ```
 
-```javascript
+```typescript
 const client = new DataGsmClient({
   apiKey: process.env.DATAGSM_API_KEY,
 });
