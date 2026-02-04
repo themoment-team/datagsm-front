@@ -60,7 +60,7 @@ const advancedClient = new DataGsmClient({
 #### 학생 정보 조회
 
 <CodeTabs>
-  <CodeTab label="JavaScript" language="javascript" code={`
+  <CodeTab label="JavaScript" language="typescript" code={`
   // 학생 목록 조회 (1학년 1반)
   const response = await client.students().getStudents({
     grade: 1,
@@ -90,7 +90,7 @@ const advancedClient = new DataGsmClient({
 #### 급식 정보 조회
 
 <CodeTabs>
-  <CodeTab label="JavaScript" language="javascript" code={`
+  <CodeTab label="JavaScript" language="typescript" code={`
   // 특정 날짜의 급식 조회
   const response = await client.neis().getMeals({
     date: '2026-02-04' // YYYY-MM-DD 포맷
