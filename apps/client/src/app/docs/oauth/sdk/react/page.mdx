@@ -63,9 +63,9 @@ root.render(
 
 | Prop | 타입 | 필수 여부 | 설명 |
 | --- | --- | --- | --- |
-| `clientId` | `string` | YES | DataGSM에서 발급받은 클라이언트 ID |
-| `redirectUri` | `string` | YES | 로그인 성공 후 리디렉션될 URI |
-| `children` | `ReactNode` | YES | `OAuthProvider`의 하위에 렌더링될 React 컴포넌트 |
+| `clientId` | `string` | 필수 | DataGSM에서 발급받은 클라이언트 ID |
+| `redirectUri` | `string` | 필수 | 로그인 성공 후 리디렉션될 URI |
+| `children` | `ReactNode` | 필수 | `OAuthProvider`의 하위에 렌더링될 React 컴포넌트 |
 
 ### 2. 로그인 버튼 사용
 
@@ -100,8 +100,8 @@ export default App;
 
 | Prop | 타입 | 필수 여부 | 설명 |
 | --- | --- | --- | --- |
-| `children` | `ReactNode` | NO | 버튼 내부에 렌더링될 내용. 기본값은 "Data GSM 로그인"입니다. |
-| `onClick` | `(event) => void` | NO | 기본 `login` 함수 호출 전에 실행할 커스텀 클릭 핸들러. |
+| `children` | `ReactNode` | 선택 | 버튼 내부에 렌더링될 내용. 기본값은 "Data GSM 로그인"입니다. |
+| `onClick` | `(event) => void` | 선택 | 기본 `login` 함수 호출 전에 실행할 커스텀 클릭 핸들러. |
 
 
 ### useOAuth Hook 사용하기
