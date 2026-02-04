@@ -1,8 +1,8 @@
-# DataGSM OAuth SDK for JavaScript
+# DataGSM OAuth SDK for React
 
 ### 개요
 
-**datagsm-oauth-sdk-javascript**는 React 애플리케이션에서 DataGSM OAuth 인증을 쉽고 빠르게 연동할 수 있도록 돕는 공식 SDK입니다.
+**datagsm-oauth-react**는 React 애플리케이션에서 DataGSM OAuth 인증을 쉽고 빠르게 연동할 수 있도록 돕는 공식 SDK입니다.
 
 이 라이브러리를 사용하면 복잡한 OAuth 리디렉션 흐름을 직접 구현할 필요 없이, 제공되는 React 컴포넌트와 Hook을 통해 간편하게 로그인 기능을 구현할 수 있습니다.
 
@@ -25,11 +25,11 @@
 ## 설치
 
 <CodeTabs>
-  <CodeTab label="npm" language="bash" code={`npm install datagsm-oauth-sdk-javascript`} />
+  <CodeTab label="npm" language="bash" code={`npm install @themoment-team/datagsm-oauth-react`} />
 
-  <CodeTab label="yarn" language="bash" code={`yarn add datagsm-oauth-sdk-javascript`} />
+  <CodeTab label="yarn" language="bash" code={`yarn add @themoment-team/datagsm-oauth-react`} />
 
-  <CodeTab label="pnpm" language="bash" code={`pnpm add datagsm-oauth-sdk-javascript`} />
+  <CodeTab label="pnpm" language="bash" code={`pnpm add @themoment-team/datagsm-oauth-react`} />
 </CodeTabs>
 
 ## 빠른 시작
@@ -45,7 +45,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { OAuthProvider } from 'datagsm-oauth-sdk-javascript';
+import { OAuthProvider } from '@themoment-team/datagsm-oauth-react';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -74,7 +74,7 @@ root.render(
 ```javascript
 // src/App.jsx
 
-import { OAuthLoginButton } from 'datagsm-oauth-sdk-javascript';
+import { OAuthLoginButton } from '@themoment-team/datagsm-oauth-react';
 
 function App() {
   return (
@@ -111,7 +111,7 @@ export default App;
 ```javascript
 // src/components/CustomLoginButton.jsx
 
-import { useOAuth } from 'datagsm-oauth-sdk-javascript';
+import { useOAuth } from '@themoment-team/datagsm-oauth-react';
 import './CustomLoginButton.css'; // 직접 만든 스타일
 
 function CustomLoginButton() {
@@ -155,7 +155,7 @@ export default CustomLoginButton;
 
 ## 추가 리소스
 
-- **GitHub 저장소**: [datagsm-oauth-sdk-javascript](https://github.com/themoment-team/datagsm-oauth-sdk-javascript)
-- **이슈 트래커**: [GitHub Issues](https://github.com/themoment-team/datagsm-oauth-sdk-javascript/issues)
+- **GitHub 저장소**: [datagsm-oauth-sdk-react](https://github.com/themoment-team/datagsm-oauth-sdk-react)
+- **이슈 트래커**: [GitHub Issues](https://github.com/themoment-team/datagsm-oauth-sdk-react/issues)
 
 문의사항이나 버그 리포트는 GitHub Issues를 통해 제출해 주세요.
