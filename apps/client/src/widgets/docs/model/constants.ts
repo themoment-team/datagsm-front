@@ -47,6 +47,10 @@ export const docsSections: DocsSection[] = [
             label: 'Python SDK',
             href: '/docs/api/sdk/python',
           },
+          {
+            label: 'JavaScript / TypeScript SDK',
+            href: '/docs/api/sdk/javascript',
+          },
         ],
       },
     ],
