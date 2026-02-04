@@ -55,5 +55,17 @@ export const docsSections: DocsSection[] = [
     label: 'OAuth',
     href: '/docs/oauth',
     icon: User,
+    children: [
+      {
+        label: 'SDK',
+        href: '/docs/oauth/sdk',
+        children: [
+          {
+            label: 'JavaScript',
+            href: '/docs/oauth/sdk/javascript',
+          },
+        ],
+      },
+    ],
   },
 ];
