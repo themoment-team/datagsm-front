@@ -1,0 +1,797 @@
+# DataGSM OAuth SDK Java / Kotlin
+
+### 개요
+
+**DataGSM OAuth SDK Java**는 DataGSM OAuth 인증을 Java 및 Kotlin 애플리케이션에서 쉽고 안전하게 구현할 수 있도록 설계된 공식 클라이언트 라이브러리입니다.
+
+이 SDK를 사용하면 복잡한 OAuth 인증 플로우를 직접 구현할 필요 없이, 간단한 인터페이스를 통해 Authorization Code 교환, 토큰 갱신, 사용자 정보 조회 등의 기능을 손쉽게 사용할 수 있습니다.
+
+### 주요 특징
+
+| 특징                 | 설명                                            |
+|--------------------|-----------------------------------------------|
+| **타입 안전성**         | 강타입 시스템으로 컴파일 타임에 오류를 검출하여 런타임 에러를 방지합니다.     |
+| **Kotlin 완벽 호환**   | Java와 Kotlin 프로젝트 모두에서 자연스럽게 사용할 수 있습니다.      |
+| **빌더 패턴**          | 직관적이고 유연한 클라이언트 구성을 지원합니다.                   |
+| **자동 리소스 관리**      | `AutoCloseable` 구현으로 리소스 누수를 자동으로 방지합니다.      |
+| **구체적인 예외 처리**     | HTTP 상태 코드별 전용 예외 타입을 제공하여 정확한 에러 핸들링이 가능합니다. |
+| **검증된 HTTP 클라이언트** | OkHttp 기반으로 안정적이고 효율적인 통신을 보장합니다.             |
+
+### 시스템 요구사항
+
+| 항목         | 최소 버전  | 권장 버전     |
+|------------|--------|-----------|
+| **Java**   | JDK 13 | JDK 25 이상 |
+| **Kotlin** | 1.3.72 | 2.3.0 이상  |
+| **Gradle** | 6.0    | 9.1.0 이상  |
+| **Maven**  | 3.6.3  | 3.9.9 이상  |
+
+## 설치
+
+프로젝트 빌드 도구에 맞는 의존성을 추가하세요.
+
+<CodeTabs>
+  <CodeTab label="Gradle (Kotlin DSL)" language="kotlin" code={`dependencies {
+    implementation("com.github.themoment-team:datagsm-oauth-sdk-java:1.0.0-M2")
+}
+
+repositories {
+    maven { url = uri("https://jitpack.io") }
+}`} />
+
+  <CodeTab label="Gradle (Groovy)" language="groovy" code={`dependencies {
+    implementation 'com.github.themoment-team:datagsm-oauth-sdk-java:1.0.0-M2'
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+}`} />
+
+  <CodeTab label="Maven" language="xml" code={`<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>com.github.themoment-team</groupId>
+        <artifactId>datagsm-oauth-sdk-java</artifactId>
+        <version>1.0.0-M2</version>
+    </dependency>
+</dependencies>`} />
+</CodeTabs>
+
+## 빠른 시작
+
+### 1. 클라이언트 초기화
+
+먼저 `DataGsmClient` 인스턴스를 생성합니다. Client Secret은 필수 파라미터입니다.
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.oauth.DataGsmClient;
+
+// 기본 설정으로 클라이언트 생성
+DataGsmClient client = DataGsmClient.builder("your-client-secret-here").build();
+
+// 커스텀 Base URL 설정 (선택사항)
+DataGsmClient clientWithCustomUrl = DataGsmClient.builder("your-client-secret-here")
+    .baseUrl("https://api.datagsm.com")
+    .build();`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.oauth.DataGsmClient
+
+// 기본 설정으로 클라이언트 생성
+val client = DataGsmClient.builder("your-client-secret-here").build()
+
+// 커스텀 Base URL 설정 (선택사항)
+val clientWithCustomUrl = DataGsmClient.builder("your-client-secret-here")
+    .baseUrl("https://api.datagsm.com")
+    .build()`} />
+
+</CodeTabs>
+
+### 2. OAuth 인증 플로우
+
+DataGSM OAuth는 Authorization Code Grant 방식을 사용합니다.
+
+#### Authorization Code를 토큰으로 교환
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.oauth.model.TokenResponse;
+
+// Authorization Code를 Access Token과 Refresh Token으로 교환
+String authorizationCode = "사용자로부터 받은 인증 코드";
+TokenResponse tokenResponse = client.exchangeToken(authorizationCode);
+
+// 토큰 사용
+String accessToken = tokenResponse.getAccessToken();
+String refreshToken = tokenResponse.getRefreshToken();`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.oauth.model.TokenResponse
+
+// Authorization Code를 Access Token과 Refresh Token으로 교환
+val authorizationCode = "사용자로부터_받은_인증_코드"
+val tokenResponse = client.exchangeToken(authorizationCode)
+
+// 토큰 사용
+val accessToken = tokenResponse.accessToken
+val refreshToken = tokenResponse.refreshToken`} />
+
+</CodeTabs>
+
+#### 토큰 갱신
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`// Refresh Token으로 새로운 토큰 발급
+TokenResponse newTokenResponse = client.refreshToken(refreshToken);
+
+String newAccessToken = newTokenResponse.getAccessToken();
+String newRefreshToken = newTokenResponse.getRefreshToken();`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`// Refresh Token으로 새로운 토큰 발급
+val newTokenResponse = client.refreshToken(refreshToken)
+
+val newAccessToken = newTokenResponse.accessToken
+val newRefreshToken = newTokenResponse.refreshToken`} />
+
+</CodeTabs>
+
+### 3. 사용자 정보 조회
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.oauth.model.UserInfo;
+import team.themoment.datagsm.sdk.oauth.model.Student;
+
+// Access Token으로 사용자 정보 조회
+UserInfo userInfo = client.getUserInfo(accessToken);
+
+// 기본 사용자 정보
+System.out.println("ID: " + userInfo.getId());
+System.out.println("이메일: " + userInfo.getEmail());
+System.out.println("역할: " + userInfo.getRole());
+
+// 학생인 경우 추가 정보 조회
+if (userInfo.isStudent()) {
+    Student student = userInfo.getStudent();
+    System.out.println("이름: " + student.getName());
+    System.out.println("학번: " + student.getStudentNumber());
+    System.out.println("학년: " + student.getGrade());
+    System.out.println("반: " + student.getClassNum());
+    System.out.println("전공: " + student.getMajor());
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.oauth.model.UserInfo
+import team.themoment.datagsm.sdk.oauth.model.Student
+
+// Access Token으로 사용자 정보 조회
+val userInfo = client.getUserInfo(accessToken)
+
+// 기본 사용자 정보
+println("ID: \${userInfo.id}")
+println("이메일: \${userInfo.email}")
+println("역할: \${userInfo.role}")
+
+// 학생인 경우 추가 정보 조회
+if (userInfo.isStudent) {
+    val student = userInfo.student
+    println("이름: \${student.name}")
+    println("학번: \${student.studentNumber}")
+    println("학년: \${student.grade}")
+    println("반: \${student.classNum}")
+    println("전공: \${student.major}")
+}`} />
+
+</CodeTabs>
+
+## API 레퍼런스
+
+SDK는 다음과 같은 API 메서드를 제공합니다.
+
+### OAuth API
+
+**`client.exchangeToken(code)`** - Authorization Code를 토큰으로 교환
+
+| 파라미터   | 타입       | 설명                |
+|--------|----------|-------------------|
+| `code` | `String` | Authorization Code |
+
+| 반환 타입           | 설명                              |
+|-----------------|---------------------------------|
+| `TokenResponse` | Access Token과 Refresh Token 포함 |
+
+**`client.refreshToken(refreshToken)`** - 토큰 갱신
+
+| 파라미터           | 타입       | 설명            |
+|----------------|----------|---------------|
+| `refreshToken` | `String` | Refresh Token |
+
+| 반환 타입           | 설명             |
+|-----------------|----------------|
+| `TokenResponse` | 새로운 토큰 응답 |
+
+### Account API
+
+**`client.getUserInfo(accessToken)`** - 사용자 정보 조회
+
+| 파라미터         | 타입       | 설명           |
+|--------------|----------|--------------|
+| `accessToken` | `String` | Access Token |
+
+| 반환 타입      | 설명                       |
+|------------|--------------------------|
+| `UserInfo` | 사용자 정보 (학생인 경우 학생 정보 포함) |
+
+## 모델 레퍼런스
+
+### TokenResponse
+
+OAuth 토큰 응답 모델
+
+| 필드             | 타입       | 설명            |
+|----------------|----------|---------------|
+| `accessToken`  | `String` | Access Token  |
+| `refreshToken` | `String` | Refresh Token |
+
+### UserInfo
+
+사용자 정보 모델
+
+| 필드          | 타입            | 설명              |
+|-------------|---------------|-----------------|
+| `id`        | `Long`        | 사용자 고유 ID       |
+| `email`     | `String`      | 이메일 주소          |
+| `role`      | `AccountRole` | 계정 역할           |
+| `isStudent` | `Boolean`     | 학생 여부           |
+| `student`   | `Student`     | 학생 정보 (학생인 경우) |
+
+### Student
+
+학생 정보 모델
+
+| 필드               | 타입            | 설명        |
+|------------------|---------------|-----------|
+| `id`             | `Long`        | 학생 고유 ID  |
+| `name`           | `String`      | 이름        |
+| `sex`            | `Sex`         | 성별        |
+| `email`          | `String`      | 이메일       |
+| `grade`          | `Integer`     | 학년        |
+| `classNum`       | `Integer`     | 반         |
+| `number`         | `Integer`     | 번호        |
+| `studentNumber`  | `Integer`     | 학번        |
+| `major`          | `Major`       | 전공        |
+| `role`           | `StudentRole` | 학생 역할     |
+| `dormitoryFloor` | `Integer`     | 기숙사 층     |
+| `dormitoryRoom`  | `Integer`     | 기숙사 호실    |
+| `isLeaveSchool`  | `Boolean`     | 자퇴 여부     |
+| `majorClub`      | `ClubInfo`    | 전공동아리 정보  |
+| `jobClub`        | `ClubInfo`    | 취업동아리 정보  |
+| `autonomousClub` | `ClubInfo`    | 창체동아리 정보  |
+
+### ClubInfo
+
+동아리 정보 모델
+
+| 필드     | 타입         | 설명        |
+|--------|------------|-----------|
+| `id`   | `Long`     | 동아리 고유 ID |
+| `name` | `String`   | 동아리 이름    |
+| `type` | `ClubType` | 동아리 유형    |
+
+### Enum 타입
+
+#### AccountRole
+
+| 값              | 설명         |
+|----------------|------------|
+| `ROOT`         | 최고 관리자     |
+| `ADMIN`        | 관리자        |
+| `USER`         | 일반 사용자     |
+| `API_KEY_USER` | API 키 사용자 |
+
+#### Sex
+
+| 값       | 설명 |
+|---------|------|
+| `MAN`   | 남성 |
+| `WOMAN` | 여성 |
+
+#### Major
+
+| 값                | 설명          |
+|------------------|-------------|
+| `SW_DEVELOPMENT` | 소프트웨어개발과    |
+| `SMART_IOT`      | 스마트IoT과     |
+| `AI`             | 인공지능과       |
+
+#### StudentRole
+
+| 값                    | 설명        |
+|----------------------|-----------|
+| `STUDENT_COUNCIL`    | 학생회       |
+| `DORMITORY_MANAGER`  | 기숙사자치위원회  |
+| `GENERAL_STUDENT`    | 일반학생      |
+
+#### ClubType
+
+| 값                 | 설명     |
+|-------------------|--------|
+| `MAJOR_CLUB`      | 전공동아리  |
+| `JOB_CLUB`        | 취업동아리  |
+| `AUTONOMOUS_CLUB` | 창체동아리  |
+
+## 예외 처리
+
+SDK는 HTTP 상태 코드별로 구체적인 예외 타입을 제공합니다.
+
+### 예외 종류
+
+| 예외 타입                   | HTTP 상태 | 발생 상황               | 권장 처리 방법                        |
+|-------------------------|---------|---------------------|---------------------------------|
+| `UnauthorizedException` | 401     | 토큰이 유효하지 않음 또는 만료   | 토큰 갱신 또는 재인증                    |
+| `ForbiddenException`    | 403     | 필요한 권한 부족           | 권한 범위 확인 및 요청                   |
+| `BadRequestException`   | 400     | 잘못된 요청 파라미터         | 요청 파라미터 검증                      |
+| `NotFoundException`     | 404     | 요청한 리소스를 찾을 수 없음    | 요청 경로 확인                        |
+| `RateLimitException`    | 429     | Rate limit 초과       | 재시도 로직 구현 (Exponential Backoff) |
+| `ServerErrorException`  | 500     | 서버 내부 오류            | 잠시 후 재시도 또는 관리자 문의              |
+| `DataGsmException`      | 기타      | 기타 API 오류           | 에러 메시지 확인 후 적절한 처리              |
+
+### 예외 처리 예제
+
+<CodeTabs>
+  <CodeTab
+    label="Java"
+    language="java"
+    code={`import team.themoment.datagsm.sdk.oauth.exception.*;
+
+try {
+    UserInfo userInfo = client.getUserInfo(accessToken);
+    // 성공적인 응답 처리
+} catch (UnauthorizedException e) {
+    // 토큰 만료 - 갱신 필요
+    logger.error("Token expired or invalid", e);
+    TokenResponse newToken = client.refreshToken(refreshToken);
+} catch (ForbiddenException e) {
+    // 권한 부족
+    logger.warn("Insufficient permissions", e);
+    notifyUserAboutPermissions();
+} catch (RateLimitException e) {
+    // Rate limit 초과 - 재시도 로직 구현 필요
+    logger.warn("Rate limit exceeded", e);
+    // 실제로는 exponential backoff 등의 재시도 전략 구현 권장
+} catch (BadRequestException e) {
+    // 잘못된 요청 파라미터
+    logger.error("Invalid request parameters: {}", e.getMessage());
+} catch (NotFoundException e) {
+    // 리소스를 찾을 수 없음
+    logger.error("Resource not found: {}", e.getMessage());
+} catch (ServerErrorException e) {
+    // 서버 오류
+    logger.error("Server error occurred", e);
+    notifyAdmin();
+} catch (DataGsmException e) {
+    // 기타 예외
+    logger.error("API error: {}", e.getMessage(), e);
+}`}
+  />
+  <CodeTab
+    label="Kotlin"
+    language="kotlin"
+    code={`import team.themoment.datagsm.sdk.oauth.exception.*
+
+try {
+    val userInfo = client.getUserInfo(accessToken)
+    // 성공적인 응답 처리
+} catch (e: UnauthorizedException) {
+    // 토큰 만료 - 갱신 필요
+    logger.error("Token expired or invalid", e)
+    val newToken = client.refreshToken(refreshToken)
+} catch (e: ForbiddenException) {
+    // 권한 부족
+    logger.warn("Insufficient permissions", e)
+    notifyUserAboutPermissions()
+} catch (e: RateLimitException) {
+    // Rate limit 초과 - 재시도 로직 구현 필요
+    logger.warn("Rate limit exceeded", e)
+    // 실제로는 exponential backoff 등의 재시도 전략 구현 권장
+} catch (e: BadRequestException) {
+    // 잘못된 요청 파라미터
+    logger.error("Invalid request parameters: \${e.message}")
+} catch (e: NotFoundException) {
+    // 리소스를 찾을 수 없음
+    logger.error("Resource not found: \${e.message}")
+} catch (e: ServerErrorException) {
+    // 서버 오류
+    logger.error("Server error occurred", e)
+    notifyAdmin()
+} catch (e: DataGsmException) {
+    // 기타 예외
+    logger.error("API error: \${e.message}", e)
+}`}
+  />
+</CodeTabs>
+
+## 리소스 관리
+
+SDK는 `AutoCloseable` 인터페이스를 구현하여 자동 리소스 정리를 지원합니다.
+
+### Try-with-resources 사용
+
+<CodeTabs>
+  <CodeTab
+    label="Java"
+    language="java"
+    code={`// Java의 try-with-resources 사용
+try (DataGsmClient client = DataGsmClient.builder("your-client-secret").build()) {
+    TokenResponse token = client.exchangeToken(code);
+    UserInfo userInfo = client.getUserInfo(token.getAccessToken());
+    // 클라이언트 사용
+} // 블록이 끝나면 자동으로 리소스 정리`}
+  />
+  <CodeTab
+    label="Kotlin"
+    language="kotlin"
+    code={`// Kotlin의 use 함수 사용
+DataGsmClient.builder("your-client-secret").build().use { client ->
+    val token = client.exchangeToken(code)
+    val userInfo = client.getUserInfo(token.accessToken)
+    // 클라이언트 사용
+} // 블록이 끝나면 자동으로 리소스 정리`}
+  />
+</CodeTabs>
+
+## Spring Boot 프로젝트에서 사용하기
+
+Spring Boot 애플리케이션에서는 `DataGsmClient`를 Bean으로 등록하여 의존성 주입 방식으로 사용할 수 있습니다.
+
+### Configuration 클래스 작성
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`package com.example.config;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import team.themoment.datagsm.sdk.oauth.DataGsmClient;
+
+@Configuration
+public class DataGsmOAuthConfig {
+
+    @Bean
+    @ConfigurationProperties(prefix = "datagsm.oauth")
+    public DataGsmOAuthProperties dataGsmOAuthProperties() {
+        return new DataGsmOAuthProperties();
+    }
+
+    @Bean
+    public DataGsmClient dataGsmClient(DataGsmOAuthProperties properties) {
+        return DataGsmClient.builder(properties.getClientSecret())
+            .baseUrl(properties.getBaseUrl())
+            .build();
+    }
+
+    public static class DataGsmOAuthProperties {
+        private String clientSecret;
+        private String baseUrl;
+
+        public String getClientSecret() { return clientSecret; }
+        public void setClientSecret(String clientSecret) { this.clientSecret = clientSecret; }
+        public String getBaseUrl() { return baseUrl; }
+        public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
+    }
+
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`package com.example.config
+
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import team.themoment.datagsm.sdk.oauth.DataGsmClient
+
+@Configuration
+class DataGsmOAuthConfig {
+
+    @Bean
+    @ConfigurationProperties(prefix = "datagsm.oauth")
+    fun dataGsmOAuthProperties() = DataGsmOAuthProperties()
+
+    @Bean
+    fun dataGsmClient(properties: DataGsmOAuthProperties): DataGsmClient {
+        return DataGsmClient.builder(properties.clientSecret)
+            .baseUrl(properties.baseUrl)
+            .build()
+    }
+
+}
+
+data class DataGsmOAuthProperties(
+    var clientSecret: String = "",
+    var baseUrl: String = ""
+)`} />
+
+</CodeTabs>
+
+### 프로파일 설정
+
+```yaml
+datagsm:
+  oauth:
+    client-secret: ${DATAGSM_CLIENT_SECRET} # 환경 변수에서 로드
+    base-url: https://api.datagsm.com
+```
+
+### Service 클래스에서 사용
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`package com.example.service;
+
+import org.springframework.stereotype.Service;
+import team.themoment.datagsm.sdk.oauth.DataGsmClient;
+import team.themoment.datagsm.sdk.oauth.model.*;
+
+@Service
+public class AuthService {
+
+    private final DataGsmClient dataGsmClient;
+
+    public AuthService(DataGsmClient dataGsmClient) {
+        this.dataGsmClient = dataGsmClient;
+    }
+
+    public TokenResponse authenticate(String authorizationCode) {
+        return dataGsmClient.exchangeToken(authorizationCode);
+    }
+
+    public UserInfo getCurrentUser(String accessToken) {
+        return dataGsmClient.getUserInfo(accessToken);
+    }
+
+    public TokenResponse refreshUserToken(String refreshToken) {
+        return dataGsmClient.refreshToken(refreshToken);
+    }
+
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`package com.example.service
+
+import org.springframework.stereotype.Service
+import team.themoment.datagsm.sdk.oauth.DataGsmClient
+import team.themoment.datagsm.sdk.oauth.model.*
+
+@Service
+class AuthService(
+    private val dataGsmClient: DataGsmClient
+) {
+
+    fun authenticate(authorizationCode: String): TokenResponse {
+        return dataGsmClient.exchangeToken(authorizationCode)
+    }
+
+    fun getCurrentUser(accessToken: String): UserInfo {
+        return dataGsmClient.getUserInfo(accessToken)
+    }
+
+    fun refreshUserToken(refreshToken: String): TokenResponse {
+        return dataGsmClient.refreshToken(refreshToken)
+    }
+
+}`} />
+
+</CodeTabs>
+
+## 일반 Java 프로젝트에서 사용하기
+
+Spring Boot를 사용하지 않는 일반 Java 애플리케이션에서는 직접 클라이언트를 생성하여 사용합니다.
+
+### 전체 예제
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.oauth.DataGsmClient;
+import team.themoment.datagsm.sdk.oauth.exception.*;
+import team.themoment.datagsm.sdk.oauth.model.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // try-with-resources로 자동 리소스 관리
+        try (DataGsmClient client = DataGsmClient.builder("your-client-secret").build()) {
+
+            // 1. Authorization Code로 토큰 교환
+            String authCode = "authorization_code_from_callback";
+            TokenResponse tokenResponse = client.exchangeToken(authCode);
+
+            System.out.println("Access Token 발급 완료");
+
+            // 2. 사용자 정보 조회
+            UserInfo userInfo = client.getUserInfo(tokenResponse.getAccessToken());
+
+            System.out.printf("사용자 ID: %d%n", userInfo.getId());
+            System.out.printf("이메일: %s%n", userInfo.getEmail());
+            System.out.printf("역할: %s%n", userInfo.getRole());
+
+            // 3. 학생 정보 조회 (학생인 경우)
+            if (userInfo.isStudent()) {
+                Student student = userInfo.getStudent();
+                System.out.printf("이름: %s%n", student.getName());
+                System.out.printf("학번: %d%n", student.getStudentNumber());
+                System.out.printf("학년/반/번호: %d학년 %d반 %d번%n",
+                    student.getGrade(), student.getClassNum(), student.getNumber());
+                System.out.printf("전공: %s%n", student.getMajor());
+
+                // 동아리 정보
+                if (student.getMajorClub() != null) {
+                    System.out.printf("전공동아리: %s%n", student.getMajorClub().getName());
+                }
+            }
+
+            // 4. 토큰 갱신
+            TokenResponse newToken = client.refreshToken(tokenResponse.getRefreshToken());
+            System.out.println("토큰 갱신 완료");
+
+        } catch (UnauthorizedException e) {
+            System.err.println("인증 오류: 토큰이 유효하지 않습니다.");
+            e.printStackTrace();
+        } catch (RateLimitException e) {
+            System.err.println("요청 제한 초과: 잠시 후 다시 시도해주세요.");
+            e.printStackTrace();
+        } catch (DataGsmException e) {
+            System.err.println("API 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("예상치 못한 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.oauth.DataGsmClient
+import team.themoment.datagsm.sdk.oauth.exception.*
+import team.themoment.datagsm.sdk.oauth.model.*
+
+fun main() {
+    // use 함수로 자동 리소스 관리
+    DataGsmClient.builder("your-client-secret").build().use { client ->
+
+        // 1. Authorization Code로 토큰 교환
+        val authCode = "authorization_code_from_callback"
+        val tokenResponse = client.exchangeToken(authCode)
+
+        println("Access Token 발급 완료")
+
+        // 2. 사용자 정보 조회
+        val userInfo = client.getUserInfo(tokenResponse.accessToken)
+
+        println("사용자 ID: \${userInfo.id}")
+        println("이메일: \${userInfo.email}")
+        println("역할: \${userInfo.role}")
+
+        // 3. 학생 정보 조회 (학생인 경우)
+        if (userInfo.isStudent) {
+            val student = userInfo.student
+            println("이름: \${student.name}")
+            println("학번: \${student.studentNumber}")
+            println("학년/반/번호: \${student.grade}학년 \${student.classNum}반 \${student.number}번")
+            println("전공: \${student.major}")
+
+            // 동아리 정보
+            student.majorClub?.let { club ->
+                println("전공동아리: \${club.name}")
+            }
+        }
+
+        // 4. 토큰 갱신
+        val newToken = client.refreshToken(tokenResponse.refreshToken)
+        println("토큰 갱신 완료")
+    }
+
+}`} />
+
+</CodeTabs>
+
+## 보안
+
+### Client Secret 관리
+
+Client Secret은 민감한 정보이므로 절대 코드에 직접 하드코딩하지 마세요. 환경 변수나 설정 파일을 통해 안전하게 관리하세요.
+
+#### 환경 변수 사용 (권장)
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`public class Main {
+    public static void main(String[] args) {
+        // 환경 변수에서 Client Secret 로드
+        String clientSecret = System.getenv("DATAGSM_CLIENT_SECRET");
+
+        if (clientSecret == null || clientSecret.isEmpty()) {
+            System.err.println("환경 변수 DATAGSM_CLIENT_SECRET이 설정되지 않았습니다.");
+            System.exit(1);
+        }
+
+        try (DataGsmClient client = DataGsmClient.builder(clientSecret).build()) {
+            // OAuth 사용
+        }
+    }
+
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`fun main() {
+    // 환경 변수에서 Client Secret 로드
+    val clientSecret = System.getenv("DATAGSM_CLIENT_SECRET")
+
+    if (clientSecret.isNullOrEmpty()) {
+        println("환경 변수 DATAGSM_CLIENT_SECRET이 설정되지 않았습니다.")
+        return
+    }
+
+    DataGsmClient.builder(clientSecret).build().use { client ->
+        // OAuth 사용
+    }
+
+}`} />
+
+</CodeTabs>
+
+#### 환경 변수 설정 방법
+
+**Linux/macOS**
+
+```bash
+export DATAGSM_CLIENT_SECRET="your-client-secret-here"
+java -jar your-application.jar
+```
+
+**Windows (PowerShell)**
+
+```powershell
+$env:DATAGSM_CLIENT_SECRET="your-client-secret-here"
+java -jar your-application.jar
+```
+
+### 토큰 보안 가이드라인
+
+- **Access Token**: 짧은 유효기간을 가지며, 메모리에서만 관리하세요.
+- **Refresh Token**: 안전한 저장소(암호화된 DB, Secure Storage 등)에 보관하세요.
+- **HTTPS 사용**: 모든 통신은 반드시 HTTPS를 통해 이루어져야 합니다.
+
+## 문제 해결
+
+### 자주 발생하는 문제
+
+#### 401 Unauthorized 오류
+
+**원인**: Access Token이 유효하지 않거나 만료됨
+
+**해결 방법**:
+
+- Access Token의 유효기간 확인
+- `refreshToken()` 메서드로 새 토큰 발급
+- Refresh Token도 만료된 경우 재인증 필요
+
+#### 403 Forbidden 오류
+
+**원인**: 요청한 리소스에 대한 권한이 없음
+
+**해결 방법**:
+
+- OAuth Scope 확인
+- 필요한 권한이 부여되었는지 확인
+- 권한 추가가 필요한 경우 관리자에게 문의
+
+#### 400 Bad Request 오류
+
+**원인**: 잘못된 요청 파라미터
+
+**해결 방법**:
+
+- Authorization Code가 유효한지 확인
+- Code가 이미 사용되었는지 확인 (일회용)
+- Client Secret이 올바른지 확인
+
+## 추가 리소스
+
+- **GitHub 저장소**: [DataGSM OAuth SDK Java](https://github.com/themoment-team/datagsm-oauth-sdk-java)
+- **이슈 트래커**: [GitHub Issues](https://github.com/themoment-team/datagsm-oauth-sdk-java/issues)
+
+문의사항이나 버그 리포트는 GitHub Issues를 통해 제출해 주세요.
