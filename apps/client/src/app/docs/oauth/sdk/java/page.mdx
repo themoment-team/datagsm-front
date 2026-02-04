@@ -102,7 +102,7 @@ DataGSM OAuth는 Authorization Code Grant 방식을 사용합니다.
   <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.oauth.model.TokenResponse;
 
 // Authorization Code를 Access Token과 Refresh Token으로 교환
-String authorizationCode = "사용자로부터 받은 인증 코드";
+String authorizationCode = "사용자로부터_받은_인증_코드";
 TokenResponse tokenResponse = client.exchangeToken(authorizationCode);
 
 // 토큰 사용
