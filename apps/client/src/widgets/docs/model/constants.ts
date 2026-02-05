@@ -61,6 +61,10 @@ export const docsSections: DocsSection[] = [
         href: '/docs/oauth/sdk',
         children: [
           {
+            label: 'React',
+            href: '/docs/oauth/sdk/react',
+          },
+          {
             label: 'Java / Kotlin SDK',
             href: '/docs/oauth/sdk/java',
           },
