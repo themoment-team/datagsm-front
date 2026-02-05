@@ -1,17 +1,13 @@
-import { authUrl } from '@repo/shared/api';
 import { COOKIE_KEYS } from '@repo/shared/constants';
 import { deleteCookie, getCookie, setCookie } from '@repo/shared/utils';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+
+import { oauthUrl } from '../api';
 
 let isRefreshing = false;
 let refreshQueue: ((token: string) => void)[] = [];
 
 export const axiosInstance = axios.create({
-  baseURL: '/api',
-  timeout: 10000,
-});
-
-const refreshAxiosInstance = axios.create({
   baseURL: '/api',
   timeout: 10000,
 });
@@ -42,9 +38,17 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(response.data);
   },
   async (error: AxiosError) => {
-    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean;
+      skipAuthRefresh?: boolean;
+    };
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // skipAuthRefresh 플래그가 있으면 토큰 갱신 건너뛰기 (로그인, 회원가입 등)
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.skipAuthRefresh
+    ) {
       originalRequest._retry = true;
 
       if (isRefreshing) {
@@ -65,11 +69,11 @@ axiosInstance.interceptors.response.use(
 
         if (!refreshToken) throw new Error('No refresh token');
 
-        const { data } = await refreshAxiosInstance.put(authUrl.putRefresh(), {
+        const response = await oauthAxiosInstance.put(oauthUrl.putOAuthRefresh(), {
           refreshToken,
         });
 
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = data.data;
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
 
         if (!newAccessToken) throw new Error('No new token returned');
 
