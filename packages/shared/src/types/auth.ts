@@ -40,3 +40,21 @@ interface OAuthCodeResponseData {
 }
 
 export type OAuthCodeResponse = ApiResponse<OAuthCodeResponseData>;
+
+export interface OAuthTokenRequest {
+  code: string;
+  clientSecret: string;
+}
+
+interface OAuthTokenResponseData {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export type OAuthTokenResponse = ApiResponse<OAuthTokenResponseData>;
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export type RefreshTokenResponse = ApiResponse<OAuthTokenResponseData>;

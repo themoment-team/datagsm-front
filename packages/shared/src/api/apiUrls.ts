@@ -1,50 +1,7 @@
 import { ClubType, StudentRole, StudentSex, UserRoleType } from '@repo/shared/types';
 
-export const accountUrl = {
-  getMy: () => '/v1/accounts/my',
-  getEmailCheck: () => '/v1/accounts/email/check',
-  postSignup: () => '/v1/accounts/signup',
-  postEmailSend: () => '/v1/accounts/email/send',
-} as const;
-
-export const authUrl = {
-  deleteApiKey: () => '/v1/auth/api-keys/my',
-  getApiKey: () => '/v1/auth/api-keys/my',
-  getAvailableScope: (userRole: UserRoleType) =>
-    `/v1/auth/api-keys/available-scopes?role=${userRole}`,
-  postApiKey: () => '/v1/auth/api-keys/my',
-  postLogin: () => '/v1/auth/signin',
-  putRefresh: () => '/v1/auth/refresh',
-  putApiKey: () => '/v1/auth/api-keys/my',
-} as const;
-
-export const oauthUrl = {
-  postOAuthCode: () => '/v1/oauth/code',
-} as const;
-
-export const clubUrl = {
-  deleteClubById: (clubId: number) => `/v1/clubs/${clubId}`,
-  getClubs: (page?: number, size?: number, type?: ClubType) => {
-    const params = new URLSearchParams();
-
-    if (page !== undefined) params.append('page', page.toString());
-    if (size !== undefined) params.append('size', size.toString());
-    if (type != null) params.append('clubType', type);
-
-    const queryString = params.toString();
-    return queryString ? `/v1/clubs?${queryString}` : '/v1/clubs';
-  },
-  getClubExcel: () => '/v1/clubs/excel/download',
-  postClub: () => '/v1/clubs',
-  postClubExcel: () => '/v1/clubs/excel/upload',
-  putClubById: (clubId: number) => `/v1/clubs/${clubId}`,
-} as const;
-
-export const healthUrl = {
-  getHealth: () => '/v1/health',
-} as const;
-
 export const studentUrl = {
+  putStudentById: (studentId: number) => `/v1/students/${studentId}`,
   getStudents: (
     page?: number,
     size?: number,
@@ -66,25 +23,68 @@ export const studentUrl = {
 
     return `/v1/students?${params.toString()}`;
   },
-  getStudentExcel: () => '/v1/students/excel/download',
   postStudent: () => '/v1/students',
+  postGraduateStudent: (studentId: number) => `/v1/students/${studentId}/graduate`,
+  postGraduateThirdGrade: () => '/v1/students/graduate/third-grade',
   postStudentExcel: () => '/v1/students/excel/upload',
-  putStudentById: (studentId: number) => `/v1/students/${studentId}`,
+  getStudentExcel: () => '/v1/students/excel/download',
 } as const;
 
-export const clientUrl = {
-  getClients: (page?: number, size?: number) => {
+export const authUrl = {
+  getApiKey: () => '/v1/auth/api-keys/my',
+  putApiKey: () => '/v1/auth/api-keys/my',
+  postApiKey: () => '/v1/auth/api-keys/my',
+  deleteApiKey: () => '/v1/auth/api-keys/my',
+  getApiKeys: (page?: number, size?: number, accountEmail?: string) => {
+    const params = new URLSearchParams();
+
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+    if (accountEmail !== undefined) params.append('accountEmail', accountEmail);
+
+    const queryString = params.toString();
+    return queryString ? `/v1/auth/api-keys?${queryString}` : '/v1/auth/api-keys';
+  },
+  getApiScope: (scopeName: string) => `/v1/auth/api-keys/scopes/${scopeName}`,
+  getAvailableScope: (userRole: UserRoleType) =>
+    `/v1/auth/api-keys/available-scopes?role=${userRole}`,
+  deleteApiKeyById: (apiKeyId: number) => `/v1/auth/api-keys/${apiKeyId}`,
+} as const;
+
+export const projectUrl = {
+  putProjectById: (projectId: number) => `/v1/projects/${projectId}`,
+  deleteProjectById: (projectId: number) => `/v1/projects/${projectId}`,
+  getProjects: (page?: number, size?: number) => {
     const params = new URLSearchParams();
 
     if (page !== undefined) params.append('page', page.toString());
     if (size !== undefined) params.append('size', size.toString());
 
     const queryString = params.toString();
-    return queryString ? `/v1/clients/my?${queryString}` : '/v1/clients/my';
+    return queryString ? `/v1/projects?${queryString}` : '/v1/projects';
   },
-  postClient: () => '/v1/clients',
-  deleteClientById: (clientId: string) => `/v1/clients/${clientId}`,
-  patchClientById: (clientId: string) => `/v1/clients/${clientId}`,
+  postProject: () => '/v1/projects',
+} as const;
+
+export const clubUrl = {
+  putClubById: (clubId: number) => `/v1/clubs/${clubId}`,
+  deleteClubById: (clubId: number) => `/v1/clubs/${clubId}`,
+  getClubs: (page?: number, size?: number, type?: ClubType) => {
+    const params = new URLSearchParams();
+
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+    if (type != null) params.append('clubType', type);
+
+    const queryString = params.toString();
+    return queryString ? `/v1/clubs?${queryString}` : '/v1/clubs';
+  },
+  postClub: () => '/v1/clubs',
+  postClubExcel: () => '/v1/clubs/excel/upload',
+  getClubExcel: () => '/v1/clubs/excel/download',
+} as const;
+
+export const clientUrl = {
   getClientsSearch: (page?: number, size?: number, clientName?: string) => {
     const params = new URLSearchParams();
 
@@ -95,5 +95,34 @@ export const clientUrl = {
     const queryString = params.toString();
     return queryString ? `/v1/clients?${queryString}` : '/v1/clients';
   },
+  postClient: () => '/v1/clients',
+  deleteClientById: (clientId: string) => `/v1/clients/${clientId}`,
+  patchClientById: (clientId: string) => `/v1/clients/${clientId}`,
+  getClients: (page?: number, size?: number) => {
+    const params = new URLSearchParams();
+
+    if (page !== undefined) params.append('page', page.toString());
+    if (size !== undefined) params.append('size', size.toString());
+
+    const queryString = params.toString();
+    return queryString ? `/v1/clients/my?${queryString}` : '/v1/clients/my';
+  },
   getAvailableScopes: () => '/v1/clients/available-scopes',
+} as const;
+
+export const healthUrl = {
+  getHealth: () => '/v1/health',
+} as const;
+
+export const accountUrl = {
+  postSignup: () => '/v1/accounts/signup',
+  postEmailSend: () => '/v1/accounts/email/send',
+  postEmailCheck: () => '/v1/accounts/email/check',
+  getMy: () => '/v1/accounts/my',
+} as const;
+
+export const oauthUrl = {
+  postOAuthCode: () => '/v1/oauth/code',
+  postOAuthToken: () => '/v1/oauth/token',
+  putOAuthRefresh: () => '/v1/oauth/refresh',
 } as const;
