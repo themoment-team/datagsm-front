@@ -28,7 +28,6 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
 
   // 내부 OAuth용 환경 변수
   const internalClientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID!;
-  const internalClientSecret = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_SECRET!;
   const internalRedirectUri = process.env.NEXT_PUBLIC_DATAGSM_REDIRECT_URI!;
 
   useEffect(() => {
@@ -117,10 +116,9 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
   const { mutate: requestInternalOAuthCode, isPending: isRequestingInternalCode } =
     useRequestOAuthCode({
       onSuccess: (response) => {
-        // 즉시 Code → Token 교환
+        // 즉시 Code → Token 교환 (client_secret은 서버에서 자동으로 추가됨)
         exchangeToken({
           code: response.data.code,
-          clientSecret: internalClientSecret,
         });
       },
       onError: (error: unknown) => {

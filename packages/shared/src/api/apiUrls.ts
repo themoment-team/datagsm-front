@@ -123,6 +123,6 @@ export const accountUrl = {
 
 export const oauthUrl = {
   postOAuthCode: () => '/v1/oauth/code',
-  postOAuthToken: () => '/v1/oauth/token',
-  putOAuthRefresh: () => '/v1/oauth/refresh',
+  postOAuthToken: () => '/oauth/token', // Next.js Route Handler (client_secret 숨김)
+  putOAuthRefresh: () => '/v1/oauth/refresh', // 직접 OAuth 서버로 (client_secret 불필요)
 } as const;
