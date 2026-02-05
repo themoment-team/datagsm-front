@@ -193,12 +193,12 @@ SDK는 다음과 같은 API 메서드를 제공합니다.
 
 **`client.exchangeToken(code)`** - Authorization Code를 토큰으로 교환
 
-| 파라미터   | 타입       | 설명                |
-|--------|----------|-------------------|
+| 파라미터   | 타입       | 설명                 |
+|--------|----------|--------------------|
 | `code` | `String` | Authorization Code |
 
-| 반환 타입           | 설명                              |
-|-----------------|---------------------------------|
+| 반환 타입           | 설명                             |
+|-----------------|--------------------------------|
 | `TokenResponse` | Access Token과 Refresh Token 포함 |
 
 **`client.refreshToken(refreshToken)`** - 토큰 갱신
@@ -238,12 +238,12 @@ OAuth 토큰 응답 모델
 
 사용자 정보 모델
 
-| 필드          | 타입            | 설명              |
-|-------------|---------------|-----------------|
-| `id`        | `Long`        | 사용자 고유 ID       |
-| `email`     | `String`      | 이메일 주소          |
-| `role`      | `AccountRole` | 계정 역할           |
-| `isStudent` | `Boolean`     | 학생 여부           |
+| 필드          | 타입            | 설명             |
+|-------------|---------------|----------------|
+| `id`        | `Long`        | 사용자 고유 ID      |
+| `email`     | `String`      | 이메일 주소         |
+| `role`      | `AccountRole` | 계정 역할          |
+| `isStudent` | `Boolean`     | 학생 여부          |
 | `student`   | `Student`     | 학생 정보 (학생인 경우) |
 
 ### Student
@@ -264,7 +264,6 @@ OAuth 토큰 응답 모델
 | `role`           | `StudentRole` | 학생 역할     |
 | `dormitoryFloor` | `Integer`     | 기숙사 층     |
 | `dormitoryRoom`  | `Integer`     | 기숙사 호실    |
-| `isLeaveSchool`  | `Boolean`     | 자퇴 여부     |
 | `majorClub`      | `ClubInfo`    | 전공동아리 정보  |
 | `jobClub`        | `ClubInfo`    | 취업동아리 정보  |
 | `autonomousClub` | `ClubInfo`    | 창체동아리 정보  |
@@ -283,17 +282,17 @@ OAuth 토큰 응답 모델
 
 #### AccountRole
 
-| 값              | 설명         |
-|----------------|------------|
-| `ROOT`         | 최고 관리자     |
-| `ADMIN`        | 관리자        |
-| `USER`         | 일반 사용자     |
+| 값              | 설명        |
+|----------------|-----------|
+| `ROOT`         | 최고 관리자    |
+| `ADMIN`        | 관리자       |
+| `USER`         | 일반 사용자    |
 | `API_KEY_USER` | API 키 사용자 |
 
 #### Sex
 
 | 값       | 설명 |
-|---------|------|
+|---------|----|
 | `MAN`   | 남성 |
 | `WOMAN` | 여성 |
 
@@ -312,6 +311,8 @@ OAuth 토큰 응답 모델
 | `STUDENT_COUNCIL`    | 학생회       |
 | `DORMITORY_MANAGER`  | 기숙사자치위원회  |
 | `GENERAL_STUDENT`    | 일반학생      |
+| `GRADUATE`           | 졸업생       |
+| `WITHDRAWN`          | 자퇴생       |
 
 #### ClubType
 
