@@ -5,7 +5,7 @@ import type { MDXComponents } from 'mdx/types';
 
 import CodeTabs, { CodeTab } from '@/widgets/docs/ui/CodeTabs';
 
-import { CodeBlock } from './shared/ui';
+import { CodeBlock, Mermaid } from './shared/ui';
 
 export function useMDXComponents(components: MDXComponents = {}): MDXComponents {
   return {
@@ -34,6 +34,10 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     code: ({ children, className }) => {
       const match = /language-(\w+)/.exec(className || '');
       const language = match ? match[1] : '';
+
+      if (language === 'mermaid') {
+        return <Mermaid chart={String(children).replace(/\n$/, '')} />;
+      }
 
       if (language) {
         return <CodeBlock language={language}>{String(children).replace(/\n$/, '')}</CodeBlock>;
