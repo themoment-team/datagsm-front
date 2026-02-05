@@ -21,7 +21,6 @@ interface SignInFormProps {
 
 const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
   const router = useRouter();
-  const formDataRef = useRef<SignInFormType | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const isExternalOAuth = clientId !== null && redirectUri !== null;
@@ -38,7 +37,7 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
     };
   }, []);
 
-  // Step 3: 외부 OAuth 코드 발급 (외부 서비스로 리다이렉트용)
+  // 외부 OAuth 코드 발급 (외부 서비스로 리다이렉트용)
   const { mutate: requestExternalOAuthCode, isPending: isRequestingExternalCode } =
     useRequestOAuthCode({
       onSuccess: (response) => {
@@ -55,22 +54,22 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
 
         switch (statusCode) {
           case 400:
-            toast.error('잘못된 요청입니다. 홈으로 이동합니다.');
+            toast.error('잘못된 요청입니다.');
             break;
           case 404:
-            toast.error('존재하지 않는 클라이언트입니다. 홈으로 이동합니다.');
+            toast.error('존재하지 않는 클라이언트입니다.');
             break;
           default:
-            toast.error('OAuth 인증에 실패했습니다. 홈으로 이동합니다.');
+            toast.error('OAuth 인증에 실패했습니다.');
         }
 
         timerRef.current = setTimeout(() => {
-          router.push('/');
+          router.push('/signin');
         }, 1500);
       },
     });
 
-  // Step 2: Code → Token 교환
+  // Code → Token 교환 (내부 로그인 전용)
   const { mutate: exchangeToken, isPending: isExchangingToken } = useExchangeToken({
     onSuccess: (response) => {
       if (response.data.accessToken && response.data.refreshToken) {
@@ -78,22 +77,8 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
         setCookie(COOKIE_KEYS.REFRESH_TOKEN, response.data.refreshToken);
       }
 
-      if (isExternalOAuth && clientId && redirectUri && formDataRef.current) {
-        // 외부 OAuth: 다시 코드 발급 → 외부 서비스로 리다이렉트
-        toast.success('로그인에 성공했습니다. 리디렉션 중...');
-        timerRef.current = setTimeout(() => {
-          requestExternalOAuthCode({
-            email: formDataRef.current!.email,
-            password: formDataRef.current!.password,
-            clientId: clientId,
-            redirectUrl: redirectUri,
-          });
-        }, 500);
-      } else {
-        // 내부 로그인: 홈으로
-        toast.success('로그인에 성공했습니다.');
-        router.push('/');
-      }
+      toast.success('로그인에 성공했습니다.');
+      router.push('/');
     },
     onError: (error: unknown) => {
       const statusCode =
@@ -112,7 +97,7 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
     },
   });
 
-  // Step 1: 내부 OAuth 코드 발급
+  // 내부 OAuth 코드 발급 (내부 로그인 전용)
   const { mutate: requestInternalOAuthCode, isPending: isRequestingInternalCode } =
     useRequestOAuthCode({
       onSuccess: (response) => {
@@ -144,21 +129,31 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
     });
 
   const handleSubmit = (data: SignInFormType) => {
-    formDataRef.current = data;
-
-    // 항상 내부 OAuth 코드 발급부터 시작
-    requestInternalOAuthCode({
-      email: data.email,
-      password: data.password,
-      clientId: internalClientId,
-      redirectUrl: internalRedirectUri,
-    });
+    if (isExternalOAuth) {
+      // 외부 OAuth: 외부 코드만 발급하고 즉시 리다이렉트
+      requestExternalOAuthCode({
+        email: data.email,
+        password: data.password,
+        clientId: clientId!,
+        redirectUrl: redirectUri!,
+      });
+    } else {
+      // 내부 로그인: 내부 코드 발급 → 토큰 교환
+      requestInternalOAuthCode({
+        email: data.email,
+        password: data.password,
+        clientId: internalClientId,
+        redirectUrl: internalRedirectUri,
+      });
+    }
   };
 
   return (
     <SharedSignInForm
       onSubmit={handleSubmit}
-      isPending={isRequestingInternalCode || isExchangingToken || isRequestingExternalCode}
+      isPending={
+        isExternalOAuth ? isRequestingExternalCode : isRequestingInternalCode || isExchangingToken
+      }
       signupHref="/signup"
     />
   );
