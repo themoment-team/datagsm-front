@@ -32,7 +32,7 @@
 
 <CodeTabs>
   <CodeTab label="Gradle (Kotlin DSL)" language="kotlin" code={`dependencies {
-    implementation("com.github.themoment-team:datagsm-oauth-sdk-java:1.0.0-M2")
+    implementation("com.github.themoment-team:datagsm-oauth-sdk-java:1.0.0")
 }
 
 repositories {
@@ -40,7 +40,7 @@ repositories {
 }`} />
 
   <CodeTab label="Gradle (Groovy)" language="groovy" code={`dependencies {
-    implementation 'com.github.themoment-team:datagsm-oauth-sdk-java:1.0.0-M2'
+    implementation 'com.github.themoment-team:datagsm-oauth-sdk-java:1.0.0'
 }
 
 repositories {
@@ -58,7 +58,7 @@ repositories {
     <dependency>
         <groupId>com.github.themoment-team</groupId>
         <artifactId>datagsm-oauth-sdk-java</artifactId>
-        <version>1.0.0-M2</version>
+        <version>1.0.0</version>
     </dependency>
 </dependencies>`} />
 </CodeTabs>
@@ -77,7 +77,8 @@ DataGsmClient client = DataGsmClient.builder("your-client-secret-here").build();
 
 // 커스텀 Base URL 설정 (선택사항)
 DataGsmClient clientWithCustomUrl = DataGsmClient.builder("your-client-secret-here")
-    .baseUrl("https://api.datagsm.com")
+    .authorizationBaseUrl("https://oauth.data.hellogsm.kr")
+    .userInfoBaseUrl("https://oauth-userinfo.data.hellogsm.kr")
     .build();`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.oauth.DataGsmClient
@@ -87,7 +88,8 @@ val client = DataGsmClient.builder("your-client-secret-here").build()
 
 // 커스텀 Base URL 설정 (선택사항)
 val clientWithCustomUrl = DataGsmClient.builder("your-client-secret-here")
-    .baseUrl("https://api.datagsm.com")
+    .authorizationBaseUrl("https://oauth.data.hellogsm.kr")
+    .userInfoBaseUrl("https://oauth-userinfo.data.hellogsm.kr")
     .build()`} />
 
 </CodeTabs>
@@ -468,18 +470,22 @@ public class DataGsmOAuthConfig {
     @Bean
     public DataGsmClient dataGsmClient(DataGsmOAuthProperties properties) {
         return DataGsmClient.builder(properties.getClientSecret())
-            .baseUrl(properties.getBaseUrl())
+            .authorizationBaseUrl(properties.getAuthorizationBaseUrl())
+            .userInfoBaseUrl(properties.getUserInfoBaseUrl())
             .build();
     }
 
     public static class DataGsmOAuthProperties {
         private String clientSecret;
-        private String baseUrl;
+        private String authorizationBaseUrl;
+        private String userInfoBaseUrl;
 
         public String getClientSecret() { return clientSecret; }
         public void setClientSecret(String clientSecret) { this.clientSecret = clientSecret; }
-        public String getBaseUrl() { return baseUrl; }
-        public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
+        public String getAuthorizationBaseUrl() { return authorizationBaseUrl; }
+        public String getUserInfoBaseUrl() { return userInfoBaseUrl; }
+        public void setAuthorizationBaseUrl(String authorizationBaseUrl) { this.authorizationBaseUrl = authorizationBaseUrl; }
+        public void setUserInfoBaseUrl(String userInfoBaseUrl) { this.userInfoBaseUrl = userInfoBaseUrl; }
     }
 
 }`} />
@@ -501,7 +507,8 @@ class DataGsmOAuthConfig {
     @Bean
     fun dataGsmClient(properties: DataGsmOAuthProperties): DataGsmClient {
         return DataGsmClient.builder(properties.clientSecret)
-            .baseUrl(properties.baseUrl)
+            .authorizationBaseUrl(properties.authorizationBaseUrl)
+            .userInfoBaseUrl(properties.userInfoBaseUrl)
             .build()
     }
 
@@ -509,7 +516,8 @@ class DataGsmOAuthConfig {
 
 data class DataGsmOAuthProperties(
     var clientSecret: String = "",
-    var baseUrl: String = ""
+    var authorizationBaseUrl: String = "",
+    var userInfoBaseUrl: String = ""
 )`} />
 
 </CodeTabs>
