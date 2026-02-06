@@ -35,13 +35,13 @@ const Header = ({ role = 'client' }: HeaderProps) => {
   const links = NAV_LINKS[role];
 
   return (
-    <header className={cn('sticky border-b')}>
+    <header className={cn('bg-background sticky top-0 z-50 border-b')}>
       <div className={cn('container mx-auto flex h-16 items-center justify-between px-4')}>
         <Link href="/" className={cn('flex items-center gap-2 text-lg font-semibold')}>
           <div className={cn('bg-primary flex h-8 w-8 items-center justify-center rounded-lg')}>
             <Database className={cn('text-primary-foreground h-5 w-5')} />
           </div>
-          <span>Data GSM</span>
+          <span>DataGSM</span>
         </Link>
 
         <nav className={cn('flex items-center gap-6')}>

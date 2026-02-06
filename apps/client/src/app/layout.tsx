@@ -6,8 +6,19 @@ import type { Metadata } from 'next';
 import '@/shared/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'datagsm-client',
-  description: '광주소프트웨어마이스터고등학교 OpenAPI 서비스 클라이언트 페이지',
+  title: 'DataGSM',
+  description: '광주소프트웨어마이스터고등학교 OpenAPI & OAuth 플랫폼',
+  icons: {
+    icon: '/favicon.ico',
+  },
+  openGraph: {
+    title: 'DataGSM',
+    description: '광주소프트웨어마이스터고등학교 OpenAPI & OAuth 플랫폼',
+    url: 'https://datagsm-front-client.vercel.app/',
+    siteName: 'DataGSM',
+    images: 'https://datagsm-front-client.vercel.app/og-image.png',
+    type: 'website',
+  },
 };
 
 const RootLayout = ({

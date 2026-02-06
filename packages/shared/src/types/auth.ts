@@ -40,3 +40,21 @@ interface OAuthCodeResponseData {
 }
 
 export type OAuthCodeResponse = ApiResponse<OAuthCodeResponseData>;
+
+// client_secret은 서버에서만 사용하므로 요청 타입에서 제거
+export interface OAuthTokenRequest {
+  code: string;
+}
+
+interface OAuthTokenResponseData {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export type OAuthTokenResponse = ApiResponse<OAuthTokenResponseData>;
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export type RefreshTokenResponse = ApiResponse<OAuthTokenResponseData>;
