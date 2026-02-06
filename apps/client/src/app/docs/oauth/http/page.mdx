@@ -1,0 +1,178 @@
+# OAuth HTTP API
+
+### 개요
+
+OAuth HTTP API를 사용하면 HTTP 요청을 통해 직접 OAuth 인증 플로우를 구현할 수 있습니다.
+SDK를 사용하지 않고 REST API를 직접 호출하여 더 세밀한 제어가 필요한 경우에 적합합니다.
+
+이 문서는 DataGSM OAuth의 모든 HTTP 엔드포인트에 대한 상세한 정보를 제공합니다.
+
+### 기본 정보
+
+#### Base URL
+
+**Authorization Server:**
+```
+https://oauth.data.hellogsm.kr
+```
+
+**UserInfo Server:**
+```
+https://oauth-userinfo.data.hellogsm.kr
+```
+
+개발 환경에서는 다음 URL을 사용할 수 있습니다.
+
+```
+http://localhost:8081
+```
+
+#### Content-Type
+
+모든 요청과 응답은 JSON 형식을 사용합니다.
+
+```http
+Content-Type: application/json
+```
+
+#### 프로토콜
+
+프로덕션 환경에서는 **반드시 HTTPS**를 사용해야 합니다. HTTP는 토큰 탈취의 위험이 있으므로
+개발 환경(localhost)에서만 사용하십시오.
+
+### 공통 응답 구조
+
+#### 토큰 응답 구조
+
+토큰을 발급하거나 갱신하는 엔드포인트는 다음과 같은 공통 응답 구조를 사용합니다.
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expiresIn": 3600
+}
+```
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `accessToken` | `String` | JWT 형식의 Access Token (1시간 유효) |
+| `refreshToken` | `String` | Refresh Token (30일 유효) |
+| `expiresIn` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+
+#### 인증 코드 응답 구조
+
+인증 코드 발급 엔드포인트는 다음과 같은 응답을 반환합니다.
+
+```json
+{
+  "code": "abc123def456"
+}
+```
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `code` | `String` | Authorization Code (5분 유효, 일회성) |
+
+### 사용 가능한 엔드포인트
+
+| 엔드포인트 | 메서드 | 설명 | 문서 |
+| --- | --- | --- | --- |
+| `/v1/oauth/code` | `POST` | 사용자 인증 후 Authorization Code 발급 | [상세 문서](/docs/oauth/http/code) |
+| `/v1/oauth/token` | `POST` | Authorization Code를 Access Token으로 교환 | [상세 문서](/docs/oauth/http/token) |
+| `/v1/oauth/refresh` | `PUT` | Refresh Token으로 새 Access Token 발급 | [상세 문서](/docs/oauth/http/refresh) |
+| `/userinfo` | `GET` | Access Token으로 사용자 정보 조회 | [상세 문서](/docs/oauth/http/userinfo) |
+
+### 에러 처리
+
+모든 엔드포인트는 오류 발생 시 적절한 HTTP 상태 코드와 함께 에러 메시지를 반환합니다.
+
+#### 공통 에러 응답 형식
+
+```json
+{
+  "error": "invalid_request",
+  "error_description": "Missing required parameter: code"
+}
+```
+
+#### HTTP 상태 코드
+
+| 상태 코드 | 설명 | 해결 방법 |
+| --- | --- | --- |
+| `400 Bad Request` | 잘못된 요청 파라미터 또는 필수 파라미터 누락 | 요청 파라미터를 확인하고 필수 필드가 모두 포함되었는지 확인하세요. |
+| `401 Unauthorized` | 인증 실패 (잘못된 비밀번호, 만료된 토큰 등) | 사용자 인증 정보나 토큰이 유효한지 확인하세요. |
+| `403 Forbidden` | 권한 없음 (잘못된 Client Secret 등) | Client Secret이 올바른지, 리다이렉트 URI가 등록되었는지 확인하세요. |
+| `404 Not Found` | 리소스를 찾을 수 없음 (존재하지 않는 Code나 Token) | Code나 Token이 만료되었거나 이미 사용된 것은 아닌지 확인하세요. |
+| `429 Too Many Requests` | 요청량 제한 초과 | 잠시 후 다시 시도하거나 요청 빈도를 줄이세요. |
+| `500 Internal Server Error` | 서버 내부 오류 | 잠시 후 다시 시도하거나 지원팀에 문의하세요. |
+
+### 기본 요청 예시
+
+다음은 cURL을 사용한 기본적인 OAuth 플로우 예시입니다.
+
+#### 1. 인증 코드 발급
+
+```bash
+curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/code" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "student@gsm.hs.kr",
+    "password": "your-password",
+    "clientId": "your-client-id",
+    "redirectUrl": "https://your-app.com/callback"
+  }'
+```
+
+#### 2. 토큰 교환
+
+```bash
+curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "abc123def456",
+    "clientSecret": "your-client-secret"
+  }'
+```
+
+#### 3. 사용자 정보 조회
+
+```bash
+curl -X GET "https://oauth-userinfo.data.hellogsm.kr/userinfo" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### 보안 고려사항
+
+#### Client Secret 보호
+
+- **Client Secret은 절대 클라이언트 측(브라우저, 모바일 앱)에 노출하지 마세요.**
+- 토큰 교환은 반드시 서버에서 수행해야 합니다.
+- 환경 변수나 보안 볼트에 안전하게 저장하세요.
+
+#### HTTPS 사용
+
+- 프로덕션 환경에서는 모든 OAuth 통신에 HTTPS를 사용하세요.
+- HTTP는 토큰과 비밀번호가 평문으로 전송되어 위험합니다.
+
+#### 토큰 만료 처리
+
+- Access Token은 1시간 후 만료됩니다.
+- 만료 시 Refresh Token을 사용하여 새 Access Token을 발급받으세요.
+- Refresh Token도 30일 후 만료되므로, 만료 전에 재로그인이 필요합니다.
+
+#### Rate Limiting
+
+- 과도한 요청은 `429 Too Many Requests` 오류를 발생시킵니다.
+- 적절한 재시도 로직을 구현하세요 (Exponential Backoff 권장).
+
+### 다음 단계
+
+각 엔드포인트의 상세한 사용법은 다음 문서를 참고하세요.
+
+- [인증 코드 발급](/docs/oauth/http/code) - 사용자 인증 및 Authorization Code 획득
+- [토큰 교환](/docs/oauth/http/token) - Authorization Code를 Access Token으로 교환
+- [토큰 갱신](/docs/oauth/http/refresh) - Refresh Token으로 새 Access Token 발급
+- [사용자 정보 조회](/docs/oauth/http/userinfo) - Access Token으로 사용자 정보 획득
+
+실전 예제를 보려면 [Examples 문서](/docs/oauth/examples)를 참고하세요.

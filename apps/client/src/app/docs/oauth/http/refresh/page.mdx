@@ -1,0 +1,360 @@
+# 토큰 갱신
+
+### 엔드포인트
+
+```http
+PUT /v1/oauth/refresh
+```
+
+### 설명
+
+Refresh Token을 사용하여 새로운 Access Token과 Refresh Token을 발급받습니다.
+Access Token이 만료되었을 때(1시간 후) 사용자가 다시 로그인하지 않고도 새로운 Access Token을 받을 수 있습니다.
+
+Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Refresh Token도 함께 발급됩니다.
+
+### 요청 파라미터
+
+모든 파라미터는 JSON 형식으로 요청 본문(body)에 포함되어야 합니다.
+
+| 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
+| --- | --- | --- | --- | --- |
+| `refreshToken` | `String` | 필수 | 이전에 발급받은 Refresh Token | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+
+### 응답
+
+#### 성공 응답 (200 OK)
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expiresIn": 3600
+}
+```
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `accessToken` | `String` | 새로 발급된 JWT 형식의 Access Token (1시간 유효) |
+| `refreshToken` | `String` | 새로 발급된 Refresh Token (30일 유효) |
+| `expiresIn` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+
+### 오류 응답
+
+| 상태 코드 | 설명 | 원인 |
+| --- | --- | --- |
+| `400 Bad Request` | 잘못된 요청 | 필수 파라미터 누락 또는 잘못된 형식 |
+| `401 Unauthorized` | 인증 실패 | Refresh Token이 유효하지 않거나 만료됨 |
+| `404 Not Found` | 리소스를 찾을 수 없음 | Refresh Token이 존재하지 않음 (이미 사용됨) |
+
+### 요청 예시
+
+#### cURL
+
+```bash
+curl -X PUT "https://oauth.data.hellogsm.kr/v1/oauth/refresh" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }'
+```
+
+### 응답 예시
+
+#### 성공
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "expiresIn": 3600
+}
+```
+
+#### 실패 (401 Unauthorized)
+
+```json
+{
+  "error": "unauthorized",
+  "error_description": "Refresh token expired or invalid"
+}
+```
+
+#### 실패 (400 Bad Request)
+
+```json
+{
+  "error": "invalid_request",
+  "error_description": "Missing required parameter: refreshToken"
+}
+```
+
+### 사용 예제
+
+다음은 여러 언어에서 토큰을 갱신하는 예제입니다.
+
+<CodeTabs>
+  <CodeTab label="JavaScript" language="javascript" code={`async function refreshAccessToken(refreshToken) {
+  try {
+    const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/refresh', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        refreshToken,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error_description || 'Failed to refresh token');
+    }
+
+    const data = await response.json();
+    return {
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+      expiresIn: data.expiresIn,
+    };
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error;
+  }
+}
+
+// 사용 예시
+const oldRefreshToken = localStorage.getItem('refreshToken');
+const tokens = await refreshAccessToken(oldRefreshToken);
+
+// 새 토큰 저장
+sessionStorage.setItem('accessToken', tokens.accessToken);
+localStorage.setItem('refreshToken', tokens.refreshToken);
+
+console.log('Access Token refreshed successfully');`} />
+
+  <CodeTab label="Python" language="python" code={`import requests
+
+def refresh_access_token(refresh_token):
+    """
+    Refresh Token으로 새로운 Access Token을 발급받습니다.
+
+    Args:
+        refresh_token: 이전에 발급받은 Refresh Token
+
+    Returns:
+        dict: accessToken, refreshToken, expiresIn 포함
+    """
+    try:
+        response = requests.put(
+            'https://oauth.data.hellogsm.kr/v1/oauth/refresh',
+            headers={'Content-Type': 'application/json'},
+            json={'refreshToken': refresh_token}
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f'Error: {e}')
+        raise
+
+# 사용 예시
+old_refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+tokens = refresh_access_token(old_refresh_token)
+
+print(f'New Access Token: {tokens["accessToken"]}')
+print(f'New Refresh Token: {tokens["refreshToken"]}')
+print(f'Expires In: {tokens["expiresIn"]} seconds')`} />
+
+  <CodeTab label="Java" language="java" code={`import java.net.http.*;
+import java.net.URI;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Map;
+
+public class OAuthRefreshService {
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    public static TokenResponse refreshAccessToken(String refreshToken) throws Exception {
+        // 요청 본문 생성
+        Map<String, String> requestBody = Map.of("refreshToken", refreshToken);
+        String requestBodyJson = mapper.writeValueAsString(requestBody);
+
+        // HTTP 요청 생성
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/refresh"))
+            .header("Content-Type", "application/json")
+            .PUT(HttpRequest.BodyPublishers.ofString(requestBodyJson))
+            .build();
+
+        // 요청 전송
+        HttpResponse<String> response = client.send(
+            request,
+            HttpResponse.BodyHandlers.ofString()
+        );
+
+        // 응답 처리
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to refresh token: " + response.body());
+        }
+
+        JsonNode jsonNode = mapper.readTree(response.body());
+        return new TokenResponse(
+            jsonNode.get("accessToken").asText(),
+            jsonNode.get("refreshToken").asText(),
+            jsonNode.get("expiresIn").asInt()
+        );
+    }
+
+    public static class TokenResponse {
+        public final String accessToken;
+        public final String refreshToken;
+        public final int expiresIn;
+
+        public TokenResponse(String accessToken, String refreshToken, int expiresIn) {
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+            this.expiresIn = expiresIn;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        String oldRefreshToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+        TokenResponse tokens = refreshAccessToken(oldRefreshToken);
+
+        System.out.println("New Access Token: " + tokens.accessToken);
+        System.out.println("New Refresh Token: " + tokens.refreshToken);
+        System.out.println("Expires In: " + tokens.expiresIn + " seconds");
+    }
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.net.URI
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+
+data class RefreshRequest(
+    val refreshToken: String
+)
+
+data class TokenResponse(
+    val accessToken: String,
+    val refreshToken: String,
+    val expiresIn: Int
+)
+
+class OAuthRefreshService {
+    private val client = HttpClient.newHttpClient()
+    private val mapper = jacksonObjectMapper()
+
+    fun refreshAccessToken(refreshToken: String): TokenResponse {
+        val requestBody = RefreshRequest(refreshToken)
+        val requestBodyJson = mapper.writeValueAsString(requestBody)
+
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/refresh"))
+            .header("Content-Type", "application/json")
+            .PUT(HttpRequest.BodyPublishers.ofString(requestBodyJson))
+            .build()
+
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        if (response.statusCode() != 200) {
+            throw RuntimeException("Failed to refresh token: \${response.body()}")
+        }
+
+        return mapper.readValue(response.body())
+    }
+}
+
+// 사용 예시
+fun main() {
+    val service = OAuthRefreshService()
+    val oldRefreshToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    val tokens = service.refreshAccessToken(oldRefreshToken)
+
+    println("New Access Token: \${tokens.accessToken}")
+    println("New Refresh Token: \${tokens.refreshToken}")
+    println("Expires In: \${tokens.expiresIn} seconds")
+}`} />
+</CodeTabs>
+
+### 자동 토큰 갱신 구현
+
+Access Token이 만료되기 전에 자동으로 갱신하는 로직을 구현하는 것이 좋습니다.
+
+#### JavaScript 예제 (타이머 기반)
+
+```javascript
+class TokenManager {
+  constructor() {
+    this.accessToken = null;
+    this.refreshToken = null;
+    this.refreshTimer = null;
+  }
+
+  setTokens(accessToken, refreshToken, expiresIn) {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+
+    // Access Token 만료 5분 전에 자동 갱신
+    const refreshTime = (expiresIn - 300) * 1000; // 5분 = 300초
+    this.scheduleRefresh(refreshTime);
+  }
+
+  scheduleRefresh(delay) {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+    }
+
+    this.refreshTimer = setTimeout(async () => {
+      try {
+        const tokens = await refreshAccessToken(this.refreshToken);
+        this.setTokens(tokens.accessToken, tokens.refreshToken, tokens.expiresIn);
+        console.log('Access Token refreshed automatically');
+      } catch (error) {
+        console.error('Failed to refresh token:', error);
+        // 갱신 실패 시 재로그인 유도
+        window.location.href = '/login';
+      }
+    }, delay);
+  }
+
+  getAccessToken() {
+    return this.accessToken;
+  }
+}
+
+// 사용 예시
+const tokenManager = new TokenManager();
+tokenManager.setTokens(accessToken, refreshToken, 3600);
+```
+
+### 보안 주의사항
+
+#### Refresh Token 보호
+
+- Refresh Token은 30일 동안 유효하므로 안전하게 저장해야 합니다.
+- **권장**: HttpOnly 쿠키 또는 서버 세션에 저장
+- **주의**: localStorage는 XSS 공격에 취약
+
+#### 토큰 로테이션
+
+- 토큰 갱신 시 새로운 Refresh Token도 함께 발급됩니다.
+- 이전 Refresh Token은 무효화되므로, 항상 새로 발급된 Refresh Token을 사용하세요.
+
+#### 만료 처리
+
+- Refresh Token이 만료되면 (`401 Unauthorized`) 사용자는 다시 로그인해야 합니다.
+- 만료 30일 전에 사용자에게 재로그인을 안내하는 것을 권장합니다.
+
+### 다음 단계
+
+토큰 갱신에 성공했다면, 새로운 Access Token으로 API를 호출할 수 있습니다.
+
+- [사용자 정보 조회](/docs/oauth/http/userinfo) - Access Token으로 사용자 정보 획득
+- [토큰 교환](/docs/oauth/http/token) - 처음부터 OAuth 플로우 이해하기
+
+실전 구현 예제가 필요하면 [Examples 문서](/docs/oauth/examples)를 참고하세요.

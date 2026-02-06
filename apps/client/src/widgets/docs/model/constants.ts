@@ -61,6 +61,46 @@ export const docsSections: DocsSection[] = [
     icon: User,
     children: [
       {
+        label: 'HTTP',
+        href: '/docs/oauth/http',
+        children: [
+          {
+            label: '인증 코드 발급',
+            href: '/docs/oauth/http/code',
+          },
+          {
+            label: '토큰 교환',
+            href: '/docs/oauth/http/token',
+          },
+          {
+            label: '토큰 갱신',
+            href: '/docs/oauth/http/refresh',
+          },
+          {
+            label: '사용자 정보 조회',
+            href: '/docs/oauth/http/userinfo',
+          },
+        ],
+      },
+      {
+        label: 'Examples',
+        href: '/docs/oauth/examples',
+        children: [
+          {
+            label: 'Next.js + Spring Boot',
+            href: '/docs/oauth/examples/nextjs-spring-boot',
+          },
+          {
+            label: 'React + Spring Boot (Kotlin)',
+            href: '/docs/oauth/examples/react-spring-boot-kotlin',
+          },
+          {
+            label: 'Vanilla JS + NestJS',
+            href: '/docs/oauth/examples/vanilla-nestjs',
+          },
+        ],
+      },
+      {
         label: 'SDK',
         href: '/docs/oauth/sdk',
         children: [
