@@ -634,7 +634,7 @@ class OAuthService(
     private val logger = LoggerFactory.getLogger(OAuthService::class.java)
     private val httpClient: HttpClient = HttpClient.newHttpClient()
 
-    @Value("\${datagsm.oauth.userinfo-url:https://oauth.datagsm.com/userinfo}")
+    @Value("\\${'$'}{datagsm.oauth.userinfo-url:https://oauth.datagsm.com/userinfo}")
     private lateinit var userInfoUrl: String
 
     /**
@@ -681,7 +681,7 @@ class OAuthService(
 
         if (response.statusCode() != 200) {
             logger.error("Failed to fetch user info: {}", response.body())
-            throw RuntimeException("Failed to fetch user info: ${response.body()}")
+            throw RuntimeException("Failed to fetch user info: " + response.body())
         }
 
         return objectMapper.readValue(response.body(), DataGsmUserInfo::class.java)
@@ -819,11 +819,11 @@ import java.util.*
 class JwtService {
     private val logger = LoggerFactory.getLogger(JwtService::class.java)
 
-    @Value("\${jwt.secret}")
+    @Value("\\${'$'}{jwt.secret}")
     private lateinit var secretKey: String
 
-    @Value("\${jwt.expiration:3600000}")
-    private var expirationTime: Long = 3600000 // 기본 1시간
+    @Value("\\${'$'}{jwt.expiration:3600000}")
+    private lateinit var expirationTime: Long
 
     private fun getSigningKey(): Key {
         return Keys.hmacShaKeyFor(secretKey.toByteArray())
@@ -1061,7 +1061,7 @@ datagsm:
 
 # JWT 설정
 jwt:
-  secret: \${JWT_SECRET:your-secret-key-minimum-256-bits-long-for-hs256-algorithm}
+  secret: ${'$'}{JWT_SECRET:default-value}
   expiration: 3600000  # 1시간 (밀리초)
 
 # CORS 설정
@@ -1204,13 +1204,13 @@ import org.springframework.web.filter.CorsFilter
 @Configuration
 class CorsConfig {
 
-    @Value("\${cors.allowed-origins}")
-    private lateinit var allowedOrigins: String
+    @Value("\\${'$'}{cors.allowed-origins}")
+    private lateinit var allowedOriginsConfig: String
 
     @Bean
     fun corsFilter(): CorsFilter {
         val config = CorsConfiguration().apply {
-            allowedOrigins = this@CorsConfig.allowedOrigins.split(",")
+            allowedOrigins = allowedOriginsConfig.split(",")
             allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
             allowedHeaders = listOf("*")
             allowCredentials = true
