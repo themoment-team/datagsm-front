@@ -41,7 +41,7 @@ const Header = ({ role = 'client' }: HeaderProps) => {
           <div className={cn('bg-primary flex h-8 w-8 items-center justify-center rounded-lg')}>
             <Database className={cn('text-primary-foreground h-5 w-5')} />
           </div>
-          <span>Data GSM</span>
+          <span>DataGSM</span>
         </Link>
 
         <nav className={cn('flex items-center gap-6')}>
