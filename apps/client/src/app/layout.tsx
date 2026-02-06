@@ -8,9 +8,6 @@ import '@/shared/styles/globals.css';
 export const metadata: Metadata = {
   title: 'DataGSM',
   description: '광주소프트웨어마이스터고등학교 OpenAPI & OAuth 플랫폼',
-  icons: {
-    icon: '/favicon.ico',
-  },
   openGraph: {
     title: 'DataGSM',
     description: '광주소프트웨어마이스터고등학교 OpenAPI & OAuth 플랫폼',
