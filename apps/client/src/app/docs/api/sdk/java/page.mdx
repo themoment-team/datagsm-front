@@ -32,7 +32,7 @@
 
 <CodeTabs>
   <CodeTab label="Gradle (Kotlin DSL)" language="kotlin" code={`dependencies {
-    implementation("com.github.themoment-team:datagsm-openapi-sdk-java:1.0.0")
+    implementation("com.github.themoment-team:datagsm-openapi-sdk-java:1.1.0")
 }
 
 repositories {
@@ -40,7 +40,7 @@ repositories {
 }`} />
 
   <CodeTab label="Gradle (Groovy)" language="groovy" code={`dependencies {
-    implementation 'com.github.themoment-team:datagsm-openapi-sdk-java:1.0.0'
+    implementation 'com.github.themoment-team:datagsm-openapi-sdk-java:1.1.0'
 }
 
 repositories {
@@ -58,7 +58,7 @@ repositories {
     <dependency>
         <groupId>com.github.themoment-team</groupId>
         <artifactId>datagsm-openapi-sdk-java</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </dependency>
 </dependencies>`} />
 </CodeTabs>
@@ -77,7 +77,7 @@ DataGsmClient client = DataGsmClient.builder("your-api-key-here").build();
 
 // 커스텀 Base URL 설정 (선택사항)
 DataGsmClient clientWithCustomUrl = DataGsmClient.builder("your-api-key-here")
-    .baseUrl("https://api.datagsm.com")
+    .baseUrl("https://api.datagsm.com") // 설정하지 않는다면 공식 Base URL 사용
     .build();`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient
@@ -87,7 +87,7 @@ val client = DataGsmClient.builder("your-api-key-here").build()
 
 // 커스텀 Base URL 설정 (선택사항)
 val clientWithCustomUrl = DataGsmClient.builder("your-api-key-here")
-    .baseUrl("https://api.datagsm.com")
+    .baseUrl("https://api.datagsm.com")  // 설정하지 않는다면 공식 Base URL 사용
     .build()`} />
 
 </CodeTabs>
