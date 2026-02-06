@@ -1,4 +1,4 @@
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, AlertTriangle } from 'lucide-react'
 
 # OpenAPI
 
@@ -17,6 +17,20 @@ OpenAPI 사용 시 가장 중요한 요소는 필요한 데이터의 파악과 �
       </div>
       <div className="text-purple-800 dark:text-purple-200 text-sm">
         DataGSM 서비스에 회원가입하여 개인정보 처리약관에 동의하지 않은 학생의 데이터는 OpenAPI를 통해 제공되지 않습니다. API 응답에는 약관에 동의한 학생의 정보만 포함됩니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div className="border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-900/20 p-4 rounded my-4">
+  <div className="flex items-start gap-3">
+    <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-amber-900 dark:text-amber-100 mb-2">
+        NEIS 학사일정 데이터 제공 제한 안내
+      </div>
+      <div className="text-amber-800 dark:text-amber-200 text-sm">
+        현재 NEIS 시스템에 등록된 2025학년도 학사일정이 말소되었으며, 2026학년도 학사일정은 아직 등록되지 않은 상태입니다. 이에 따라 당분간 학사일정 API 호출 시 실질적인 데이터가 반환되지 않을 수 있으니 서비스 이용에 참고하시기 바랍니다.
       </div>
     </div>
   </div>
