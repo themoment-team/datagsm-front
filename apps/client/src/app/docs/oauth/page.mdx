@@ -123,11 +123,11 @@ State 파라미터는 클라이언트가 생성한 랜덤 문자열로, 요청 �
 
 ```javascript
 // State 생성 예시
-const state = crypto.randomBytes(16).toString('hex');
+const state = crypto.randomUUID();
 sessionStorage.setItem('oauth_state', state);
 
 // 인증 요청 시 포함
-const authUrl = `https://oauth.datagsm.com/login?clientId=${clientId}&state=${state}`;
+const authUrl = `https://oauth.data.hellogsm.kr/login?clientId=${clientId}&redirect_uri=${redirectUri}&state=${state}`;
 
 // 콜백에서 검증
 const returnedState = new URLSearchParams(window.location.search).get('state');
