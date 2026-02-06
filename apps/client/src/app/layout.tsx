@@ -1,8 +1,8 @@
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import { Header } from '@repo/shared/ui';
 import type { Metadata } from 'next';
 
+import { GoogleAnalytics } from '@/shared/lib';
 import '@/shared/styles/globals.css';
 
 export const metadata: Metadata = {
@@ -26,14 +26,15 @@ const RootLayout = ({
   return (
     <html lang="ko">
       <body>
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
-          <TanStackProvider>
-            <ToastProvider>
-              <Header role="client" />
-              {children}
-            </ToastProvider>
-          </TanStackProvider>
-        </GoogleOAuthProvider>
+        {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />
+        )}
+        <TanStackProvider>
+          <ToastProvider>
+            <Header role="client" />
+            {children}
+          </ToastProvider>
+        </TanStackProvider>
       </body>
     </html>
   );
