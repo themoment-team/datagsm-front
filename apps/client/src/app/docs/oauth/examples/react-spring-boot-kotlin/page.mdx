@@ -167,8 +167,7 @@ export const useOAuthLogin = (config: OAuthConfig): UseOAuthLoginReturn => {
 
     try {
       // State 파라미터 생성 (CSRF 방지)
-      const state = Math.random().toString(36).substring(2, 15) +
-                    Math.random().toString(36).substring(2, 15);
+      const state = crypto.randomUUID();
 
       sessionStorage.setItem('oauth_state', state);
 
@@ -222,7 +221,7 @@ class OAuthService {
 
   constructor() {
     this.tokenUrl = process.env.REACT_APP_DATAGSM_TOKEN_URL ||
-                    'https://oauth.datagsm.com/v1/oauth/token';
+                    'https://oauth.data.hellogsm.kr/v1/oauth/token';
     this.clientId = process.env.REACT_APP_DATAGSM_CLIENT_ID || '';
     this.clientSecret = process.env.REACT_APP_DATAGSM_CLIENT_SECRET || '';
     this.backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8080';
@@ -301,8 +300,8 @@ const LoginPage: React.FC = () => {
     clientId: process.env.REACT_APP_DATAGSM_CLIENT_ID || '',
     clientSecret: process.env.REACT_APP_DATAGSM_CLIENT_SECRET || '',
     redirectUri: process.env.REACT_APP_REDIRECT_URI || 'http://localhost:3000/callback',
-    authUrl: 'https://oauth.datagsm.com/login',
-    tokenUrl: 'https://oauth.datagsm.com/v1/oauth/token',
+    authUrl: 'https://oauth.data.hellogsm.kr/login',
+    tokenUrl: 'https://oauth.data.hellogsm.kr/v1/oauth/token',
   });
 
   return (
@@ -634,7 +633,7 @@ class OAuthService(
     private val logger = LoggerFactory.getLogger(OAuthService::class.java)
     private val httpClient: HttpClient = HttpClient.newHttpClient()
 
-    @Value("\\${'$'}{datagsm.oauth.userinfo-url:https://oauth.datagsm.com/userinfo}")
+    @Value("\\${'$'}{datagsm.oauth.userinfo-url:https://oauth-userinfo.data.hellogsm.kr/userinfo}")
     private lateinit var userInfoUrl: String
 
     /**
@@ -807,13 +806,13 @@ class UserService(
 import com.example.app.entity.User
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.security.Key
 import java.util.*
+import javax.crypto.SecretKey
 
 @Service
 class JwtService {
@@ -845,11 +844,11 @@ class JwtService {
         val expiryDate = Date(now.time + expirationTime)
 
         return Jwts.builder()
-            .setClaims(claims)
-            .setSubject(user.email)
-            .setIssuedAt(now)
-            .setExpiration(expiryDate)
-            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+            .claims(claims)
+            .subject(user.email)
+            .issuedAt(now)
+            .expiration(expiryDate)
+            .signWith(getSigningKey(), Jwts.SIG.HS256)
             .compact()
     }
 
@@ -885,11 +884,11 @@ class JwtService {
      * JWT에서 모든 클레임 추출
      */
     private fun extractAllClaims(token: String): Claims {
-        return Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
+        return Jwts.parser()
+            .verifyWith(getSigningKey() as SecretKey)
             .build()
-            .parseClaimsJws(token)
-            .body
+            .parseSignedClaims(token)
+            .payload
     }
 
     /**
@@ -1029,8 +1028,8 @@ REACT_APP_DATAGSM_CLIENT_SECRET=your-client-secret-here
 REACT_APP_REDIRECT_URI=http://localhost:3000/callback
 
 # DataGSM API URLs
-REACT_APP_DATAGSM_AUTH_URL=https://oauth.datagsm.com/login
-REACT_APP_DATAGSM_TOKEN_URL=https://oauth.datagsm.com/v1/oauth/token
+REACT_APP_DATAGSM_AUTH_URL=https://oauth.data.hellogsm.kr/login
+REACT_APP_DATAGSM_TOKEN_URL=https://oauth.data.hellogsm.kr/v1/oauth/token
 
 # 백엔드 API URL
 REACT_APP_BACKEND_URL=http://localhost:8080`} />
@@ -1057,7 +1056,7 @@ REACT_APP_BACKEND_URL=http://localhost:8080`} />
 # DataGSM OAuth 설정
 datagsm:
   oauth:
-    userinfo-url: https://oauth.datagsm.com/userinfo
+    userinfo-url: https://oauth-userinfo.data.hellogsm.kr/userinfo
 
 # JWT 설정
 jwt:
@@ -1127,9 +1126,9 @@ dependencies {
     runtimeOnly("com.mysql:mysql-connector-j")
 
     // JWT
-    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
 
     // Validation
     implementation("org.springframework.boot:spring-boot-starter-validation")

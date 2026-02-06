@@ -54,7 +54,7 @@ Access Token은 사용자 리소스에 접근하기 위해 사용되며, Refresh
 #### cURL
 
 ```bash
-curl -X POST "https://oauth.datagsm.com/v1/oauth/token" \
+curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   -H "Content-Type: application/json" \
   -d '{
     "code": "abc123def456",
@@ -99,7 +99,7 @@ curl -X POST "https://oauth.datagsm.com/v1/oauth/token" \
 <CodeTabs>
   <CodeTab label="JavaScript" language="javascript" code={`async function exchangeToken(code, clientSecret) {
   try {
-    const response = await fetch('https://oauth.datagsm.com/v1/oauth/token', {
+    const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ def exchange_token(code, client_secret):
     """
     try:
         response = requests.post(
-            'https://oauth.datagsm.com/v1/oauth/token',
+            'https://oauth.data.hellogsm.kr/v1/oauth/token',
             headers={'Content-Type': 'application/json'},
             json={
                 'code': code,
@@ -195,7 +195,7 @@ public class OAuthTokenService {
 
         // HTTP 요청 생성
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://oauth.datagsm.com/v1/oauth/token"))
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/token"))
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
             .build();
@@ -267,7 +267,7 @@ class OAuthTokenService {
         val requestBodyJson = mapper.writeValueAsString(requestBody)
 
         val request = HttpRequest.newBuilder()
-            .uri(URI.create("https://oauth.datagsm.com/v1/oauth/token"))
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/token"))
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
             .build()

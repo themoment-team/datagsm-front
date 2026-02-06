@@ -11,8 +11,14 @@ SDK를 사용하지 않고 REST API를 직접 호출하여 더 세밀한 제어�
 
 #### Base URL
 
+**Authorization Server:**
 ```
-https://oauth.datagsm.com
+https://oauth.data.hellogsm.kr
+```
+
+**UserInfo Server:**
+```
+https://oauth-userinfo.data.hellogsm.kr
 ```
 
 개발 환경에서는 다음 URL을 사용할 수 있습니다.
@@ -108,7 +114,7 @@ Content-Type: application/json
 #### 1. 인증 코드 발급
 
 ```bash
-curl -X POST "https://oauth.datagsm.com/v1/oauth/code" \
+curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/code" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "student@gsm.hs.kr",
@@ -121,7 +127,7 @@ curl -X POST "https://oauth.datagsm.com/v1/oauth/code" \
 #### 2. 토큰 교환
 
 ```bash
-curl -X POST "https://oauth.datagsm.com/v1/oauth/token" \
+curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   -H "Content-Type: application/json" \
   -d '{
     "code": "abc123def456",
@@ -132,7 +138,7 @@ curl -X POST "https://oauth.datagsm.com/v1/oauth/token" \
 #### 3. 사용자 정보 조회
 
 ```bash
-curl -X GET "https://oauth.datagsm.com/userinfo" \
+curl -X GET "https://oauth-userinfo.data.hellogsm.kr/userinfo" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 

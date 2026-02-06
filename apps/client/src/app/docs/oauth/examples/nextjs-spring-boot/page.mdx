@@ -119,7 +119,7 @@ const LoginPage = () => {
     setIsLoading(true);
 
     // State 파라미터 생성 (CSRF 방지)
-    const state = Math.random().toString(36).substring(2, 15);
+    const state = crypto.randomUUID();
     sessionStorage.setItem('oauth_state', state);
 
     // 환경 변수에서 설정 가져오기
@@ -127,7 +127,7 @@ const LoginPage = () => {
     const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
 
     // DataGSM 로그인 페이지로 리다이렉트
-    const authUrl = new URL('https://oauth.datagsm.com/login');
+    const authUrl = new URL('https://oauth.data.hellogsm.kr/login');
     authUrl.searchParams.append('client_id', clientId);
     authUrl.searchParams.append('redirect_uri', redirectUri);
     authUrl.searchParams.append('state', state);
@@ -554,10 +554,10 @@ public class OAuthService {
     @Value("\${datagsm.oauth.client-secret}")
     private String clientSecret;
 
-    @Value("\${datagsm.oauth.token-url:https://oauth.datagsm.com/v1/oauth/token}")
+    @Value("\${datagsm.oauth.token-url:https://oauth.data.hellogsm.kr/v1/oauth/token}")
     private String tokenUrl;
 
-    @Value("\${datagsm.oauth.userinfo-url:https://oauth.datagsm.com/userinfo}")
+    @Value("\${datagsm.oauth.userinfo-url:https://oauth-userinfo.data.hellogsm.kr/userinfo}")
     private String userInfoUrl;
 
     /**
@@ -763,12 +763,12 @@ public class UserService {
 import com.example.app.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -801,11 +801,11 @@ public class JwtService {
         claims.put("number", user.getNumber());
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(user.getEmail())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .claims(claims)
+                .subject(user.getEmail())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -841,11 +841,11 @@ public class JwtService {
      * JWT에서 모든 클레임 추출
      */
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+        return Jwts.parser()
+                .verifyWith((SecretKey) getSigningKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     /**
@@ -1060,8 +1060,8 @@ BACKEND_URL=http://localhost:8080`} />
 datagsm:
   oauth:
     client-secret: \${DATAGSM_CLIENT_SECRET}
-    token-url: https://oauth.datagsm.com/v1/oauth/token
-    userinfo-url: https://oauth.datagsm.com/userinfo
+    token-url: https://oauth.data.hellogsm.kr/v1/oauth/token
+    userinfo-url: https://oauth-userinfo.data.hellogsm.kr/userinfo
 
 # JWT 설정
 jwt:
@@ -1145,18 +1145,18 @@ cors:
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <version>0.12.5</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
+            <version>0.12.5</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
+            <version>0.12.5</version>
             <scope>runtime</scope>
         </dependency>
 
