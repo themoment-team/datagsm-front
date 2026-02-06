@@ -333,7 +333,7 @@ export default async function handler(
 
     // Spring Boot 백엔드 API 호출
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
-    const response = await fetch(\`\${backendUrl}/api/auth/oauth/callback\`, {
+    const response = await fetch(backendUrl + '/api/auth/oauth/callback', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -380,10 +380,10 @@ export default async function handler(
 
     // Spring Boot 백엔드에 JWT로 사용자 정보 조회
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
-    const response = await fetch(\`\${backendUrl}/api/auth/me\`, {
+    const response = await fetch(backendUrl + '/api/auth/me', {
       method: 'GET',
       headers: {
-        'Authorization': \`Bearer \${token}\`,
+        'Authorization': 'Bearer ' + token,
       },
     });
 

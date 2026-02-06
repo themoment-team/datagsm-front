@@ -596,7 +596,7 @@ function validateState(state) {
 async function exchangeCodeForSession(code) {
     updateProgress('서버에서 인증 정보를 처리하는 중...');
 
-    const response = await fetch(\`\${CONFIG.API_URL}/api/auth/callback\`, {
+    const response = await fetch(CONFIG.API_URL + '/api/auth/callback', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -669,7 +669,7 @@ const CONFIG = {
  * 현재 사용자 정보 조회
  */
 async function getCurrentUser() {
-    const response = await fetch(\`\${CONFIG.API_URL}/api/auth/me\`, {
+    const response = await fetch(CONFIG.API_URL + '/api/auth/me', {
         method: 'GET',
         credentials: 'include', // 세션 쿠키 포함
     });
@@ -692,7 +692,7 @@ async function getCurrentUser() {
  */
 async function logout() {
     try {
-        const response = await fetch(\`\${CONFIG.API_URL}/api/auth/logout\`, {
+        const response = await fetch(CONFIG.API_URL + '/api/auth/logout', {
             method: 'POST',
             credentials: 'include',
         });

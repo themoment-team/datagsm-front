@@ -255,7 +255,7 @@ class OAuthService {
    * Access Token을 서버에 전달하여 JWT 받기
    */
   async verifyAndGetJWT(accessToken: string): Promise<AuthResponse> {
-    const response = await fetch(\`\${this.backendUrl}/api/auth/verify\`, {
+    const response = await fetch(this.backendUrl + '/api/auth/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1305,11 +1305,11 @@ async function authenticatedFetch(
     throw new Error('인증 토큰이 없습니다.');
   }
 
-  const response = await fetch(\`\${API_BASE_URL}\${endpoint}\`, {
+  const response = await fetch(API_BASE_URL + endpoint, {
     ...options,
     headers: {
       ...options.headers,
-      'Authorization': \`Bearer \${token}\`,
+      'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json',
     },
   });
