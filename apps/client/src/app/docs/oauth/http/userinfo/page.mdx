@@ -1,0 +1,418 @@
+# 사용자 정보 조회
+
+### 엔드포인트
+
+```http
+GET /userinfo
+```
+
+### 설명
+
+Access Token을 사용하여 인증된 사용자의 정보를 조회합니다.
+이 엔드포인트는 사용자의 기본 정보와 학생인 경우 학생 상세 정보를 반환합니다.
+
+### 인증
+
+이 엔드포인트는 `Authorization` 헤더에 Bearer Token을 포함해야 합니다.
+
+```http
+Authorization: Bearer {accessToken}
+```
+
+### 요청 파라미터
+
+요청 파라미터는 없습니다. Access Token만 필요합니다.
+
+### 응답
+
+#### 성공 응답 (200 OK)
+
+```json
+{
+  "id": 1,
+  "email": "student@gsm.hs.kr",
+  "role": "USER",
+  "isStudent": true,
+  "student": {
+    "id": 1,
+    "name": "홍길동",
+    "sex": "MAN",
+    "grade": 1,
+    "classNum": 1,
+    "number": 1,
+    "studentNumber": 1101,
+    "major": "SW_DEVELOPMENT",
+    "dormitoryFloor": 3,
+    "dormitoryRoom": 301,
+    "role": "GENERAL_STUDENT",
+    "isLeaveSchool": false
+  }
+}
+```
+
+### 응답 필드
+
+#### 사용자 기본 정보
+
+| 필드 | 타입 | 설명 | 예시 |
+| --- | --- | --- | --- |
+| `id` | `Long` | 사용자 고유 ID | `1` |
+| `email` | `String` | 사용자 이메일 주소 | `student@gsm.hs.kr` |
+| `role` | `String` | 사용자 역할 (`USER`, `ADMIN`) | `USER` |
+| `isStudent` | `Boolean` | 학생 여부 | `true` |
+| `student` | `Object?` | 학생 상세 정보 (학생인 경우만 제공, nullable) | - |
+
+#### 학생 상세 정보 (student 객체)
+
+학생인 경우(`isStudent: true`) 다음 필드를 포함합니다.
+
+| 필드 | 타입 | 설명 | 예시 |
+| --- | --- | --- | --- |
+| `id` | `Long` | 학생 고유 ID | `1` |
+| `name` | `String` | 학생 이름 | `홍길동` |
+| `sex` | `String` | 성별 (`MAN`, `WOMAN`) | `MAN` |
+| `grade` | `Int` | 학년 (1-3) | `1` |
+| `classNum` | `Int` | 반 (1-4) | `1` |
+| `number` | `Int` | 번호 (1-18) | `1` |
+| `studentNumber` | `Int` | 학번 (4자리) | `1101` |
+| `major` | `String` | 전공 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`) | `SW_DEVELOPMENT` |
+| `dormitoryFloor` | `Int?` | 기숙사 층 (nullable) | `3` |
+| `dormitoryRoom` | `Int?` | 기숙사 호실 (nullable) | `301` |
+| `role` | `String` | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`) | `GENERAL_STUDENT` |
+| `isLeaveSchool` | `Boolean` | 자퇴 여부 | `false` |
+
+### 오류 응답
+
+| 상태 코드 | 설명 | 원인 |
+| --- | --- | --- |
+| `401 Unauthorized` | 인증 실패 | Access Token이 유효하지 않거나 만료됨 |
+| `403 Forbidden` | 권한 없음 | Access Token이 올바르지 않음 |
+| `404 Not Found` | 리소스를 찾을 수 없음 | 사용자 정보를 찾을 수 없음 |
+
+### 요청 예시
+
+#### cURL
+
+```bash
+curl -X GET "https://oauth.datagsm.com/userinfo" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### 응답 예시
+
+#### 학생 사용자
+
+```json
+{
+  "id": 1,
+  "email": "student@gsm.hs.kr",
+  "role": "USER",
+  "isStudent": true,
+  "student": {
+    "id": 1,
+    "name": "홍길동",
+    "sex": "MAN",
+    "grade": 1,
+    "classNum": 1,
+    "number": 1,
+    "studentNumber": 1101,
+    "major": "SW_DEVELOPMENT",
+    "dormitoryFloor": 3,
+    "dormitoryRoom": 301,
+    "role": "GENERAL_STUDENT",
+    "isLeaveSchool": false
+  }
+}
+```
+
+#### 비학생 사용자
+
+```json
+{
+  "id": 2,
+  "email": "teacher@gsm.hs.kr",
+  "role": "ADMIN",
+  "isStudent": false,
+  "student": null
+}
+```
+
+#### 실패 (401 Unauthorized)
+
+```json
+{
+  "error": "unauthorized",
+  "error_description": "Access token expired or invalid"
+}
+```
+
+### 사용 예제
+
+다음은 여러 언어에서 사용자 정보를 조회하는 예제입니다.
+
+<CodeTabs>
+  <CodeTab label="JavaScript" language="javascript" code={`async function getUserInfo(accessToken) {
+  try {
+    const response = await fetch('https://oauth.datagsm.com/userinfo', {
+      method: 'GET',
+      headers: {
+        'Authorization': \`Bearer \${accessToken}\`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error_description || 'Failed to get user info');
+    }
+
+    const userInfo = await response.json();
+    return userInfo;
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error;
+  }
+}
+
+// 사용 예시
+const accessToken = sessionStorage.getItem('accessToken');
+const userInfo = await getUserInfo(accessToken);
+
+console.log('User ID:', userInfo.id);
+console.log('Email:', userInfo.email);
+
+if (userInfo.isStudent) {
+  console.log('Student Name:', userInfo.student.name);
+  console.log('Grade:', userInfo.student.grade);
+  console.log('Class:', userInfo.student.classNum);
+}`} />
+
+  <CodeTab label="Python" language="python" code={`import requests
+
+def get_user_info(access_token):
+    """
+    Access Token으로 사용자 정보를 조회합니다.
+
+    Args:
+        access_token: Access Token
+
+    Returns:
+        dict: 사용자 정보
+    """
+    try:
+        response = requests.get(
+            'https://oauth.datagsm.com/userinfo',
+            headers={'Authorization': f'Bearer {access_token}'}
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f'Error: {e}')
+        raise
+
+# 사용 예시
+access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+user_info = get_user_info(access_token)
+
+print(f'User ID: {user_info["id"]}')
+print(f'Email: {user_info["email"]}')
+
+if user_info['isStudent']:
+    student = user_info['student']
+    print(f'Student Name: {student["name"]}')
+    print(f'Grade: {student["grade"]}')
+    print(f'Class: {student["classNum"]}')`} />
+
+  <CodeTab label="Java" language="java" code={`import java.net.http.*;
+import java.net.URI;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class UserInfoService {
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    public static UserInfo getUserInfo(String accessToken) throws Exception {
+        // HTTP 요청 생성
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://oauth.datagsm.com/userinfo"))
+            .header("Authorization", "Bearer " + accessToken)
+            .GET()
+            .build();
+
+        // 요청 전송
+        HttpResponse<String> response = client.send(
+            request,
+            HttpResponse.BodyHandlers.ofString()
+        );
+
+        // 응답 처리
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to get user info: " + response.body());
+        }
+
+        return mapper.readValue(response.body(), UserInfo.class);
+    }
+
+    public static class UserInfo {
+        public Long id;
+        public String email;
+        public String role;
+        public Boolean isStudent;
+        public Student student;
+    }
+
+    public static class Student {
+        public Long id;
+        public String name;
+        public String sex;
+        public Integer grade;
+        public Integer classNum;
+        public Integer number;
+        public Integer studentNumber;
+        public String major;
+        public Integer dormitoryFloor;
+        public Integer dormitoryRoom;
+        public String role;
+        public Boolean isLeaveSchool;
+    }
+
+    public static void main(String[] args) throws Exception {
+        String accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+        UserInfo userInfo = getUserInfo(accessToken);
+
+        System.out.println("User ID: " + userInfo.id);
+        System.out.println("Email: " + userInfo.email);
+
+        if (userInfo.isStudent && userInfo.student != null) {
+            System.out.println("Student Name: " + userInfo.student.name);
+            System.out.println("Grade: " + userInfo.student.grade);
+        }
+    }
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.net.URI
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+
+data class UserInfo(
+    val id: Long,
+    val email: String,
+    val role: String,
+    val isStudent: Boolean,
+    val student: Student?
+)
+
+data class Student(
+    val id: Long,
+    val name: String,
+    val sex: String,
+    val grade: Int,
+    val classNum: Int,
+    val number: Int,
+    val studentNumber: Int,
+    val major: String,
+    val dormitoryFloor: Int?,
+    val dormitoryRoom: Int?,
+    val role: String,
+    val isLeaveSchool: Boolean
+)
+
+class UserInfoService {
+    private val client = HttpClient.newHttpClient()
+    private val mapper = jacksonObjectMapper()
+
+    fun getUserInfo(accessToken: String): UserInfo {
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("https://oauth.datagsm.com/userinfo"))
+            .header("Authorization", "Bearer $accessToken")
+            .GET()
+            .build()
+
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        if (response.statusCode() != 200) {
+            throw RuntimeException("Failed to get user info: \${response.body()}")
+        }
+
+        return mapper.readValue(response.body())
+    }
+}
+
+// 사용 예시
+fun main() {
+    val service = UserInfoService()
+    val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    val userInfo = service.getUserInfo(accessToken)
+
+    println("User ID: \${userInfo.id}")
+    println("Email: \${userInfo.email}")
+
+    if (userInfo.isStudent && userInfo.student != null) {
+        println("Student Name: \${userInfo.student.name}")
+        println("Grade: \${userInfo.student.grade}")
+        println("Class: \${userInfo.student.classNum}")
+    }
+}`} />
+</CodeTabs>
+
+### 전공 코드 (Major)
+
+`student.major` 필드는 다음 값 중 하나입니다.
+
+| 코드 | 설명 |
+| --- | --- |
+| `SW_DEVELOPMENT` | 소프트웨어개발과 |
+| `SMART_IOT` | 스마트IoT과 |
+| `AI` | 인공지능과 |
+
+### 학생 역할 코드 (Student Role)
+
+`student.role` 필드는 다음 값 중 하나입니다.
+
+| 코드 | 설명 |
+| --- | --- |
+| `GENERAL_STUDENT` | 일반 학생 |
+| `STUDENT_COUNCIL` | 학생회 |
+| `DORMITORY_MANAGER` | 기숙사 사감 |
+| `GRADUATE` | 졸업생 |
+
+### 보안 주의사항
+
+#### Access Token 보호
+
+- Access Token은 사용자의 개인정보에 접근할 수 있는 권한을 부여합니다.
+- Access Token을 안전하게 저장하고, HTTPS를 통해서만 전송하세요.
+- Access Token이 탈취되면 공격자가 사용자 정보를 조회할 수 있습니다.
+
+#### 토큰 만료 처리
+
+- Access Token은 1시간 후 만료됩니다.
+- 만료 시 `401 Unauthorized` 오류가 발생하며, Refresh Token으로 갱신해야 합니다.
+
+```javascript
+async function getUserInfoWithRetry(accessToken, refreshToken) {
+  try {
+    return await getUserInfo(accessToken);
+  } catch (error) {
+    if (error.message.includes('expired')) {
+      // Access Token 갱신
+      const tokens = await refreshAccessToken(refreshToken);
+      // 새 토큰으로 재시도
+      return await getUserInfo(tokens.accessToken);
+    }
+    throw error;
+  }
+}
+```
+
+### 다음 단계
+
+사용자 정보를 성공적으로 조회했다면, 이제 애플리케이션에서 사용자를 식별하고 맞춤형 기능을 제공할 수 있습니다.
+
+- [토큰 갱신](/docs/oauth/http/refresh) - Access Token 만료 시 갱신 방법
+- [OAuth 개요](/docs/oauth) - OAuth 전체 플로우 이해하기
+
+실전 구현 예제가 필요하면 [Examples 문서](/docs/oauth/examples)를 참고하세요.
