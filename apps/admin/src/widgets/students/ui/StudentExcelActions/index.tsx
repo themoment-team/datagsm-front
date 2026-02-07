@@ -42,7 +42,7 @@ const StudentExcelActions = () => {
         className={cn('gap-2 bg-transparent')}
         onClick={() =>
           downloadExcel({
-            url: studentUrl.getStudentExcel(),
+            url: studentUrl.getStudentExport(),
             fileName: '학생목록',
           })
         }
