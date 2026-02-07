@@ -8,11 +8,15 @@ POST /v1/oauth/token
 
 ### 설명
 
-Authorization Code를 Access Token과 Refresh Token으로 교환합니다.
-이 엔드포인트는 **반드시 서버에서만** 호출해야 하며, Client Secret이 필요합니다.
+Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 이 엔드포인트는 **반드시 서버에서만** 호출해야 하며, Client Secret이 필요합니다.
 
-Access Token은 사용자 리소스에 접근하기 위해 사용되며, Refresh Token은 Access Token이 만료되었을 때
-새로운 Access Token을 발급받기 위해 사용됩니다.
+발급되는 토큰은 다음과 같은 용도로 사용됩니다:
+- **Access Token**: 사용자 리소스 접근 (1시간 유효)
+- **Refresh Token**: Access Token 갱신 (30일 유효)
+
+이 엔드포인트는 `grant_type` 파라미터로 토큰 교환과 토큰 갱신을 모두 처리합니다. Authorization Code 교환 시에는 `grant_type`을 `authorization_code`로 설정하세요.
+
+보안 강화를 위해 `code_verifier` 파라미터를 함께 전달하는 것을 권장합니다.
 
 ### 요청 파라미터
 
@@ -20,8 +24,12 @@ Access Token은 사용자 리소스에 접근하기 위해 사용되며, Refresh
 
 | 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
 | --- | --- | --- | --- | --- |
+| `grant_type` | `String` | 필수 | 요청 타입 (`authorization_code` 고정) | `authorization_code` |
 | `code` | `String` | 필수 | `/v1/oauth/code`에서 발급받은 Authorization Code | `abc123def456` |
-| `clientSecret` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 시크릿 (서버에서만 사용) | `your-client-secret` |
+| `client_id` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 ID | `your-client-id` |
+| `client_secret` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 시크릿 (서버에서만 사용) | `your-client-secret` |
+| `redirect_uri` | `String` | 필수 | Authorization Code 발급 시 사용한 리다이렉트 URI | `https://your-app.com/callback` |
+| `code_verifier` | `String` | 권장 | PKCE Code Verifier (Authorization Code 발급 시 생성한 원본 값) | `dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk` |
 
 ### 응답
 
@@ -29,17 +37,19 @@ Access Token은 사용자 리소스에 접근하기 위해 사용되며, Refresh
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresIn": 3600
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
 | 필드 | 타입 | 설명 |
 | --- | --- | --- |
-| `accessToken` | `String` | JWT 형식의 Access Token (1시간 유효) |
-| `refreshToken` | `String` | Refresh Token (30일 유효) |
-| `expiresIn` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `access_token` | `String` | JWT 형식의 Access Token (1시간 유효) |
+| `token_type` | `String` | 토큰 타입 (`Bearer` 고정) |
+| `expires_in` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `refresh_token` | `String` | Refresh Token (30일 유효) |
 
 ### 오류 응답
 
@@ -57,8 +67,12 @@ Access Token은 사용자 리소스에 접근하기 위해 사용되며, Refresh
 curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   -H "Content-Type: application/json" \
   -d '{
+    "grant_type": "authorization_code",
     "code": "abc123def456",
-    "clientSecret": "your-client-secret"
+    "client_id": "your-client-id",
+    "client_secret": "your-client-secret",
+    "redirect_uri": "https://your-app.com/callback",
+    "code_verifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
   }'
 ```
 
@@ -97,7 +111,7 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 다음은 여러 언어에서 토큰을 교환하는 예제입니다.
 
 <CodeTabs>
-  <CodeTab label="JavaScript" language="javascript" code={`async function exchangeToken(code, clientSecret) {
+  <CodeTab label="JavaScript" language="javascript" code={`async function exchangeToken(code, codeVerifier, clientId, clientSecret, redirectUri) {
   try {
     const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/token', {
       method: 'POST',
@@ -105,8 +119,12 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        grant_type: 'authorization_code',
         code,
-        clientSecret,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        code_verifier: codeVerifier,
       }),
     });
 
@@ -128,9 +146,13 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 }
 
 // 사용 예시
+const codeVerifier = sessionStorage.getItem('oauth_code_verifier');
 const tokens = await exchangeToken(
   'abc123def456',
-  process.env.DATAGSM_CLIENT_SECRET
+  codeVerifier,
+  'your-client-id',
+  process.env.DATAGSM_CLIENT_SECRET,
+  'https://your-app.com/callback'
 );
 console.log('Access Token:', tokens.accessToken);
 console.log('Refresh Token:', tokens.refreshToken);
