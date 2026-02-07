@@ -8,7 +8,7 @@ import { COOKIE_KEYS } from '@repo/shared/constants';
 import { useExchangeToken } from '@repo/shared/hooks';
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
-import { setCookie } from '@repo/shared/utils';
+import { generateCodeChallenge, generateCodeVerifier, setCookie } from '@repo/shared/utils';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
@@ -47,20 +47,31 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
         }
       },
       onError: (error: unknown) => {
-        const statusCode =
-          error instanceof AxiosError
-            ? (error.response?.data as { code?: number })?.code
-            : undefined;
+        if (error instanceof AxiosError && error.response?.data) {
+          const errorData = error.response.data;
 
-        switch (statusCode) {
-          case 400:
-            toast.error('잘못된 요청입니다.');
-            break;
-          case 404:
-            toast.error('존재하지 않는 클라이언트입니다.');
-            break;
-          default:
-            toast.error('OAuth 인증에 실패했습니다.');
+          if (errorData.error && errorData.error_description) {
+            toast.error(errorData.error_description);
+            timerRef.current = setTimeout(() => {
+              router.push('/signin');
+            }, 1500);
+            return;
+          }
+
+          const statusCode = (errorData as { code?: number })?.code;
+
+          switch (statusCode) {
+            case 400:
+              toast.error('잘못된 요청입니다.');
+              break;
+            case 404:
+              toast.error('존재하지 않는 클라이언트입니다.');
+              break;
+            default:
+              toast.error('OAuth 인증에 실패했습니다.');
+          }
+        } else {
+          toast.error('OAuth 인증에 실패했습니다.');
         }
 
         timerRef.current = setTimeout(() => {
@@ -81,18 +92,28 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
       router.push('/');
     },
     onError: (error: unknown) => {
-      const statusCode =
-        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
+      if (error instanceof AxiosError && error.response?.data) {
+        const errorData = error.response.data;
 
-      switch (statusCode) {
-        case 400:
-          toast.error('잘못된 인증 코드입니다.');
-          break;
-        case 404:
-          toast.error('인증 코드가 만료되었거나 존재하지 않습니다.');
-          break;
-        default:
-          toast.error('토큰 교환에 실패했습니다.');
+        if (errorData.error && errorData.error_description) {
+          toast.error(errorData.error_description);
+          return;
+        }
+
+        const statusCode = (errorData as { code?: number })?.code;
+
+        switch (statusCode) {
+          case 400:
+            toast.error('잘못된 인증 코드입니다.');
+            break;
+          case 404:
+            toast.error('인증 코드가 만료되었거나 존재하지 않습니다.');
+            break;
+          default:
+            toast.error('토큰 교환에 실패했습니다.');
+        }
+      } else {
+        toast.error('토큰 교환에 실패했습니다.');
       }
     },
   });
@@ -107,43 +128,65 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
         });
       },
       onError: (error: unknown) => {
-        const statusCode =
-          error instanceof AxiosError
-            ? (error.response?.data as { code?: number })?.code
-            : undefined;
+        if (error instanceof AxiosError && error.response?.data) {
+          const errorData = error.response.data;
 
-        switch (statusCode) {
-          case 400:
-            toast.error('입력 정보를 확인해주세요.');
-            break;
-          case 401:
-            toast.error('비밀번호가 일치하지 않습니다.');
-            break;
-          case 404:
-            toast.error('존재하지 않는 계정입니다.');
-            break;
-          default:
-            toast.error('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+          if (errorData.error && errorData.error_description) {
+            toast.error(errorData.error_description);
+            return;
+          }
+
+          // 기존 에러 코드 처리 (fallback)
+          const statusCode = (errorData as { code?: number })?.code;
+
+          switch (statusCode) {
+            case 400:
+              toast.error('입력 정보를 확인해주세요.');
+              break;
+            case 401:
+              toast.error('비밀번호가 일치하지 않습니다.');
+              break;
+            case 404:
+              toast.error('존재하지 않는 계정입니다.');
+              break;
+            default:
+              toast.error('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+          }
+        } else {
+          toast.error('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
         }
       },
     });
 
-  const handleSubmit = (data: SignInFormType) => {
+  const handleSubmit = async (data: SignInFormType) => {
+    let codeChallenge: string;
+
     if (isExternalOAuth) {
-      // 외부 OAuth: 외부 코드만 발급하고 즉시 리다이렉트
+      // 외부 OAuth: challenge만 생성
+      const tempVerifier = generateCodeVerifier();
+      codeChallenge = await generateCodeChallenge(tempVerifier);
+
       requestExternalOAuthCode({
         email: data.email,
         password: data.password,
         clientId: clientId!,
         redirectUrl: redirectUri!,
+        codeChallenge: codeChallenge,
+        codeChallengeMethod: 'S256',
       });
     } else {
-      // 내부 로그인: 내부 코드 발급 → 토큰 교환
+      // 내부 로그인: PKCE 완전 구현
+      const codeVerifier = generateCodeVerifier();
+      codeChallenge = await generateCodeChallenge(codeVerifier);
+      sessionStorage.setItem('oauth_code_verifier', codeVerifier);
+
       requestInternalOAuthCode({
         email: data.email,
         password: data.password,
         clientId: internalClientId,
         redirectUrl: internalRedirectUri,
+        codeChallenge: codeChallenge,
+        codeChallengeMethod: 'S256',
       });
     }
   };

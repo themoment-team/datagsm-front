@@ -14,16 +14,30 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { code } = body;
+    const { code, code_verifier: codeVerifier } = body;
 
-    if (!code) {
-      return NextResponse.json({ message: 'code is required' }, { status: 400 });
+    if (!code || !codeVerifier) {
+      return NextResponse.json(
+        {
+          error: 'invalid_request',
+          error_description: 'code and code_verifier are required',
+        },
+        { status: 400 },
+      );
     }
 
+    const clientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID;
     const clientSecret = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_SECRET;
+    const redirectUri = process.env.NEXT_PUBLIC_DATAGSM_REDIRECT_URI;
 
-    if (!clientSecret) {
-      return NextResponse.json({ message: 'Server configuration error' }, { status: 500 });
+    if (!clientSecret || !clientId || !redirectUri) {
+      return NextResponse.json(
+        {
+          error: 'server_error',
+          error_description: 'Server configuration error',
+        },
+        { status: 500 },
+      );
     }
 
     // OAuth 서버로 토큰 교환 요청
@@ -34,8 +48,12 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        grantType: 'authorization_code',
         code,
+        clientId,
         clientSecret,
+        redirectUri,
+        codeVerifier,
       }),
     });
 
@@ -44,10 +62,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(errorData, { status: response.status });
     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    const responseData = await response.json();
+    const tokenData = responseData.data;
+
+    return NextResponse.json({
+      status: '200 OK',
+      code: 200,
+      message: 'OK',
+      data: {
+        accessToken: tokenData.access_token,
+        refreshToken: tokenData.refresh_token,
+        tokenType: tokenData.token_type,
+        expiresIn: tokenData.expires_in,
+      },
+    });
   } catch (error) {
     console.error('Token exchange error:', error);
-    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'server_error',
+        error_description: 'Internal server error',
+      },
+      { status: 500 },
+    );
   }
 }
