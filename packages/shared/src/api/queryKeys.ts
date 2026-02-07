@@ -73,7 +73,7 @@ export const accountQueryKeys = {
 } as const;
 
 export const oauthQueryKeys = {
-  postOAuthTokens: () => ['oauth', 'tokens'] as const,
+  postOAuthTokenRefresh: () => ['oauth', 'token', 'refresh'] as const,
   postOAuthToken: () => ['oauth', 'token'] as const,
   postOAuthCode: () => ['oauth', 'code'] as const,
 } as const;

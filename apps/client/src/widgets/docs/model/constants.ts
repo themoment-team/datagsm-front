@@ -84,7 +84,7 @@ export const docsSections: DocsSection[] = [
           },
           {
             label: '토큰 갱신',
-            href: '/docs/oauth/http/refresh',
+            href: '/docs/oauth/http/tokens',
           },
           {
             label: '사용자 정보 조회',

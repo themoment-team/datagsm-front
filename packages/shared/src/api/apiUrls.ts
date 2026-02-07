@@ -127,5 +127,5 @@ export const accountUrl = {
 export const oauthUrl = {
   postOAuthCode: () => '/v1/oauth/code',
   postOAuthToken: () => '/oauth/token', // Next.js Route Handler (client_secret 숨김)
-  postOAuthTokens: () => '/v1/oauth/tokens', // 토큰 재발급 (기존 putOAuthRefresh 대체)
+  postOAuthTokenRefresh: () => '/v1/oauth/token', // 토큰 갱신 (통합 엔드포인트)
 } as const;

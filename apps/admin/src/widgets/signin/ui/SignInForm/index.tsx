@@ -6,7 +6,7 @@ import { COOKIE_KEYS } from '@repo/shared/constants';
 import { useExchangeToken } from '@repo/shared/hooks';
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
-import { setCookie } from '@repo/shared/utils';
+import { generateCodeChallenge, generateCodeVerifier, setCookie } from '@repo/shared/utils';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
@@ -78,13 +78,20 @@ const SignInForm = () => {
       },
     });
 
-  const handleSubmit = (data: SignInFormType) => {
+  const handleSubmit = async (data: SignInFormType) => {
+    // PKCE 생성
+    const codeVerifier = generateCodeVerifier();
+    const codeChallenge = await generateCodeChallenge(codeVerifier);
+    sessionStorage.setItem('oauth_code_verifier', codeVerifier);
+
     // 내부 OAuth 코드 발급
     requestInternalOAuthCode({
       email: data.email,
       password: data.password,
       clientId: internalClientId,
       redirectUrl: internalRedirectUri,
+      codeChallenge: codeChallenge,
+      codeChallengeMethod: 'S256',
     });
   };
 

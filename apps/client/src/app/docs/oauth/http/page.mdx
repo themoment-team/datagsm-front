@@ -78,9 +78,9 @@ Content-Type: application/json
 
 | 엔드포인트 | 메서드 | 설명 | 문서 |
 | --- | --- | --- | --- |
-| `/v1/oauth/code` | `POST` | 사용자 인증 후 Authorization Code 발급 | [상세 문서](/docs/oauth/http/code) |
-| `/v1/oauth/token` | `POST` | Authorization Code를 Access Token으로 교환 | [상세 문서](/docs/oauth/http/token) |
-| `/v1/oauth/tokens` | `POST` | Refresh Token으로 새 Access Token 발급 | [상세 문서](/docs/oauth/http/tokens) |
+| `/v1/oauth/code` | `POST` | 사용자 인증 후 Authorization Code 발급 (PKCE 권장) | [상세 문서](/docs/oauth/http/code) |
+| `/v1/oauth/token` | `POST` | Authorization Code를 Access Token으로 교환 (통합 엔드포인트) | [상세 문서](/docs/oauth/http/token) |
+| `/v1/oauth/token` | `POST` | Refresh Token으로 새 Access Token 발급 (통합 엔드포인트) | [상세 문서](/docs/oauth/http/tokens) |
 | `/userinfo` | `GET` | Access Token으로 사용자 정보 조회 | [상세 문서](/docs/oauth/http/userinfo) |
 
 ### 에러 처리

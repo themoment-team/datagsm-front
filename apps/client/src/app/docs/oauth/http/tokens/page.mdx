@@ -3,8 +3,11 @@
 ### 엔드포인트
 
 ```http
-POST /v1/oauth/tokens
+POST /v1/oauth/token
 ```
+
+**주의**: 이 엔드포인트는 토큰 교환(`/v1/oauth/token`)과 동일한 통합 엔드포인트입니다.
+`grant_type` 파라미터로 구분됩니다.
 
 ### 설명
 
@@ -19,7 +22,8 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
 
 | 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
 | --- | --- | --- | --- | --- |
-| `refreshToken` | `String` | 필수 | 이전에 발급받은 Refresh Token | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `grant_type` | `String` | 필수 | 요청 타입 (`refresh_token` 고정) | `refresh_token` |
+| `refresh_token` | `String` | 필수 | 이전에 발급받은 Refresh Token | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
 
 ### 응답
 
@@ -27,17 +31,19 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresIn": 3600
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
 | 필드 | 타입 | 설명 |
 | --- | --- | --- |
-| `accessToken` | `String` | 새로 발급된 JWT 형식의 Access Token (1시간 유효) |
-| `refreshToken` | `String` | 새로 발급된 Refresh Token (30일 유효) |
-| `expiresIn` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `access_token` | `String` | 새로 발급된 JWT 형식의 Access Token (1시간 유효) |
+| `token_type` | `String` | 토큰 타입 (`Bearer` 고정) |
+| `expires_in` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `refresh_token` | `String` | 새로 발급된 Refresh Token (30일 유효) |
 
 ### 오류 응답
 
@@ -52,10 +58,11 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
 #### cURL
 
 ```bash
-curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/tokens" \
+curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   -H "Content-Type: application/json" \
   -d '{
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "grant_type": "refresh_token",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }'
 ```
 
