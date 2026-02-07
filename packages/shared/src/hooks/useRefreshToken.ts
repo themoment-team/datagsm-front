@@ -11,8 +11,8 @@ export const useRefreshToken = (
   >,
 ) =>
   useMutation({
-    mutationKey: oauthQueryKeys.putOAuthRefresh(),
+    mutationKey: oauthQueryKeys.postOAuthTokens(),
     mutationFn: (data: RefreshTokenRequest) =>
-      oauthPost<RefreshTokenResponse>(oauthUrl.putOAuthRefresh(), data),
+      oauthPost<RefreshTokenResponse>(oauthUrl.postOAuthTokens(), data),
     ...options,
   });

@@ -10,11 +10,11 @@ export const useUploadStudentExcel = (
   >,
 ) =>
   useMutation({
-    mutationKey: studentQueryKeys.postStudentExcel(),
+    mutationKey: studentQueryKeys.postStudentImport(),
     mutationFn: (file: File) => {
       const formData = new FormData();
       formData.append('file', file);
-      return post<BaseApiResponse>(studentUrl.postStudentExcel(), formData);
+      return post<BaseApiResponse>(studentUrl.postStudentImport(), formData);
     },
     ...options,
   });

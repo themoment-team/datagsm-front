@@ -12,10 +12,10 @@ export const studentQueryKeys = {
     isLeaveSchool?: boolean,
   ) => ['students', 'list', { page, size, grade, classNum, sex, role, isLeaveSchool }] as const,
   postStudent: () => ['students', 'create'] as const,
-  postGraduateStudent: () => ['students', 'graduate'] as const,
-  postGraduateThirdGrade: () => ['students', 'graduate', 'third-grade'] as const,
-  postStudentExcel: () => ['students', 'excel', 'upload'] as const,
-  getStudentExcel: () => ['students', 'excel', 'download'] as const,
+  patchStudentStatus: () => ['students', 'status', 'update'] as const,
+  postStudentBatchOperation: () => ['students', 'batch-operations'] as const,
+  postStudentImport: () => ['students', 'imports'] as const,
+  getStudentExport: () => ['students', 'exports', 'excel'] as const,
 } as const;
 
 export const authQueryKeys = {
@@ -44,8 +44,8 @@ export const clubQueryKeys = {
   getClubs: (page?: number, size?: number, type?: string) =>
     ['clubs', 'list', { page, size, type }] as const,
   postClub: () => ['clubs', 'create'] as const,
-  postClubExcel: () => ['clubs', 'excel', 'upload'] as const,
-  getClubExcel: () => ['clubs', 'excel', 'download'] as const,
+  postClubImport: () => ['clubs', 'imports'] as const,
+  getClubExport: () => ['clubs', 'exports', 'excel'] as const,
 } as const;
 
 export const clientQueryKeys = {
@@ -63,14 +63,17 @@ export const healthQueryKeys = {
 } as const;
 
 export const accountQueryKeys = {
-  postSignup: () => ['accounts', 'signup'] as const,
-  postEmailSend: () => ['accounts', 'email', 'send'] as const,
-  postEmailCheck: () => ['accounts', 'email', 'check'] as const,
+  postEmailVerification: () => ['accounts', 'email-verifications'] as const,
+  postEmailVerificationVerify: () => ['accounts', 'email-verifications', 'verify'] as const,
+  postAccount: () => ['accounts', 'create'] as const,
   getMy: () => ['accounts', 'my'] as const,
+  postPasswordReset: () => ['accounts', 'password-resets'] as const,
+  postPasswordResetVerification: () => ['accounts', 'password-resets', 'verification'] as const,
+  putPassword: () => ['accounts', 'password', 'update'] as const,
 } as const;
 
 export const oauthQueryKeys = {
-  putOAuthRefresh: () => ['oauth', 'refresh'] as const,
+  postOAuthTokens: () => ['oauth', 'tokens'] as const,
   postOAuthToken: () => ['oauth', 'token'] as const,
   postOAuthCode: () => ['oauth', 'code'] as const,
 } as const;

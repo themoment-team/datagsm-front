@@ -69,7 +69,7 @@ axiosInstance.interceptors.response.use(
 
         if (!refreshToken) throw new Error('No refresh token');
 
-        const response = await oauthAxiosInstance.put(oauthUrl.putOAuthRefresh(), {
+        const response = await oauthAxiosInstance.post(oauthUrl.postOAuthTokens(), {
           refreshToken,
         });
 
