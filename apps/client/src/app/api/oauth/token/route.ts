@@ -48,12 +48,12 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        grantType: 'authorization_code',
+        grant_type: 'authorization_code',
         code,
-        clientId,
-        clientSecret,
-        redirectUri,
-        codeVerifier,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        code_verifier: codeVerifier,
       }),
     });
 

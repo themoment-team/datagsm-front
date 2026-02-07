@@ -159,25 +159,18 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
     });
 
   const handleSubmit = async (data: SignInFormType) => {
-    let codeChallenge: string;
-
     if (isExternalOAuth) {
-      // 외부 OAuth: challenge만 생성
-      const tempVerifier = generateCodeVerifier();
-      codeChallenge = await generateCodeChallenge(tempVerifier);
-
+      // 외부 OAuth: PKCE 없이 (외부 서비스가 client_secret으로 토큰 교환)
       requestExternalOAuthCode({
         email: data.email,
         password: data.password,
         clientId: clientId!,
         redirectUrl: redirectUri!,
-        codeChallenge: codeChallenge,
-        codeChallengeMethod: 'S256',
       });
     } else {
       // 내부 로그인: PKCE 완전 구현
       const codeVerifier = generateCodeVerifier();
-      codeChallenge = await generateCodeChallenge(codeVerifier);
+      const codeChallenge = await generateCodeChallenge(codeVerifier);
       sessionStorage.setItem('oauth_code_verifier', codeVerifier);
 
       requestInternalOAuthCode({
