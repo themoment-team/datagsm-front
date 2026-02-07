@@ -226,69 +226,128 @@ console.log('Authorization Code:', code);
 console.log('Code Verifier saved in sessionStorage');`} />
 
   <CodeTab label="Python" language="python" code={`import requests
+import hashlib
+import secrets
+import base64
 
-def get_authorization_code(email, password, client_id, redirect_url):
+# PKCE Code Verifier 생성
+def generate_code_verifier():
+    code_verifier = base64.urlsafe_b64encode(secrets.token_bytes(32)).decode('utf-8')
+    return code_verifier.rstrip('=')
+
+# PKCE Code Challenge 생성
+def generate_code_challenge(verifier):
+    digest = hashlib.sha256(verifier.encode('utf-8')).digest()
+    challenge = base64.urlsafe_b64encode(digest).decode('utf-8')
+    return challenge.rstrip('=')
+
+def get_authorization_code(email, password, client_id, redirect_uri):
     """
-    DataGSM OAuth 인증 코드를 발급받습니다.
+    DataGSM OAuth 인증 코드를 발급받습니다 (PKCE 포함).
 
     Args:
         email: 사용자 이메일
         password: 사용자 비밀번호
         client_id: 클라이언트 ID
-        redirect_url: 리다이렉트 URL
+        redirect_uri: 리다이렉트 URI
 
     Returns:
-        Authorization Code (string)
+        tuple: (Authorization Code, Code Verifier)
     """
     try:
+        # PKCE 생성
+        code_verifier = generate_code_verifier()
+        code_challenge = generate_code_challenge(code_verifier)
+
         response = requests.post(
             'https://oauth.data.hellogsm.kr/v1/oauth/code',
             headers={'Content-Type': 'application/json'},
             json={
                 'email': email,
                 'password': password,
-                'clientId': client_id,
-                'redirectUrl': redirect_url,
+                'client_id': client_id,
+                'redirect_uri': redirect_uri,
+                'code_challenge': code_challenge,
+                'code_challenge_method': 'S256',
             }
         )
         response.raise_for_status()
         data = response.json()
-        return data['code']
+        return data['code'], code_verifier
     except requests.exceptions.RequestException as e:
         print(f'Error: {e}')
         raise
 
 # 사용 예시
-code = get_authorization_code(
+code, verifier = get_authorization_code(
     'student@gsm.hs.kr',
     'mypassword123',
     'your-client-id',
     'https://your-app.com/callback'
 )
-print(f'Authorization Code: {code}')`} />
+print(f'Authorization Code: {code}')
+print(f'Code Verifier: {verifier} (저장 필요)')`} />
 
   <CodeTab label="Java" language="java" code={`import java.net.http.*;
 import java.net.URI;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Map;
 
 public class OAuthCodeService {
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static String getAuthorizationCode(
+    // PKCE Code Verifier 생성
+    public static String generateCodeVerifier() {
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[32];
+        random.nextBytes(bytes);
+        return Base64.getUrlEncoder()
+            .withoutPadding()
+            .encodeToString(bytes);
+    }
+
+    // PKCE Code Challenge 생성
+    public static String generateCodeChallenge(String verifier) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(verifier.getBytes("UTF-8"));
+        return Base64.getUrlEncoder()
+            .withoutPadding()
+            .encodeToString(hash);
+    }
+
+    public static class CodeResult {
+        public final String code;
+        public final String verifier;
+
+        public CodeResult(String code, String verifier) {
+            this.code = code;
+            this.verifier = verifier;
+        }
+    }
+
+    public static CodeResult getAuthorizationCode(
         String email,
         String password,
         String clientId,
-        String redirectUrl
+        String redirectUri
     ) throws Exception {
+        // PKCE 생성
+        String codeVerifier = generateCodeVerifier();
+        String codeChallenge = generateCodeChallenge(codeVerifier);
+
         // 요청 본문 생성
         Map<String, String> requestBody = Map.of(
             "email", email,
             "password", password,
-            "clientId", clientId,
-            "redirectUrl", redirectUrl
+            "client_id", clientId,
+            "redirect_uri", redirectUri,
+            "code_challenge", codeChallenge,
+            "code_challenge_method", "S256"
         );
 
         String requestBodyJson = mapper.writeValueAsString(requestBody);
@@ -312,17 +371,20 @@ public class OAuthCodeService {
         }
 
         JsonNode jsonNode = mapper.readTree(response.body());
-        return jsonNode.get("code").asText();
+        String code = jsonNode.get("code").asText();
+
+        return new CodeResult(code, codeVerifier);
     }
 
     public static void main(String[] args) throws Exception {
-        String code = getAuthorizationCode(
+        CodeResult result = getAuthorizationCode(
             "student@gsm.hs.kr",
             "mypassword123",
             "your-client-id",
             "https://your-app.com/callback"
         );
-        System.out.println("Authorization Code: " + code);
+        System.out.println("Authorization Code: " + result.code);
+        System.out.println("Code Verifier: " + result.verifier + " (저장 필요)");
     }
 }`} />
 
@@ -330,18 +392,47 @@ public class OAuthCodeService {
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.URI
+import java.security.MessageDigest
+import java.security.SecureRandom
+import java.util.Base64
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+
+// PKCE 유틸리티
+object PkceUtil {
+    fun generateCodeVerifier(): String {
+        val bytes = ByteArray(32)
+        SecureRandom().nextBytes(bytes)
+        return Base64.getUrlEncoder()
+            .withoutPadding()
+            .encodeToString(bytes)
+    }
+
+    fun generateCodeChallenge(verifier: String): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hash = digest.digest(verifier.toByteArray())
+        return Base64.getUrlEncoder()
+            .withoutPadding()
+            .encodeToString(hash)
+    }
+}
 
 data class CodeRequest(
     val email: String,
     val password: String,
-    val clientId: String,
-    val redirectUrl: String
+    val client_id: String,
+    val redirect_uri: String,
+    val code_challenge: String,
+    val code_challenge_method: String
 )
 
 data class CodeResponse(
     val code: String
+)
+
+data class CodeResult(
+    val code: String,
+    val verifier: String
 )
 
 class OAuthCodeService {
@@ -352,9 +443,20 @@ class OAuthCodeService {
         email: String,
         password: String,
         clientId: String,
-        redirectUrl: String
-    ): String {
-        val requestBody = CodeRequest(email, password, clientId, redirectUrl)
+        redirectUri: String
+    ): CodeResult {
+        // PKCE 생성
+        val codeVerifier = PkceUtil.generateCodeVerifier()
+        val codeChallenge = PkceUtil.generateCodeChallenge(codeVerifier)
+
+        val requestBody = CodeRequest(
+            email = email,
+            password = password,
+            client_id = clientId,
+            redirect_uri = redirectUri,
+            code_challenge = codeChallenge,
+            code_challenge_method = "S256"
+        )
         val requestBodyJson = mapper.writeValueAsString(requestBody)
 
         val request = HttpRequest.newBuilder()
@@ -370,20 +472,21 @@ class OAuthCodeService {
         }
 
         val codeResponse: CodeResponse = mapper.readValue(response.body())
-        return codeResponse.code
+        return CodeResult(codeResponse.code, codeVerifier)
     }
 }
 
 // 사용 예시
 fun main() {
     val service = OAuthCodeService()
-    val code = service.getAuthorizationCode(
+    val result = service.getAuthorizationCode(
         email = "student@gsm.hs.kr",
         password = "mypassword123",
         clientId = "your-client-id",
-        redirectUrl = "https://your-app.com/callback"
+        redirectUri = "https://your-app.com/callback"
     )
-    println("Authorization Code: $code")
+    println("Authorization Code: \${result.code}")
+    println("Code Verifier: \${result.verifier} (저장 필요)")
 }`} />
 </CodeTabs>
 

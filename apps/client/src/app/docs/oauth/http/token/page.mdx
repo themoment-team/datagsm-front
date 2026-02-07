@@ -161,24 +161,31 @@ console.log('Expires In:', tokens.expiresIn, 'seconds');`} />
   <CodeTab label="Python" language="python" code={`import requests
 import os
 
-def exchange_token(code, client_secret):
+def exchange_token(code, code_verifier, client_id, client_secret, redirect_uri):
     """
-    Authorization Code를 Access Token으로 교환합니다.
+    Authorization Code를 Access Token으로 교환합니다 (PKCE 포함).
 
     Args:
         code: Authorization Code
+        code_verifier: PKCE Code Verifier
+        client_id: 클라이언트 ID
         client_secret: 클라이언트 시크릿
+        redirect_uri: 리다이렉트 URI
 
     Returns:
-        dict: accessToken, refreshToken, expiresIn 포함
+        dict: access_token, refresh_token, expires_in 포함
     """
     try:
         response = requests.post(
             'https://oauth.data.hellogsm.kr/v1/oauth/token',
             headers={'Content-Type': 'application/json'},
             json={
+                'grant_type': 'authorization_code',
                 'code': code,
-                'clientSecret': client_secret,
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'redirect_uri': redirect_uri,
+                'code_verifier': code_verifier,
             }
         )
         response.raise_for_status()
@@ -187,14 +194,17 @@ def exchange_token(code, client_secret):
         print(f'Error: {e}')
         raise
 
-# 사용 예시
+# 사용 예시 (code/page.mdx에서 받은 verifier 사용)
 tokens = exchange_token(
-    'abc123def456',
-    os.environ.get('DATAGSM_CLIENT_SECRET')
+    code='abc123def456',
+    code_verifier='dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk',
+    client_id='your-client-id',
+    client_secret=os.environ.get('DATAGSM_CLIENT_SECRET'),
+    redirect_uri='https://your-app.com/callback'
 )
-print(f'Access Token: {tokens["accessToken"]}')
-print(f'Refresh Token: {tokens["refreshToken"]}')
-print(f'Expires In: {tokens["expiresIn"]} seconds')`} />
+print(f'Access Token: {tokens["access_token"]}')
+print(f'Refresh Token: {tokens["refresh_token"]}')
+print(f'Expires In: {tokens["expires_in"]} seconds')`} />
 
   <CodeTab label="Java" language="java" code={`import java.net.http.*;
 import java.net.URI;
@@ -206,11 +216,21 @@ public class OAuthTokenService {
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static TokenResponse exchangeToken(String code, String clientSecret) throws Exception {
+    public static TokenResponse exchangeToken(
+        String code,
+        String codeVerifier,
+        String clientId,
+        String clientSecret,
+        String redirectUri
+    ) throws Exception {
         // 요청 본문 생성
         Map<String, String> requestBody = Map.of(
+            "grant_type", "authorization_code",
             "code", code,
-            "clientSecret", clientSecret
+            "client_id", clientId,
+            "client_secret", clientSecret,
+            "redirect_uri", redirectUri,
+            "code_verifier", codeVerifier
         );
 
         String requestBodyJson = mapper.writeValueAsString(requestBody);
@@ -235,9 +255,9 @@ public class OAuthTokenService {
 
         JsonNode jsonNode = mapper.readTree(response.body());
         return new TokenResponse(
-            jsonNode.get("accessToken").asText(),
-            jsonNode.get("refreshToken").asText(),
-            jsonNode.get("expiresIn").asInt()
+            jsonNode.get("access_token").asText(),
+            jsonNode.get("refresh_token").asText(),
+            jsonNode.get("expires_in").asInt()
         );
     }
 
@@ -254,8 +274,17 @@ public class OAuthTokenService {
     }
 
     public static void main(String[] args) throws Exception {
+        String clientId = "your-client-id";
         String clientSecret = System.getenv("DATAGSM_CLIENT_SECRET");
-        TokenResponse tokens = exchangeToken("abc123def456", clientSecret);
+        String codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"; // code/page.mdx에서 저장한 값
+
+        TokenResponse tokens = exchangeToken(
+            "abc123def456",
+            codeVerifier,
+            clientId,
+            clientSecret,
+            "https://your-app.com/callback"
+        );
         System.out.println("Access Token: " + tokens.accessToken);
         System.out.println("Refresh Token: " + tokens.refreshToken);
         System.out.println("Expires In: " + tokens.expiresIn + " seconds");
@@ -266,17 +295,25 @@ public class OAuthTokenService {
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.URI
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
 data class TokenRequest(
+    val grant_type: String,
     val code: String,
-    val clientSecret: String
+    val client_id: String,
+    val client_secret: String,
+    val redirect_uri: String,
+    val code_verifier: String
 )
 
 data class TokenResponse(
+    @JsonProperty("access_token")
     val accessToken: String,
+    @JsonProperty("refresh_token")
     val refreshToken: String,
+    @JsonProperty("expires_in")
     val expiresIn: Int
 )
 
@@ -284,8 +321,21 @@ class OAuthTokenService {
     private val client = HttpClient.newHttpClient()
     private val mapper = jacksonObjectMapper()
 
-    fun exchangeToken(code: String, clientSecret: String): TokenResponse {
-        val requestBody = TokenRequest(code, clientSecret)
+    fun exchangeToken(
+        code: String,
+        codeVerifier: String,
+        clientId: String,
+        clientSecret: String,
+        redirectUri: String
+    ): TokenResponse {
+        val requestBody = TokenRequest(
+            grant_type = "authorization_code",
+            code = code,
+            client_id = clientId,
+            client_secret = clientSecret,
+            redirect_uri = redirectUri,
+            code_verifier = codeVerifier
+        )
         val requestBodyJson = mapper.writeValueAsString(requestBody)
 
         val request = HttpRequest.newBuilder()
@@ -307,8 +357,17 @@ class OAuthTokenService {
 // 사용 예시
 fun main() {
     val service = OAuthTokenService()
+    val clientId = "your-client-id"
     val clientSecret = System.getenv("DATAGSM_CLIENT_SECRET")
-    val tokens = service.exchangeToken("abc123def456", clientSecret)
+    val codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk" // code/page.mdx에서 저장한 값
+
+    val tokens = service.exchangeToken(
+        code = "abc123def456",
+        codeVerifier = codeVerifier,
+        clientId = clientId,
+        clientSecret = clientSecret,
+        redirectUri = "https://your-app.com/callback"
+    )
 
     println("Access Token: \${tokens.accessToken}")
     println("Refresh Token: \${tokens.refreshToken}")

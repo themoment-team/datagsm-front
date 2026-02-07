@@ -114,6 +114,28 @@ Client Secret은 **절대 프론트엔드 코드에 포함하거나 공개 저�
 
 CSRF 공격 방지를 위해 `state` 파라미터를 사용하세요. 랜덤 문자열을 생성하여 요청 시 전송하고, 콜백에서 검증합니다.
 
+```javascript
+// State 생성 및 저장
+const state = crypto.randomUUID();
+sessionStorage.setItem('oauth_state', state);
+
+// 인증 요청 시 포함
+const authUrl = `https://oauth.data.hellogsm.kr/v1/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}`;
+window.location.href = authUrl;
+
+// 콜백에서 검증
+const urlParams = new URLSearchParams(window.location.search);
+const returnedState = urlParams.get('state');
+const savedState = sessionStorage.getItem('oauth_state');
+
+if (returnedState !== savedState) {
+  throw new Error('State mismatch - possible CSRF attack');
+}
+
+// 검증 후 state 삭제
+sessionStorage.removeItem('oauth_state');
+```
+
 #### 토큰 저장
 
 Access Token은 메모리나 sessionStorage에, Refresh Token은 서버 측 세션이나 HttpOnly 쿠키에 저장하세요. localStorage는 XSS 공격에 취약하므로 사용을 지양합니다.
