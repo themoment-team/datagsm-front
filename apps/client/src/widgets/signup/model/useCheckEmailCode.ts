@@ -15,8 +15,8 @@ export const useCheckEmailCode = (
   >,
 ) =>
   useMutation({
-    mutationKey: accountQueryKeys.postEmailCheck(),
+    mutationKey: accountQueryKeys.postEmailVerificationVerify(),
     mutationFn: (data: CheckEmailCodeParams) =>
-      post<BaseApiResponse>(accountUrl.postEmailCheck(), data),
+      post<BaseApiResponse>(accountUrl.postEmailVerificationVerify(), data),
     ...options,
   });

@@ -14,8 +14,8 @@ export const useSendEmailCode = (
   >,
 ) =>
   useMutation({
-    mutationKey: accountQueryKeys.postEmailSend(),
+    mutationKey: accountQueryKeys.postEmailVerification(),
     mutationFn: (data: SendEmailCodeParams) =>
-      post<BaseApiResponse>(accountUrl.postEmailSend(), data),
+      post<BaseApiResponse>(accountUrl.postEmailVerification(), data),
     ...options,
   });

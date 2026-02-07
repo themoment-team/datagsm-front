@@ -3,7 +3,7 @@
 ### 엔드포인트
 
 ```http
-PUT /v1/oauth/refresh
+POST /v1/oauth/tokens
 ```
 
 ### 설명
@@ -52,7 +52,7 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
 #### cURL
 
 ```bash
-curl -X PUT "https://oauth.data.hellogsm.kr/v1/oauth/refresh" \
+curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/tokens" \
   -H "Content-Type: application/json" \
   -d '{
     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -96,8 +96,8 @@ curl -X PUT "https://oauth.data.hellogsm.kr/v1/oauth/refresh" \
 <CodeTabs>
   <CodeTab label="JavaScript" language="javascript" code={`async function refreshAccessToken(refreshToken) {
   try {
-    const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/refresh', {
-      method: 'PUT',
+    const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/tokens', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -146,8 +146,8 @@ def refresh_access_token(refresh_token):
         dict: accessToken, refreshToken, expiresIn 포함
     """
     try:
-        response = requests.put(
-            'https://oauth.data.hellogsm.kr/v1/oauth/refresh',
+        response = requests.post(
+            'https://oauth.data.hellogsm.kr/v1/oauth/tokens',
             headers={'Content-Type': 'application/json'},
             json={'refreshToken': refresh_token}
         )
@@ -182,9 +182,9 @@ public class OAuthRefreshService {
 
         // HTTP 요청 생성
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/refresh"))
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/tokens"))
             .header("Content-Type", "application/json")
-            .PUT(HttpRequest.BodyPublishers.ofString(requestBodyJson))
+            .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
             .build();
 
         // 요청 전송
@@ -254,9 +254,9 @@ class OAuthRefreshService {
         val requestBodyJson = mapper.writeValueAsString(requestBody)
 
         val request = HttpRequest.newBuilder()
-            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/refresh"))
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/tokens"))
             .header("Content-Type", "application/json")
-            .PUT(HttpRequest.BodyPublishers.ofString(requestBodyJson))
+            .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
             .build()
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())

@@ -12,7 +12,7 @@ export const useSignUp = (
   >,
 ) =>
   useMutation({
-    mutationKey: accountQueryKeys.postSignup(),
-    mutationFn: (data: SignUpRequestType) => post<BaseApiResponse>(accountUrl.postSignup(), data),
+    mutationKey: accountQueryKeys.postAccount(),
+    mutationFn: (data: SignUpRequestType) => post<BaseApiResponse>(accountUrl.postAccount(), data),
     ...options,
   });
