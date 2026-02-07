@@ -33,8 +33,8 @@ export interface OAuthCodeRequest {
   password: string;
   clientId: string;
   redirectUrl: string;
-  codeChallenge: string;
-  codeChallengeMethod: 'S256';
+  codeChallenge?: string;
+  codeChallengeMethod?: 'S256';
 }
 
 interface OAuthCodeResponseData {

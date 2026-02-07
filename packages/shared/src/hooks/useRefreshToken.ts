@@ -18,8 +18,8 @@ export const useRefreshToken = (
     mutationKey: oauthQueryKeys.postOAuthTokenRefresh(),
     mutationFn: (data: RefreshTokenInput) =>
       oauthPost<RefreshTokenResponse>(oauthUrl.postOAuthTokenRefresh(), {
-        grantType: 'refresh_token',
-        refreshToken: data.refreshToken,
+        grant_type: 'refresh_token',
+        refresh_token: data.refreshToken,
       }),
     ...options,
   });
