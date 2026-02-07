@@ -32,6 +32,16 @@ export const docsSections: DocsSection[] = [
           {
             label: 'NEIS 데이터 OpenAPI',
             href: '/docs/api/http/neis',
+            children: [
+              {
+                label: '급식 정보 API',
+                href: '/docs/api/http/neis/meals',
+              },
+              {
+                label: '학사일정 정보 API',
+                href: '/docs/api/http/neis/schedules',
+              },
+            ],
           },
         ],
       },
