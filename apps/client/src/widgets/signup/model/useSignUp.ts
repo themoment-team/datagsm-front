@@ -1,4 +1,4 @@
-import { accountQueryKeys, accountUrl, post } from '@repo/shared/api';
+import { accountQueryKeys, accountUrl, oauthPost } from '@repo/shared/api';
 import { BaseApiResponse } from '@repo/shared/types';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -13,6 +13,6 @@ export const useSignUp = (
 ) =>
   useMutation({
     mutationKey: accountQueryKeys.postAccount(),
-    mutationFn: (data: SignUpRequestType) => post<BaseApiResponse>(accountUrl.postAccount(), data),
+    mutationFn: (data: SignUpRequestType) => oauthPost<BaseApiResponse>(accountUrl.postAccount(), data),
     ...options,
   });
