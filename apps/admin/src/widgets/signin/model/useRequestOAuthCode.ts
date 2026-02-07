@@ -4,7 +4,10 @@ import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 export const useRequestOAuthCode = (
-  options?: UseMutationOptions<OAuthCodeResponse, AxiosError, OAuthCodeRequest>,
+  options?: Omit<
+    UseMutationOptions<OAuthCodeResponse, AxiosError, OAuthCodeRequest>,
+    'mutationKey' | 'mutationFn'
+  >,
 ) =>
   useMutation({
     mutationKey: oauthQueryKeys.postOAuthCode(),
