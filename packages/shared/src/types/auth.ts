@@ -33,6 +33,8 @@ export interface OAuthCodeRequest {
   password: string;
   clientId: string;
   redirectUrl: string;
+  codeChallenge: string;
+  codeChallengeMethod: 'S256';
 }
 
 interface OAuthCodeResponseData {
@@ -41,20 +43,23 @@ interface OAuthCodeResponseData {
 
 export type OAuthCodeResponse = ApiResponse<OAuthCodeResponseData>;
 
-// client_secret은 서버에서만 사용하므로 요청 타입에서 제거
 export interface OAuthTokenRequest {
   code: string;
+  code_verifier: string;
 }
 
 interface OAuthTokenResponseData {
   accessToken: string;
+  tokenType: string;
+  expiresIn: number;
   refreshToken: string;
 }
 
 export type OAuthTokenResponse = ApiResponse<OAuthTokenResponseData>;
 
 export interface RefreshTokenRequest {
-  refreshToken: string;
+  grant_type: 'refresh_token';
+  refresh_token: string;
 }
 
 export type RefreshTokenResponse = ApiResponse<OAuthTokenResponseData>;
