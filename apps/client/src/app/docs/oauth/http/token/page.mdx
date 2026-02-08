@@ -8,11 +8,15 @@ POST /v1/oauth/token
 
 ### 설명
 
-Authorization Code를 Access Token과 Refresh Token으로 교환합니다.
-이 엔드포인트는 **반드시 서버에서만** 호출해야 하며, Client Secret이 필요합니다.
+Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 이 엔드포인트는 **반드시 서버에서만** 호출해야 하며, Client Secret이 필요합니다.
 
-Access Token은 사용자 리소스에 접근하기 위해 사용되며, Refresh Token은 Access Token이 만료되었을 때
-새로운 Access Token을 발급받기 위해 사용됩니다.
+발급되는 토큰은 다음과 같은 용도로 사용됩니다:
+- **Access Token**: 사용자 리소스 접근 (1시간 유효)
+- **Refresh Token**: Access Token 갱신 (30일 유효)
+
+이 엔드포인트는 `grant_type` 파라미터로 토큰 교환과 토큰 갱신을 모두 처리합니다. Authorization Code 교환 시에는 `grant_type`을 `authorization_code`로 설정하세요.
+
+보안 강화를 위해 `code_verifier` 파라미터를 함께 전달하는 것을 권장합니다.
 
 ### 요청 파라미터
 
@@ -20,8 +24,12 @@ Access Token은 사용자 리소스에 접근하기 위해 사용되며, Refresh
 
 | 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
 | --- | --- | --- | --- | --- |
+| `grant_type` | `String` | 필수 | 요청 타입 (`authorization_code` 고정) | `authorization_code` |
 | `code` | `String` | 필수 | `/v1/oauth/code`에서 발급받은 Authorization Code | `abc123def456` |
-| `clientSecret` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 시크릿 (서버에서만 사용) | `your-client-secret` |
+| `client_id` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 ID | `your-client-id` |
+| `client_secret` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 시크릿 (서버에서만 사용) | `your-client-secret` |
+| `redirect_uri` | `String` | 필수 | Authorization Code 발급 시 사용한 리다이렉트 URI | `https://your-app.com/callback` |
+| `code_verifier` | `String` | 권장 | PKCE Code Verifier (Authorization Code 발급 시 생성한 원본 값) | `dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk` |
 
 ### 응답
 
@@ -29,17 +37,19 @@ Access Token은 사용자 리소스에 접근하기 위해 사용되며, Refresh
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresIn": 3600
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
 | 필드 | 타입 | 설명 |
 | --- | --- | --- |
-| `accessToken` | `String` | JWT 형식의 Access Token (1시간 유효) |
-| `refreshToken` | `String` | Refresh Token (30일 유효) |
-| `expiresIn` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `access_token` | `String` | JWT 형식의 Access Token (1시간 유효) |
+| `token_type` | `String` | 토큰 타입 (`Bearer` 고정) |
+| `expires_in` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `refresh_token` | `String` | Refresh Token (30일 유효) |
 
 ### 오류 응답
 
@@ -57,8 +67,12 @@ Access Token은 사용자 리소스에 접근하기 위해 사용되며, Refresh
 curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   -H "Content-Type: application/json" \
   -d '{
+    "grant_type": "authorization_code",
     "code": "abc123def456",
-    "clientSecret": "your-client-secret"
+    "client_id": "your-client-id",
+    "client_secret": "your-client-secret",
+    "redirect_uri": "https://your-app.com/callback",
+    "code_verifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
   }'
 ```
 
@@ -97,7 +111,7 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 다음은 여러 언어에서 토큰을 교환하는 예제입니다.
 
 <CodeTabs>
-  <CodeTab label="JavaScript" language="javascript" code={`async function exchangeToken(code, clientSecret) {
+  <CodeTab label="JavaScript" language="javascript" code={`async function exchangeToken(code, codeVerifier, clientId, clientSecret, redirectUri) {
   try {
     const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/token', {
       method: 'POST',
@@ -105,8 +119,12 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        grant_type: 'authorization_code',
         code,
-        clientSecret,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        code_verifier: codeVerifier,
       }),
     });
 
@@ -128,9 +146,13 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 }
 
 // 사용 예시
+const codeVerifier = sessionStorage.getItem('oauth_code_verifier');
 const tokens = await exchangeToken(
   'abc123def456',
-  process.env.DATAGSM_CLIENT_SECRET
+  codeVerifier,
+  'your-client-id',
+  process.env.DATAGSM_CLIENT_SECRET,
+  'https://your-app.com/callback'
 );
 console.log('Access Token:', tokens.accessToken);
 console.log('Refresh Token:', tokens.refreshToken);
@@ -139,24 +161,31 @@ console.log('Expires In:', tokens.expiresIn, 'seconds');`} />
   <CodeTab label="Python" language="python" code={`import requests
 import os
 
-def exchange_token(code, client_secret):
+def exchange_token(code, code_verifier, client_id, client_secret, redirect_uri):
     """
-    Authorization Code를 Access Token으로 교환합니다.
+    Authorization Code를 Access Token으로 교환합니다 (PKCE 포함).
 
     Args:
         code: Authorization Code
+        code_verifier: PKCE Code Verifier
+        client_id: 클라이언트 ID
         client_secret: 클라이언트 시크릿
+        redirect_uri: 리다이렉트 URI
 
     Returns:
-        dict: accessToken, refreshToken, expiresIn 포함
+        dict: access_token, refresh_token, expires_in 포함
     """
     try:
         response = requests.post(
             'https://oauth.data.hellogsm.kr/v1/oauth/token',
             headers={'Content-Type': 'application/json'},
             json={
+                'grant_type': 'authorization_code',
                 'code': code,
-                'clientSecret': client_secret,
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'redirect_uri': redirect_uri,
+                'code_verifier': code_verifier,
             }
         )
         response.raise_for_status()
@@ -165,14 +194,17 @@ def exchange_token(code, client_secret):
         print(f'Error: {e}')
         raise
 
-# 사용 예시
+# 사용 예시 (code/page.mdx에서 받은 verifier 사용)
 tokens = exchange_token(
-    'abc123def456',
-    os.environ.get('DATAGSM_CLIENT_SECRET')
+    code='abc123def456',
+    code_verifier='dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk',
+    client_id='your-client-id',
+    client_secret=os.environ.get('DATAGSM_CLIENT_SECRET'),
+    redirect_uri='https://your-app.com/callback'
 )
-print(f'Access Token: {tokens["accessToken"]}')
-print(f'Refresh Token: {tokens["refreshToken"]}')
-print(f'Expires In: {tokens["expiresIn"]} seconds')`} />
+print(f'Access Token: {tokens["access_token"]}')
+print(f'Refresh Token: {tokens["refresh_token"]}')
+print(f'Expires In: {tokens["expires_in"]} seconds')`} />
 
   <CodeTab label="Java" language="java" code={`import java.net.http.*;
 import java.net.URI;
@@ -184,11 +216,21 @@ public class OAuthTokenService {
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static TokenResponse exchangeToken(String code, String clientSecret) throws Exception {
+    public static TokenResponse exchangeToken(
+        String code,
+        String codeVerifier,
+        String clientId,
+        String clientSecret,
+        String redirectUri
+    ) throws Exception {
         // 요청 본문 생성
         Map<String, String> requestBody = Map.of(
+            "grant_type", "authorization_code",
             "code", code,
-            "clientSecret", clientSecret
+            "client_id", clientId,
+            "client_secret", clientSecret,
+            "redirect_uri", redirectUri,
+            "code_verifier", codeVerifier
         );
 
         String requestBodyJson = mapper.writeValueAsString(requestBody);
@@ -213,9 +255,9 @@ public class OAuthTokenService {
 
         JsonNode jsonNode = mapper.readTree(response.body());
         return new TokenResponse(
-            jsonNode.get("accessToken").asText(),
-            jsonNode.get("refreshToken").asText(),
-            jsonNode.get("expiresIn").asInt()
+            jsonNode.get("access_token").asText(),
+            jsonNode.get("refresh_token").asText(),
+            jsonNode.get("expires_in").asInt()
         );
     }
 
@@ -232,8 +274,17 @@ public class OAuthTokenService {
     }
 
     public static void main(String[] args) throws Exception {
+        String clientId = "your-client-id";
         String clientSecret = System.getenv("DATAGSM_CLIENT_SECRET");
-        TokenResponse tokens = exchangeToken("abc123def456", clientSecret);
+        String codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"; // code/page.mdx에서 저장한 값
+
+        TokenResponse tokens = exchangeToken(
+            "abc123def456",
+            codeVerifier,
+            clientId,
+            clientSecret,
+            "https://your-app.com/callback"
+        );
         System.out.println("Access Token: " + tokens.accessToken);
         System.out.println("Refresh Token: " + tokens.refreshToken);
         System.out.println("Expires In: " + tokens.expiresIn + " seconds");
@@ -244,17 +295,25 @@ public class OAuthTokenService {
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.URI
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
 data class TokenRequest(
+    val grant_type: String,
     val code: String,
-    val clientSecret: String
+    val client_id: String,
+    val client_secret: String,
+    val redirect_uri: String,
+    val code_verifier: String
 )
 
 data class TokenResponse(
+    @JsonProperty("access_token")
     val accessToken: String,
+    @JsonProperty("refresh_token")
     val refreshToken: String,
+    @JsonProperty("expires_in")
     val expiresIn: Int
 )
 
@@ -262,8 +321,21 @@ class OAuthTokenService {
     private val client = HttpClient.newHttpClient()
     private val mapper = jacksonObjectMapper()
 
-    fun exchangeToken(code: String, clientSecret: String): TokenResponse {
-        val requestBody = TokenRequest(code, clientSecret)
+    fun exchangeToken(
+        code: String,
+        codeVerifier: String,
+        clientId: String,
+        clientSecret: String,
+        redirectUri: String
+    ): TokenResponse {
+        val requestBody = TokenRequest(
+            grant_type = "authorization_code",
+            code = code,
+            client_id = clientId,
+            client_secret = clientSecret,
+            redirect_uri = redirectUri,
+            code_verifier = codeVerifier
+        )
         val requestBodyJson = mapper.writeValueAsString(requestBody)
 
         val request = HttpRequest.newBuilder()
@@ -285,8 +357,17 @@ class OAuthTokenService {
 // 사용 예시
 fun main() {
     val service = OAuthTokenService()
+    val clientId = "your-client-id"
     val clientSecret = System.getenv("DATAGSM_CLIENT_SECRET")
-    val tokens = service.exchangeToken("abc123def456", clientSecret)
+    val codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk" // code/page.mdx에서 저장한 값
+
+    val tokens = service.exchangeToken(
+        code = "abc123def456",
+        codeVerifier = codeVerifier,
+        clientId = clientId,
+        clientSecret = clientSecret,
+        redirectUri = "https://your-app.com/callback"
+    )
 
     println("Access Token: \${tokens.accessToken}")
     println("Refresh Token: \${tokens.refreshToken}")
