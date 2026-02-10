@@ -13,14 +13,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const cookieHeader = request.headers.get('Cookie') || '';
+    const sessionCookie = request.cookies.get('SESSION')?.value;
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    if (sessionCookie) {
+      headers['Cookie'] = `SESSION=${sessionCookie}`;
+    }
 
     const response = await fetch(`${oauthBaseUrl}/v1/oauth/authorize`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: cookieHeader,
-      },
+      headers,
       body: JSON.stringify(body),
       redirect: 'manual',
     });
