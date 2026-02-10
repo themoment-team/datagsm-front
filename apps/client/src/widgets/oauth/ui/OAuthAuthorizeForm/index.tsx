@@ -67,12 +67,6 @@ const OAuthAuthorizeForm = () => {
 
   return (
     <div className="max-w-180 flex w-full flex-col items-center gap-6">
-      <div className="flex flex-col items-center gap-2">
-        <h1 className="text-2xl font-bold">DataGSM OAuth</h1>
-        <p className="text-muted-foreground text-sm text-center">
-          외부 서비스 로그인을 위해 DataGSM 계정으로 인증하세요.
-        </p>
-      </div>
       <SharedSignInForm onSubmit={handleSubmit} isPending={isPending} signupHref="/signup" />
     </div>
   );
