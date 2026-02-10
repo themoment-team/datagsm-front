@@ -42,8 +42,8 @@ export async function GET(request: NextRequest) {
 
     const tokenData = await tokenResponse.json();
 
-    const accessToken = tokenData.data?.access_token || tokenData.access_token;
-    const refreshToken = tokenData.data?.refresh_token || tokenData.refresh_token;
+    const accessToken = tokenData.data?.access_token
+    const refreshToken = tokenData.data?.refresh_token
 
     if (!accessToken || !refreshToken) {
       return NextResponse.redirect(new URL('/', request.url));
