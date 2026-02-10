@@ -54,7 +54,7 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
           if (errorData.error && errorData.error_description) {
             toast.error(errorData.error_description);
             timerRef.current = setTimeout(() => {
-              router.push('/signin');
+              router.push('/');
             }, 1500);
             return;
           }

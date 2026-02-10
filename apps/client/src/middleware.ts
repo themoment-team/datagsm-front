@@ -46,13 +46,11 @@ export async function middleware(request: NextRequest) {
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-    const statePath = request.nextUrl.pathname === '/signin' ? '/' : request.nextUrl.pathname;
-
     const oauthUrl = new URL(`${oauthBaseUrl}/v1/oauth/authorize`);
     oauthUrl.searchParams.set('clientId', clientId);
     oauthUrl.searchParams.set('redirectUri', redirectUri);
     oauthUrl.searchParams.set('responseType', 'code');
-    oauthUrl.searchParams.set('state', statePath);
+    oauthUrl.searchParams.set('state', request.nextUrl.pathname);
     oauthUrl.searchParams.set('codeChallenge', codeChallenge);
     oauthUrl.searchParams.set('codeChallengeMethod', 'S256');
 
