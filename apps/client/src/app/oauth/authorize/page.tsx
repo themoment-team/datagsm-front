@@ -2,9 +2,9 @@ import { Suspense } from 'react';
 
 import { Skeleton } from '@repo/shared/ui';
 
-import { SignInPage } from '@/views/signin';
+import { OAuthAuthorizePage } from '@/views/oauth';
 
-const SignIn = () => {
+const OAuthAuthorize = () => {
   return (
     <Suspense
       fallback={
@@ -18,9 +18,9 @@ const SignIn = () => {
         </div>
       }
     >
-      <SignInPage />
+      <OAuthAuthorizePage />
     </Suspense>
   );
 };
 
-export default SignIn;
+export default OAuthAuthorize;

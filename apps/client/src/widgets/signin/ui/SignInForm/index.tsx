@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -22,6 +22,7 @@ interface SignInFormProps {
 const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
   const router = useRouter();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isInternalLoginPending, setIsInternalLoginPending] = useState(false);
 
   const isExternalOAuth = clientId !== null && redirectUri !== null;
 
@@ -118,28 +119,45 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
     },
   });
 
-  // 내부 OAuth 코드 발급 (내부 로그인 전용)
-  const { mutate: requestInternalOAuthCode, isPending: isRequestingInternalCode } =
-    useRequestOAuthCode({
-      onSuccess: (response) => {
-        // 즉시 Code → Token 교환 (client_secret은 서버에서 자동으로 추가됨)
-        exchangeToken({
-          code: response.data.code,
-        });
-      },
-      onError: (error: unknown) => {
-        if (error instanceof AxiosError && error.response?.data) {
-          const errorData = error.response.data;
+  const handleInternalLogin = async (email: string, password: string) => {
+    setIsInternalLoginPending(true);
 
-          if (errorData.error && errorData.error_description) {
-            toast.error(errorData.error_description);
-            return;
-          }
+    try {
+      const oauthBaseUrl = process.env.NEXT_PUBLIC_OAUTH_BASE_URL || 'http://localhost:8081';
 
-          // 기존 에러 코드 처리 (fallback)
-          const statusCode = (errorData as { code?: number })?.code;
+      // 1. 세션 생성 (GET /v1/oauth/authorize)
+      const state = Math.random().toString(36).substring(2, 15);
+      const authorizeUrl = `${oauthBaseUrl}/v1/oauth/authorize?${new URLSearchParams({
+        clientId: internalClientId,
+        redirectUri: `${window.location.origin}/callback`,
+        responseType: 'code',
+        state,
+      })}`;
 
-          switch (statusCode) {
+      await fetch(authorizeUrl, {
+        credentials: 'include',
+        redirect: 'manual',
+      });
+
+      // 2. 로그인 (POST /api/oauth/authorize)
+      const loginResponse = await fetch('/api/oauth/authorize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+      });
+
+      if (loginResponse.ok) {
+        const data = await loginResponse.json();
+        if (data.redirect_url) {
+          window.location.href = data.redirect_url;
+        }
+      } else {
+        const errorData = await loginResponse.json();
+        if (errorData.error_description) {
+          toast.error(errorData.error_description);
+        } else {
+          switch (loginResponse.status) {
             case 400:
               toast.error('입력 정보를 확인해주세요.');
               break;
@@ -150,13 +168,16 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
               toast.error('존재하지 않는 계정입니다.');
               break;
             default:
-              toast.error('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+              toast.error('로그인에 실패했습니다.');
           }
-        } else {
-          toast.error('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
         }
-      },
-    });
+      }
+    } catch (error) {
+      toast.error('로그인에 실패했습니다.');
+    } finally {
+      setIsInternalLoginPending(false);
+    }
+  };
 
   const handleSubmit = async (data: SignInFormType) => {
     if (isExternalOAuth) {
@@ -168,28 +189,14 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
         redirectUrl: redirectUri!,
       });
     } else {
-      // 내부 로그인: PKCE 완전 구현
-      const codeVerifier = generateCodeVerifier();
-      const codeChallenge = await generateCodeChallenge(codeVerifier);
-      sessionStorage.setItem('oauth_code_verifier', codeVerifier);
-
-      requestInternalOAuthCode({
-        email: data.email,
-        password: data.password,
-        clientId: internalClientId,
-        redirectUrl: internalRedirectUri,
-        codeChallenge: codeChallenge,
-        codeChallengeMethod: 'S256',
-      });
+      await handleInternalLogin(data.email, data.password);
     }
   };
 
   return (
     <SharedSignInForm
       onSubmit={handleSubmit}
-      isPending={
-        isExternalOAuth ? isRequestingExternalCode : isRequestingInternalCode || isExchangingToken
-      }
+      isPending={isExternalOAuth ? isRequestingExternalCode : isInternalLoginPending}
       signupHref="/signup"
     />
   );

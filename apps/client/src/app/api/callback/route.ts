@@ -1,0 +1,76 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+import { COOKIE_KEYS } from '@repo/shared/constants';
+
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const code = searchParams.get('code');
+    const state = searchParams.get('state');
+
+    if (!code) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    const oauthBaseUrl = process.env.NEXT_PUBLIC_OAUTH_BASE_URL;
+    const clientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID;
+    const clientSecret = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_SECRET;
+
+    if (!oauthBaseUrl || !clientId || !clientSecret) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    const tokenResponse = await fetch(`${oauthBaseUrl}/v1/oauth/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        grant_type: 'authorization_code',
+        code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: `${request.nextUrl.origin}/api/callback`,
+      }),
+    });
+
+    if (!tokenResponse.ok) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    const tokenData = await tokenResponse.json();
+
+    const accessToken = tokenData.data?.access_token || tokenData.access_token;
+    const refreshToken = tokenData.data?.refresh_token || tokenData.refresh_token;
+
+    if (!accessToken || !refreshToken) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    // 리다이렉트 응답 생성
+    const targetPath = state && state !== '/' ? state : '/';
+    const redirectUrl = new URL(targetPath, request.url);
+    const response = NextResponse.redirect(redirectUrl);
+
+    // 쿠키 설정
+    response.cookies.set(COOKIE_KEYS.ACCESS_TOKEN, accessToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60, // 1시간
+    });
+
+    response.cookies.set(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30, // 30일
+    });
+
+    return response;
+  } catch (error) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+}
