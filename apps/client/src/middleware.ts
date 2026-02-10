@@ -23,8 +23,12 @@ export async function middleware(request: NextRequest) {
 
   if (!accessToken) {
     const oauthBaseUrl = process.env.NEXT_PUBLIC_OAUTH_BASE_URL || 'http://localhost:8081';
-    const clientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID!;
+    const clientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID;
     const redirectUri = `${request.nextUrl.origin}/api/callback`;
+
+    if (!clientId) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
 
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -40,7 +44,7 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(oauthUrl);
     response.cookies.set('code_verifier', codeVerifier, {
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
       maxAge: 600,
