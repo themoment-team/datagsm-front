@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
     response.cookies.delete('code_verifier');
 
     return response;
-  } catch (error) {
+  } catch {
     return NextResponse.redirect(new URL('/', request.url));
   }
 }
