@@ -96,7 +96,7 @@ axiosInstance.interceptors.response.use(
         deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
 
         if (typeof window !== 'undefined') {
-          window.location.href = '/signin';
+          window.location.href = '/';
         }
 
         return Promise.reject(refreshError);
