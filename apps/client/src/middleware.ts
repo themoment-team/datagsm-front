@@ -47,12 +47,12 @@ export async function middleware(request: NextRequest) {
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 
     const oauthUrl = new URL(`${oauthBaseUrl}/v1/oauth/authorize`);
-    oauthUrl.searchParams.set('clientId', clientId);
-    oauthUrl.searchParams.set('redirectUri', redirectUri);
-    oauthUrl.searchParams.set('responseType', 'code');
+    oauthUrl.searchParams.set('client_id', clientId);
+    oauthUrl.searchParams.set('redirect_uri', redirectUri);
+    oauthUrl.searchParams.set('response_type', 'code');
     oauthUrl.searchParams.set('state', request.nextUrl.pathname);
-    oauthUrl.searchParams.set('codeChallenge', codeChallenge);
-    oauthUrl.searchParams.set('codeChallengeMethod', 'S256');
+    oauthUrl.searchParams.set('code_challenge', codeChallenge);
+    oauthUrl.searchParams.set('code_challenge_method', 'S256');
 
     const response = NextResponse.redirect(oauthUrl);
     response.cookies.set('code_verifier', codeVerifier, {
