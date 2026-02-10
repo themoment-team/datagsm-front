@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
-import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 const OAuthAuthorizeForm = () => {
@@ -54,11 +53,10 @@ const OAuthAuthorizeForm = () => {
         }
       }
     } catch (error) {
-      if (error instanceof AxiosError && error.response?.data) {
-        const errorData = error.response.data;
-        toast.error(errorData.error_description || '로그인에 실패했습니다.');
+      if (error instanceof Error) {
+        toast.error(error.message || '네트워크 오류가 발생했습니다.');
       } else {
-        toast.error('네트워크 오류가 발생했습니다.');
+        toast.error('알 수 없는 네트워크 오류가 발생했습니다.');
       }
     } finally {
       setIsPending(false);
