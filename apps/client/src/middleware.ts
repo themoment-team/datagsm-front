@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
     const redirectUri = `${request.nextUrl.origin}/api/callback`;
 
     if (!clientId) {
-      return NextResponse.redirect(new URL('/', request.url));
+      throw new Error('NEXT_PUBLIC_DATAGSM_CLIENT_ID 환경 변수가 설정되지 않았습니다.');
     }
 
     const codeVerifier = generateCodeVerifier();
