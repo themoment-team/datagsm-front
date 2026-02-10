@@ -4,11 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { COOKIE_KEYS } from '@repo/shared/constants';
-import { useExchangeToken } from '@repo/shared/hooks';
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
-import { generateCodeChallenge, generateCodeVerifier, setCookie } from '@repo/shared/utils';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
@@ -26,9 +23,7 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
 
   const isExternalOAuth = clientId !== null && redirectUri !== null;
 
-  // 내부 OAuth용 환경 변수
   const internalClientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID!;
-  const internalRedirectUri = process.env.NEXT_PUBLIC_DATAGSM_REDIRECT_URI!;
 
   useEffect(() => {
     return () => {
@@ -80,44 +75,6 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
         }, 1500);
       },
     });
-
-  // Code → Token 교환 (내부 로그인 전용)
-  const { mutate: exchangeToken, isPending: isExchangingToken } = useExchangeToken({
-    onSuccess: (response) => {
-      if (response.data.accessToken && response.data.refreshToken) {
-        setCookie(COOKIE_KEYS.ACCESS_TOKEN, response.data.accessToken);
-        setCookie(COOKIE_KEYS.REFRESH_TOKEN, response.data.refreshToken);
-      }
-
-      toast.success('로그인에 성공했습니다.');
-      router.push('/');
-    },
-    onError: (error: unknown) => {
-      if (error instanceof AxiosError && error.response?.data) {
-        const errorData = error.response.data;
-
-        if (errorData.error && errorData.error_description) {
-          toast.error(errorData.error_description);
-          return;
-        }
-
-        const statusCode = (errorData as { code?: number })?.code;
-
-        switch (statusCode) {
-          case 400:
-            toast.error('잘못된 인증 코드입니다.');
-            break;
-          case 404:
-            toast.error('인증 코드가 만료되었거나 존재하지 않습니다.');
-            break;
-          default:
-            toast.error('토큰 교환에 실패했습니다.');
-        }
-      } else {
-        toast.error('토큰 교환에 실패했습니다.');
-      }
-    },
-  });
 
   const handleInternalLogin = async (email: string, password: string) => {
     setIsInternalLoginPending(true);
@@ -172,7 +129,7 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
           }
         }
       }
-    } catch (error) {
+    } catch {
       toast.error('로그인에 실패했습니다.');
     } finally {
       setIsInternalLoginPending(false);
