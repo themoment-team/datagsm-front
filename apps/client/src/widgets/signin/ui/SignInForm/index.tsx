@@ -85,9 +85,9 @@ const SignInForm = ({ clientId, redirectUri }: SignInFormProps) => {
       // 1. 세션 생성 (GET /v1/oauth/authorize)
       const state = Math.random().toString(36).substring(2, 15);
       const authorizeUrl = `${oauthBaseUrl}/v1/oauth/authorize?${new URLSearchParams({
-        clientId: internalClientId,
-        redirectUri: `${window.location.origin}/callback`,
-        responseType: 'code',
+        client_id: internalClientId,
+        redirect_uri: `${window.location.origin}/callback`,
+        response_type: 'code',
         state,
       })}`;
 
