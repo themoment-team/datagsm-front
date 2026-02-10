@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
     const oauthBaseUrl = process.env.NEXT_PUBLIC_OAUTH_BASE_URL;
     const clientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID;
     const clientSecret = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_SECRET;
+    const codeVerifier = request.cookies.get('code_verifier')?.value;
 
     if (!oauthBaseUrl || !clientId || !clientSecret) {
       return NextResponse.redirect(new URL('/', request.url));
@@ -31,6 +32,7 @@ export async function GET(request: NextRequest) {
         client_id: clientId,
         client_secret: clientSecret,
         redirect_uri: `${request.nextUrl.origin}/api/callback`,
+        code_verifier: codeVerifier,
       }),
     });
 
@@ -68,6 +70,8 @@ export async function GET(request: NextRequest) {
       path: '/',
       maxAge: 60 * 60 * 24 * 30, // 30일
     });
+
+    response.cookies.delete('code_verifier');
 
     return response;
   } catch (error) {

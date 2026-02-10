@@ -2,7 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { COOKIE_KEYS } from '@repo/shared/constants';
 
-export function middleware(request: NextRequest) {
+function base64UrlEncode(array: Uint8Array): string {
+  const base64 = btoa(String.fromCharCode(...array));
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function generateCodeVerifier(): string {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return base64UrlEncode(array);
+}
+
+async function generateCodeChallenge(verifier: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(verifier);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return base64UrlEncode(new Uint8Array(hash));
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
@@ -25,13 +43,29 @@ export function middleware(request: NextRequest) {
     const clientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID!;
     const redirectUri = `${request.nextUrl.origin}/api/callback`;
 
+    const codeVerifier = generateCodeVerifier();
+    const codeChallenge = await generateCodeChallenge(codeVerifier);
+
+    const statePath = request.nextUrl.pathname === '/signin' ? '/' : request.nextUrl.pathname;
+
     const oauthUrl = new URL(`${oauthBaseUrl}/v1/oauth/authorize`);
     oauthUrl.searchParams.set('clientId', clientId);
     oauthUrl.searchParams.set('redirectUri', redirectUri);
     oauthUrl.searchParams.set('responseType', 'code');
-    oauthUrl.searchParams.set('state', request.nextUrl.pathname);
+    oauthUrl.searchParams.set('state', statePath);
+    oauthUrl.searchParams.set('codeChallenge', codeChallenge);
+    oauthUrl.searchParams.set('codeChallengeMethod', 'S256');
 
-    return NextResponse.redirect(oauthUrl);
+    const response = NextResponse.redirect(oauthUrl);
+    response.cookies.set('code_verifier', codeVerifier, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 600,
+    });
+
+    return response;
   }
 
   return NextResponse.next();
