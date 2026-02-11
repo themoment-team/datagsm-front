@@ -1,6 +1,10 @@
+import { cookies } from 'next/headers';
+
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import { Header } from '@repo/shared/ui';
 import type { Metadata } from 'next';
+
+import { COOKIE_KEYS } from '@repo/shared/constants';
 
 import { GoogleAnalytics } from '@/shared/lib';
 import '@/shared/styles/globals.css';
@@ -18,11 +22,14 @@ export const metadata: Metadata = {
   },
 };
 
-const RootLayout = ({
+const RootLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
+
   return (
     <html lang="ko">
       <body>
@@ -31,7 +38,7 @@ const RootLayout = ({
         )}
         <TanStackProvider>
           <ToastProvider>
-            <Header role="client" />
+            {accessToken && <Header role="client" />}
             {children}
           </ToastProvider>
         </TanStackProvider>
