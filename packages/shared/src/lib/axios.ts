@@ -73,7 +73,6 @@ axiosInstance.interceptors.response.use(
           grant_type: 'refresh_token',
           refresh_token: refreshToken,
           client_id: process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID,
-          client_secret: process.env.NEXT_PUBLIC_DATAGSM_CLIENT_SECRET,
         });
 
         const { access_token: newAccessToken, refresh_token: newRefreshToken } = response.data;
