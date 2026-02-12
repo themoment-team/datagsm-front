@@ -22,12 +22,19 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!accessToken) {
-    const oauthBaseUrl = process.env.NEXT_PUBLIC_OAUTH_BASE_URL || 'http://localhost:8081';
+    const oauthBaseUrl = process.env.NEXT_PUBLIC_OAUTH_BASE_URL;
     const clientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID;
-    const redirectUri = `${request.nextUrl.origin}/api/callback`;
+    const redirectUri = process.env.NEXT_PUBLIC_DATAGSM_REDIRECT_URI;
 
+    if (!oauthBaseUrl) {
+      throw new Error('NEXT_PUBLIC_OAUTH_BASE_URL 환경 변수가 설정되지 않았습니다.');
+    }
     if (!clientId) {
       throw new Error('NEXT_PUBLIC_DATAGSM_CLIENT_ID 환경 변수가 설정되지 않았습니다.');
+    }
+
+    if (!redirectUri) {
+      throw new Error('NEXT_PUBLIC_DATAGSM_REDIRECT_URI 환경 변수가 설정되지 않았습니다.');
     }
 
     const codeVerifier = generateCodeVerifier();
