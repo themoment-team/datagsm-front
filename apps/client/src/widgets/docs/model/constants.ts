@@ -84,11 +84,11 @@ export const docsSections: DocsSection[] = [
           },
           {
             label: '토큰 교환',
-            href: '/docs/oauth/http/token',
+            href: '/docs/oauth/http/token-exchange',
           },
           {
             label: '토큰 갱신',
-            href: '/docs/oauth/http/tokens',
+            href: '/docs/oauth/http/token-refresh',
           },
           {
             label: '사용자 정보 조회',
