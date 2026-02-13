@@ -1,0 +1,1116 @@
+import { Shield, CheckCircle2 } from 'lucide-react'
+
+# React + Spring Boot Kotlin OAuth 구현 (BFF 패턴)
+
+## 개요
+
+이 가이드는 **BFF (Backend For Frontend)** 패턴을 사용하여 React와 Spring Boot Kotlin으로 안전한 OAuth 인증을 구현하는 방법을 설명합니다.
+
+<div className="border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-yellow-600 dark:text-yellow-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
+        BFF 패턴 사용
+      </div>
+      <div className="text-yellow-800 dark:text-yellow-200 text-sm">
+        이 예제는 보안을 위해 BFF(Backend For Frontend) 패턴을 사용합니다.
+        프론트엔드에서 직접 OAuth 플로우를 처리하는 것은 보안상 권장하지 않습니다.
+        PKCE를 사용하더라도 백엔드를 통한 인증 처리를 권장합니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+### 아키텍처
+
+```mermaid
+graph LR
+    A[React<br/>Browser] <-->|httpOnly Cookie| B[Spring Boot<br/>BFF Server]
+    B <-->|PKCE + OAuth| C[DataGSM OAuth<br/>Server]
+
+    style A fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style B fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style C fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+```
+
+### 주요 특징
+
+- ✅ **PKCE 구현**: Authorization Code 탈취 방지
+- ✅ **httpOnly 쿠키**: XSS 공격으로부터 토큰 보호
+- ✅ **client_secret 미사용**: 클라이언트 노출 위험 제거
+- ✅ **서버 사이드 검증**: 안전한 토큰 관리
+- ✅ **자동 토큰 갱신**: Refresh Token 자동 처리
+
+## 프로젝트 구조
+
+```mermaid
+graph TD
+    A[project/] --> B[frontend/]
+    A --> C[backend/]
+    A --> D[.env]
+
+    B --> B1[src/]
+    B --> B2[package.json]
+
+    B1 --> B1A[components/]
+    B1 --> B1B[hooks/]
+    B1 --> B1C[App.tsx]
+
+    B1A --> B1A1[LoginButton.tsx]
+    B1A --> B1A2[UserProfile.tsx]
+
+    B1B --> B1B1[useAuth.ts]
+
+    C --> C1[src/main/kotlin/]
+    C --> C2[build.gradle.kts]
+
+    C1 --> C1A[config/]
+    C1 --> C1B[controller/]
+    C1 --> C1C[service/]
+    C1 --> C1D[dto/]
+    C1 --> C1E[Application.kt]
+
+    C1A --> C1A1[SecurityConfig.kt]
+    C1B --> C1B1[AuthController.kt]
+    C1C --> C1C1[OAuthService.kt]
+    C1C --> C1C2[PkceService.kt]
+    C1D --> C1D1[TokenResponse.kt]
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e6
+    style C fill:#e8f5e9
+    style D fill:#fce4ec
+```
+
+## 백엔드 구현 (Spring Boot Kotlin)
+
+### 1. 의존성 추가
+
+<CodeTabs>
+  <CodeTab label="build.gradle.kts" language="kotlin" code={`dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+
+    // HTTP 클라이언트
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+}`} />
+</CodeTabs>
+
+### 2. PKCE 서비스
+
+PKCE code_verifier 및 code_challenge 생성을 담당합니다.
+
+<CodeTabs>
+  <CodeTab label="service/PkceService.kt" language="kotlin" code={`package com.example.oauth.service
+
+import org.springframework.stereotype.Service
+import java.security.MessageDigest
+import java.security.SecureRandom
+import java.util.Base64
+
+@Service
+class PkceService {
+
+    /**
+     * PKCE Code Verifier 생성
+     * - 43-128자 길이의 랜덤 문자열
+     * - Base64URL 인코딩
+     */
+    fun generateCodeVerifier(): String {
+        val bytes = ByteArray(32) // 256 bits
+        SecureRandom().nextBytes(bytes)
+        return base64UrlEncode(bytes)
+    }
+
+    /**
+     * PKCE Code Challenge 생성
+     * - Code Verifier의 SHA-256 해시
+     * - Base64URL 인코딩
+     */
+    fun generateCodeChallenge(verifier: String): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hash = digest.digest(verifier.toByteArray(Charsets.UTF_8))
+        return base64UrlEncode(hash)
+    }
+
+    /**
+     * Base64URL 인코딩
+     * - RFC 7636 표준 준수
+     * - padding 제거
+     */
+    private fun base64UrlEncode(bytes: ByteArray): String {
+        return Base64.getUrlEncoder()
+            .withoutPadding()
+            .encodeToString(bytes)
+    }
+}`} />
+</CodeTabs>
+
+### 3. OAuth 서비스
+
+DataGSM OAuth API와 통신합니다.
+
+<CodeTabs>
+  <CodeTab label="service/OAuthService.kt" language="kotlin" code={`package com.example.oauth.service
+
+import com.example.oauth.dto.TokenResponse
+import com.example.oauth.dto.UserInfo
+import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
+
+private val logger = KotlinLogging.logger {}
+
+@Service
+class OAuthService(
+    @Value("\\\${'$'}{oauth.client-id}") private val clientId: String,
+    @Value("\\\${'$'}{oauth.redirect-uri}") private val redirectUri: String,
+    private val pkceService: PkceService,
+    private val webClient: WebClient = WebClient.create()
+) {
+
+    private val oauthBaseUrl = "https://oauth.data.hellogsm.kr"
+    private val userinfoBaseUrl = "https://oauth-userinfo.data.hellogsm.kr"
+
+    /**
+     * Authorization Code 발급
+     *
+     * @param email 사용자 이메일
+     * @param password 사용자 비밀번호
+     * @param codeChallenge PKCE code_challenge
+     * @return Authorization Code
+     */
+    fun getAuthorizationCode(
+        email: String,
+        password: String,
+        codeChallenge: String
+    ): String {
+        logger.info { "Requesting authorization code for email: $email" }
+
+        val response = webClient.post()
+            .uri("$oauthBaseUrl/v1/oauth/code")
+            .bodyValue(
+                mapOf(
+                    "email" to email,
+                    "password" to password,
+                    "client_id" to clientId,
+                    "redirect_uri" to redirectUri,
+                    "code_challenge" to codeChallenge,
+                    "code_challenge_method" to "S256"
+                )
+            )
+            .retrieve()
+            .bodyToMono<Map<String, String>>()
+            .block() ?: throw RuntimeException("Failed to get authorization code")
+
+        return response["code"] ?: throw RuntimeException("Code not found in response")
+    }
+
+    /**
+     * Authorization Code를 Access Token으로 교환 (PKCE)
+     *
+     * @param code Authorization Code
+     * @param codeVerifier PKCE code_verifier
+     * @return TokenResponse (accessToken, refreshToken, expiresIn)
+     */
+    fun exchangeToken(code: String, codeVerifier: String): TokenResponse {
+        logger.info { "Exchanging authorization code for tokens" }
+
+        val response = webClient.post()
+            .uri("$oauthBaseUrl/v1/oauth/token")
+            .bodyValue(
+                mapOf(
+                    "grant_type" to "authorization_code",
+                    "code" to code,
+                    "client_id" to clientId,
+                    "redirect_uri" to redirectUri,
+                    "code_verifier" to codeVerifier
+                )
+            )
+            .retrieve()
+            .bodyToMono<TokenResponse>()
+            .block() ?: throw RuntimeException("Failed to exchange token")
+
+        logger.info { "Successfully exchanged tokens" }
+        return response
+    }
+
+    /**
+     * Refresh Token으로 새로운 Access Token 발급
+     *
+     * @param refreshToken Refresh Token
+     * @return TokenResponse (새로운 accessToken, refreshToken)
+     */
+    fun refreshToken(refreshToken: String): TokenResponse {
+        logger.info { "Refreshing access token" }
+
+        val response = webClient.post()
+            .uri("$oauthBaseUrl/v1/oauth/token")
+            .bodyValue(
+                mapOf(
+                    "grant_type" to "refresh_token",
+                    "refresh_token" to refreshToken
+                )
+            )
+            .retrieve()
+            .bodyToMono<TokenResponse>()
+            .block() ?: throw RuntimeException("Failed to refresh token")
+
+        logger.info { "Successfully refreshed token" }
+        return response
+    }
+
+    /**
+     * Access Token으로 사용자 정보 조회
+     *
+     * @param accessToken Access Token
+     * @return UserInfo (사용자 정보)
+     */
+    fun getUserInfo(accessToken: String): UserInfo {
+        logger.info { "Fetching user info" }
+
+        val userInfo = webClient.get()
+            .uri("$userinfoBaseUrl/v1/oauth/userinfo")
+            .header("Authorization", "Bearer $accessToken")
+            .retrieve()
+            .bodyToMono<UserInfo>()
+            .block() ?: throw RuntimeException("Failed to get user info")
+
+        logger.info { "Successfully fetched user info for: \\\${userInfo.email}" }
+        return userInfo
+    }
+}`} />
+</CodeTabs>
+
+### 4. DTO 클래스
+
+<CodeTabs>
+  <CodeTab label="dto/TokenResponse.kt" language="kotlin" code={`package com.example.oauth.dto
+
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class TokenResponse(
+    @JsonProperty("accessToken")
+    val accessToken: String,
+
+    @JsonProperty("refreshToken")
+    val refreshToken: String,
+
+    @JsonProperty("expiresIn")
+    val expiresIn: Int
+)
+
+data class UserInfo(
+    val email: String,
+    val name: String,
+    val grade: Int,
+    val classNum: Int,
+    val number: Int,
+    val profileImage: String?
+)
+
+data class LoginRequest(
+    val email: String,
+    val password: String
+)`} />
+</CodeTabs>
+
+### 5. Auth Controller
+
+프론트엔드와 통신하는 API 엔드포인트를 제공합니다.
+
+<CodeTabs>
+  <CodeTab label="controller/AuthController.kt" language="kotlin" code={`package com.example.oauth.controller
+
+import com.example.oauth.dto.LoginRequest
+import com.example.oauth.dto.UserInfo
+import com.example.oauth.service.OAuthService
+import com.example.oauth.service.PkceService
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import mu.KotlinLogging
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+
+private val logger = KotlinLogging.logger {}
+
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = ["http://localhost:3000"], allowCredentials = "true")
+class AuthController(
+    private val oauthService: OAuthService,
+    private val pkceService: PkceService
+) {
+
+    /**
+     * POST /api/auth/login
+     * 로그인 처리 및 토큰 발급
+     */
+    @PostMapping("/login")
+    fun login(
+        @RequestBody request: LoginRequest,
+        httpResponse: HttpServletResponse
+    ): ResponseEntity<Map<String, String>> {
+        return try {
+            logger.info { "Login attempt for: \\\${request.email}" }
+
+            // 1. PKCE code_verifier 생성
+            val codeVerifier = pkceService.generateCodeVerifier()
+            val codeChallenge = pkceService.generateCodeChallenge(codeVerifier)
+
+            // 2. Authorization Code 발급
+            val code = oauthService.getAuthorizationCode(
+                email = request.email,
+                password = request.password,
+                codeChallenge = codeChallenge
+            )
+
+            // 3. Token 교환 (PKCE)
+            val tokens = oauthService.exchangeToken(code, codeVerifier)
+
+            // 4. httpOnly 쿠키에 토큰 저장
+            setTokenCookies(httpResponse, tokens.accessToken, tokens.refreshToken)
+
+            logger.info { "Login successful for: \\\${request.email}" }
+            ResponseEntity.ok(mapOf("message" to "Login successful"))
+
+        } catch (e: Exception) {
+            logger.error(e) { "Login failed for: \\\${request.email}" }
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(mapOf("error" to (e.message ?: "Login failed")))
+        }
+    }
+
+    /**
+     * POST /api/auth/refresh
+     * Access Token 갱신
+     */
+    @PostMapping("/refresh")
+    fun refresh(
+        request: HttpServletRequest,
+        httpResponse: HttpServletResponse
+    ): ResponseEntity<Map<String, String>> {
+        return try {
+            val refreshToken = getRefreshTokenFromCookie(request)
+                ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(mapOf("error" to "No refresh token"))
+
+            logger.info { "Refreshing access token" }
+
+            val tokens = oauthService.refreshToken(refreshToken)
+            setTokenCookies(httpResponse, tokens.accessToken, tokens.refreshToken)
+
+            ResponseEntity.ok(mapOf("message" to "Token refreshed"))
+
+        } catch (e: Exception) {
+            logger.error(e) { "Token refresh failed" }
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(mapOf("error" to "Token refresh failed"))
+        }
+    }
+
+    /**
+     * POST /api/auth/logout
+     * 로그아웃 (쿠키 삭제)
+     */
+    @PostMapping("/logout")
+    fun logout(httpResponse: HttpServletResponse): ResponseEntity<Map<String, String>> {
+        logger.info { "Logout request" }
+
+        clearTokenCookies(httpResponse)
+
+        return ResponseEntity.ok(mapOf("message" to "Logout successful"))
+    }
+
+    /**
+     * GET /api/auth/me
+     * 현재 로그인한 사용자 정보 조회
+     */
+    @GetMapping("/me")
+    fun getCurrentUser(request: HttpServletRequest): ResponseEntity<Any> {
+        return try {
+            val accessToken = getAccessTokenFromCookie(request)
+                ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(mapOf("error" to "Not authenticated"))
+
+            val userInfo = oauthService.getUserInfo(accessToken)
+            ResponseEntity.ok(userInfo)
+
+        } catch (e: Exception) {
+            logger.error(e) { "Failed to get user info" }
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(mapOf("error" to "Failed to get user info"))
+        }
+    }
+
+    /**
+     * 토큰을 httpOnly 쿠키에 저장
+     */
+    private fun setTokenCookies(
+        httpResponse: HttpServletResponse,
+        accessToken: String,
+        refreshToken: String
+    ) {
+        // Access Token 쿠키 (1시간)
+        val accessTokenCookie = Cookie("access_token", accessToken).apply {
+            isHttpOnly = true
+            secure = true // HTTPS에서만 전송
+            path = "/"
+            maxAge = 3600 // 1시간
+        }
+
+        // Refresh Token 쿠키 (30일)
+        val refreshTokenCookie = Cookie("refresh_token", refreshToken).apply {
+            isHttpOnly = true
+            secure = true
+            path = "/"
+            maxAge = 30 * 24 * 3600 // 30일
+        }
+
+        httpResponse.addCookie(accessTokenCookie)
+        httpResponse.addCookie(refreshTokenCookie)
+    }
+
+    /**
+     * 쿠키 삭제
+     */
+    private fun clearTokenCookies(httpResponse: HttpServletResponse) {
+        val accessTokenCookie = Cookie("access_token", "").apply {
+            isHttpOnly = true
+            secure = true
+            path = "/"
+            maxAge = 0 // 즉시 삭제
+        }
+
+        val refreshTokenCookie = Cookie("refresh_token", "").apply {
+            isHttpOnly = true
+            secure = true
+            path = "/"
+            maxAge = 0
+        }
+
+        httpResponse.addCookie(accessTokenCookie)
+        httpResponse.addCookie(refreshTokenCookie)
+    }
+
+    /**
+     * 쿠키에서 Access Token 추출
+     */
+    private fun getAccessTokenFromCookie(request: HttpServletRequest): String? {
+        return request.cookies
+            ?.firstOrNull { it.name == "access_token" }
+            ?.value
+    }
+
+    /**
+     * 쿠키에서 Refresh Token 추출
+     */
+    private fun getRefreshTokenFromCookie(request: HttpServletRequest): String? {
+        return request.cookies
+            ?.firstOrNull { it.name == "refresh_token" }
+            ?.value
+    }
+}`} />
+</CodeTabs>
+
+### 6. Security 설정
+
+<CodeTabs>
+  <CodeTab label="config/SecurityConfig.kt" language="kotlin" code={`package com.example.oauth.config
+
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.web.SecurityFilterChain
+
+@Configuration
+@EnableWebSecurity
+class SecurityConfig {
+
+    @Bean
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .csrf { it.disable() } // API이므로 CSRF 비활성화 (프로덕션에서는 고려 필요)
+            .cors { it.disable() } // CORS는 @CrossOrigin으로 처리
+            .authorizeHttpRequests { auth ->
+                auth
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .anyRequest().authenticated()
+            }
+
+        return http.build()
+    }
+}`} />
+</CodeTabs>
+
+### 7. 환경 변수 설정
+
+<CodeTabs>
+  <CodeTab label="application.properties" language="properties" code={`oauth.client-id=\\\${OAUTH_CLIENT_ID}
+oauth.redirect-uri=\\\${OAUTH_REDIRECT_URI:http://localhost:8080/api/auth/callback}
+
+server.port=8080
+logging.level.com.example.oauth=DEBUG`} />
+  <CodeTab label=".env" language="bash" code={`OAUTH_CLIENT_ID=your-client-id
+OAUTH_REDIRECT_URI=http://localhost:8080/api/auth/callback`} />
+</CodeTabs>
+
+## 프론트엔드 구현 (React + TypeScript)
+
+### 1. 인증 Hook
+
+<CodeTabs>
+  <CodeTab label="hooks/useAuth.ts" language="typescript" code={`import { useState, useEffect, useCallback } from 'react';
+
+interface UserInfo {
+  email: string;
+  name: string;
+  grade: number;
+  classNum: number;
+  number: number;
+  profileImage?: string;
+}
+
+export function useAuth() {
+  const [user, setUser] = useState<UserInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const API_BASE_URL = 'http://localhost:8080/api/auth';
+
+  /**
+   * 현재 로그인한 사용자 정보 가져오기
+   */
+  const fetchUser = useCallback(async () => {
+    try {
+      const response = await fetch(\`\${API_BASE_URL}/me\`, {
+        credentials: 'include', // 쿠키 포함
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      } else {
+        setUser(null);
+      }
+    } catch (err) {
+      console.error('Failed to fetch user:', err);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /**
+   * 로그인
+   */
+  const login = async (email: string, password: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(\`\${API_BASE_URL}/login\`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 쿠키 포함
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Login failed');
+      }
+
+      // 로그인 성공 후 사용자 정보 가져오기
+      await fetchUser();
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * 로그아웃
+   */
+  const logout = async () => {
+    try {
+      await fetch(\`\${API_BASE_URL}/logout\`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      setUser(null);
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  };
+
+  /**
+   * 토큰 자동 갱신
+   */
+  const refreshToken = async () => {
+    try {
+      const response = await fetch(\`\${API_BASE_URL}/refresh\`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        // Refresh 실패 시 로그아웃
+        setUser(null);
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error('Token refresh failed:', err);
+      setUser(null);
+      return false;
+    }
+  };
+
+  /**
+   * 초기 로드 시 사용자 정보 가져오기
+   */
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  /**
+   * 50분마다 자동 토큰 갱신 (Access Token 만료 10분 전)
+   */
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(() => {
+      refreshToken();
+    }, 50 * 60 * 1000); // 50분
+
+    return () => clearInterval(interval);
+  }, [user]);
+
+  return {
+    user,
+    loading,
+    error,
+    login,
+    logout,
+    isAuthenticated: !!user,
+  };
+}`} />
+</CodeTabs>
+
+### 2. 로그인 컴포넌트
+
+<CodeTabs>
+  <CodeTab label="components/LoginButton.tsx" language="typescript" code={`import React, { useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
+
+export function LoginButton() {
+  const { login, loading, error } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      await login(email, password);
+      // 로그인 성공 시 리다이렉트
+      window.location.href = '/dashboard';
+    } catch (err) {
+      // 에러는 useAuth에서 처리됨
+      console.error(err);
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-center">DataGSM 로그인</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            이메일
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="student@gsm.hs.kr"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            비밀번호
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        {error && (
+          <div className="text-red-600 text-sm bg-red-50 p-3 rounded">
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? '로그인 중...' : '로그인'}
+        </button>
+      </form>
+    </div>
+  );
+}`} />
+</CodeTabs>
+
+### 3. 사용자 프로필 컴포넌트
+
+<CodeTabs>
+  <CodeTab label="components/UserProfile.tsx" language="typescript" code={`import React from 'react';
+import { useAuth } from '../hooks/useAuth';
+
+export function UserProfile() {
+  const { user, logout, loading } = useAuth();
+
+  if (loading) {
+    return <div className="text-center py-4">로딩 중...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+      <div className="flex items-center space-x-4 mb-6">
+        {user.profileImage ? (
+          <img
+            src={user.profileImage}
+            alt={user.name}
+            className="w-16 h-16 rounded-full"
+          />
+        ) : (
+          <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold text-white">
+            {user.name.charAt(0)}
+          </div>
+        )}
+
+        <div>
+          <h2 className="text-xl font-bold">{user.name}</h2>
+          <p className="text-gray-600">{user.email}</p>
+        </div>
+      </div>
+
+      <div className="space-y-2 mb-6">
+        <p className="text-sm text-gray-600">
+          <span className="font-medium">학년:</span> {user.grade}학년
+        </p>
+        <p className="text-sm text-gray-600">
+          <span className="font-medium">반:</span> {user.classNum}반
+        </p>
+        <p className="text-sm text-gray-600">
+          <span className="font-medium">번호:</span> {user.number}번
+        </p>
+      </div>
+
+      <button
+        onClick={logout}
+        className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+      >
+        로그아웃
+      </button>
+    </div>
+  );
+}`} />
+</CodeTabs>
+
+### 4. App 컴포넌트
+
+<CodeTabs>
+  <CodeTab label="App.tsx" language="typescript" code={`import React from 'react';
+import { LoginButton } from './components/LoginButton';
+import { UserProfile } from './components/UserProfile';
+import { useAuth } from './hooks/useAuth';
+
+function App() {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl">로딩 중...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-center mb-12">
+          DataGSM OAuth Demo
+        </h1>
+
+        {isAuthenticated ? <UserProfile /> : <LoginButton />}
+      </div>
+    </div>
+  );
+}
+
+export default App;`} />
+</CodeTabs>
+
+## 보안 체크리스트
+
+<div className="border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-green-900 dark:text-green-100 mb-2">
+        구현된 보안 기능
+      </div>
+      <ul className="text-green-800 dark:text-green-200 text-sm space-y-1">
+        <li>✅ PKCE 사용 (Authorization Code 탈취 방지)</li>
+        <li>✅ httpOnly 쿠키 (XSS 공격 방지)</li>
+        <li>✅ Secure 플래그 (HTTPS에서만 쿠키 전송)</li>
+        <li>✅ SameSite=Lax (CSRF 공격 방지)</li>
+        <li>✅ client_secret 미사용 (클라이언트 노출 위험 제거)</li>
+        <li>✅ 서버 사이드 검증 (토큰 관리)</li>
+        <li>✅ 자동 토큰 갱신 (사용자 경험 개선)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+### 추가 권장 사항
+
+1. **HTTPS 사용**
+   - 프로덕션 환경에서 반드시 HTTPS 사용
+   - 개발 환경에서도 localhost가 아닌 경우 HTTPS 권장
+
+2. **CORS 설정**
+   - 프로덕션 환경에서는 정확한 origin 지정
+   - 와일드카드(`*`) 사용 금지
+
+3. **Rate Limiting**
+   - 로그인 시도 횟수 제한 (Brute Force 공격 방지)
+   - IP 기반 또는 사용자 기반 제한
+
+4. **로깅**
+   - 인증 시도, 성공, 실패 로깅
+   - 민감한 정보 (비밀번호, 토큰) 로깅 금지
+
+5. **에러 메시지**
+   - 사용자에게 노출되는 에러는 최소한의 정보만 제공
+   - 상세 에러는 서버 로그에만 기록
+
+## 테스트
+
+### 백엔드 테스트
+
+<CodeTabs>
+  <CodeTab label="test/service/PkceServiceTest.kt" language="kotlin" code={`package com.example.oauth.service
+
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.*
+
+class PkceServiceTest {
+
+    private val pkceService = PkceService()
+
+    @Test
+    fun \`code_verifier 생성 테스트\`() {
+        val verifier = pkceService.generateCodeVerifier()
+
+        // 길이 검증 (43-128자)
+        assertTrue(verifier.length in 43..128)
+
+        // Base64URL 문자만 포함 확인
+        assertTrue(verifier.matches(Regex("^[A-Za-z0-9_-]+$")))
+    }
+
+    @Test
+    fun \`code_challenge 생성 테스트\`() {
+        val verifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
+        val challenge = pkceService.generateCodeChallenge(verifier)
+
+        // SHA-256 해시는 항상 43자 (Base64URL)
+        assertEquals(43, challenge.length)
+
+        // 예상 값과 일치 확인
+        assertEquals("E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM", challenge)
+    }
+
+    @Test
+    fun \`동일한 verifier는 동일한 challenge 생성\`() {
+        val verifier = pkceService.generateCodeVerifier()
+        val challenge1 = pkceService.generateCodeChallenge(verifier)
+        val challenge2 = pkceService.generateCodeChallenge(verifier)
+
+        assertEquals(challenge1, challenge2)
+    }
+
+    @Test
+    fun \`다른 verifier는 다른 challenge 생성\`() {
+        val verifier1 = pkceService.generateCodeVerifier()
+        val verifier2 = pkceService.generateCodeVerifier()
+
+        val challenge1 = pkceService.generateCodeChallenge(verifier1)
+        val challenge2 = pkceService.generateCodeChallenge(verifier2)
+
+        assertNotEquals(challenge1, challenge2)
+    }
+}`} />
+</CodeTabs>
+
+### 프론트엔드 테스트
+
+<CodeTabs>
+  <CodeTab label="hooks/__tests__/useAuth.test.ts" language="typescript" code={`import { renderHook, act, waitFor } from '@testing-library/react';
+import { useAuth } from '../useAuth';
+
+// Mock fetch
+global.fetch = jest.fn();
+
+describe('useAuth', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should login successfully', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ message: 'Login successful' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          email: 'test@gsm.hs.kr',
+          name: 'Test User',
+          grade: 1,
+          classNum: 1,
+          number: 1,
+        }),
+      });
+
+    const { result } = renderHook(() => useAuth());
+
+    await act(async () => {
+      await result.current.login('test@gsm.hs.kr', 'password');
+    });
+
+    await waitFor(() => {
+      expect(result.current.isAuthenticated).toBe(true);
+      expect(result.current.user?.email).toBe('test@gsm.hs.kr');
+    });
+  });
+
+  it('should handle login failure', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: 'Invalid credentials' }),
+    });
+
+    const { result } = renderHook(() => useAuth());
+
+    await act(async () => {
+      try {
+        await result.current.login('test@gsm.hs.kr', 'wrong-password');
+      } catch (err) {
+        // Error expected
+      }
+    });
+
+    await waitFor(() => {
+      expect(result.current.isAuthenticated).toBe(false);
+      expect(result.current.error).toBeTruthy();
+    });
+  });
+
+  it('should logout successfully', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+    });
+
+    const { result } = renderHook(() => useAuth());
+
+    // Set user
+    await act(async () => {
+      await result.current.login('test@gsm.hs.kr', 'password');
+    });
+
+    // Logout
+    await act(async () => {
+      await result.current.logout();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isAuthenticated).toBe(false);
+      expect(result.current.user).toBeNull();
+    });
+  });
+});`} />
+</CodeTabs>
+
+## 실행 방법
+
+### 백엔드 실행
+
+<CodeTabs>
+  <CodeTab label="terminal" language="bash" code={`cd backend
+./gradlew bootRun`} />
+</CodeTabs>
+
+### 프론트엔드 실행
+
+<CodeTabs>
+  <CodeTab label="terminal" language="bash" code={`cd frontend
+npm install
+npm start`} />
+</CodeTabs>
+
+애플리케이션이 다음 주소에서 실행됩니다:
+- 프론트엔드: http://localhost:3000
+- 백엔드: http://localhost:8080
+
+## 다음 단계
+
+- [PKCE 가이드](/docs/oauth/pkce) - PKCE 개념 및 구현 상세 설명
+- [HTTP API 문서](/docs/oauth/http/code) - OAuth API 명세
+- [토큰 관리](/docs/oauth/http/token) - 토큰 교환 및 갱신
+
+## 참고 자료
+
+- [RFC 7636 - PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
+- [Spring Security Documentation](https://docs.spring.io/spring-security/reference/index.html)
+- [React Authentication Best Practices](https://react.dev/learn/you-might-not-need-an-effect#authenticating-a-user)

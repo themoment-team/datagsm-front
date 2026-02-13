@@ -1,4 +1,23 @@
+import { Shield } from 'lucide-react'
+
 # React + Spring Boot (Kotlin) OAuth 구현
+
+<div className="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-red-900 dark:text-red-100 mb-1">
+        레거시 방식 (client_secret 사용)
+      </div>
+      <div className="text-red-800 dark:text-red-200 text-sm">
+        이 예제는 레거시 <code className="mx-1 px-1.5 py-0.5 bg-red-100 dark:bg-red-800 rounded">client_secret</code> 방식을 사용합니다.
+        프론트엔드에서 <code className="mx-1 px-1.5 py-0.5 bg-red-100 dark:bg-red-800 rounded">client_secret</code>을 사용하는 것은 보안상 취약하므로,
+        새로운 프로젝트에서는 <strong>PKCE</strong>를 사용하는 <a href="/docs/oauth/example/react-spring" className="underline font-medium">React + Spring Boot (BFF)</a> 예제를 참고해주세요.
+        자세한 내용은 <a href="/docs/oauth/pkce" className="underline font-medium">PKCE 가이드</a>를 참고하세요.
+      </div>
+    </div>
+  </div>
+</div>
 
 ### 시나리오
 
@@ -117,21 +136,33 @@ sequenceDiagram
 
 ### 프로젝트 구조
 
-```
-src/
-├── hooks/
-│   └── useOAuthLogin.ts          # OAuth 로그인 커스텀 Hook
-├── pages/
-│   ├── LoginPage.tsx             # 로그인 페이지
-│   ├── CallbackPage.tsx          # OAuth 콜백 페이지
-│   └── HomePage.tsx              # 메인 페이지
-├── services/
-│   ├── oauthService.ts           # OAuth API 호출 서비스
-│   └── authService.ts            # 인증 관련 서비스
-├── types/
-│   └── auth.ts                   # 타입 정의
-└── utils/
-    └── storage.ts                # 로컬 스토리지 유틸
+```mermaid
+graph TD
+    A[src/] --> B[hooks/]
+    A --> C[pages/]
+    A --> D[services/]
+    A --> E[types/]
+    A --> F[utils/]
+
+    B --> B1[useOAuthLogin.ts<br/><i>OAuth 로그인 커스텀 Hook</i>]
+
+    C --> C1[LoginPage.tsx<br/><i>로그인 페이지</i>]
+    C --> C2[CallbackPage.tsx<br/><i>OAuth 콜백 페이지</i>]
+    C --> C3[HomePage.tsx<br/><i>메인 페이지</i>]
+
+    D --> D1[oauthService.ts<br/><i>OAuth API 호출 서비스</i>]
+    D --> D2[authService.ts<br/><i>인증 관련 서비스</i>]
+
+    E --> E1[auth.ts<br/><i>타입 정의</i>]
+
+    F --> F1[storage.ts<br/><i>로컬 스토리지 유틸</i>]
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e6
+    style C fill:#e8f5e9
+    style D fill:#f3e5f5
+    style E fill:#fce4ec
+    style F fill:#e0f2f1
 ```
 
 ### OAuth 로그인 Hook
@@ -495,25 +526,39 @@ export default CallbackPage;`} />
 
 ### 프로젝트 구조
 
-```
-src/main/kotlin/com/example/app/
-├── config/
-│   ├── SecurityConfig.kt         # Spring Security 설정
-│   └── CorsConfig.kt             # CORS 설정
-├── controller/
-│   └── AuthController.kt         # OAuth 인증 컨트롤러
-├── service/
-│   ├── OAuthService.kt           # OAuth 비즈니스 로직
-│   ├── UserService.kt            # 사용자 관리 서비스
-│   └── JwtService.kt             # JWT 발급/검증 서비스
-├── dto/
-│   ├── VerifyTokenRequest.kt     # 토큰 검증 요청 DTO
-│   ├── AuthResponse.kt           # 인증 응답 DTO
-│   └── UserInfoResponse.kt       # 사용자 정보 DTO
-├── entity/
-│   └── User.kt                   # 사용자 엔티티
-└── repository/
-    └── UserRepository.kt         # 사용자 레포지토리
+```mermaid
+graph TD
+    A[src/main/kotlin/com/example/app/] --> B[config/]
+    A --> C[controller/]
+    A --> D[service/]
+    A --> E[dto/]
+    A --> F[entity/]
+    A --> G[repository/]
+
+    B --> B1[SecurityConfig.kt<br/><i>Spring Security 설정</i>]
+    B --> B2[CorsConfig.kt<br/><i>CORS 설정</i>]
+
+    C --> C1[AuthController.kt<br/><i>OAuth 인증 컨트롤러</i>]
+
+    D --> D1[OAuthService.kt<br/><i>OAuth 비즈니스 로직</i>]
+    D --> D2[UserService.kt<br/><i>사용자 관리 서비스</i>]
+    D --> D3[JwtService.kt<br/><i>JWT 발급/검증 서비스</i>]
+
+    E --> E1[VerifyTokenRequest.kt<br/><i>토큰 검증 요청 DTO</i>]
+    E --> E2[AuthResponse.kt<br/><i>인증 응답 DTO</i>]
+    E --> E3[UserInfoResponse.kt<br/><i>사용자 정보 DTO</i>]
+
+    F --> F1[User.kt<br/><i>사용자 엔티티</i>]
+
+    G --> G1[UserRepository.kt<br/><i>사용자 레포지토리</i>]
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e6
+    style C fill:#e8f5e9
+    style D fill:#f3e5f5
+    style E fill:#fce4ec
+    style F fill:#e0f2f1
+    style G fill:#fff9c4
 ```
 
 ### AuthController

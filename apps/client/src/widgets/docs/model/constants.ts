@@ -71,6 +71,10 @@ export const docsSections: DocsSection[] = [
     icon: User,
     children: [
       {
+        label: 'PKCE 가이드',
+        href: '/docs/oauth/pkce',
+      },
+      {
         label: 'HTTP',
         href: '/docs/oauth/http',
         children: [
@@ -96,6 +100,10 @@ export const docsSections: DocsSection[] = [
         label: 'Examples',
         href: '/docs/oauth/examples',
         children: [
+          {
+            label: 'React + Spring Boot (BFF)',
+            href: '/docs/oauth/example/react-spring',
+          },
           {
             label: 'Next.js + Spring Boot',
             href: '/docs/oauth/examples/nextjs-spring-boot',
