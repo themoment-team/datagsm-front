@@ -4,7 +4,7 @@ import { Shield, AlertTriangle } from 'lucide-react'
 
 ## PKCE란?
 
-PKCE (Proof Key for Code Exchange, RFC 7636)는 OAuth 2.0 Authorization Code Flow의 보안을 강화하는 확장 표준입니다. 원래는 모바일 앱과 같은 Public Client를 보호하기 위해 설계되었지만, 현재는 **모든 OAuth 클라이언트**에서 사용이 권장됩니다.
+PKCE (Proof Key for Code Exchange, RFC 7636)는 OAuth 2.0 Authorization Code Flow의 보안을 강화하는 확장 표준입니다. 원래는 모바일 앱과 같은 Public Client를 보호하기 위해 설계되었지만, 현재는 많은 OAuth 클라이언트에서 선택적으로 사용되고 있습니다.
 
 ### 도입 배경
 
@@ -350,16 +350,16 @@ export async function GET(request: NextRequest) {
 
 ### code_verifier 저장 방법
 
-<div className="border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded my-6">
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
   <div className="flex items-start gap-3">
-    <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 shrink-0 mt-0.5" />
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
     <div>
-      <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
         code_verifier 보안
       </div>
-      <div className="text-yellow-800 dark:text-yellow-200 text-sm">
-        <code className="mx-1 px-1.5 py-0.5 bg-yellow-100 dark:bg-yellow-800 rounded">code_verifier</code>는 안전하게 저장되어야 합니다.
-        브라우저 환경에서는 httpOnly 쿠키 사용을 권장합니다.
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">code_verifier</code>는 안전하게 저장되어야 합니다.
+        브라우저 환경에서는 httpOnly 쿠키를 사용하시면 더 안전합니다.
         localStorage나 sessionStorage는 XSS 공격에 취약합니다.
       </div>
     </div>
@@ -370,11 +370,11 @@ export async function GET(request: NextRequest) {
 
 | 방법 | 보안성 | XSS 방어 | 권장 여부 | 비고 |
 |------|--------|----------|-----------|------|
-| **httpOnly 쿠키** | ⭐⭐⭐⭐⭐ | ✅ | ✅ 강력 권장 | JavaScript에서 접근 불가, 가장 안전 |
-| **서버 세션** | ⭐⭐⭐⭐⭐ | ✅ | ✅ 강력 권장 | 서버 메모리/DB에 저장, 매우 안전 |
-| **sessionStorage** | ⭐⭐⭐ | ❌ | ⚠️ 주의 필요 | XSS 취약, 단기 저장에만 사용 |
-| **localStorage** | ⭐⭐ | ❌ | ❌ 권장하지 않음 | XSS 취약, 영구 저장으로 위험 증가 |
-| **메모리** | ⭐⭐⭐⭐ | ✅ | ✅ 권장 | 새로고침 시 손실, SPA에 적합 |
+| **httpOnly 쿠키** | ⭐⭐⭐⭐⭐ | ✅ | ✅ 추천 | JavaScript에서 접근 불가, 가장 안전 |
+| **서버 세션** | ⭐⭐⭐⭐⭐ | ✅ | ✅ 추천 | 서버 메모리/DB에 저장, 매우 안전 |
+| **sessionStorage** | ⭐⭐⭐ | ❌ | 💡 참고 | XSS 취약점 주의 필요 |
+| **localStorage** | ⭐⭐ | ❌ | 💡 참고 | XSS 취약점이 있어 주의 필요 |
+| **메모리** | ⭐⭐⭐⭐ | ✅ | ✅ 추천 | 새로고침 시 손실, SPA에 적합 |
 
 #### BFF 패턴 권장
 
@@ -403,7 +403,7 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-`plain` 방식은 `code_verifier`를 그대로 전송하므로, 중간자 공격에 취약합니다. OAuth 2.0 스펙에서도 `S256` 사용을 강력히 권장합니다.
+`plain` 방식은 `code_verifier`를 그대로 전송하므로, 중간자 공격에 취약합니다. OAuth 2.0 스펙에서도 `S256` 사용을 제안하고 있습니다.
 
 ### 일회성 사용 (Replay Attack 방지)
 
@@ -445,13 +445,13 @@ const codeVerifier = "short"; // 5자 → 예측 가능
 
 ### Q1. PKCE와 client_secret을 함께 사용할 수 있나요?
 
-**A.** 기술적으로는 가능하지만, 권장하지 않습니다.
+**A.** 기술적으로는 가능합니다.
 
-- PKCE만으로도 충분한 보안을 제공합니다
-- `client_secret`을 함께 사용하면 관리 복잡도만 증가합니다
+- PKCE만 사용하셔도 충분한 보안을 제공합니다
+- `client_secret`을 함께 사용하면 관리가 조금 복잡해질 수 있습니다
 - 대부분의 OAuth 제공자는 PKCE를 사용할 때 `client_secret`을 선택 사항으로 만듭니다
 
-**권장**: PKCE만 사용하고, `client_secret`은 생략하세요.
+**제안**: 꼭 필요하지 않다면 PKCE만 사용하시는 것이 관리가 편할 수 있습니다.
 
 ### Q2. 모바일 앱에서 PKCE를 사용하는 방법은?
 

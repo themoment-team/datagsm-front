@@ -6,17 +6,17 @@ import { Shield, CheckCircle2 } from 'lucide-react'
 
 이 가이드는 **BFF (Backend For Frontend)** 패턴을 사용하여 React와 Spring Boot Kotlin으로 안전한 OAuth 인증을 구현하는 방법을 설명합니다.
 
-<div className="border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded my-6">
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
   <div className="flex items-start gap-3">
-    <Shield className="h-5 w-5 text-yellow-600 dark:text-yellow-500 shrink-0 mt-0.5" />
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
     <div>
-      <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
         BFF 패턴 사용
       </div>
-      <div className="text-yellow-800 dark:text-yellow-200 text-sm">
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
         이 예제는 보안을 위해 BFF(Backend For Frontend) 패턴을 사용합니다.
-        프론트엔드에서 직접 OAuth 플로우를 처리하는 것은 보안상 권장하지 않습니다.
-        PKCE를 사용하더라도 백엔드를 통한 인증 처리를 권장합니다.
+        프론트엔드에서 직접 OAuth 플로우를 처리하는 것보다 BFF 패턴을 사용하면 더 안전합니다.
+        PKCE를 사용하시는 경우에도 백엔드를 통한 인증 처리를 고려해보세요.
       </div>
     </div>
   </div>

@@ -7,16 +7,16 @@ import { Shield } from 'lucide-react'
 이 섹션에서는 다양한 프레임워크와 아키텍처 패턴을 사용한 실전 OAuth 구현 예제를 제공합니다.
 각 예제는 완전히 동작하는 코드와 함께 프론트엔드와 백엔드 구현을 모두 포함합니다.
 
-<div className="border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded my-6">
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
   <div className="flex items-start gap-3">
-    <Shield className="h-5 w-5 text-yellow-600 dark:text-yellow-500 shrink-0 mt-0.5" />
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
     <div>
-      <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
-        PKCE 사용 권장
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        인증 방식 안내
       </div>
-      <div className="text-yellow-800 dark:text-yellow-200 text-sm">
-        새로운 애플리케이션에서는 <strong>PKCE</strong> 방식을 사용해주세요.
-        일부 예제는 레거시 <code className="mx-1 px-1.5 py-0.5 bg-yellow-100 dark:bg-yellow-800 rounded">client_secret</code> 방식을 사용하고 있으며, PKCE로 마이그레이션을 권장합니다.
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <strong>PKCE</strong> 방식과 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식 중 선택하실 수 있습니다.
+        새로운 프로젝트에서는 PKCE 방식을 고려해보시면 좋을 것 같습니다.
         자세한 내용은 <a href="/docs/oauth/pkce" className="underline font-medium">PKCE 가이드</a>를 참고하세요.
       </div>
     </div>
@@ -78,7 +78,7 @@ import { Shield } from 'lucide-react'
 **특징**:
 - 프론트엔드가 client_secret을 사용하여 Token 교환
 - 서버는 Access Token을 검증하고 자체 JWT 발급
-- **새로운 프로젝트에서는 사용하지 마세요**
+- **참고용 예제입니다**
 
 **플로우**:
 ```
@@ -130,7 +130,7 @@ OAuth 인증 후 사용자가 돌아올 URI입니다. DataGSM에 사전 등록�
 
 #### 1. PKCE 사용
 
-새로운 애플리케이션에서는 반드시 PKCE를 사용하세요. Authorization Code 탈취 공격을 효과적으로 방지합니다.
+새로운 애플리케이션에서는 PKCE를 고려해보세요. Authorization Code 탈취 공격을 효과적으로 방지합니다.
 
 ```typescript
 // code_verifier 생성 (43-128자 랜덤 문자열)
@@ -170,7 +170,7 @@ DATAGSM_CLIENT_SECRET=your-client-secret
 .env.local
 ```
 
-**⚠️ 새로운 프로젝트에서는 PKCE를 사용하여 client_secret을 아예 사용하지 마세요.**
+**💡 새로운 프로젝트에서는 PKCE를 사용하시면 client_secret 관리가 불필요합니다.**
 
 ### 예제 사용 방법
 

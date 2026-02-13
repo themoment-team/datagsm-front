@@ -2,17 +2,17 @@ import { Shield } from 'lucide-react'
 
 # React + Spring Boot (Kotlin) OAuth 구현
 
-<div className="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 rounded my-6">
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
   <div className="flex items-start gap-3">
-    <Shield className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
     <div>
-      <div className="font-semibold text-red-900 dark:text-red-100 mb-1">
-        레거시 방식 (client_secret 사용)
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        client_secret 방식 예제
       </div>
-      <div className="text-red-800 dark:text-red-200 text-sm">
-        이 예제는 레거시 <code className="mx-1 px-1.5 py-0.5 bg-red-100 dark:bg-red-800 rounded">client_secret</code> 방식을 사용합니다.
-        프론트엔드에서 <code className="mx-1 px-1.5 py-0.5 bg-red-100 dark:bg-red-800 rounded">client_secret</code>을 사용하는 것은 보안상 취약하므로,
-        새로운 프로젝트에서는 <strong>PKCE</strong>를 사용하는 <a href="/docs/oauth/example/react-spring" className="underline font-medium">React + Spring Boot (BFF)</a> 예제를 참고해주세요.
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        이 예제는 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식을 사용합니다.
+        프론트엔드에서 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code>을 사용하는 것보다
+        <strong>PKCE</strong>를 사용하는 <a href="/docs/oauth/example/react-spring" className="underline font-medium">React + Spring Boot (BFF)</a> 예제가 더 안전합니다.
         자세한 내용은 <a href="/docs/oauth/pkce" className="underline font-medium">PKCE 가이드</a>를 참고하세요.
       </div>
     </div>

@@ -10,7 +10,7 @@ POST /v1/oauth/token
 
 ### 설명
 
-Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보안을 위해 **PKCE (Proof Key for Code Exchange) 방식**을 사용하여 `code_verifier`로 인증하는 것을 강력히 권장합니다.
+Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보안을 더 강화하고 싶으시다면 **PKCE (Proof Key for Code Exchange) 방식**을 사용하여 `code_verifier`로 인증하는 것도 좋습니다.
 
 발급되는 토큰은 다음과 같은 용도로 사용됩니다:
 - **Access Token**: 사용자 리소스 접근 (1시간 유효)
@@ -20,16 +20,16 @@ Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보�
 
 ### 요청 파라미터
 
-<div className="border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded my-6">
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
   <div className="flex items-start gap-3">
-    <Shield className="h-5 w-5 text-yellow-600 dark:text-yellow-500 shrink-0 mt-0.5" />
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
     <div>
-      <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
-        PKCE 방식 사용 권장
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        인증 방식 안내
       </div>
-      <div className="text-yellow-800 dark:text-yellow-200 text-sm">
-        Authorization Code Grant에서는 <code className="mx-1 px-1.5 py-0.5 bg-yellow-100 dark:bg-yellow-800 rounded">code_verifier</code>를 사용하는 PKCE 방식을 권장합니다.
-        <code className="mx-1 px-1.5 py-0.5 bg-yellow-100 dark:bg-yellow-800 rounded">client_secret</code> 방식은 레거시 지원용으로, 보안상 새로운 구현에서는 사용하지 않는 것을 권장합니다.
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">code_verifier</code>를 사용하는 PKCE 방식과 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식 중 선택하실 수 있습니다.
+        PKCE 방식이 몇 가지 장점이 있어 가능하시다면 사용해보시는 것도 좋습니다.
       </div>
     </div>
   </div>
@@ -49,16 +49,16 @@ Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보�
 
 #### 레거시 방식 (client_secret)
 
-<div className="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 rounded my-6">
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
   <div className="flex items-start gap-3">
-    <Shield className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+    <Shield className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
     <div>
-      <div className="font-semibold text-red-900 dark:text-red-100 mb-1">
-        레거시 파라미터
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        client_secret 방식
       </div>
-      <div className="text-red-800 dark:text-red-200 text-sm">
-        <code className="mx-1 px-1.5 py-0.5 bg-red-100 dark:bg-red-800 rounded">client_secret</code>는 레거시 지원 목적으로만 제공됩니다.
-        클라이언트에서 secret을 안전하게 보관하기 어려우므로, PKCE 방식(<code className="mx-1 px-1.5 py-0.5 bg-red-100 dark:bg-red-800 rounded">code_verifier</code>)을 사용해주세요.
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식도 계속 사용 가능합니다.
+        클라이언트 환경에 따라 PKCE 방식을 선택하실 수도 있습니다.
       </div>
     </div>
   </div>
@@ -443,7 +443,7 @@ export DATAGSM_CLIENT_SECRET=your-client-secret
 DATAGSM_CLIENT_SECRET=your-client-secret
 ```
 
-**주의**: `client_secret` 방식은 클라이언트 사이드에서 안전하게 관리하기 어려우므로, 가능한 빠른 시일 내에 PKCE 방식으로 마이그레이션하는 것을 강력히 권장합니다.
+**참고**: `client_secret` 방식을 사용하시는 경우, 여유가 되시면 PKCE 방식으로 전환해보시는 것도 고려해보세요.
 
 ### 다음 단계
 
