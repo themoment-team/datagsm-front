@@ -498,7 +498,7 @@ fun generateCodeVerifier(): String {
 
 fun generateCodeChallenge(verifier: String): String {
     val digest = MessageDigest.getInstance("SHA-256")
-    val hash = digest.digest(verifier.toByteArray())
+    val hash = digest.digest(verifier.toByteArray(Charsets.UTF_8))
     return Base64.getUrlEncoder()
         .withoutPadding()
         .encodeToString(hash)
