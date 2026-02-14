@@ -1128,8 +1128,8 @@ datagsm:
   oauth:
     token-url: https://oauth.data.hellogsm.kr/v1/oauth/token
     userinfo-url: https://oauth-userinfo.data.hellogsm.kr/userinfo
-    client-id: ${OAUTH_CLIENT_ID}
-    redirect-uri: ${OAUTH_REDIRECT_URI:http://localhost:3000/callback}
+    client-id: \${OAUTH_CLIENT_ID}
+    redirect-uri: \${OAUTH_REDIRECT_URI:http://localhost:3000/callback}
 
 # JWT 설정
 jwt:
