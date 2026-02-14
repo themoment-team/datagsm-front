@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
 import { SignInFormType } from '@repo/shared/types';
@@ -8,9 +9,17 @@ import { toast } from 'sonner';
 
 const OAuthAuthorizeForm = () => {
   const [isPending, setIsPending] = useState(false);
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
 
   const handleSubmit = async (data: SignInFormType) => {
     setIsPending(true);
+
+    if (!token) {
+      toast.error('인증 토큰이 없습니다. 다시 시도해주세요.');
+      setIsPending(false);
+      return;
+    }
 
     try {
       const response = await fetch('/api/oauth/authorize', {
@@ -21,15 +30,21 @@ const OAuthAuthorizeForm = () => {
         body: JSON.stringify({
           email: data.email,
           password: data.password,
+          token: token,
         }),
-        credentials: 'include',
+        credentials: 'same-origin',
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
+      }
 
-        if (data.redirect_url) {
-          window.location.href = data.redirect_url;
+      if (response.ok) {
+        const responseData = await response.json();
+
+        if (responseData.redirect_url) {
+          window.location.href = responseData.redirect_url;
           return;
         }
       }
