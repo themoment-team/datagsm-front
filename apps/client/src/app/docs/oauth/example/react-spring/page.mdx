@@ -297,13 +297,13 @@ class OAuthService(
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class TokenResponse(
-    @JsonProperty("accessToken")
+    @JsonProperty("access_token")
     val accessToken: String,
 
-    @JsonProperty("refreshToken")
+    @JsonProperty("refresh_token")
     val refreshToken: String,
 
-    @JsonProperty("expiresIn")
+    @JsonProperty("expires_in")
     val expiresIn: Int
 )
 
