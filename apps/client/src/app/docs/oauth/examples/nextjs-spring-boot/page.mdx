@@ -617,6 +617,12 @@ public class OAuthService {
     @Value("\${datagsm.oauth.userinfo-url:https://oauth-userinfo.data.hellogsm.kr/userinfo}")
     private String userInfoUrl;
 
+    @Value("\${datagsm.oauth.client-id}")
+    private String clientId;
+
+    @Value("\${datagsm.oauth.redirect-uri}")
+    private String redirectUri;
+
     /**
      * OAuth 콜백 처리: Code → Token → UserInfo → JWT 발급
      */
@@ -647,7 +653,10 @@ public class OAuthService {
     private TokenResponse exchangeCodeForToken(String code, String codeVerifier) throws Exception {
         // 요청 본문 생성 (PKCE: code_verifier 포함)
         Map<String, String> requestBody = Map.of(
+            "grant_type", "authorization_code",
             "code", code,
+            "client_id", clientId,
+            "redirect_uri", redirectUri,
             "codeVerifier", codeVerifier
         );
 
