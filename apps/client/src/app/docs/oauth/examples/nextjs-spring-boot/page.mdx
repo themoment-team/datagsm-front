@@ -2,9 +2,9 @@
 
 ### 시나리오
 
-프론트엔드(Next.js)에서 Authorization Code까지 획득하고, 서버(Spring Boot)에서 Token 교환 및 사용자 정보 조회 후 자체 JWT 발급하는 완전한 OAuth 구현 예제입니다.
+프론트엔드(Next.js)에서 Authorization Code까지 획득하고, 서버(Spring Boot)에서 PKCE 검증 및 Token 교환, 사용자 정보 조회 후 자체 JWT 발급하는 완전한 OAuth 구현 예제입니다.
 
-이 방식은 Client Secret을 완전히 보호하면서 서버 측에서 사용자 인증을 완전히 제어할 수 있는 가장 안전한 구현 방식입니다.
+이 방식은 PKCE를 사용하여 Authorization Code 탈취를 방지하면서 서버 측에서 사용자 인증을 완전히 제어할 수 있는 안전한 구현 방식입니다.
 
 ## 아키텍처 개요
 
@@ -47,19 +47,22 @@ sequenceDiagram
     participant D as Database
 
     U->>N: 1. 로그인 버튼 클릭
-    N->>O: 2. 로그인 페이지로 리다이렉트<br/>(clientId, redirectUri)
-    U->>O: 3. 이메일/비밀번호 입력
-    O-->>N: 4. 콜백 페이지로 리다이렉트<br/>(code 포함)
-    N->>S: 5. POST /api/auth/callback<br/>(code 전달)
-    S->>O: 6. POST /v1/oauth/token<br/>(code, clientSecret)
-    O-->>S: 7. Access Token & Refresh Token
-    S->>O: 8. GET /userinfo<br/>(Bearer Token)
-    O-->>S: 9. 사용자 정보
-    S->>D: 10. 사용자 정보 동기화
-    D-->>S: 11. 저장 완료
-    S->>S: 12. 자체 JWT 생성
-    S-->>N: 13. JWT 반환
-    N-->>U: 14. 로그인 완료,<br/>메인 페이지로 이동
+    N->>N: 2. code_verifier 생성 및 저장
+    N->>N: 3. code_challenge 생성 (SHA-256)
+    N->>O: 4. 로그인 페이지로 리다이렉트<br/>(clientId, redirectUri, code_challenge)
+    U->>O: 5. 이메일/비밀번호 입력
+    O-->>N: 6. 콜백 페이지로 리다이렉트<br/>(code 포함)
+    N->>S: 7. POST /api/auth/callback<br/>(code, code_verifier 전달)
+    S->>O: 8. POST /v1/oauth/token<br/>(code, code_verifier)
+    O->>O: 9. PKCE 검증 (code_verifier → SHA-256 → code_challenge 비교)
+    O-->>S: 10. Access Token & Refresh Token
+    S->>O: 11. GET /userinfo<br/>(Bearer Token)
+    O-->>S: 12. 사용자 정보
+    S->>D: 13. 사용자 정보 동기화
+    D-->>S: 14. 저장 완료
+    S->>S: 15. 자체 JWT 생성
+    S-->>N: 16. JWT 반환
+    N-->>U: 17. 로그인 완료,<br/>메인 페이지로 이동
 ```
 
 ### 책임 분리
@@ -71,9 +74,11 @@ sequenceDiagram
 | 책임 | 설명 |
 | --- | --- |
 | **UI 렌더링** | 로그인 페이지, 로딩 상태, 에러 처리 UI |
+| **PKCE code_verifier 생성** | 43-128자 랜덤 문자열 생성 및 저장 |
+| **PKCE code_challenge 생성** | code_verifier를 SHA-256 해싱 |
 | **리다이렉트 처리** | DataGSM 로그인 페이지로 이동 및 콜백 받기 |
 | **Authorization Code 획득** | URL 파라미터에서 code 추출 |
-| **백엔드 API 호출** | Code를 서버로 전달하고 JWT 받기 |
+| **백엔드 API 호출** | Code와 code_verifier를 서버로 전달하고 JWT 받기 |
 | **토큰 관리** | JWT를 sessionStorage에 저장 및 관리 |
 | **인증 상태 관리** | 로그인 여부에 따른 UI 분기 처리 |
 
@@ -81,7 +86,7 @@ sequenceDiagram
 
 | 책임 | 설명 |
 | --- | --- |
-| **Client Secret 보호** | 환경 변수로 안전하게 관리 |
+| **PKCE 검증** | code_verifier를 OAuth 서버로 전달하여 검증 |
 | **토큰 교환** | Authorization Code → Access Token 변환 |
 | **사용자 정보 조회** | DataGSM API에서 사용자 정보 획득 |
 | **DB 동기화** | 사용자 정보를 자체 DB에 저장/업데이트 |
@@ -94,9 +99,10 @@ sequenceDiagram
 
 | 보안 요소 | 구현 위치 | 설명 |
 | --- | --- | --- |
-| **Client Secret 보호** | Spring Boot | 서버 환경 변수로만 관리, 절대 프론트엔드 노출 금지 |
+| **PKCE 사용** | Next.js & Spring Boot | code_verifier와 code_challenge로 Authorization Code 탈취 방지 |
 | **HTTPS 강제** | 전체 시스템 | 프로덕션에서 모든 통신은 HTTPS 사용 |
 | **State 파라미터** | Next.js | CSRF 공격 방지를 위한 랜덤 토큰 생성 및 검증 |
+| **code_verifier 보호** | Next.js | sessionStorage에 안전하게 저장 (일회성 사용) |
 | **토큰 분리** | 양쪽 | DataGSM Access Token은 서버만, 자체 JWT는 프론트엔드에서 관리 |
 | **HttpOnly Cookie** | Spring Boot | Refresh Token을 XSS로부터 보호 |
 | **JWT 검증** | Spring Boot | 모든 API 요청에서 JWT 서명 및 만료 검증 |
@@ -111,16 +117,44 @@ sequenceDiagram
   <CodeTab label="pages/login.tsx" language="typescript" code={`import { useRouter } from 'next/router';
 import { useState } from 'react';
 
+// PKCE 유틸리티 함수
+function generateCodeVerifier(): string {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return base64UrlEncode(array);
+}
+
+async function generateCodeChallenge(verifier: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(verifier);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return base64UrlEncode(new Uint8Array(hash));
+}
+
+function base64UrlEncode(array: Uint8Array): string {
+  return btoa(String.fromCharCode(...array))
+    .replace(/\\+/g, '-')
+    .replace(/\\//g, '_')
+    .replace(/=/g, '');
+}
+
 const LoginPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setIsLoading(true);
 
     // State 파라미터 생성 (CSRF 방지)
     const state = crypto.randomUUID();
     sessionStorage.setItem('oauth_state', state);
+
+    // PKCE code_verifier 생성 및 저장
+    const codeVerifier = generateCodeVerifier();
+    sessionStorage.setItem('code_verifier', codeVerifier);
+
+    // PKCE code_challenge 생성
+    const codeChallenge = await generateCodeChallenge(codeVerifier);
 
     // 환경 변수에서 설정 가져오기
     const clientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID;
@@ -131,6 +165,8 @@ const LoginPage = () => {
     authUrl.searchParams.append('client_id', clientId);
     authUrl.searchParams.append('redirect_uri', redirectUri);
     authUrl.searchParams.append('state', state);
+    authUrl.searchParams.append('code_challenge', codeChallenge);
+    authUrl.searchParams.append('code_challenge_method', 'S256');
 
     window.location.href = authUrl.toString();
   };
@@ -210,16 +246,23 @@ const CallbackPage = () => {
           throw new Error('State 파라미터가 일치하지 않습니다.');
         }
 
-        // State 제거 (일회용)
-        sessionStorage.removeItem('oauth_state');
+        // code_verifier 가져오기
+        const codeVerifier = sessionStorage.getItem('code_verifier');
+        if (!codeVerifier) {
+          throw new Error('code_verifier가 없습니다.');
+        }
 
-        // 백엔드에 code 전달하여 JWT 받기
+        // State와 code_verifier 제거 (일회용)
+        sessionStorage.removeItem('oauth_state');
+        sessionStorage.removeItem('code_verifier');
+
+        // 백엔드에 code와 code_verifier 전달하여 JWT 받기
         const response = await fetch('/api/auth/callback', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ code }),
+          body: JSON.stringify({ code, codeVerifier }),
         });
 
         if (!response.ok) {
@@ -409,25 +452,39 @@ export default async function handler(
 
 ### 프로젝트 구조
 
-```
-src/main/java/com/example/app/
-├── config/
-│   ├── SecurityConfig.java         # Spring Security 설정
-│   └── JwtConfig.java              # JWT 설정
-├── controller/
-│   └── AuthController.java         # OAuth 인증 컨트롤러
-├── service/
-│   ├── OAuthService.java           # OAuth 비즈니스 로직
-│   ├── UserService.java            # 사용자 관리 서비스
-│   └── JwtService.java             # JWT 발급/검증 서비스
-├── dto/
-│   ├── OAuthCallbackRequest.java   # 콜백 요청 DTO
-│   ├── TokenResponse.java          # 토큰 응답 DTO
-│   └── UserInfoResponse.java       # 사용자 정보 DTO
-├── entity/
-│   └── User.java                   # 사용자 엔티티
-└── repository/
-    └── UserRepository.java         # 사용자 레포지토리
+```mermaid
+graph TD
+    A[src/main/java/com/example/app/] --> B[config/]
+    A --> C[controller/]
+    A --> D[service/]
+    A --> E[dto/]
+    A --> F[entity/]
+    A --> G[repository/]
+
+    B --> B1[SecurityConfig.java<br/><i>Spring Security 설정</i>]
+    B --> B2[JwtConfig.java<br/><i>JWT 설정</i>]
+
+    C --> C1[AuthController.java<br/><i>OAuth 인증 컨트롤러</i>]
+
+    D --> D1[OAuthService.java<br/><i>OAuth 비즈니스 로직</i>]
+    D --> D2[UserService.java<br/><i>사용자 관리 서비스</i>]
+    D --> D3[JwtService.java<br/><i>JWT 발급/검증 서비스</i>]
+
+    E --> E1[OAuthCallbackRequest.java<br/><i>콜백 요청 DTO</i>]
+    E --> E2[TokenResponse.java<br/><i>토큰 응답 DTO</i>]
+    E --> E3[UserInfoResponse.java<br/><i>사용자 정보 DTO</i>]
+
+    F --> F1[User.java<br/><i>사용자 엔티티</i>]
+
+    G --> G1[UserRepository.java<br/><i>사용자 레포지토리</i>]
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e6
+    style C fill:#e8f5e9
+    style D fill:#f3e5f5
+    style E fill:#fce4ec
+    style F fill:#e0f2f1
+    style G fill:#fff9c4
 ```
 
 ### AuthController
@@ -454,7 +511,7 @@ public class AuthController {
     /**
      * OAuth 콜백 처리 및 JWT 발급
      *
-     * @param request Authorization Code를 포함한 요청
+     * @param request Authorization Code와 code_verifier를 포함한 요청
      * @return JWT 토큰 및 사용자 정보
      */
     @PostMapping("/oauth/callback")
@@ -462,8 +519,11 @@ public class AuthController {
             @RequestBody OAuthCallbackRequest request) {
 
         try {
-            // Authorization Code로 토큰 교환 및 사용자 정보 조회
-            AuthResponse response = oAuthService.processOAuthCallback(request.getCode());
+            // Authorization Code와 code_verifier로 토큰 교환 및 사용자 정보 조회
+            AuthResponse response = oAuthService.processOAuthCallback(
+                request.getCode(),
+                request.getCodeVerifier()
+            );
 
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
@@ -551,22 +611,25 @@ public class OAuthService {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("\${datagsm.oauth.client-secret}")
-    private String clientSecret;
-
     @Value("\${datagsm.oauth.token-url:https://oauth.data.hellogsm.kr/v1/oauth/token}")
     private String tokenUrl;
 
     @Value("\${datagsm.oauth.userinfo-url:https://oauth-userinfo.data.hellogsm.kr/userinfo}")
     private String userInfoUrl;
 
+    @Value("\${datagsm.oauth.client-id}")
+    private String clientId;
+
+    @Value("\${datagsm.oauth.redirect-uri}")
+    private String redirectUri;
+
     /**
      * OAuth 콜백 처리: Code → Token → UserInfo → JWT 발급
      */
     @Transactional
-    public AuthResponse processOAuthCallback(String code) throws Exception {
-        // 1. Authorization Code를 Access Token으로 교환
-        TokenResponse tokenResponse = exchangeCodeForToken(code);
+    public AuthResponse processOAuthCallback(String code, String codeVerifier) throws Exception {
+        // 1. Authorization Code와 code_verifier로 Access Token 교환
+        TokenResponse tokenResponse = exchangeCodeForToken(code, codeVerifier);
 
         // 2. Access Token으로 사용자 정보 조회
         DataGsmUserInfo userInfo = fetchUserInfo(tokenResponse.getAccessToken());
@@ -585,13 +648,16 @@ public class OAuthService {
     }
 
     /**
-     * Authorization Code를 Access Token으로 교환
+     * Authorization Code를 Access Token으로 교환 (PKCE 사용)
      */
-    private TokenResponse exchangeCodeForToken(String code) throws Exception {
-        // 요청 본문 생성
+    private TokenResponse exchangeCodeForToken(String code, String codeVerifier) throws Exception {
+        // 요청 본문 생성 (PKCE: code_verifier 포함)
         Map<String, String> requestBody = Map.of(
+            "grant_type", "authorization_code",
             "code", code,
-            "clientSecret", clientSecret
+            "client_id", clientId,
+            "redirect_uri", redirectUri,
+            "codeVerifier", codeVerifier
         );
 
         String requestBodyJson = objectMapper.writeValueAsString(requestBody);
@@ -875,6 +941,7 @@ import lombok.*;
 @AllArgsConstructor
 public class OAuthCallbackRequest {
     private String code;
+    private String codeVerifier;
 }
 
 // DataGSM 토큰 응답
@@ -1059,9 +1126,10 @@ BACKEND_URL=http://localhost:8080`} />
 # DataGSM OAuth 설정
 datagsm:
   oauth:
-    client-secret: \${DATAGSM_CLIENT_SECRET}
     token-url: https://oauth.data.hellogsm.kr/v1/oauth/token
     userinfo-url: https://oauth-userinfo.data.hellogsm.kr/userinfo
+    client-id: \${OAUTH_CLIENT_ID}
+    redirect-uri: \${OAUTH_REDIRECT_URI:http://localhost:3000/callback}
 
 # JWT 설정
 jwt:
@@ -1187,26 +1255,34 @@ cors:
 
 ## Step 4: 보안 고려사항
 
-### 1. Client Secret 보호
+### 1. PKCE 사용
 
-Client Secret은 애플리케이션의 가장 중요한 인증 정보입니다.
+PKCE (Proof Key for Code Exchange)는 Authorization Code 탈취 공격을 방지하는 표준 방식입니다.
 
-| 위험 요소 | 대응 방안 |
+| 보안 요소 | 설명 |
 | --- | --- |
-| **코드에 하드코딩** | 환경 변수로 관리하고 .gitignore에 추가 |
-| **프론트엔드 노출** | 절대 프론트엔드에서 사용 금지, 서버에서만 사용 |
-| **로그 출력** | 로그에 Client Secret이 출력되지 않도록 마스킹 처리 |
-| **버전 관리 시스템** | .env 파일을 Git에 커밋하지 않음 |
+| **code_verifier 생성** | 43-128자의 랜덤 문자열을 암호학적으로 안전한 방식으로 생성 |
+| **code_challenge 생성** | code_verifier를 SHA-256으로 해싱하여 생성 |
+| **일회성 사용** | 각 인증 요청마다 새로운 code_verifier 생성 |
+| **안전한 저장** | code_verifier를 sessionStorage에 저장 (일회성 사용 후 즉시 삭제) |
 
-**올바른 사용 예시:**
+**PKCE 구현 예시:**
 
-```bash
-# 환경 변수 설정
-export DATAGSM_CLIENT_SECRET=your-actual-secret
+```typescript
+// code_verifier 생성 (43-128자 랜덤 문자열)
+function generateCodeVerifier(): string {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return base64UrlEncode(array);
+}
 
-# Spring Boot에서 사용
-@Value("\${datagsm.oauth.client-secret}")
-private String clientSecret;
+// code_challenge 생성 (SHA-256 해싱)
+async function generateCodeChallenge(verifier: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(verifier);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return base64UrlEncode(new Uint8Array(hash));
+}
 ```
 
 ### 2. HTTPS 사용
@@ -1259,23 +1335,26 @@ sequenceDiagram
     participant D as Database
 
     U->>N: 로그인 클릭
-    N->>N: 1. State 생성 & 저장
-    N-->>U: 2. 리다이렉트<br/>(clientId, redirectUri, state)
-    U->>O: 3. 로그인 페이지 표시
-    U->>O: 4. 이메일/비밀번호 입력
-    O-->>U: 5. 콜백 리다이렉트<br/>(code, state)
+    N->>N: 1. State & code_verifier 생성 & 저장
+    N->>N: 2. code_challenge 생성 (SHA-256)
+    N-->>U: 3. 리다이렉트<br/>(clientId, redirectUri, state, code_challenge)
+    U->>O: 4. 로그인 페이지 표시
+    U->>O: 5. 이메일/비밀번호 입력
+    O-->>U: 6. 콜백 리다이렉트<br/>(code, state)
     U->>N: 콜백 페이지 접속
-    N->>N: 6. State 검증
-    N->>S: 7. POST /api/auth/callback<br/>{ code }
-    S->>O: 8. POST /v1/oauth/token<br/>{ code, clientSecret }
-    O-->>S: 9. { accessToken, refreshToken }
-    S->>O: 10. GET /userinfo<br/>Authorization: Bearer token
-    O-->>S: 11. UserInfo
-    S->>D: 12. 사용자 동기화
-    D-->>S: 13. User 저장
-    S->>S: 14. JWT 생성
-    S-->>N: 15. { token, user }
-    N->>N: 16. JWT 저장<br/>(sessionStorage)
+    N->>N: 7. State 검증
+    N->>N: 8. code_verifier 가져오기
+    N->>S: 9. POST /api/auth/callback<br/>{ code, codeVerifier }
+    S->>O: 10. POST /v1/oauth/token<br/>{ code, codeVerifier }
+    O->>O: 11. PKCE 검증
+    O-->>S: 12. { accessToken, refreshToken }
+    S->>O: 13. GET /userinfo<br/>Authorization: Bearer token
+    O-->>S: 14. UserInfo
+    S->>D: 15. 사용자 동기화
+    D-->>S: 16. User 저장
+    S->>S: 17. JWT 생성
+    S-->>N: 18. { token, user }
+    N->>N: 19. JWT 저장 & code_verifier 삭제<br/>(sessionStorage)
     N-->>U: 17. 메인 페이지로 이동
 ```
 
