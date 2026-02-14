@@ -134,10 +134,15 @@ OAuth 인증 후 사용자가 돌아올 URI입니다. DataGSM에 사전 등록�
 
 ```typescript
 // code_verifier 생성 (43-128자 랜덤 문자열)
-const codeVerifier = generateRandomString(128);
+const array = new Uint8Array(32);
+crypto.getRandomValues(array);
+const codeVerifier = base64UrlEncode(array);
 
 // code_challenge 생성 (SHA-256 해시)
-const codeChallenge = await sha256(codeVerifier);
+const encoder = new TextEncoder();
+const data = encoder.encode(codeVerifier);
+const hash = await crypto.subtle.digest('SHA-256', data);
+const codeChallenge = base64UrlEncode(new Uint8Array(hash));
 ```
 
 자세한 구현 방법은 [PKCE 가이드](/docs/oauth/pkce)를 참고하세요.
