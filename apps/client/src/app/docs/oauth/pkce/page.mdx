@@ -328,14 +328,14 @@ export async function GET(request: NextRequest) {
   cookies().delete('oauth_code_verifier');
 
   // 4. 토큰을 httpOnly 쿠키에 저장
-  cookies().set('access_token', tokens.accessToken, {
+  cookies().set('access_token', tokens.access_token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',
     maxAge: 3600, // 1시간
   });
 
-  cookies().set('refresh_token', tokens.refreshToken, {
+  cookies().set('refresh_token', tokens.refresh_token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',

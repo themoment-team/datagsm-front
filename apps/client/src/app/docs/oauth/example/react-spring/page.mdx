@@ -386,7 +386,7 @@ class AuthController(
         } catch (e: Exception) {
             logger.error(e) { "Login failed for: \\\${request.email}" }
             ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(mapOf("error" to (e.message ?: "Login failed")))
+                .body(mapOf("error" to "Authentication failed"))
         }
     }
 
