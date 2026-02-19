@@ -657,7 +657,7 @@ public class OAuthService {
             "code", code,
             "client_id", clientId,
             "redirect_uri", redirectUri,
-            "codeVerifier", codeVerifier
+            "code_verifier", codeVerifier
         );
 
         String requestBodyJson = objectMapper.writeValueAsString(requestBody);
