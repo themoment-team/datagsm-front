@@ -35,11 +35,6 @@ const OAuthAuthorizeForm = () => {
         credentials: 'same-origin',
       });
 
-      if (response.redirected) {
-        window.location.href = response.url;
-        return;
-      }
-
       if (response.ok) {
         const responseData = await response.json();
 
