@@ -1,4 +1,23 @@
+import { Shield } from 'lucide-react'
+
 # Vanilla JavaScript + NestJS OAuth 구현
+
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        client_secret 방식 예제
+      </div>
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        이 예제는 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식을 사용합니다.
+        서버에서 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code>을 사용하는 것도 가능하며,
+        새로운 프로젝트에서는 <strong>PKCE</strong> 방식도 고려해보시면 좋습니다.
+        자세한 내용은 <a href="/docs/oauth/pkce" className="underline font-medium">PKCE 가이드</a>를 참고하세요.
+      </div>
+    </div>
+  </div>
+</div>
 
 ### 시나리오
 
@@ -752,23 +771,33 @@ initDashboard();`} />
 
 ### 프로젝트 구조
 
-```
-src/
-├── auth/
-│   ├── auth.controller.ts       # OAuth 인증 컨트롤러
-│   ├── auth.service.ts          # OAuth 비즈니스 로직
-│   ├── auth.module.ts           # 인증 모듈
-│   ├── dto/
-│   │   ├── callback.dto.ts      # 콜백 요청 DTO
-│   │   └── user-info.dto.ts     # 사용자 정보 DTO
-│   └── guards/
-│       └── session.guard.ts     # 세션 인증 가드
-├── user/
-│   ├── user.service.ts          # 사용자 관리 서비스
-│   ├── user.entity.ts           # 사용자 엔티티
-│   └── user.module.ts           # 사용자 모듈
-├── app.module.ts                # 루트 모듈
-└── main.ts                      # 애플리케이션 진입점
+```mermaid
+graph TD
+    A[src/] --> B[auth/]
+    A --> C[user/]
+    A --> D[app.module.ts<br/><i>루트 모듈</i>]
+    A --> E[main.ts<br/><i>애플리케이션 진입점</i>]
+
+    B --> B1[auth.controller.ts<br/><i>OAuth 인증 컨트롤러</i>]
+    B --> B2[auth.service.ts<br/><i>OAuth 비즈니스 로직</i>]
+    B --> B3[auth.module.ts<br/><i>인증 모듈</i>]
+    B --> B4[dto/]
+    B --> B5[guards/]
+
+    B4 --> B4A[callback.dto.ts<br/><i>콜백 요청 DTO</i>]
+    B4 --> B4B[user-info.dto.ts<br/><i>사용자 정보 DTO</i>]
+
+    B5 --> B5A[session.guard.ts<br/><i>세션 인증 가드</i>]
+
+    C --> C1[user.service.ts<br/><i>사용자 관리 서비스</i>]
+    C --> C2[user.entity.ts<br/><i>사용자 엔티티</i>]
+    C --> C3[user.module.ts<br/><i>사용자 모듈</i>]
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e6
+    style C fill:#e8f5e9
+    style D fill:#fce4ec
+    style E fill:#f3e5f5
 ```
 
 ### AuthController

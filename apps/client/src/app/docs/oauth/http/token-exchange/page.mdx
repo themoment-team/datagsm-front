@@ -1,3 +1,5 @@
+import { Shield } from 'lucide-react'
+
 # 토큰 교환
 
 ### 엔드포인트
@@ -8,7 +10,7 @@ POST /v1/oauth/token
 
 ### 설명
 
-Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 이 엔드포인트는 **반드시 서버에서만** 호출해야 하며, Client Secret이 필요합니다.
+Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보안을 더 강화하고 싶으시다면 **PKCE (Proof Key for Code Exchange) 방식**을 사용하여 `code_verifier`로 인증하는 것도 좋습니다.
 
 발급되는 토큰은 다음과 같은 용도로 사용됩니다:
 - **Access Token**: 사용자 리소스 접근 (1시간 유효)
@@ -16,20 +18,59 @@ Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 이 �
 
 이 엔드포인트는 `grant_type` 파라미터로 토큰 교환과 토큰 갱신을 모두 처리합니다. Authorization Code 교환 시에는 `grant_type`을 `authorization_code`로 설정하세요.
 
-보안 강화를 위해 `code_verifier` 파라미터를 함께 전달하는 것을 권장합니다.
-
 ### 요청 파라미터
 
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        인증 방식 안내
+      </div>
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">code_verifier</code>를 사용하는 PKCE 방식과 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식 중 선택하실 수 있습니다.
+        PKCE 방식이 몇 가지 장점이 있어 가능하시다면 사용해보시는 것도 좋습니다.
+      </div>
+    </div>
+  </div>
+</div>
+
 모든 파라미터는 JSON 형식으로 요청 본문(body)에 포함되어야 합니다.
+
+#### PKCE 방식 (권장)
 
 | 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
 | --- | --- | --- | --- | --- |
 | `grant_type` | `String` | 필수 | 요청 타입 (`authorization_code` 고정) | `authorization_code` |
 | `code` | `String` | 필수 | `/v1/oauth/code`에서 발급받은 Authorization Code | `abc123def456` |
 | `client_id` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 ID | `your-client-id` |
-| `client_secret` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 시크릿 (서버에서만 사용) | `your-client-secret` |
 | `redirect_uri` | `String` | 필수 | Authorization Code 발급 시 사용한 리다이렉트 URI | `https://your-app.com/callback` |
-| `code_verifier` | `String` | 권장 | PKCE Code Verifier (Authorization Code 발급 시 생성한 원본 값) | `dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk` |
+| `code_verifier` | `String` | 필수 | PKCE Code Verifier (Authorization Code 발급 시 생성한 원본 값) | `dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk` |
+
+#### 레거시 방식 (client_secret)
+
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        client_secret 방식
+      </div>
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식도 계속 사용 가능합니다.
+        클라이언트 환경에 따라 PKCE 방식을 선택하실 수도 있습니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+| 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
+| --- | --- | --- | --- | --- |
+| `grant_type` | `String` | 필수 | 요청 타입 (`authorization_code` 고정) | `authorization_code` |
+| `code` | `String` | 필수 | `/v1/oauth/code`에서 발급받은 Authorization Code | `abc123def456` |
+| `client_id` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 ID | `your-client-id` |
+| `client_secret` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 시크릿 (**반드시 서버에서만 사용**) | `your-client-secret` |
+| `redirect_uri` | `String` | 필수 | Authorization Code 발급 시 사용한 리다이렉트 URI | `https://your-app.com/callback` |
 
 ### 응답
 
@@ -61,7 +102,7 @@ Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 이 �
 
 ### 요청 예시
 
-#### cURL
+#### cURL (PKCE 방식)
 
 ```bash
 curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
@@ -70,7 +111,6 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
     "grant_type": "authorization_code",
     "code": "abc123def456",
     "client_id": "your-client-id",
-    "client_secret": "your-client-secret",
     "redirect_uri": "https://your-app.com/callback",
     "code_verifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
   }'
@@ -82,9 +122,9 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-  "expiresIn": 3600
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "expires_in": 3600
 }
 ```
 
@@ -111,7 +151,7 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 다음은 여러 언어에서 토큰을 교환하는 예제입니다.
 
 <CodeTabs>
-  <CodeTab label="JavaScript" language="javascript" code={`async function exchangeToken(code, codeVerifier, clientId, clientSecret, redirectUri) {
+  <CodeTab label="JavaScript" language="javascript" code={`async function exchangeToken(code, codeVerifier, clientId, redirectUri) {
   try {
     const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/token', {
       method: 'POST',
@@ -122,7 +162,6 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
         grant_type: 'authorization_code',
         code,
         client_id: clientId,
-        client_secret: clientSecret,
         redirect_uri: redirectUri,
         code_verifier: codeVerifier,
       }),
@@ -135,9 +174,9 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 
     const data = await response.json();
     return {
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
-      expiresIn: data.expiresIn,
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresIn: data.expires_in,
     };
   } catch (error) {
     console.error('Error:', error.message);
@@ -145,13 +184,12 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   }
 }
 
-// 사용 예시
+// 사용 예시 (PKCE)
 const codeVerifier = sessionStorage.getItem('oauth_code_verifier');
 const tokens = await exchangeToken(
   'abc123def456',
   codeVerifier,
   'your-client-id',
-  process.env.DATAGSM_CLIENT_SECRET,
   'https://your-app.com/callback'
 );
 console.log('Access Token:', tokens.accessToken);
@@ -159,17 +197,15 @@ console.log('Refresh Token:', tokens.refreshToken);
 console.log('Expires In:', tokens.expiresIn, 'seconds');`} />
 
   <CodeTab label="Python" language="python" code={`import requests
-import os
 
-def exchange_token(code, code_verifier, client_id, client_secret, redirect_uri):
+def exchange_token(code, code_verifier, client_id, redirect_uri):
     """
-    Authorization Code를 Access Token으로 교환합니다 (PKCE 포함).
+    Authorization Code를 Access Token으로 교환합니다 (PKCE).
 
     Args:
         code: Authorization Code
         code_verifier: PKCE Code Verifier
         client_id: 클라이언트 ID
-        client_secret: 클라이언트 시크릿
         redirect_uri: 리다이렉트 URI
 
     Returns:
@@ -183,7 +219,6 @@ def exchange_token(code, code_verifier, client_id, client_secret, redirect_uri):
                 'grant_type': 'authorization_code',
                 'code': code,
                 'client_id': client_id,
-                'client_secret': client_secret,
                 'redirect_uri': redirect_uri,
                 'code_verifier': code_verifier,
             }
@@ -194,12 +229,11 @@ def exchange_token(code, code_verifier, client_id, client_secret, redirect_uri):
         print(f'Error: {e}')
         raise
 
-# 사용 예시 (code/page.mdx에서 받은 verifier 사용)
+# 사용 예시 (PKCE)
 tokens = exchange_token(
     code='abc123def456',
     code_verifier='dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk',
     client_id='your-client-id',
-    client_secret=os.environ.get('DATAGSM_CLIENT_SECRET'),
     redirect_uri='https://your-app.com/callback'
 )
 print(f'Access Token: {tokens["access_token"]}')
@@ -220,7 +254,6 @@ public class OAuthTokenService {
         String code,
         String codeVerifier,
         String clientId,
-        String clientSecret,
         String redirectUri
     ) throws Exception {
         // 요청 본문 생성
@@ -228,7 +261,6 @@ public class OAuthTokenService {
             "grant_type", "authorization_code",
             "code", code,
             "client_id", clientId,
-            "client_secret", clientSecret,
             "redirect_uri", redirectUri,
             "code_verifier", codeVerifier
         );
@@ -275,14 +307,12 @@ public class OAuthTokenService {
 
     public static void main(String[] args) throws Exception {
         String clientId = "your-client-id";
-        String clientSecret = System.getenv("DATAGSM_CLIENT_SECRET");
         String codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"; // code/page.mdx에서 저장한 값
 
         TokenResponse tokens = exchangeToken(
             "abc123def456",
             codeVerifier,
             clientId,
-            clientSecret,
             "https://your-app.com/callback"
         );
         System.out.println("Access Token: " + tokens.accessToken);
@@ -303,7 +333,6 @@ data class TokenRequest(
     val grant_type: String,
     val code: String,
     val client_id: String,
-    val client_secret: String,
     val redirect_uri: String,
     val code_verifier: String
 )
@@ -325,14 +354,12 @@ class OAuthTokenService {
         code: String,
         codeVerifier: String,
         clientId: String,
-        clientSecret: String,
         redirectUri: String
     ): TokenResponse {
         val requestBody = TokenRequest(
             grant_type = "authorization_code",
             code = code,
             client_id = clientId,
-            client_secret = clientSecret,
             redirect_uri = redirectUri,
             code_verifier = codeVerifier
         )
@@ -354,18 +381,16 @@ class OAuthTokenService {
     }
 }
 
-// 사용 예시
+// 사용 예시 (PKCE)
 fun main() {
     val service = OAuthTokenService()
     val clientId = "your-client-id"
-    val clientSecret = System.getenv("DATAGSM_CLIENT_SECRET")
     val codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk" // code/page.mdx에서 저장한 값
 
     val tokens = service.exchangeToken(
         code = "abc123def456",
         codeVerifier = codeVerifier,
         clientId = clientId,
-        clientSecret = clientSecret,
         redirectUri = "https://your-app.com/callback"
     )
 
@@ -377,14 +402,37 @@ fun main() {
 
 ### 보안 주의사항
 
-#### Client Secret 보호
+#### PKCE Code Verifier 보호
 
-**가장 중요**: Client Secret은 **절대 클라이언트 측(브라우저, 모바일 앱)에 노출되어서는 안 됩니다.**
+PKCE 방식을 사용할 때는 `code_verifier`를 안전하게 관리해야 합니다:
+
+- ✅ **권장**: httpOnly 쿠키에 저장 (BFF 패턴 사용 시)
+- ✅ **권장**: 서버 세션에 저장
+- ⚠️ **주의**: sessionStorage 사용 시 XSS 취약점에 주의
+- ❌ **금지**: localStorage는 XSS 공격에 매우 취약
+
+`code_verifier`는 일회성으로 사용되며, 토큰 교환 후 즉시 삭제해야 합니다.
+
+#### HTTPS 필수
+
+모든 OAuth 통신은 **반드시 HTTPS**를 사용해야 합니다. HTTP를 사용하면 Authorization Code와 토큰이 평문으로 전송되어 중간자 공격에 취약합니다.
+
+#### 토큰 저장
+
+- **Access Token**: sessionStorage 또는 메모리에 저장 (1시간 후 만료)
+- **Refresh Token**: HttpOnly 쿠키 또는 서버 세션에 저장 (30일 후 만료)
+- localStorage는 XSS 공격에 취약하므로 사용을 지양하세요.
+
+### 레거시 방식 (client_secret) 보안 주의사항
+
+레거시 `client_secret` 방식을 사용해야 하는 경우, 다음 사항을 **반드시** 준수하세요:
+
+**Client Secret 보호** (가장 중요):
 
 - ❌ **절대 금지**: 프론트엔드 코드에 하드코딩
 - ❌ **절대 금지**: 브라우저의 localStorage, sessionStorage에 저장
 - ❌ **절대 금지**: Git 저장소에 커밋
-- ✅ **권장**: 서버의 환경 변수로 관리
+- ✅ **필수**: 서버의 환경 변수로 관리
 - ✅ **권장**: 보안 볼트(AWS Secrets Manager, HashiCorp Vault 등) 사용
 
 ```bash
@@ -395,22 +443,13 @@ export DATAGSM_CLIENT_SECRET=your-client-secret
 DATAGSM_CLIENT_SECRET=your-client-secret
 ```
 
-#### HTTPS 필수
-
-- 이 엔드포인트는 Client Secret을 전송하므로 **반드시 HTTPS**를 사용해야 합니다.
-- HTTP를 사용하면 Client Secret이 평문으로 전송되어 심각한 보안 위협이 됩니다.
-
-#### 토큰 저장
-
-- **Access Token**: sessionStorage 또는 메모리에 저장 (1시간 후 만료)
-- **Refresh Token**: HttpOnly 쿠키 또는 서버 세션에 저장 (30일 후 만료)
-- localStorage는 XSS 공격에 취약하므로 사용을 지양하세요.
+**참고**: `client_secret` 방식을 사용하시는 경우, 여유가 되시면 PKCE 방식으로 전환해보시는 것도 고려해보세요.
 
 ### 다음 단계
 
 Token 교환에 성공했다면, 다음 작업을 수행할 수 있습니다.
 
 - [사용자 정보 조회](/docs/oauth/http/userinfo) - Access Token으로 사용자 정보 획득
-- [토큰 갱신](/docs/oauth/http/tokens) - Refresh Token으로 새 Access Token 발급
+- [토큰 갱신](/docs/oauth/http/token-refresh) - Refresh Token으로 새 Access Token 발급
 
 실전 구현 예제가 필요하면 [Examples 문서](/docs/oauth/examples)를 참고하세요.

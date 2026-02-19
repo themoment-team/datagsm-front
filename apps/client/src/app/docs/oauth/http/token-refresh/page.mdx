@@ -1,3 +1,5 @@
+import { Shield } from 'lucide-react'
+
 # 토큰 갱신
 
 ### 엔드포인트
@@ -15,6 +17,20 @@ Refresh Token을 사용하여 새로운 Access Token과 Refresh Token을 발급�
 Access Token이 만료되었을 때(1시간 후) 사용자가 다시 로그인하지 않고도 새로운 Access Token을 받을 수 있습니다.
 
 Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Refresh Token도 함께 발급됩니다.
+
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        client_secret 불필요
+      </div>
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        토큰 갱신 시 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code>는 필요하지 않습니다. <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">refresh_token</code>만으로 갱신이 가능합니다.
+      </div>
+    </div>
+  </div>
+</div>
 
 ### 요청 파라미터
 

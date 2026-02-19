@@ -1,3 +1,5 @@
+import { Shield } from 'lucide-react'
+
 # OAuth 구현 예제
 
 ### 개요
@@ -5,67 +7,98 @@
 이 섹션에서는 다양한 프레임워크와 아키텍처 패턴을 사용한 실전 OAuth 구현 예제를 제공합니다.
 각 예제는 완전히 동작하는 코드와 함께 프론트엔드와 백엔드 구현을 모두 포함합니다.
 
-예제를 통해 프로젝트의 기술 스택과 요구사항에 맞는 OAuth 구현 방법을 선택할 수 있습니다.
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        인증 방식 안내
+      </div>
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <strong>PKCE</strong> 방식과 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식 중 선택하실 수 있습니다.
+        새로운 프로젝트에서는 PKCE 방식을 고려해보시면 좋을 것 같습니다.
+        자세한 내용은 <a href="/docs/oauth/pkce" className="underline font-medium">PKCE 가이드</a>를 참고하세요.
+      </div>
+    </div>
+  </div>
+</div>
 
 ### 사용 가능한 예제
 
-| 예제 | 프론트엔드 | 백엔드 | 주요 특징 | 권장 사용 사례 |
-| --- | --- | --- | --- | --- |
-| [Next.js + Spring Boot](/docs/oauth/examples/nextjs-spring-boot) | Next.js | Spring Boot (Java) | 프론트에서 code까지, 서버에서 token 교환 및 JWT 발급 | 보안이 중요한 서비스, 엔터프라이즈 애플리케이션 |
-| [React + Spring Boot (Kotlin)](/docs/oauth/examples/react-spring-boot-kotlin) | React | Spring Boot (Kotlin) | 프론트에서 token까지 교환, 서버에서 token 검증 | SPA 기반 애플리케이션, 모던 웹 서비스 |
-| [Vanilla JS + NestJS](/docs/oauth/examples/vanilla-nestjs) | Vanilla JavaScript | NestJS (TypeScript) | OAuth code 인증 후 세션 기반 인증 | 프레임워크 없는 프로젝트, 세션 기반 인증 선호 |
+| 예제 | 프론트엔드 | 백엔드 | 인증 방식 | 주요 특징 | 권장 사용 사례 |
+| --- | --- | --- | --- | --- | --- |
+| [React + Spring Boot (BFF)](/docs/oauth/example/react-spring) | React | Spring Boot (Kotlin) | **PKCE** | BFF 패턴, 서버에서 OAuth 처리, httpOnly 쿠키 | 보안이 가장 중요한 프로덕션 환경 |
+| [Next.js + Spring Boot](/docs/oauth/examples/nextjs-spring-boot) | Next.js | Spring Boot (Java) | **PKCE** | 서버에서 token 교환 및 JWT 발급 | 엔터프라이즈 애플리케이션 |
+| [React + Spring Boot (Kotlin)](/docs/oauth/examples/react-spring-boot-kotlin) | React | Spring Boot (Kotlin) | client_secret (레거시) | 프론트에서 token 교환, 서버에서 검증 | SPA 기반 애플리케이션 |
+| [Vanilla JS + NestJS](/docs/oauth/examples/vanilla-nestjs) | Vanilla JavaScript | NestJS (TypeScript) | client_secret (레거시) | 세션 기반 인증 | 프레임워크 없는 프로젝트 |
 
 ### 시나리오별 선택 가이드
 
-#### 시나리오 1: Next.js + Spring Boot
+#### 시나리오 1: React + Spring Boot (BFF)
 
 **언제 사용하나요?**
+- 프로덕션 환경에서 최고 수준의 보안이 필요한 경우
+- PKCE를 사용하여 Authorization Code 탈취를 방지하고 싶은 경우
+- 토큰을 브라우저에 노출하지 않고 httpOnly 쿠키로 관리하고 싶은 경우
+
+**특징**:
+- BFF(Backend For Frontend) 패턴 사용
+- 서버에서 PKCE 플로우 처리 (code_verifier 생성 및 검증)
+- httpOnly 쿠키로 XSS 공격 방지
+- **가장 안전한 구현 방식**
+
+**플로우**:
+```
+사용자 → React (BFF 엔드포인트 호출) → Spring Boot (PKCE + OAuth 처리 + httpOnly 쿠키 설정) → 로그인 완료
+```
+
+#### 시나리오 2: Next.js + Spring Boot
+
+**언제 사용하나요?**
+- Next.js SSR/SSG 기능을 활용하는 경우
 - 서버 측에서 완전한 OAuth 플로우 제어가 필요한 경우
-- Client Secret을 완전히 보호해야 하는 경우
-- 서버에서 자체 JWT를 발급하여 세션 관리를 하는 경우
+- PKCE를 사용하여 보안을 강화하고 싶은 경우
 
 **특징**:
 - 프론트엔드는 Authorization Code만 획득
-- 서버가 Token 교환 및 UserInfo 조회를 담당
-- 가장 안전한 구현 방식
+- 서버가 PKCE 검증 및 Token 교환 담당
+- 안전한 구현 방식
 
 **플로우**:
 ```
-사용자 → Next.js (code 획득) → Spring Boot (token 교환 + userinfo 조회 + JWT 발급) → 로그인 완료
+사용자 → Next.js (code 획득) → Spring Boot (PKCE 검증 + token 교환 + JWT 발급) → 로그인 완료
 ```
 
-#### 시나리오 2: React + Spring Boot (Kotlin)
+#### 시나리오 3: React + Spring Boot (Kotlin) - 레거시
 
 **언제 사용하나요?**
-- SPA(Single Page Application) 구조를 선호하는 경우
-- 프론트엔드에서 OAuth 플로우를 직접 제어하고 싶은 경우
-- 서버는 토큰 검증만 담당하면 되는 경우
+- 기존 프로젝트에서 client_secret 방식을 사용 중인 경우
+- PKCE로 마이그레이션하기 전 참고용
 
 **특징**:
-- 프론트엔드가 Token 교환까지 수행
+- 프론트엔드가 client_secret을 사용하여 Token 교환
 - 서버는 Access Token을 검증하고 자체 JWT 발급
-- 프론트엔드 개발자의 자율성이 높음
+- **참고용 예제입니다**
 
 **플로우**:
 ```
-사용자 → React (code 획득 + token 교환) → Spring Boot (token 검증 + JWT 발급) → 로그인 완료
+사용자 → React (code 획득 + token 교환 with client_secret) → Spring Boot (token 검증 + JWT 발급) → 로그인 완료
 ```
 
-#### 시나리오 3: Vanilla JS + NestJS
+#### 시나리오 4: Vanilla JS + NestJS - 레거시
 
 **언제 사용하나요?**
-- React/Vue 등의 프레임워크 없이 순수 JavaScript를 사용하는 경우
-- 세션 기반 인증을 선호하는 경우
-- JWT 대신 전통적인 서버 세션을 사용하는 경우
+- 기존 프로젝트에서 client_secret 방식을 사용 중인 경우
+- 프레임워크 없는 순수 JavaScript 프로젝트
 
 **특징**:
 - 프레임워크 없는 순수 JavaScript 구현
+- client_secret 방식 사용
 - 서버 측 세션 스토어 활용
-- 간단한 쿠키 기반 인증
 
 **플로우**:
 ```
-사용자 → Vanilla JS (code 획득) → NestJS (token 교환 + userinfo 조회 + 세션 생성) → 로그인 완료
+사용자 → Vanilla JS (code 획득) → NestJS (token 교환 with client_secret + 세션 생성) → 로그인 완료
 ```
 
 ### 공통 개념
@@ -95,16 +128,24 @@ OAuth 인증 후 사용자가 돌아올 URI입니다. DataGSM에 사전 등록�
 
 모든 예제에서 공통으로 적용해야 할 보안 권장사항입니다.
 
-#### 1. Client Secret 보호
+#### 1. PKCE 사용
 
-```bash
-# 환경 변수로 관리
-DATAGSM_CLIENT_SECRET=your-client-secret
+새로운 애플리케이션에서는 PKCE를 고려해보세요. Authorization Code 탈취 공격을 효과적으로 방지합니다.
 
-# .gitignore에 추가
-.env
-.env.local
+```typescript
+// code_verifier 생성 (43-128자 랜덤 문자열)
+const array = new Uint8Array(32);
+crypto.getRandomValues(array);
+const codeVerifier = base64UrlEncode(array);
+
+// code_challenge 생성 (SHA-256 해시)
+const encoder = new TextEncoder();
+const data = encoder.encode(codeVerifier);
+const hash = await crypto.subtle.digest('SHA-256', data);
+const codeChallenge = base64UrlEncode(new Uint8Array(hash));
 ```
+
+자세한 구현 방법은 [PKCE 가이드](/docs/oauth/pkce)를 참고하세요.
 
 #### 2. HTTPS 사용
 
@@ -116,8 +157,25 @@ CSRF 공격 방지를 위해 State 파라미터를 사용하세요.
 
 #### 4. 토큰 저장
 
-- Access Token: sessionStorage 또는 메모리
-- Refresh Token: HttpOnly 쿠키 또는 서버 세션
+- **권장**: httpOnly 쿠키 (XSS 공격 방지)
+- Access Token: 메모리 또는 sessionStorage
+- Refresh Token: httpOnly 쿠키 또는 서버 세션
+- **지양**: localStorage (XSS 공격에 취약)
+
+#### 5. Client Secret 보호 (레거시 방식 사용 시)
+
+레거시 방식(client_secret)을 사용하는 경우에만 해당됩니다.
+
+```bash
+# 환경 변수로 관리
+DATAGSM_CLIENT_SECRET=your-client-secret
+
+# .gitignore에 추가
+.env
+.env.local
+```
+
+**💡 새로운 프로젝트에서는 PKCE를 사용하시면 client_secret 관리가 불필요합니다.**
 
 ### 예제 사용 방법
 
@@ -134,8 +192,13 @@ CSRF 공격 방지를 위해 State 파라미터를 사용하세요.
 
 프로젝트에 적합한 예제를 선택하여 구현을 시작하세요.
 
+**권장 (PKCE 사용)**:
+- [React + Spring Boot (BFF) 예제](/docs/oauth/example/react-spring)
 - [Next.js + Spring Boot 예제](/docs/oauth/examples/nextjs-spring-boot)
+
+**레거시 (client_secret 사용)**:
 - [React + Spring Boot (Kotlin) 예제](/docs/oauth/examples/react-spring-boot-kotlin)
 - [Vanilla JS + NestJS 예제](/docs/oauth/examples/vanilla-nestjs)
 
+PKCE 구현 방법이 필요하면 [PKCE 가이드](/docs/oauth/pkce)를 참고하세요.
 HTTP API 상세 문서가 필요하면 [HTTP API 문서](/docs/oauth/http)를 참고하세요.

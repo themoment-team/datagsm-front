@@ -17,15 +17,15 @@ Authorization Code는 이후 `/v1/oauth/token` 엔드포인트에서 Access Toke
 
 <div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
   <div className="flex items-start gap-3">
-    <Shield className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
     <div>
       <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-        PKCE 권장
+        PKCE 파라미터 안내
       </div>
       <div className="text-blue-800 dark:text-blue-200 text-sm">
-        보안 강화를 위해 <strong>PKCE (RFC 7636)</strong> 사용을 권장합니다.
-        Authorization Code 요청 시 <code>code_challenge</code>와 <code>code_challenge_method</code>를 포함하고,
-        Token 교환 시 원본 <code>code_verifier</code>를 제공하세요.
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">code_challenge</code>와 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">code_challenge_method</code> 파라미터를 포함하시면 보안이 향상됩니다.
+        PKCE를 사용하지 않는 방식도 지원됩니다.
+        자세한 내용은 <a href="/docs/oauth/pkce" className="underline font-medium">PKCE 가이드</a>를 참고하세요.
       </div>
     </div>
   </div>
@@ -41,8 +41,8 @@ Authorization Code는 이후 `/v1/oauth/token` 엔드포인트에서 Access Toke
 | `password`              | `String` | 필수    | 사용자의 비밀번호                                      | `mypassword123`                               |
 | `client_id`             | `String` | 필수    | DataGSM에서 발급받은 클라이언트 ID                        | `your-client-id`                              |
 | `redirect_uri`          | `String` | 필수    | 인증 성공 후 리다이렉트될 URL (사전 등록 필요)                  | `https://your-app.com/callback`               |
-| `code_challenge`        | `String` | 권장    | PKCE Code Verifier의 SHA-256 해시 (Base64URL 인코딩) | `E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM` |
-| `code_challenge_method` | `String` | 권장    | Challenge 생성 방법 (`S256` 권장)                    | `S256`                                        |
+| `code_challenge`        | `String` | 선택 (PKCE) | PKCE Code Verifier의 SHA-256 해시 (Base64URL 인코딩) | `E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM` |
+| `code_challenge_method` | `String` | 선택 (PKCE) | Challenge 생성 방법 (항상 `S256` 사용)                    | `S256`                                        |
 
 ### 응답
 
@@ -516,5 +516,5 @@ fun main() {
 
 Authorization Code를 발급받았다면, 다음 단계로 Token 교환을 진행하세요.
 
-- [토큰 교환](/docs/oauth/http/token) - Authorization Code를 Access Token으로 교환
+- [토큰 교환](/docs/oauth/http/token-exchange) - Authorization Code를 Access Token으로 교환
 - [사용자 정보 조회](/docs/oauth/http/userinfo) - Access Token으로 사용자 정보 획득
