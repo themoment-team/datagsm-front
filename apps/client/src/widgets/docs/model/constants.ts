@@ -83,7 +83,7 @@ export const docsSections: DocsSection[] = [
             href: '/docs/oauth/http/authorize',
           },
           {
-            label: '인증 코드 발급 (Deprecated)',
+            label: '인증 코드 발급',
             href: '/docs/oauth/http/code',
           },
           {
