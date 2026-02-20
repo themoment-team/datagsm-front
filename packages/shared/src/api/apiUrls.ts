@@ -24,10 +24,10 @@ export const studentUrl = {
     return `/v1/students?${params.toString()}`;
   },
   postStudent: () => '/v1/students',
-  postGraduateStudent: (studentId: number) => `/v1/students/${studentId}/graduate`,
-  postGraduateThirdGrade: () => '/v1/students/graduate/third-grade',
-  postStudentExcel: () => '/v1/students/excel/upload',
-  getStudentExcel: () => '/v1/students/excel/download',
+  patchStudentStatus: (studentId: number) => `/v1/students/${studentId}/status`,
+  postStudentBatchOperation: () => '/v1/students/batch-operations',
+  postStudentImport: () => '/v1/students/imports',
+  getStudentExport: () => '/v1/students/exports/excel',
 } as const;
 
 export const authUrl = {
@@ -80,8 +80,8 @@ export const clubUrl = {
     return queryString ? `/v1/clubs?${queryString}` : '/v1/clubs';
   },
   postClub: () => '/v1/clubs',
-  postClubExcel: () => '/v1/clubs/excel/upload',
-  getClubExcel: () => '/v1/clubs/excel/download',
+  postClubImport: () => '/v1/clubs/imports',
+  getClubExport: () => '/v1/clubs/exports/excel',
 } as const;
 
 export const clientUrl = {
@@ -115,14 +115,17 @@ export const healthUrl = {
 } as const;
 
 export const accountUrl = {
-  postSignup: () => '/v1/accounts/signup',
-  postEmailSend: () => '/v1/accounts/email/send',
-  postEmailCheck: () => '/v1/accounts/email/check',
+  postEmailVerification: () => '/v1/accounts/email-verifications',
+  postEmailVerificationVerify: () => '/v1/accounts/email-verifications/verify',
+  postAccount: () => '/v1/accounts',
   getMy: () => '/v1/accounts/my',
+  postPasswordReset: () => '/v1/accounts/password-resets',
+  postPasswordResetVerification: () => '/v1/accounts/password-resets/verification',
+  putPassword: () => '/v1/accounts/password',
 } as const;
 
 export const oauthUrl = {
   postOAuthCode: () => '/v1/oauth/code',
   postOAuthToken: () => '/oauth/token', // Next.js Route Handler (client_secret 숨김)
-  putOAuthRefresh: () => '/v1/oauth/refresh', // 직접 OAuth 서버로 (client_secret 불필요)
+  postOAuthTokenRefresh: () => '/v1/oauth/token', // 토큰 갱신 (통합 엔드포인트)
 } as const;

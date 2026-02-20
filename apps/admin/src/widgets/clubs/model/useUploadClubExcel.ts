@@ -10,11 +10,11 @@ export const useUploadClubExcel = (
   >,
 ) =>
   useMutation({
-    mutationKey: clubQueryKeys.postClubExcel(),
+    mutationKey: clubQueryKeys.postClubImport(),
     mutationFn: (file: File) => {
       const formData = new FormData();
       formData.append('file', file);
-      return post<BaseApiResponse>(clubUrl.postClubExcel(), formData);
+      return post<BaseApiResponse>(clubUrl.postClubImport(), formData);
     },
     ...options,
   });

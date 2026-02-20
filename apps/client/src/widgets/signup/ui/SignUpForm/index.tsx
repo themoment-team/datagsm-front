@@ -207,7 +207,7 @@ const SignUpForm = () => {
   const { mutate: signUp, isPending: isSigningUp } = useSignUp({
     onSuccess: () => {
       toast.success('회원가입이 완료되었습니다. 로그인해주세요.');
-      router.push('/signin');
+      router.push('/');
     },
     onError: (error: unknown) => {
       const statusCode =
@@ -385,7 +385,7 @@ const SignUpForm = () => {
 
           <p className={cn('text-muted-foreground text-center text-sm')}>
             이미 계정이 있으신가요?{' '}
-            <Link href="/signin" className={cn('text-primary font-medium hover:underline')}>
+            <Link href="/" className={cn('text-primary font-medium hover:underline')}>
               로그인
             </Link>
           </p>

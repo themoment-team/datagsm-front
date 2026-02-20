@@ -49,7 +49,7 @@ const SidebarItem = ({ item, level, isActive, toggle, openMap, onLinkClick }: Si
           <button
             type="button"
             onClick={() => toggle(item.href)}
-            className="p-1"
+            className="cursor-pointer p-1"
             aria-label={`${item.label} 토글`}
           >
             <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />

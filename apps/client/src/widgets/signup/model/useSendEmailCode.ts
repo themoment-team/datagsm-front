@@ -1,4 +1,4 @@
-import { accountQueryKeys, accountUrl, post } from '@repo/shared/api';
+import { accountQueryKeys, accountUrl, oauthPost } from '@repo/shared/api';
 import { BaseApiResponse } from '@repo/shared/types';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -14,8 +14,8 @@ export const useSendEmailCode = (
   >,
 ) =>
   useMutation({
-    mutationKey: accountQueryKeys.postEmailSend(),
+    mutationKey: accountQueryKeys.postEmailVerification(),
     mutationFn: (data: SendEmailCodeParams) =>
-      post<BaseApiResponse>(accountUrl.postEmailSend(), data),
+      oauthPost<BaseApiResponse>(accountUrl.postEmailVerification(), data),
     ...options,
   });

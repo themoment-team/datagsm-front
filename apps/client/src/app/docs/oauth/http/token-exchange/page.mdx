@@ -1,0 +1,456 @@
+import { Shield } from 'lucide-react'
+
+# 토큰 교환
+
+### 엔드포인트
+
+```http
+POST /v1/oauth/token
+```
+
+### 설명
+
+Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보안을 더 강화하고 싶으시다면 **PKCE (Proof Key for Code Exchange) 방식**을 사용하여 `code_verifier`로 인증하는 것도 좋습니다.
+
+발급되는 토큰은 다음과 같은 용도로 사용됩니다:
+- **Access Token**: 사용자 리소스 접근 (1시간 유효)
+- **Refresh Token**: Access Token 갱신 (30일 유효)
+
+이 엔드포인트는 `grant_type` 파라미터로 토큰 교환과 토큰 갱신을 모두 처리합니다. Authorization Code 교환 시에는 `grant_type`을 `authorization_code`로 설정하세요.
+
+### 요청 파라미터
+
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        인증 방식 안내
+      </div>
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">code_verifier</code>를 사용하는 PKCE 방식과 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식 중 선택하실 수 있습니다.
+        PKCE 방식이 몇 가지 장점이 있어 가능하시다면 사용해보시는 것도 좋습니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+모든 파라미터는 JSON 형식으로 요청 본문(body)에 포함되어야 합니다.
+
+#### PKCE 방식 (권장)
+
+| 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
+| --- | --- | --- | --- | --- |
+| `grant_type` | `String` | 필수 | 요청 타입 (`authorization_code` 고정) | `authorization_code` |
+| `code` | `String` | 필수 | `/v1/oauth/code`에서 발급받은 Authorization Code | `abc123def456` |
+| `client_id` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 ID | `your-client-id` |
+| `redirect_uri` | `String` | 필수 | Authorization Code 발급 시 사용한 리다이렉트 URI | `https://your-app.com/callback` |
+| `code_verifier` | `String` | 필수 | PKCE Code Verifier (Authorization Code 발급 시 생성한 원본 값) | `dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk` |
+
+#### 레거시 방식 (client_secret)
+
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        client_secret 방식
+      </div>
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code> 방식도 계속 사용 가능합니다.
+        클라이언트 환경에 따라 PKCE 방식을 선택하실 수도 있습니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+| 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
+| --- | --- | --- | --- | --- |
+| `grant_type` | `String` | 필수 | 요청 타입 (`authorization_code` 고정) | `authorization_code` |
+| `code` | `String` | 필수 | `/v1/oauth/code`에서 발급받은 Authorization Code | `abc123def456` |
+| `client_id` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 ID | `your-client-id` |
+| `client_secret` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 시크릿 (**반드시 서버에서만 사용**) | `your-client-secret` |
+| `redirect_uri` | `String` | 필수 | Authorization Code 발급 시 사용한 리다이렉트 URI | `https://your-app.com/callback` |
+
+### 응답
+
+#### 성공 응답 (200 OK)
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `access_token` | `String` | JWT 형식의 Access Token (1시간 유효) |
+| `token_type` | `String` | 토큰 타입 (`Bearer` 고정) |
+| `expires_in` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `refresh_token` | `String` | Refresh Token (30일 유효) |
+
+### 오류 응답
+
+| 상태 코드 | 설명 | 원인 |
+| --- | --- | --- |
+| `400 Bad Request` | 잘못된 요청 | 필수 파라미터 누락 또는 잘못된 형식 |
+| `401 Unauthorized` | 인증 실패 | Client Secret이 올바르지 않음 |
+| `404 Not Found` | 리소스를 찾을 수 없음 | Authorization Code가 만료되었거나 존재하지 않음 |
+
+### 요청 예시
+
+#### cURL (PKCE 방식)
+
+```bash
+curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "grant_type": "authorization_code",
+    "code": "abc123def456",
+    "client_id": "your-client-id",
+    "redirect_uri": "https://your-app.com/callback",
+    "code_verifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
+  }'
+```
+
+### 응답 예시
+
+#### 성공
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+}
+```
+
+#### 실패 (404 Not Found)
+
+```json
+{
+  "error": "not_found",
+  "error_description": "Authorization code not found or expired"
+}
+```
+
+#### 실패 (401 Unauthorized)
+
+```json
+{
+  "error": "unauthorized",
+  "error_description": "Invalid client secret"
+}
+```
+
+### 사용 예제
+
+다음은 여러 언어에서 토큰을 교환하는 예제입니다.
+
+<CodeTabs>
+  <CodeTab label="JavaScript" language="javascript" code={`async function exchangeToken(code, codeVerifier, clientId, redirectUri) {
+  try {
+    const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        grant_type: 'authorization_code',
+        code,
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        code_verifier: codeVerifier,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error_description || 'Failed to exchange token');
+    }
+
+    const data = await response.json();
+    return {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresIn: data.expires_in,
+    };
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error;
+  }
+}
+
+// 사용 예시 (PKCE)
+const codeVerifier = sessionStorage.getItem('oauth_code_verifier');
+const tokens = await exchangeToken(
+  'abc123def456',
+  codeVerifier,
+  'your-client-id',
+  'https://your-app.com/callback'
+);
+console.log('Access Token:', tokens.accessToken);
+console.log('Refresh Token:', tokens.refreshToken);
+console.log('Expires In:', tokens.expiresIn, 'seconds');`} />
+
+  <CodeTab label="Python" language="python" code={`import requests
+
+def exchange_token(code, code_verifier, client_id, redirect_uri):
+    """
+    Authorization Code를 Access Token으로 교환합니다 (PKCE).
+
+    Args:
+        code: Authorization Code
+        code_verifier: PKCE Code Verifier
+        client_id: 클라이언트 ID
+        redirect_uri: 리다이렉트 URI
+
+    Returns:
+        dict: access_token, refresh_token, expires_in 포함
+    """
+    try:
+        response = requests.post(
+            'https://oauth.data.hellogsm.kr/v1/oauth/token',
+            headers={'Content-Type': 'application/json'},
+            json={
+                'grant_type': 'authorization_code',
+                'code': code,
+                'client_id': client_id,
+                'redirect_uri': redirect_uri,
+                'code_verifier': code_verifier,
+            }
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f'Error: {e}')
+        raise
+
+# 사용 예시 (PKCE)
+tokens = exchange_token(
+    code='abc123def456',
+    code_verifier='dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk',
+    client_id='your-client-id',
+    redirect_uri='https://your-app.com/callback'
+)
+print(f'Access Token: {tokens["access_token"]}')
+print(f'Refresh Token: {tokens["refresh_token"]}')
+print(f'Expires In: {tokens["expires_in"]} seconds')`} />
+
+  <CodeTab label="Java" language="java" code={`import java.net.http.*;
+import java.net.URI;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Map;
+
+public class OAuthTokenService {
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    public static TokenResponse exchangeToken(
+        String code,
+        String codeVerifier,
+        String clientId,
+        String redirectUri
+    ) throws Exception {
+        // 요청 본문 생성
+        Map<String, String> requestBody = Map.of(
+            "grant_type", "authorization_code",
+            "code", code,
+            "client_id", clientId,
+            "redirect_uri", redirectUri,
+            "code_verifier", codeVerifier
+        );
+
+        String requestBodyJson = mapper.writeValueAsString(requestBody);
+
+        // HTTP 요청 생성
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/token"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
+            .build();
+
+        // 요청 전송
+        HttpResponse<String> response = client.send(
+            request,
+            HttpResponse.BodyHandlers.ofString()
+        );
+
+        // 응답 처리
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to exchange token: " + response.body());
+        }
+
+        JsonNode jsonNode = mapper.readTree(response.body());
+        return new TokenResponse(
+            jsonNode.get("access_token").asText(),
+            jsonNode.get("refresh_token").asText(),
+            jsonNode.get("expires_in").asInt()
+        );
+    }
+
+    public static class TokenResponse {
+        public final String accessToken;
+        public final String refreshToken;
+        public final int expiresIn;
+
+        public TokenResponse(String accessToken, String refreshToken, int expiresIn) {
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+            this.expiresIn = expiresIn;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        String clientId = "your-client-id";
+        String codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"; // code/page.mdx에서 저장한 값
+
+        TokenResponse tokens = exchangeToken(
+            "abc123def456",
+            codeVerifier,
+            clientId,
+            "https://your-app.com/callback"
+        );
+        System.out.println("Access Token: " + tokens.accessToken);
+        System.out.println("Refresh Token: " + tokens.refreshToken);
+        System.out.println("Expires In: " + tokens.expiresIn + " seconds");
+    }
+}`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.net.URI
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+
+data class TokenRequest(
+    val grant_type: String,
+    val code: String,
+    val client_id: String,
+    val redirect_uri: String,
+    val code_verifier: String
+)
+
+data class TokenResponse(
+    @JsonProperty("access_token")
+    val accessToken: String,
+    @JsonProperty("refresh_token")
+    val refreshToken: String,
+    @JsonProperty("expires_in")
+    val expiresIn: Int
+)
+
+class OAuthTokenService {
+    private val client = HttpClient.newHttpClient()
+    private val mapper = jacksonObjectMapper()
+
+    fun exchangeToken(
+        code: String,
+        codeVerifier: String,
+        clientId: String,
+        redirectUri: String
+    ): TokenResponse {
+        val requestBody = TokenRequest(
+            grant_type = "authorization_code",
+            code = code,
+            client_id = clientId,
+            redirect_uri = redirectUri,
+            code_verifier = codeVerifier
+        )
+        val requestBodyJson = mapper.writeValueAsString(requestBody)
+
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/token"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
+            .build()
+
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        if (response.statusCode() != 200) {
+            throw RuntimeException("Failed to exchange token: \${response.body()}")
+        }
+
+        return mapper.readValue(response.body())
+    }
+}
+
+// 사용 예시 (PKCE)
+fun main() {
+    val service = OAuthTokenService()
+    val clientId = "your-client-id"
+    val codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk" // code/page.mdx에서 저장한 값
+
+    val tokens = service.exchangeToken(
+        code = "abc123def456",
+        codeVerifier = codeVerifier,
+        clientId = clientId,
+        redirectUri = "https://your-app.com/callback"
+    )
+
+    println("Access Token: \${tokens.accessToken}")
+    println("Refresh Token: \${tokens.refreshToken}")
+    println("Expires In: \${tokens.expiresIn} seconds")
+}`} />
+</CodeTabs>
+
+### 보안 주의사항
+
+#### PKCE Code Verifier 보호
+
+PKCE 방식을 사용할 때는 `code_verifier`를 안전하게 관리해야 합니다:
+
+- ✅ **권장**: httpOnly 쿠키에 저장 (BFF 패턴 사용 시)
+- ✅ **권장**: 서버 세션에 저장
+- ⚠️ **주의**: sessionStorage 사용 시 XSS 취약점에 주의
+- ❌ **금지**: localStorage는 XSS 공격에 매우 취약
+
+`code_verifier`는 일회성으로 사용되며, 토큰 교환 후 즉시 삭제해야 합니다.
+
+#### HTTPS 필수
+
+모든 OAuth 통신은 **반드시 HTTPS**를 사용해야 합니다. HTTP를 사용하면 Authorization Code와 토큰이 평문으로 전송되어 중간자 공격에 취약합니다.
+
+#### 토큰 저장
+
+- **Access Token**: sessionStorage 또는 메모리에 저장 (1시간 후 만료)
+- **Refresh Token**: HttpOnly 쿠키 또는 서버 세션에 저장 (30일 후 만료)
+- localStorage는 XSS 공격에 취약하므로 사용을 지양하세요.
+
+### 레거시 방식 (client_secret) 보안 주의사항
+
+레거시 `client_secret` 방식을 사용해야 하는 경우, 다음 사항을 **반드시** 준수하세요:
+
+**Client Secret 보호** (가장 중요):
+
+- ❌ **절대 금지**: 프론트엔드 코드에 하드코딩
+- ❌ **절대 금지**: 브라우저의 localStorage, sessionStorage에 저장
+- ❌ **절대 금지**: Git 저장소에 커밋
+- ✅ **필수**: 서버의 환경 변수로 관리
+- ✅ **권장**: 보안 볼트(AWS Secrets Manager, HashiCorp Vault 등) 사용
+
+```bash
+# 환경 변수 설정 예시
+export DATAGSM_CLIENT_SECRET=your-client-secret
+
+# .env 파일 (Git에 커밋 금지!)
+DATAGSM_CLIENT_SECRET=your-client-secret
+```
+
+**참고**: `client_secret` 방식을 사용하시는 경우, 여유가 되시면 PKCE 방식으로 전환해보시는 것도 고려해보세요.
+
+### 다음 단계
+
+Token 교환에 성공했다면, 다음 작업을 수행할 수 있습니다.
+
+- [사용자 정보 조회](/docs/oauth/http/userinfo) - Access Token으로 사용자 정보 획득
+- [토큰 갱신](/docs/oauth/http/token-refresh) - Refresh Token으로 새 Access Token 발급
+
+실전 구현 예제가 필요하면 [Examples 문서](/docs/oauth/examples)를 참고하세요.

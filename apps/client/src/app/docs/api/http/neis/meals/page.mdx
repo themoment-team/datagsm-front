@@ -1,0 +1,183 @@
+# 급식 정보 API
+
+NEIS 급식 정보 API를 통해 학교의 급식 메뉴, 알레르기 정보, 영양 정보 등을 조회할 수 있습니다.
+
+## 엔드포인트
+
+```http
+GET /v1/neis/meals
+```
+
+## 요청 파라미터
+
+| 파라미터       | 타입          | 필수 여부 | 설명                            | 예시           |
+|------------|-------------|-------|-------------------------------|--------------|
+| `date`     | `LocalDate` | 선택    | 특정 날짜의 급식 정보 조회 (ISO 8601 형식) | `2025-12-15` |
+| `fromDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)        | `2025-12-01` |
+| `toDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)        | `2025-12-31` |
+
+**날짜 파라미터 사용 규칙:**
+
+- `date`: 특정 날짜의 급식 정보만 조회
+- `fromDate`와 `toDate`: 기간 범위 내의 급식 정보 조회
+- 파라미터를 생략하면 오늘 날짜 기준으로 조회
+
+## 응답 형식
+
+모든 성공 응답은 다음과 같은 구조로 반환됩니다.
+
+| 필드        | 타입       | 설명              | 예시    |
+|-----------|----------|-----------------|-------|
+| `status`  | `String` | HTTP 상태 메시지     | `OK`  |
+| `code`    | `Int`    | HTTP 상태 코드      | `200` |
+| `message` | `String` | 응답 메시지          | `OK`  |
+| `data`    | `Array`  | 급식 정보 목록 배열 데이터 | -     |
+
+### data 배열
+
+`data` 필드는 급식 정보 객체의 배열이며, 각 급식 객체는 다음 필드를 포함합니다.
+
+| 필드                | 타입             | 설명                                    | 예시                              |
+|-------------------|----------------|---------------------------------------|---------------------------------|
+| `mealId`          | `String`       | 급식 ID                                 | `7430310_20251215_2`            |
+| `schoolCode`      | `String`       | 학교 코드                                 | `7430310`                       |
+| `schoolName`      | `String`       | 학교명                                   | `광주소프트웨어마이스터고등학교`               |
+| `officeCode`      | `String`       | 시도교육청 코드                              | `G10`                           |
+| `officeName`      | `String`       | 시도교육청명                                | `광주광역시교육청`                      |
+| `mealDate`        | `LocalDate`    | 급식 날짜                                 | `2025-12-15`                    |
+| `mealType`        | `MealType`     | 급식 타입(`BREAKFAST`, `LUNCH`, `DINNER`) | `LUNCH`                         |
+| `mealMenu`        | `List<String>` | 급식 메뉴 목록                              | `["쌀밥", "김치찌개", "돈까스", "배추김치"]` |
+| `mealAllergyInfo` | `List<String>` | 알레르기 정보 목록 (nullable)                 | `["1", "2", "5", "6"]`          |
+| `mealCalories`    | `String`       | 칼로리 정보 (nullable)                     | `650.8 Kcal`                    |
+| `originInfo`      | `String`       | 원산지 정보 (nullable)                     | `쌀:국내산 돼지고기:국내산 배추김치:국내산`       |
+| `nutritionInfo`   | `String`       | 영양 정보 (nullable)                      | `단백질:25.0g 지방:15.0g 탄수화물:90.0g` |
+| `mealServeCount`  | `Int`          | 급식 인원수 (nullable)                     | `450`                           |
+
+## 요청 예시
+
+```bash
+# 특정 날짜 조회
+curl -X GET "https://api.datagsm.com/v1/neis/meals?date=2025-12-15" \
+  -H "X-API-KEY: your-api-key-here"
+
+# 기간 범위 조회
+curl -X GET "https://api.datagsm.com/v1/neis/meals?fromDate=2025-12-01&toDate=2025-12-31" \
+  -H "X-API-KEY: your-api-key-here"
+```
+
+## 응답 예시
+
+```json
+{
+  "status": "OK",
+  "code": 200,
+  "message": "OK",
+  "data": [
+    {
+      "mealId": "7430310_20251215_2",
+      "schoolCode": "7430310",
+      "schoolName": "광주소프트웨어마이스터고등학교",
+      "officeCode": "G10",
+      "officeName": "광주광역시교육청",
+      "mealDate": "2025-12-15",
+      "mealType": "LUNCH",
+      "mealMenu": ["쌀밥", "김치찌개", "돈까스", "배추김치"],
+      "mealAllergyInfo": ["1", "2", "5", "6"],
+      "mealCalories": "650.8 Kcal",
+      "originInfo": "쌀:국내산 돼지고기:국내산 배추김치:국내산",
+      "nutritionInfo": "단백질:25.0g 지방:15.0g 탄수화물:90.0g",
+      "mealServeCount": 450
+    }
+  ]
+}
+```
+
+## 오류 응답
+
+| 상태 코드                   | 설명                  |
+|-------------------------|---------------------|
+| `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
+| `403 Forbidden`         | 필요한 권한 범위가 없음       |
+| `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
+| `400 Bad Request`       | 잘못된 요청 파라미터         |
+
+## 사용 예제
+
+다음은 여러 언어에서 급식 정보를 조회하는 예제입니다.
+
+<CodeTabs>
+  <CodeTab label="JavaScript" language="javascript" code={`const axios = require('axios');
+
+async function getMeals(date) {
+  try {
+    const response = await axios.get('https://api.datagsm.com/v1/neis/meals', {
+      headers: {
+        'X-API-KEY': 'your-api-key-here',
+      },
+      params: {
+        date: date,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error;
+  }
+}
+`} />
+  <CodeTab label="Python" language="python" code={`import requests
+
+def get_meals(date):
+    try:
+        response = requests.get(
+            'https://api.datagsm.com/v1/neis/meals',
+            headers={'X-API-KEY': 'your-api-key-here'},
+            params={'date': date}
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f'Error: {e}')
+        raise
+`} />
+  <CodeTab label="Java" language="java" code={`import java.net.http.*;
+import java.net.URI;
+
+public class NeisAPI {
+    public static String getMeals(String date) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://api.datagsm.com/v1/neis/meals?date=" + date))
+            .header("X-API-KEY", "your-api-key-here")
+            .GET()
+            .build();
+
+        HttpResponse<String> response = client.send(request,
+            HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
+}
+`} />
+  <CodeTab label="Kotlin" language="kotlin" code={`import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.net.URI
+
+fun getMeals(date: String): String {
+    val client = HttpClient.newHttpClient()
+    val request = HttpRequest.newBuilder()
+        .uri(URI.create("https://api.datagsm.com/v1/neis/meals?date=\${date}"))
+        .header("X-API-KEY", "your-api-key-here")
+        .GET()
+        .build()
+
+    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+    return response.body()
+}
+`} />
+</CodeTabs>
+
+## 관련 문서
+
+- [NEIS 데이터 OpenAPI 개요](/docs/api/http/neis)
+- [학사일정 정보 API](/docs/api/http/neis/schedules)

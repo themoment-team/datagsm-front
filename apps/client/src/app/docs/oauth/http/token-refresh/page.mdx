@@ -1,10 +1,15 @@
+import { Shield } from 'lucide-react'
+
 # 토큰 갱신
 
 ### 엔드포인트
 
 ```http
-PUT /v1/oauth/refresh
+POST /v1/oauth/token
 ```
+
+**주의**: 이 엔드포인트는 토큰 교환(`/v1/oauth/token`)과 동일한 통합 엔드포인트입니다.
+`grant_type` 파라미터로 구분됩니다.
 
 ### 설명
 
@@ -13,13 +18,28 @@ Access Token이 만료되었을 때(1시간 후) 사용자가 다시 로그인�
 
 Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Refresh Token도 함께 발급됩니다.
 
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        client_secret 불필요
+      </div>
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        토큰 갱신 시 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code>는 필요하지 않습니다. <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">refresh_token</code>만으로 갱신이 가능합니다.
+      </div>
+    </div>
+  </div>
+</div>
+
 ### 요청 파라미터
 
 모든 파라미터는 JSON 형식으로 요청 본문(body)에 포함되어야 합니다.
 
 | 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
 | --- | --- | --- | --- | --- |
-| `refreshToken` | `String` | 필수 | 이전에 발급받은 Refresh Token | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `grant_type` | `String` | 필수 | 요청 타입 (`refresh_token` 고정) | `refresh_token` |
+| `refresh_token` | `String` | 필수 | 이전에 발급받은 Refresh Token | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
 
 ### 응답
 
@@ -27,17 +47,19 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresIn": 3600
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
 | 필드 | 타입 | 설명 |
 | --- | --- | --- |
-| `accessToken` | `String` | 새로 발급된 JWT 형식의 Access Token (1시간 유효) |
-| `refreshToken` | `String` | 새로 발급된 Refresh Token (30일 유효) |
-| `expiresIn` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `access_token` | `String` | 새로 발급된 JWT 형식의 Access Token (1시간 유효) |
+| `token_type` | `String` | 토큰 타입 (`Bearer` 고정) |
+| `expires_in` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `refresh_token` | `String` | 새로 발급된 Refresh Token (30일 유효) |
 
 ### 오류 응답
 
@@ -52,10 +74,11 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
 #### cURL
 
 ```bash
-curl -X PUT "https://oauth.data.hellogsm.kr/v1/oauth/refresh" \
+curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   -H "Content-Type: application/json" \
   -d '{
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "grant_type": "refresh_token",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }'
 ```
 
@@ -96,8 +119,8 @@ curl -X PUT "https://oauth.data.hellogsm.kr/v1/oauth/refresh" \
 <CodeTabs>
   <CodeTab label="JavaScript" language="javascript" code={`async function refreshAccessToken(refreshToken) {
   try {
-    const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/refresh', {
-      method: 'PUT',
+    const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/tokens', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -146,8 +169,8 @@ def refresh_access_token(refresh_token):
         dict: accessToken, refreshToken, expiresIn 포함
     """
     try:
-        response = requests.put(
-            'https://oauth.data.hellogsm.kr/v1/oauth/refresh',
+        response = requests.post(
+            'https://oauth.data.hellogsm.kr/v1/oauth/tokens',
             headers={'Content-Type': 'application/json'},
             json={'refreshToken': refresh_token}
         )
@@ -182,9 +205,9 @@ public class OAuthRefreshService {
 
         // HTTP 요청 생성
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/refresh"))
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/tokens"))
             .header("Content-Type", "application/json")
-            .PUT(HttpRequest.BodyPublishers.ofString(requestBodyJson))
+            .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
             .build();
 
         // 요청 전송
@@ -254,9 +277,9 @@ class OAuthRefreshService {
         val requestBodyJson = mapper.writeValueAsString(requestBody)
 
         val request = HttpRequest.newBuilder()
-            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/refresh"))
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/tokens"))
             .header("Content-Type", "application/json")
-            .PUT(HttpRequest.BodyPublishers.ofString(requestBodyJson))
+            .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
             .build()
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())

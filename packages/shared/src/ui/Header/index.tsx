@@ -26,10 +26,10 @@ const Header = ({ role = 'client' }: HeaderProps) => {
     deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
 
     toast.success('로그아웃 되었습니다.');
-    router.push('/signin');
+    router.push('/');
   };
 
-  const PUBLIC_ROUTES = ['/signin', '/signup'];
+  const PUBLIC_ROUTES = ['/signup'];
   if (PUBLIC_ROUTES.includes(pathname)) return null;
 
   const links = NAV_LINKS[role];

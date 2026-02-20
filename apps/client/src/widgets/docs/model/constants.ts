@@ -32,6 +32,16 @@ export const docsSections: DocsSection[] = [
           {
             label: 'NEIS 데이터 OpenAPI',
             href: '/docs/api/http/neis',
+            children: [
+              {
+                label: '급식 정보 API',
+                href: '/docs/api/http/neis/meals',
+              },
+              {
+                label: '학사일정 정보 API',
+                href: '/docs/api/http/neis/schedules',
+              },
+            ],
           },
         ],
       },
@@ -61,6 +71,10 @@ export const docsSections: DocsSection[] = [
     icon: User,
     children: [
       {
+        label: 'PKCE 가이드',
+        href: '/docs/oauth/pkce',
+      },
+      {
         label: 'HTTP',
         href: '/docs/oauth/http',
         children: [
@@ -70,11 +84,11 @@ export const docsSections: DocsSection[] = [
           },
           {
             label: '토큰 교환',
-            href: '/docs/oauth/http/token',
+            href: '/docs/oauth/http/token-exchange',
           },
           {
             label: '토큰 갱신',
-            href: '/docs/oauth/http/refresh',
+            href: '/docs/oauth/http/token-refresh',
           },
           {
             label: '사용자 정보 조회',
@@ -86,6 +100,10 @@ export const docsSections: DocsSection[] = [
         label: 'Examples',
         href: '/docs/oauth/examples',
         children: [
+          {
+            label: 'React + Spring Boot (BFF)',
+            href: '/docs/oauth/example/react-spring',
+          },
           {
             label: 'Next.js + Spring Boot',
             href: '/docs/oauth/examples/nextjs-spring-boot',

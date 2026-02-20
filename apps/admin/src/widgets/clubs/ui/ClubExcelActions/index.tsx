@@ -43,7 +43,7 @@ const ClubExcelActions = () => {
         className={cn('gap-2 bg-transparent')}
         onClick={() =>
           downloadExcel({
-            url: clubUrl.getClubExcel(),
+            url: clubUrl.getClubExport(),
             fileName: '동아리목록',
           })
         }

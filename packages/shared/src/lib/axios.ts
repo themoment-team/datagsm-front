@@ -69,11 +69,13 @@ axiosInstance.interceptors.response.use(
 
         if (!refreshToken) throw new Error('No refresh token');
 
-        const response = await oauthAxiosInstance.put(oauthUrl.putOAuthRefresh(), {
-          refreshToken,
+        const response = await oauthAxiosInstance.post(oauthUrl.postOAuthTokenRefresh(), {
+          grant_type: 'refresh_token',
+          refresh_token: refreshToken,
+          client_id: process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID,
         });
 
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+        const { access_token: newAccessToken, refresh_token: newRefreshToken } = response.data;
 
         if (!newAccessToken) throw new Error('No new token returned');
 
@@ -93,7 +95,7 @@ axiosInstance.interceptors.response.use(
         deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
 
         if (typeof window !== 'undefined') {
-          window.location.href = '/signin';
+          window.location.href = '/';
         }
 
         return Promise.reject(refreshError);
