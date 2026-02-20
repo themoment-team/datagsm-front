@@ -79,7 +79,11 @@ export const docsSections: DocsSection[] = [
         href: '/docs/oauth/http',
         children: [
           {
-            label: '인증 코드 발급',
+            label: '인증 흐름 시작',
+            href: '/docs/oauth/http/authorize',
+          },
+          {
+            label: '인증 코드 발급 (Deprecated)',
             href: '/docs/oauth/http/code',
           },
           {

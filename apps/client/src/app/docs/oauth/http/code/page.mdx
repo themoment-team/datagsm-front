@@ -1,6 +1,22 @@
-import { Shield } from 'lucide-react'
+import { Shield, AlertTriangle, ArrowRight } from 'lucide-react'
 
 # 인증 코드 발급
+
+<div className="border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
+        Deprecated
+      </div>
+      <div className="text-yellow-800 dark:text-yellow-200 text-sm">
+        이 엔드포인트는 더 이상 권장되지 않습니다. 표준 OAuth 인증 흐름인
+        <a href="/docs/oauth/http/authorize" className="underline font-medium mx-1">GET /v1/oauth/authorize</a>
+        를 사용하세요. 기존 연동을 유지하는 경우에만 이 문서를 참고하세요.
+      </div>
+    </div>
+  </div>
+</div>
 
 ### 엔드포인트
 
