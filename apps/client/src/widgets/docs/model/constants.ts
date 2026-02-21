@@ -83,10 +83,6 @@ export const docsSections: DocsSection[] = [
             href: '/docs/oauth/http/authorize',
           },
           {
-            label: '인증 코드 발급',
-            href: '/docs/oauth/http/code',
-          },
-          {
             label: '토큰 교환',
             href: '/docs/oauth/http/token-exchange',
           },
@@ -106,7 +102,7 @@ export const docsSections: DocsSection[] = [
         children: [
           {
             label: 'React + Spring Boot (BFF)',
-            href: '/docs/oauth/example/react-spring',
+            href: '/docs/oauth/examples/react-spring-boot-boot',
           },
           {
             label: 'Next.js + Spring Boot',
