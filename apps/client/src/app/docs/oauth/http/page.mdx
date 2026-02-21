@@ -48,40 +48,30 @@ Content-Type: application/json
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresIn": 3600
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "scope": "self:read"
 }
 ```
 
-| 필드 | 타입 | 설명 |
-| --- | --- | --- |
-| `accessToken` | `String` | JWT 형식의 Access Token (1시간 유효) |
-| `refreshToken` | `String` | Refresh Token (30일 유효) |
-| `expiresIn` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
-
-#### 인증 코드 응답 구조
-
-인증 코드 발급 엔드포인트는 다음과 같은 응답을 반환합니다.
-
-```json
-{
-  "code": "abc123def456"
-}
-```
-
-| 필드 | 타입 | 설명 |
-| --- | --- | --- |
-| `code` | `String` | Authorization Code (5분 유효, 일회성) |
+| 필드              | 타입       | 설명                                     |
+|-----------------|----------|----------------------------------------|
+| `access_token`  | `String` | JWT 형식의 Access Token (1시간 유효)          |
+| `token_type`    | `String` | 토큰 타입 (`Bearer` 고정)                    |
+| `expires_in`    | `Int`    | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
+| `refresh_token` | `String` | Refresh Token (30일 유효)                 |
+| `scope`         | `String` | 발급된 권한 범위 (공백으로 구분)                    |
 
 ### 사용 가능한 엔드포인트
 
-| 엔드포인트 | 메서드 | 설명 | 문서 |
-| --- | --- | --- | --- |
-| `/v1/oauth/code` | `POST` | 사용자 인증 후 Authorization Code 발급 (PKCE 권장) | [상세 문서](/docs/oauth/http/code) |
-| `/v1/oauth/token` | `POST` | Authorization Code를 Access Token으로 교환 (통합 엔드포인트) | [상세 문서](/docs/oauth/http/token-exchange) |
-| `/v1/oauth/token` | `POST` | Refresh Token으로 새 Access Token 발급 (통합 엔드포인트) | [상세 문서](/docs/oauth/http/token-refresh) |
-| `/userinfo` | `GET` | Access Token으로 사용자 정보 조회 | [상세 문서](/docs/oauth/http/userinfo) |
+| 엔드포인트                 | 메서드    | 설명                                               | 문서                                       |
+|-----------------------|--------|--------------------------------------------------|------------------------------------------|
+| `/v1/oauth/authorize` | `GET`  | OAuth 인증 흐름 시작 (사용자를 로그인 페이지로 리다이렉트)             | [상세 문서](/docs/oauth/http/authorize)      |
+| `/v1/oauth/token`     | `POST` | Authorization Code를 Access Token으로 교환 (통합 엔드포인트) | [상세 문서](/docs/oauth/http/token-exchange) |
+| `/v1/oauth/token`     | `POST` | Refresh Token으로 새 Access Token 발급 (통합 엔드포인트)     | [상세 문서](/docs/oauth/http/token-refresh)  |
+| `/userinfo`           | `GET`  | Access Token으로 사용자 정보 조회                         | [상세 문서](/docs/oauth/http/userinfo)       |
 
 ### 에러 처리
 
@@ -98,30 +88,22 @@ Content-Type: application/json
 
 #### HTTP 상태 코드
 
-| 상태 코드 | 설명 | 해결 방법 |
-| --- | --- | --- |
-| `400 Bad Request` | 잘못된 요청 파라미터 또는 필수 파라미터 누락 | 요청 파라미터를 확인하고 필수 필드가 모두 포함되었는지 확인하세요. |
-| `401 Unauthorized` | 인증 실패 (잘못된 비밀번호, 만료된 토큰 등) | 사용자 인증 정보나 토큰이 유효한지 확인하세요. |
-| `403 Forbidden` | 권한 없음 (잘못된 Client Secret 등) | Client Secret이 올바른지, 리다이렉트 URI가 등록되었는지 확인하세요. |
-| `404 Not Found` | 리소스를 찾을 수 없음 (존재하지 않는 Code나 Token) | Code나 Token이 만료되었거나 이미 사용된 것은 아닌지 확인하세요. |
-| `429 Too Many Requests` | 요청량 제한 초과 | 잠시 후 다시 시도하거나 요청 빈도를 줄이세요. |
-| `500 Internal Server Error` | 서버 내부 오류 | 잠시 후 다시 시도하거나 지원팀에 문의하세요. |
+| 상태 코드                       | 설명                                     | 해결 방법                                   |
+|-----------------------------|----------------------------------------|-----------------------------------------|
+| `400 Bad Request`           | 잘못된 요청 파라미터 또는 필수 파라미터 누락              | 요청 파라미터를 확인하고 필수 필드가 모두 포함되었는지 확인하세요.   |
+| `401 Unauthorized`          | 인증 실패 (잘못된 Client ID·Secret, 만료된 토큰 등) | Client ID·Secret이 올바른지, 토큰이 유효한지 확인하세요. |
+| `500 Internal Server Error` | 서버 내부 오류                               | 잠시 후 다시 시도하거나 지원팀에 문의하세요.               |
 
 ### 기본 요청 예시
 
 다음은 cURL을 사용한 기본적인 OAuth 플로우 예시입니다.
 
-#### 1. 인증 코드 발급
+#### 1. 인증 흐름 시작
 
-```bash
-curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/code" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "student@gsm.hs.kr",
-    "password": "your-password",
-    "clientId": "your-client-id",
-    "redirectUrl": "https://your-app.com/callback"
-  }'
+브라우저에서 다음 URL로 리다이렉트합니다. 사용자가 로그인하면 `redirect_uri`로 Authorization Code가 전달됩니다.
+
+```
+https://oauth.data.hellogsm.kr/v1/oauth/authorize?client_id=your-client-id&redirect_uri=https%3A%2F%2Fyour-app.com%2Fcallback&response_type=code&state=random-state-value
 ```
 
 #### 2. 토큰 교환
@@ -130,8 +112,11 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/code" \
 curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   -H "Content-Type: application/json" \
   -d '{
+    "grant_type": "authorization_code",
     "code": "abc123def456",
-    "clientSecret": "your-client-secret"
+    "client_id": "your-client-id",
+    "redirect_uri": "https://your-app.com/callback",
+    "client_secret": "your-client-secret"
   }'
 ```
 
@@ -161,16 +146,11 @@ curl -X GET "https://oauth-userinfo.data.hellogsm.kr/userinfo" \
 - 만료 시 Refresh Token을 사용하여 새 Access Token을 발급받으세요.
 - Refresh Token도 30일 후 만료되므로, 만료 전에 재로그인이 필요합니다.
 
-#### Rate Limiting
-
-- 과도한 요청은 `429 Too Many Requests` 오류를 발생시킵니다.
-- 적절한 재시도 로직을 구현하세요 (Exponential Backoff 권장).
-
 ### 다음 단계
 
 각 엔드포인트의 상세한 사용법은 다음 문서를 참고하세요.
 
-- [인증 코드 발급](/docs/oauth/http/code) - 사용자 인증 및 Authorization Code 획득
+- [인증 흐름 시작](/docs/oauth/http/authorize) - 사용자 인증 및 Authorization Code 획득
 - [토큰 교환](/docs/oauth/http/token-exchange) - Authorization Code를 Access Token으로 교환
 - [토큰 갱신](/docs/oauth/http/token-refresh) - Refresh Token으로 새 Access Token 발급
 - [사용자 정보 조회](/docs/oauth/http/userinfo) - Access Token으로 사용자 정보 획득
