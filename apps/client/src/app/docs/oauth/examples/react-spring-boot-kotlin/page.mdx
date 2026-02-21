@@ -230,13 +230,21 @@ OAuth API 호출을 처리하는 서비스입니다.
   expiresIn: number;
 }
 
-interface UserInfo {
-  email: string;
+interface StudentInfo {
+  id: number;
   name: string;
   grade: number;
-  class: number;
+  classNum: number;
   number: number;
-  profileImage?: string;
+  major: string;
+}
+
+interface UserInfo {
+  id: number;
+  email: string;
+  role: string;
+  isStudent: boolean;
+  student?: StudentInfo;
 }
 
 interface AuthResponse {
@@ -268,8 +276,11 @@ class OAuthService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        grant_type: 'authorization_code',
         code,
-        clientSecret: this.clientSecret,
+        client_id: this.clientId,
+        redirect_uri: process.env.REACT_APP_REDIRECT_URI || 'http://localhost:3000/callback',
+        client_secret: this.clientSecret,
       }),
     });
 
@@ -331,7 +342,7 @@ const LoginPage: React.FC = () => {
     clientId: process.env.REACT_APP_DATAGSM_CLIENT_ID || '',
     clientSecret: process.env.REACT_APP_DATAGSM_CLIENT_SECRET || '',
     redirectUri: process.env.REACT_APP_REDIRECT_URI || 'http://localhost:3000/callback',
-    authUrl: 'https://oauth.data.hellogsm.kr/login',
+    authUrl: 'https://oauth.data.hellogsm.kr/v1/oauth/authorize',
     tokenUrl: 'https://oauth.data.hellogsm.kr/v1/oauth/token',
   });
 
@@ -789,13 +800,13 @@ class UserService(
      * 신규 사용자 생성
      */
     private fun createUser(userInfo: DataGsmUserInfo): User {
+        val s = userInfo.student
         val user = User(
             email = userInfo.email,
-            name = userInfo.name,
-            grade = userInfo.grade,
-            classNum = userInfo.classNum,
-            number = userInfo.number,
-            profileImage = userInfo.profileImage,
+            name = s?.name ?: "",
+            grade = s?.grade ?: 0,
+            classNum = s?.classNum ?: 0,
+            number = s?.number ?: 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -810,11 +821,12 @@ class UserService(
      */
     private fun updateUser(user: User, userInfo: DataGsmUserInfo): User {
         user.apply {
-            name = userInfo.name
-            grade = userInfo.grade
-            classNum = userInfo.classNum
-            number = userInfo.number
-            profileImage = userInfo.profileImage
+            userInfo.student?.let { s ->
+                name = s.name
+                grade = s.grade
+                classNum = s.classNum
+                number = s.number
+            }
             updatedAt = LocalDateTime.now()
         }
 
@@ -960,16 +972,23 @@ data class VerifyTokenRequest(
     val accessToken: String
 )
 
-// DataGSM 사용자 정보
+// DataGSM 사용자 정보 (중첩 구조)
 data class DataGsmUserInfo(
+    val id: Long,
     val email: String,
-    val name: String,
-    val grade: Int,
-    @JsonProperty("class")
-    val classNum: Int,
-    val number: Int,
-    val profileImage: String?
-)
+    val role: String,
+    val isStudent: Boolean,
+    val student: StudentInfo?
+) {
+    data class StudentInfo(
+        val id: Long,
+        val name: String,
+        val grade: Int,
+        val classNum: Int,
+        val number: Int,
+        val major: String
+    )
+}
 
 // 인증 응답 (JWT + 사용자 정보)
 data class AuthResponse(
@@ -1073,7 +1092,7 @@ REACT_APP_DATAGSM_CLIENT_SECRET=your-client-secret-here
 REACT_APP_REDIRECT_URI=http://localhost:3000/callback
 
 # DataGSM API URLs
-REACT_APP_DATAGSM_AUTH_URL=https://oauth.data.hellogsm.kr/login
+REACT_APP_DATAGSM_AUTH_URL=https://oauth.data.hellogsm.kr/v1/oauth/authorize
 REACT_APP_DATAGSM_TOKEN_URL=https://oauth.data.hellogsm.kr/v1/oauth/token
 
 # 백엔드 API URL

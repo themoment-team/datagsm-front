@@ -171,8 +171,7 @@ private val logger = KotlinLogging.logger {}
 @Service
 class OAuthService(
     @Value("\\\${'$'}{oauth.client-id}") private val clientId: String,
-    @Value("\\\${'$'}{oauth.redirect-uri}") private val redirectUri: String,
-    private val pkceService: PkceService,
+    @Value("\\\${'$'}{oauth.callback-uri}") private val callbackUri: String,
     private val webClient: WebClient = WebClient.create()
 ) {
 
@@ -180,37 +179,20 @@ class OAuthService(
     private val userinfoBaseUrl = "https://oauth-userinfo.data.hellogsm.kr"
 
     /**
-     * Authorization Code 발급
+     * DataGSM OAuth 인가 URL 생성
+     * - GET /v1/oauth/authorize 엔드포인트로 리다이렉트할 URL 반환
      *
-     * @param email 사용자 이메일
-     * @param password 사용자 비밀번호
-     * @param codeChallenge PKCE code_challenge
-     * @return Authorization Code
+     * @param state CSRF 방지용 랜덤 문자열
+     * @param codeChallenge PKCE code_challenge (SHA-256 해시)
+     * @return DataGSM OAuth 인가 URL
      */
-    fun getAuthorizationCode(
-        email: String,
-        password: String,
-        codeChallenge: String
-    ): String {
-        logger.info { "Requesting authorization code for email: $email" }
-
-        val response = webClient.post()
-            .uri("$oauthBaseUrl/v1/oauth/code")
-            .bodyValue(
-                mapOf(
-                    "email" to email,
-                    "password" to password,
-                    "client_id" to clientId,
-                    "redirect_uri" to redirectUri,
-                    "code_challenge" to codeChallenge,
-                    "code_challenge_method" to "S256"
-                )
-            )
-            .retrieve()
-            .bodyToMono<Map<String, String>>()
-            .block() ?: throw RuntimeException("Failed to get authorization code")
-
-        return response["code"] ?: throw RuntimeException("Code not found in response")
+    fun buildAuthorizeUrl(state: String, codeChallenge: String): String {
+        return "$oauthBaseUrl/v1/oauth/authorize" +
+            "?client_id=$clientId" +
+            "&redirect_uri=$callbackUri" +
+            "&state=$state" +
+            "&code_challenge=$codeChallenge" +
+            "&code_challenge_method=S256"
     }
 
     /**
@@ -230,7 +212,7 @@ class OAuthService(
                     "grant_type" to "authorization_code",
                     "code" to code,
                     "client_id" to clientId,
-                    "redirect_uri" to redirectUri,
+                    "redirect_uri" to callbackUri,
                     "code_verifier" to codeVerifier
                 )
             )
@@ -256,6 +238,7 @@ class OAuthService(
             .bodyValue(
                 mapOf(
                     "grant_type" to "refresh_token",
+                    "client_id" to clientId,
                     "refresh_token" to refreshToken
                 )
             )
@@ -277,7 +260,7 @@ class OAuthService(
         logger.info { "Fetching user info" }
 
         val userInfo = webClient.get()
-            .uri("$userinfoBaseUrl/v1/oauth/userinfo")
+            .uri("$userinfoBaseUrl/userinfo")
             .header("Authorization", "Bearer $accessToken")
             .retrieve()
             .bodyToMono<UserInfo>()
@@ -307,18 +290,22 @@ data class TokenResponse(
     val expiresIn: Int
 )
 
+// DataGSM /userinfo 응답 구조
 data class UserInfo(
+    val id: Long,
     val email: String,
+    val role: String,
+    val isStudent: Boolean,
+    val student: StudentInfo?
+)
+
+data class StudentInfo(
+    val id: Long,
     val name: String,
     val grade: Int,
     val classNum: Int,
     val number: Int,
-    val profileImage: String?
-)
-
-data class LoginRequest(
-    val email: String,
-    val password: String
+    val major: String
 )`} />
 </CodeTabs>
 
@@ -329,64 +316,98 @@ data class LoginRequest(
 <CodeTabs>
   <CodeTab label="controller/AuthController.kt" language="kotlin" code={`package com.example.oauth.controller
 
-import com.example.oauth.dto.LoginRequest
 import com.example.oauth.dto.UserInfo
 import com.example.oauth.service.OAuthService
 import com.example.oauth.service.PkceService
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
 import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.UUID
 
 private val logger = KotlinLogging.logger {}
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = ["http://localhost:3000"], allowCredentials = "true")
 class AuthController(
     private val oauthService: OAuthService,
-    private val pkceService: PkceService
+    private val pkceService: PkceService,
+    @Value("\\\${'$'}{oauth.frontend-url}") private val frontendUrl: String
 ) {
 
     /**
-     * POST /api/auth/login
-     * 로그인 처리 및 토큰 발급
+     * GET /api/auth/initiate
+     * OAuth 인가 시작 - 사용자를 DataGSM OAuth 서버로 리다이렉트
+     *
+     * BFF 패턴: code_verifier와 state를 서버 세션에 저장하고
+     * 사용자를 DataGSM 인가 엔드포인트로 리다이렉트합니다.
      */
-    @PostMapping("/login")
-    fun login(
-        @RequestBody request: LoginRequest,
+    @GetMapping("/initiate")
+    fun initiateOAuth(
+        session: HttpSession,
         httpResponse: HttpServletResponse
-    ): ResponseEntity<Map<String, String>> {
+    ) {
+        logger.info { "OAuth initiation started" }
+
+        // PKCE 생성 (서버에서 관리)
+        val codeVerifier = pkceService.generateCodeVerifier()
+        val codeChallenge = pkceService.generateCodeChallenge(codeVerifier)
+        val state = UUID.randomUUID().toString()
+
+        // 세션에 저장 (콜백에서 검증용)
+        session.setAttribute("code_verifier", codeVerifier)
+        session.setAttribute("oauth_state", state)
+
+        // DataGSM OAuth 인가 URL로 리다이렉트
+        val authorizeUrl = oauthService.buildAuthorizeUrl(state, codeChallenge)
+        logger.info { "Redirecting to DataGSM OAuth: $authorizeUrl" }
+        httpResponse.sendRedirect(authorizeUrl)
+    }
+
+    /**
+     * GET /api/auth/callback
+     * DataGSM OAuth 서버 콜백 처리 및 토큰 발급
+     *
+     * DataGSM 로그인 성공 후 redirect_uri로 돌아오는 엔드포인트입니다.
+     */
+    @GetMapping("/callback")
+    fun handleCallback(
+        @RequestParam code: String,
+        @RequestParam state: String,
+        session: HttpSession,
+        httpResponse: HttpServletResponse
+    ) {
         return try {
-            logger.info { "Login attempt for: \\\${request.email}" }
+            // State 검증 (CSRF 방지)
+            val savedState = session.getAttribute("oauth_state") as? String
+                ?: throw IllegalStateException("No state in session")
+            if (state != savedState) throw SecurityException("State mismatch - possible CSRF attack")
 
-            // 1. PKCE code_verifier 생성
-            val codeVerifier = pkceService.generateCodeVerifier()
-            val codeChallenge = pkceService.generateCodeChallenge(codeVerifier)
+            // code_verifier 조회
+            val codeVerifier = session.getAttribute("code_verifier") as? String
+                ?: throw IllegalStateException("No code_verifier in session")
 
-            // 2. Authorization Code 발급
-            val code = oauthService.getAuthorizationCode(
-                email = request.email,
-                password = request.password,
-                codeChallenge = codeChallenge
-            )
+            // 세션 정리 (일회용)
+            session.removeAttribute("oauth_state")
+            session.removeAttribute("code_verifier")
 
-            // 3. Token 교환 (PKCE)
+            // Token 교환 (PKCE)
             val tokens = oauthService.exchangeToken(code, codeVerifier)
 
-            // 4. httpOnly 쿠키에 토큰 저장
+            // httpOnly 쿠키에 토큰 저장
             setTokenCookies(httpResponse, tokens.accessToken, tokens.refreshToken)
 
-            logger.info { "Login successful for: \\\${request.email}" }
-            ResponseEntity.ok(mapOf("message" to "Login successful"))
+            logger.info { "OAuth callback successful, redirecting to frontend" }
+            httpResponse.sendRedirect(frontendUrl)
 
         } catch (e: Exception) {
-            logger.error(e) { "Login failed for: \\\${request.email}" }
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(mapOf("error" to "Authentication failed"))
+            logger.error(e) { "OAuth callback failed" }
+            httpResponse.sendRedirect("$frontendUrl/login?error=auth_failed")
         }
     }
 
@@ -425,9 +446,7 @@ class AuthController(
     @PostMapping("/logout")
     fun logout(httpResponse: HttpServletResponse): ResponseEntity<Map<String, String>> {
         logger.info { "Logout request" }
-
         clearTokenCookies(httpResponse)
-
         return ResponseEntity.ok(mapOf("message" to "Logout successful"))
     }
 
@@ -460,22 +479,18 @@ class AuthController(
         accessToken: String,
         refreshToken: String
     ) {
-        // Access Token 쿠키 (1시간)
         val accessTokenCookie = Cookie("access_token", accessToken).apply {
             isHttpOnly = true
-            secure = true // HTTPS에서만 전송
+            secure = true
             path = "/"
             maxAge = 3600 // 1시간
         }
-
-        // Refresh Token 쿠키 (30일)
         val refreshTokenCookie = Cookie("refresh_token", refreshToken).apply {
             isHttpOnly = true
             secure = true
             path = "/"
             maxAge = 30 * 24 * 3600 // 30일
         }
-
         httpResponse.addCookie(accessTokenCookie)
         httpResponse.addCookie(refreshTokenCookie)
     }
@@ -484,41 +499,18 @@ class AuthController(
      * 쿠키 삭제
      */
     private fun clearTokenCookies(httpResponse: HttpServletResponse) {
-        val accessTokenCookie = Cookie("access_token", "").apply {
-            isHttpOnly = true
-            secure = true
-            path = "/"
-            maxAge = 0 // 즉시 삭제
+        listOf("access_token", "refresh_token").forEach { name ->
+            httpResponse.addCookie(Cookie(name, "").apply {
+                isHttpOnly = true; secure = true; path = "/"; maxAge = 0
+            })
         }
-
-        val refreshTokenCookie = Cookie("refresh_token", "").apply {
-            isHttpOnly = true
-            secure = true
-            path = "/"
-            maxAge = 0
-        }
-
-        httpResponse.addCookie(accessTokenCookie)
-        httpResponse.addCookie(refreshTokenCookie)
     }
 
-    /**
-     * 쿠키에서 Access Token 추출
-     */
-    private fun getAccessTokenFromCookie(request: HttpServletRequest): String? {
-        return request.cookies
-            ?.firstOrNull { it.name == "access_token" }
-            ?.value
-    }
+    private fun getAccessTokenFromCookie(request: HttpServletRequest): String? =
+        request.cookies?.firstOrNull { it.name == "access_token" }?.value
 
-    /**
-     * 쿠키에서 Refresh Token 추출
-     */
-    private fun getRefreshTokenFromCookie(request: HttpServletRequest): String? {
-        return request.cookies
-            ?.firstOrNull { it.name == "refresh_token" }
-            ?.value
-    }
+    private fun getRefreshTokenFromCookie(request: HttpServletRequest): String? =
+        request.cookies?.firstOrNull { it.name == "refresh_token" }?.value
 }`} />
 </CodeTabs>
 
@@ -557,12 +549,14 @@ class SecurityConfig {
 
 <CodeTabs>
   <CodeTab label="application.properties" language="properties" code={`oauth.client-id=\\\${OAUTH_CLIENT_ID}
-oauth.redirect-uri=\\\${OAUTH_REDIRECT_URI:http://localhost:8080/api/auth/callback}
+oauth.callback-uri=\\\${OAUTH_CALLBACK_URI:http://localhost:8080/api/auth/callback}
+oauth.frontend-url=\\\${OAUTH_FRONTEND_URL:http://localhost:3000}
 
 server.port=8080
 logging.level.com.example.oauth=DEBUG`} />
   <CodeTab label=".env" language="bash" code={`OAUTH_CLIENT_ID=your-client-id
-OAUTH_REDIRECT_URI=http://localhost:8080/api/auth/callback`} />
+OAUTH_CALLBACK_URI=http://localhost:8080/api/auth/callback
+OAUTH_FRONTEND_URL=http://localhost:3000`} />
 </CodeTabs>
 
 ## 프론트엔드 구현 (React + TypeScript)
@@ -572,19 +566,26 @@ OAUTH_REDIRECT_URI=http://localhost:8080/api/auth/callback`} />
 <CodeTabs>
   <CodeTab label="hooks/useAuth.ts" language="typescript" code={`import { useState, useEffect, useCallback } from 'react';
 
-interface UserInfo {
-  email: string;
+interface StudentInfo {
+  id: number;
   name: string;
   grade: number;
   classNum: number;
   number: number;
-  profileImage?: string;
+  major: string;
+}
+
+interface UserInfo {
+  id: number;
+  email: string;
+  role: string;
+  isStudent: boolean;
+  student?: StudentInfo;
 }
 
 export function useAuth() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const API_BASE_URL = 'http://localhost:8080/api/auth';
 
@@ -594,7 +595,7 @@ export function useAuth() {
   const fetchUser = useCallback(async () => {
     try {
       const response = await fetch(\`\${API_BASE_URL}/me\`, {
-        credentials: 'include', // 쿠키 포함
+        credentials: 'include', // httpOnly 쿠키 포함
       });
 
       if (response.ok) {
@@ -612,36 +613,12 @@ export function useAuth() {
   }, []);
 
   /**
-   * 로그인
+   * 로그인 시작
+   * BFF 패턴: 직접 BFF의 /initiate 엔드포인트로 리다이렉트
+   * BFF 서버가 PKCE 생성 + DataGSM OAuth 서버로 리다이렉트 처리
    */
-  const login = async (email: string, password: string) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(\`\${API_BASE_URL}/login\`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // 쿠키 포함
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Login failed');
-      }
-
-      // 로그인 성공 후 사용자 정보 가져오기
-      await fetchUser();
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Login failed';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+  const login = () => {
+    window.location.href = \`\${API_BASE_URL}/initiate\`;
   };
 
   /**
@@ -653,7 +630,6 @@ export function useAuth() {
         method: 'POST',
         credentials: 'include',
       });
-
       setUser(null);
     } catch (err) {
       console.error('Logout failed:', err);
@@ -671,7 +647,6 @@ export function useAuth() {
       });
 
       if (!response.ok) {
-        // Refresh 실패 시 로그아웃
         setUser(null);
         return false;
       }
@@ -699,7 +674,7 @@ export function useAuth() {
 
     const interval = setInterval(() => {
       refreshToken();
-    }, 50 * 60 * 1000); // 50분
+    }, 50 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [user]);
@@ -707,7 +682,6 @@ export function useAuth() {
   return {
     user,
     loading,
-    error,
     login,
     logout,
     isAuthenticated: !!user,
@@ -718,75 +692,27 @@ export function useAuth() {
 ### 2. 로그인 컴포넌트
 
 <CodeTabs>
-  <CodeTab label="components/LoginButton.tsx" language="typescript" code={`import React, { useState } from 'react';
+  <CodeTab label="components/LoginButton.tsx" language="typescript" code={`import React from 'react';
 import { useAuth } from '../hooks/useAuth';
 
 export function LoginButton() {
-  const { login, loading, error } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      await login(email, password);
-      // 로그인 성공 시 리다이렉트
-      window.location.href = '/dashboard';
-    } catch (err) {
-      // 에러는 useAuth에서 처리됨
-      console.error(err);
-    }
-  };
+  const { login, loading } = useAuth();
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-center">DataGSM 로그인</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            이메일
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="student@gsm.hs.kr"
-          />
-        </div>
+      <p className="text-gray-600 text-sm mb-6 text-center">
+        DataGSM 계정으로 안전하게 로그인하세요.
+      </p>
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            비밀번호
-          </label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-
-        {error && (
-          <div className="text-red-600 text-sm bg-red-50 p-3 rounded">
-            {error}
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? '로그인 중...' : '로그인'}
-        </button>
-      </form>
+      <button
+        onClick={login}
+        disabled={loading}
+        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? '로딩 중...' : 'DataGSM으로 로그인'}
+      </button>
     </div>
   );
 }`} />
@@ -809,38 +735,37 @@ export function UserProfile() {
     return null;
   }
 
+  const student = user.student;
+
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
       <div className="flex items-center space-x-4 mb-6">
-        {user.profileImage ? (
-          <img
-            src={user.profileImage}
-            alt={user.name}
-            className="w-16 h-16 rounded-full"
-          />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold text-white">
-            {user.name.charAt(0)}
-          </div>
-        )}
+        <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold text-white">
+          {student?.name?.charAt(0) ?? user.email.charAt(0)}
+        </div>
 
         <div>
-          <h2 className="text-xl font-bold">{user.name}</h2>
+          <h2 className="text-xl font-bold">{student?.name ?? '사용자'}</h2>
           <p className="text-gray-600">{user.email}</p>
         </div>
       </div>
 
-      <div className="space-y-2 mb-6">
-        <p className="text-sm text-gray-600">
-          <span className="font-medium">학년:</span> {user.grade}학년
-        </p>
-        <p className="text-sm text-gray-600">
-          <span className="font-medium">반:</span> {user.classNum}반
-        </p>
-        <p className="text-sm text-gray-600">
-          <span className="font-medium">번호:</span> {user.number}번
-        </p>
-      </div>
+      {student && (
+        <div className="space-y-2 mb-6">
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">학년:</span> {student.grade}학년
+          </p>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">반:</span> {student.classNum}반
+          </p>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">번호:</span> {student.number}번
+          </p>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">전공:</span> {student.major}
+          </p>
+        </div>
+      )}
 
       <button
         onClick={logout}
@@ -1000,76 +925,71 @@ import { useAuth } from '../useAuth';
 // Mock fetch
 global.fetch = jest.fn();
 
+// Mock window.location
+const mockLocationHref = jest.fn();
+Object.defineProperty(window, 'location', {
+  value: { ...window.location, set href(url: string) { mockLocationHref(url); } },
+  writable: true,
+});
+
 describe('useAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should login successfully', async () => {
-    (global.fetch as jest.Mock)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ message: 'Login successful' }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          email: 'test@gsm.hs.kr',
-          name: 'Test User',
-          grade: 1,
-          classNum: 1,
-          number: 1,
-        }),
-      });
-
+  it('should redirect to /initiate on login', () => {
     const { result } = renderHook(() => useAuth());
 
-    await act(async () => {
-      await result.current.login('test@gsm.hs.kr', 'password');
+    act(() => {
+      result.current.login();
     });
+
+    expect(mockLocationHref).toHaveBeenCalledWith(
+      'http://localhost:8080/api/auth/initiate'
+    );
+  });
+
+  it('should fetch user on mount', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        id: 1,
+        email: 'test@gsm.hs.kr',
+        role: 'USER',
+        isStudent: true,
+        student: { id: 1, name: '홍길동', grade: 1, classNum: 1, number: 1, major: 'SW' },
+      }),
+    });
+
+    const { result } = renderHook(() => useAuth());
 
     await waitFor(() => {
       expect(result.current.isAuthenticated).toBe(true);
       expect(result.current.user?.email).toBe('test@gsm.hs.kr');
-    });
-  });
-
-  it('should handle login failure', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: false,
-      json: async () => ({ error: 'Invalid credentials' }),
-    });
-
-    const { result } = renderHook(() => useAuth());
-
-    await act(async () => {
-      try {
-        await result.current.login('test@gsm.hs.kr', 'wrong-password');
-      } catch (err) {
-        // Error expected
-      }
-    });
-
-    await waitFor(() => {
-      expect(result.current.isAuthenticated).toBe(false);
-      expect(result.current.error).toBeTruthy();
+      expect(result.current.user?.student?.name).toBe('홍길동');
     });
   });
 
   it('should logout successfully', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({
-      ok: true,
-      json: async () => ({}),
-    });
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 1, email: 'test@gsm.hs.kr', role: 'USER', isStudent: true,
+          student: { id: 1, name: '홍길동', grade: 1, classNum: 1, number: 1, major: 'SW' },
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      });
 
     const { result } = renderHook(() => useAuth());
 
-    // Set user
-    await act(async () => {
-      await result.current.login('test@gsm.hs.kr', 'password');
+    await waitFor(() => {
+      expect(result.current.isAuthenticated).toBe(true);
     });
 
-    // Logout
     await act(async () => {
       await result.current.logout();
     });

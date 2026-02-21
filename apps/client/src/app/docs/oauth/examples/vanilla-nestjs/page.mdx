@@ -436,7 +436,7 @@ sequenceDiagram
 const CONFIG = {
     CLIENT_ID: 'your-client-id-here',
     REDIRECT_URI: 'http://localhost:3000/callback.html',
-    AUTH_URL: 'https://oauth.data.hellogsm.kr/login',
+    AUTH_URL: 'https://oauth.data.hellogsm.kr/v1/oauth/authorize',
 };
 
 // DOM 요소
@@ -933,13 +933,21 @@ interface TokenResponse {
   expiresIn: number;
 }
 
-interface DataGsmUserInfo {
-  email: string;
+interface StudentInfo {
+  id: number;
   name: string;
   grade: number;
-  class: number;
+  classNum: number;
   number: number;
-  profileImage?: string;
+  major: string;
+}
+
+interface DataGsmUserInfo {
+  id: number;
+  email: string;
+  role: string;
+  isStudent: boolean;
+  student?: StudentInfo;
 }
 
 @Injectable()
@@ -955,11 +963,11 @@ export class AuthService {
   /**
    * OAuth 콜백 처리: Code → Token → UserInfo → DB 동기화
    */
-  async processOAuthCallback(code: string) {
+  async processOAuthCallback(code: string, redirectUri: string) {
     try {
       // 1. Authorization Code를 Access Token으로 교환
       this.logger.log('Exchanging authorization code for tokens');
-      const tokenResponse = await this.exchangeCodeForToken(code);
+      const tokenResponse = await this.exchangeCodeForToken(code, redirectUri);
 
       // 2. Access Token으로 사용자 정보 조회
       this.logger.log('Fetching user info with access token');
@@ -980,11 +988,12 @@ export class AuthService {
   /**
    * Authorization Code를 Access Token으로 교환
    */
-  private async exchangeCodeForToken(code: string): Promise<TokenResponse> {
+  private async exchangeCodeForToken(code: string, redirectUri: string): Promise<TokenResponse> {
     const tokenUrl = this.configService.get<string>(
       'DATAGSM_TOKEN_URL',
       'https://oauth.data.hellogsm.kr/v1/oauth/token',
     );
+    const clientId = this.configService.get<string>('DATAGSM_CLIENT_ID');
     const clientSecret = this.configService.get<string>('DATAGSM_CLIENT_SECRET');
 
     if (!clientSecret) {
@@ -997,8 +1006,11 @@ export class AuthService {
     try {
       const response = await firstValueFrom(
         this.httpService.post(tokenUrl, {
+          grant_type: 'authorization_code',
           code,
-          clientSecret,
+          client_id: clientId,
+          redirect_uri: redirectUri,
+          client_secret: clientSecret,
         }),
       );
 
@@ -1018,7 +1030,7 @@ export class AuthService {
   private async fetchUserInfo(accessToken: string): Promise<DataGsmUserInfo> {
     const userInfoUrl = this.configService.get<string>(
       'DATAGSM_USERINFO_URL',
-      'https://oauth.data.hellogsm.kr/userinfo',
+      'https://oauth-userinfo.data.hellogsm.kr/userinfo',
     );
 
     try {
@@ -1059,13 +1071,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 
-interface DataGsmUserInfo {
-  email: string;
+interface StudentInfo {
+  id: number;
   name: string;
   grade: number;
-  class: number;
+  classNum: number;
   number: number;
-  profileImage?: string;
+  major: string;
+}
+
+interface DataGsmUserInfo {
+  id: number;
+  email: string;
+  role: string;
+  isStudent: boolean;
+  student?: StudentInfo;
 }
 
 @Injectable()
@@ -1085,7 +1105,7 @@ export class UserService {
    */
   async syncUser(userInfo: DataGsmUserInfo): Promise<User> {
     const existingUser = await this.userRepository.findOne({
-      where: { email: userInfo.email },
+      where: { email: userInfo.email },  // email은 최상위 필드
     });
 
     if (existingUser) {
@@ -1101,11 +1121,10 @@ export class UserService {
   private async createUser(userInfo: DataGsmUserInfo): Promise<User> {
     const user = this.userRepository.create({
       email: userInfo.email,
-      name: userInfo.name,
-      grade: userInfo.grade,
-      classNum: userInfo.class,
-      number: userInfo.number,
-      profileImage: userInfo.profileImage,
+      name: userInfo.student?.name ?? '',
+      grade: userInfo.student?.grade ?? 0,
+      classNum: userInfo.student?.classNum ?? 0,
+      number: userInfo.student?.number ?? 0,
     });
 
     const saved = await this.userRepository.save(user);
@@ -1120,11 +1139,12 @@ export class UserService {
     user: User,
     userInfo: DataGsmUserInfo,
   ): Promise<User> {
-    user.name = userInfo.name;
-    user.grade = userInfo.grade;
-    user.classNum = userInfo.class;
-    user.number = userInfo.number;
-    user.profileImage = userInfo.profileImage;
+    if (userInfo.student) {
+      user.name = userInfo.student.name;
+      user.grade = userInfo.student.grade;
+      user.classNum = userInfo.student.classNum;
+      user.number = userInfo.student.number;
+    }
     user.updatedAt = new Date();
 
     const updated = await this.userRepository.save(user);
@@ -1411,9 +1431,11 @@ app.use(csurf({
 }`} />
 
   <CodeTab label=".env" language="bash" code={`# DataGSM OAuth
+DATAGSM_CLIENT_ID=your-client-id
 DATAGSM_CLIENT_SECRET=your-client-secret
+DATAGSM_REDIRECT_URI=http://localhost:3000/callback.html
 DATAGSM_TOKEN_URL=https://oauth.data.hellogsm.kr/v1/oauth/token
-DATAGSM_USERINFO_URL=https://oauth.data.hellogsm.kr/userinfo
+DATAGSM_USERINFO_URL=https://oauth-userinfo.data.hellogsm.kr/userinfo
 
 # Session
 SESSION_SECRET=your-session-secret-minimum-32-chars
