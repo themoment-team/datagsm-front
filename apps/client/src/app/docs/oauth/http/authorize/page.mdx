@@ -1,0 +1,155 @@
+import { Shield, ArrowRight } from 'lucide-react'
+
+# 인증 흐름 시작
+
+### 엔드포인트
+
+```http
+GET /v1/oauth/authorize
+```
+
+### 설명
+
+OAuth 인증 흐름의 진입점입니다. 클라이언트가 사용자를 이 엔드포인트로 리다이렉트하면, DataGSM OAuth 서버가 검증 후 DataGSM 로그인 페이지로 안내합니다. 사용자가 로그인에 성공하면 `redirect_uri`로 Authorization Code가 전달됩니다.
+
+<div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded my-6">
+  <div className="flex items-start gap-3">
+    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
+    <div>
+      <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+        PKCE 사용 권장
+      </div>
+      <div className="text-blue-800 dark:text-blue-200 text-sm">
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">code_challenge</code>와
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">code_challenge_method</code>를 포함하면 Authorization Code 탈취 공격을 방지할 수 있습니다.
+        자세한 내용은 <a href="/docs/oauth/pkce" className="underline font-medium">PKCE 가이드</a>를 참고하세요.
+      </div>
+    </div>
+  </div>
+</div>
+
+### 요청 파라미터
+
+모든 파라미터는 쿼리 스트링(Query String)으로 전달합니다.
+
+| 파라미터                    | 타입       | 필수 여부     | 설명                                                | 예시                                            |
+|-------------------------|----------|-----------|---------------------------------------------------|-----------------------------------------------|
+| `client_id`             | `String` | 필수        | DataGSM에서 발급받은 클라이언트 ID                           | `your-client-id`                              |
+| `redirect_uri`          | `String` | 필수        | 인증 완료 후 code를 전달받을 URI (사전 등록 필요)                 | `https://your-app.com/callback`               |
+| `response_type`         | `String` | 선택        | 응답 타입 (`code` 고정, 기본값 `code`)                     | `code`                                        |
+| `state`                 | `String` | 선택 (권장)   | CSRF 공격 방지용 임의 문자열. 콜백 시 그대로 반환됨                  | `randomString123`                             |
+| `code_challenge`        | `String` | 선택 (PKCE) | PKCE Code Verifier를 SHA-256 해싱 후 Base64URL 인코딩한 값 | `E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM` |
+| `code_challenge_method` | `String` | 선택 (PKCE) | Challenge 생성 방법 (`S256` 권장, `plain` 지원)           | `S256`                                        |
+
+### 응답
+
+#### 성공 응답 (302 Found)
+
+DataGSM 로그인 페이지로 리다이렉트됩니다. 서버 내부적으로 인증 상태 토큰이 생성되어 로그인 페이지에 전달되며, 유효 시간은 **10분**입니다.
+
+사용자가 로그인에 성공하면 아래 형태로 `redirect_uri`에 Authorization Code가 전달됩니다.
+
+```
+https://your-app.com/callback?code={authorization_code}&state={state}
+```
+
+| 파라미터    | 설명                                  |
+|---------|-------------------------------------|
+| `code`  | Authorization Code (5분 유효, 일회성)     |
+| `state` | 요청 시 전달한 `state` 값 (생략한 경우 포함되지 않음) |
+
+### 오류 응답
+
+| 상태 코드             | 설명           | 원인                                                                           |
+|-------------------|--------------|------------------------------------------------------------------------------|
+| `400 Bad Request` | 잘못된 요청       | `response_type`이 `code`가 아님, `code_challenge` 없이 `code_challenge_method`만 전달 |
+| `404 Not Found`   | 리소스를 찾을 수 없음 | 존재하지 않는 `client_id` 또는 등록되지 않은 `redirect_uri`                                |
+
+### 요청 예시
+
+#### URL 구성 (PKCE)
+
+```javascript
+// 1. PKCE code_verifier 생성
+function generateCodeVerifier() {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  const base64 = btoa(String.fromCharCode(...array));
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// 2. code_challenge 생성 (SHA-256)
+async function generateCodeChallenge(verifier) {
+  const data = new TextEncoder().encode(verifier);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(hash)));
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// 3. state 생성 및 저장
+const state = crypto.randomUUID();
+const codeVerifier = generateCodeVerifier();
+const codeChallenge = await generateCodeChallenge(codeVerifier);
+
+sessionStorage.setItem('oauth_state', state);
+sessionStorage.setItem('oauth_code_verifier', codeVerifier);
+
+// 4. 인증 URL 구성 후 리다이렉트
+const params = new URLSearchParams({
+  client_id: 'your-client-id',
+  redirect_uri: 'https://your-app.com/callback',
+  response_type: 'code',
+  state,
+  code_challenge: codeChallenge,
+  code_challenge_method: 'S256',
+});
+
+window.location.href = `https://oauth.data.hellogsm.kr/v1/oauth/authorize?${params}`;
+```
+
+#### URL 구성 (state만 사용)
+
+```javascript
+const state = crypto.randomUUID();
+sessionStorage.setItem('oauth_state', state);
+
+const params = new URLSearchParams({
+  client_id: 'your-client-id',
+  redirect_uri: 'https://your-app.com/callback',
+  response_type: 'code',
+  state,
+});
+
+window.location.href = `https://oauth.data.hellogsm.kr/v1/oauth/authorize?${params}`;
+```
+
+#### 콜백 처리 예시
+
+```javascript
+// redirect_uri 페이지에서 code와 state 수신
+const params = new URLSearchParams(window.location.search);
+const code = params.get('code');
+const returnedState = params.get('state');
+
+// state 검증 (CSRF 방지)
+const savedState = sessionStorage.getItem('oauth_state');
+if (returnedState !== savedState) {
+  throw new Error('State mismatch - possible CSRF attack');
+}
+sessionStorage.removeItem('oauth_state');
+
+// code로 토큰 교환 진행
+const codeVerifier = sessionStorage.getItem('oauth_code_verifier');
+sessionStorage.removeItem('oauth_code_verifier');
+// → POST /v1/oauth/token 으로 교환
+```
+
+### 다음 단계
+
+Authorization Code를 발급받았다면, 토큰 교환을 진행하세요.
+
+<div className="flex items-center gap-2 mt-4">
+  <ArrowRight className="h-4 w-4 text-gray-500" />
+  <a href="/docs/oauth/http/token-exchange" className="underline font-medium">토큰 교환</a>
+  <span className="text-gray-400">— Authorization Code를 Access Token으로 교환</span>
+</div>
