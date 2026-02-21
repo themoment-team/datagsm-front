@@ -165,6 +165,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import org.springframework.web.util.UriComponentsBuilder
 
 private val logger = KotlinLogging.logger {}
 
@@ -187,12 +188,17 @@ class OAuthService(
      * @return DataGSM OAuth 인가 URL
      */
     fun buildAuthorizeUrl(state: String, codeChallenge: String): String {
-        return "$oauthBaseUrl/v1/oauth/authorize" +
-            "?client_id=$clientId" +
-            "&redirect_uri=$callbackUri" +
-            "&state=$state" +
-            "&code_challenge=$codeChallenge" +
-            "&code_challenge_method=S256"
+        return UriComponentsBuilder
+            .fromHttpUrl(oauthBaseUrl)
+            .path("/v1/oauth/authorize")
+            .queryParam("client_id", clientId)
+            .queryParam("redirect_uri", callbackUri)
+            .queryParam("state", state)
+            .queryParam("code_challenge", codeChallenge)
+            .queryParam("code_challenge_method", "S256")
+            .build()
+            .encode()
+            .toUriString()
     }
 
     /**
@@ -377,16 +383,19 @@ class AuthController(
      */
     @GetMapping("/callback")
     fun handleCallback(
-        @RequestParam code: String,
+        @RequestParam(required = false) code: String?,
         @RequestParam state: String,
         session: HttpSession,
         httpResponse: HttpServletResponse
     ) {
-        return try {
+        try {
             // State 검증 (CSRF 방지)
             val savedState = session.getAttribute("oauth_state") as? String
                 ?: throw IllegalStateException("No state in session")
             if (state != savedState) throw SecurityException("State mismatch - possible CSRF attack")
+
+            // 사용자가 로그인을 취소하거나 인증 서버 에러로 code가 없는 경우 처리
+            if (code == null) throw IllegalArgumentException("Authorization code is missing")
 
             // code_verifier 조회
             val codeVerifier = session.getAttribute("code_verifier") as? String
