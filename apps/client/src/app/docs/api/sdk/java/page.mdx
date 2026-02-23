@@ -32,7 +32,7 @@
 
 <CodeTabs>
   <CodeTab label="Gradle (Kotlin DSL)" language="kotlin" code={`dependencies {
-    implementation("com.github.themoment-team:datagsm-openapi-sdk-java:1.1.0")
+    implementation("com.github.themoment-team:datagsm-openapi-sdk-java:1.1.1")
 }
 
 repositories {
@@ -40,7 +40,7 @@ repositories {
 }`} />
 
   <CodeTab label="Gradle (Groovy)" language="groovy" code={`dependencies {
-    implementation 'com.github.themoment-team:datagsm-openapi-sdk-java:1.1.0'
+    implementation 'com.github.themoment-team:datagsm-openapi-sdk-java:1.1.1'
 }
 
 repositories {
@@ -58,7 +58,7 @@ repositories {
     <dependency>
         <groupId>com.github.themoment-team</groupId>
         <artifactId>datagsm-openapi-sdk-java</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </dependency>
 </dependencies>`} />
 </CodeTabs>
@@ -67,26 +67,26 @@ repositories {
 
 ### 1. 클라이언트 초기화
 
-먼저 `DataGsmClient` 인스턴스를 생성합니다. API 키는 필수 파라미터입니다.
+먼저 `DataGsmOpenApiClient` 인스턴스를 생성합니다. API 키는 필수 파라미터입니다.
 
 <CodeTabs>
-  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient;
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.DataGsmOpenApiClient;
 
 // 기본 설정으로 클라이언트 생성
-DataGsmClient client = DataGsmClient.builder("your-api-key-here").build();
+DataGsmOpenApiClient client = DataGsmOpenApiClient.builder("your-api-key-here").build();
 
 // 커스텀 Base URL 설정 (선택사항)
-DataGsmClient clientWithCustomUrl = DataGsmClient.builder("your-api-key-here")
+DataGsmOpenApiClient clientWithCustomUrl = DataGsmOpenApiClient.builder("your-api-key-here")
     .baseUrl("https://api.datagsm.com") // 설정하지 않는다면 공식 Base URL 사용
     .build();`} />
 
-  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmOpenApiClient
 
 // 기본 설정으로 클라이언트 생성
-val client = DataGsmClient.builder("your-api-key-here").build()
+val client = DataGsmOpenApiClient.builder("your-api-key-here").build()
 
 // 커스텀 Base URL 설정 (선택사항)
-val clientWithCustomUrl = DataGsmClient.builder("your-api-key-here")
+val clientWithCustomUrl = DataGsmOpenApiClient.builder("your-api-key-here")
     .baseUrl("https://api.datagsm.com") // 설정하지 않는다면 공식 Base URL 사용
     .build()`} />
 
@@ -371,7 +371,7 @@ SDK는 `AutoCloseable` 인터페이스를 구현하여 자동 리소스 정리�
     label="Java"
     language="java"
     code={`// Java의 try-with-resources 사용
-try (DataGsmClient client = DataGsmClient.builder("your-api-key").build()) {
+try (DataGsmOpenApiClient client = DataGsmOpenApiClient.builder("your-api-key").build()) {
     StudentResponse students = client.students().getStudents(request);
     // 클라이언트 사용
 } // 블록이 끝나면 자동으로 리소스 정리`}
@@ -380,7 +380,7 @@ try (DataGsmClient client = DataGsmClient.builder("your-api-key").build()) {
     label="Kotlin"
     language="kotlin"
     code={`// Kotlin의 use 함수 사용
-DataGsmClient.builder("your-api-key").build().use { client ->
+DataGsmOpenApiClient.builder("your-api-key").build().use { client ->
     val students = client.students().getStudents(request)
     // 클라이언트 사용
 } // 블록이 끝나면 자동으로 리소스 정리`}
@@ -389,7 +389,7 @@ DataGsmClient.builder("your-api-key").build().use { client ->
 
 ## Spring Boot 프로젝트에서 사용하기
 
-Spring Boot 애플리케이션에서는 `DataGsmClient`를 Bean으로 등록하여 의존성 주입 방식으로 사용할 수 있습니다.
+Spring Boot 애플리케이션에서는 `DataGsmOpenApiClient`를 Bean으로 등록하여 의존성 주입 방식으로 사용할 수 있습니다.
 
 ### Configuration 클래스 작성
 
@@ -399,7 +399,7 @@ Spring Boot 애플리케이션에서는 `DataGsmClient`를 Bean으로 등록하�
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import team.themoment.datagsm.sdk.openapi.DataGsmClient;
+import team.themoment.datagsm.sdk.openapi.DataGsmOpenApiClient;
 
 @Configuration
 public class DataGsmConfig {
@@ -411,8 +411,8 @@ public class DataGsmConfig {
     }
 
     @Bean
-    public DataGsmClient dataGsmClient(DataGsmProperties properties) {
-        return DataGsmClient.builder(properties.getKey())
+    public DataGsmOpenApiClient dataGsmClient(DataGsmProperties properties) {
+        return DataGsmOpenApiClient.builder(properties.getKey())
             .baseUrl(properties.getBaseUrl())
             .build();
     }
@@ -434,7 +434,7 @@ public class DataGsmConfig {
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import team.themoment.datagsm.sdk.openapi.DataGsmClient
+import team.themoment.datagsm.sdk.openapi.DataGsmOpenApiClient
 
 @Configuration
 class DataGsmConfig {
@@ -444,8 +444,8 @@ class DataGsmConfig {
     fun dataGsmProperties() = DataGsmProperties()
 
     @Bean
-    fun dataGsmClient(properties: DataGsmProperties): DataGsmClient {
-        return DataGsmClient.builder(properties.key)
+    fun dataGsmClient(properties: DataGsmProperties): DataGsmOpenApiClient {
+        return DataGsmOpenApiClient.builder(properties.key)
             .baseUrl(properties.baseUrl)
             .build()
     }
@@ -474,7 +474,7 @@ datagsm:
   <CodeTab label="Java" language="java" code={`package com.example.service;
 
 import org.springframework.stereotype.Service;
-import team.themoment.datagsm.sdk.openapi.DataGsmClient;
+import team.themoment.datagsm.sdk.openapi.DataGsmOpenApiClient;
 import team.themoment.datagsm.sdk.openapi.client.StudentApi;
 import team.themoment.datagsm.sdk.openapi.model.*;
 
@@ -483,9 +483,9 @@ import java.util.List;
 @Service
 public class SchoolDataService {
 
-    private final DataGsmClient dataGsmClient;
+    private final DataGsmOpenApiClient dataGsmClient;
 
-    public SchoolDataService(DataGsmClient dataGsmClient) {
+    public SchoolDataService(DataGsmOpenApiClient dataGsmClient) {
         this.dataGsmClient = dataGsmClient;
     }
 
@@ -504,14 +504,14 @@ public class SchoolDataService {
   <CodeTab label="Kotlin" language="kotlin" code={`package com.example.service
 
 import org.springframework.stereotype.Service
-import team.themoment.datagsm.sdk.openapi.DataGsmClient
+import team.themoment.datagsm.sdk.openapi.DataGsmOpenApiClient
 import team.themoment.datagsm.sdk.openapi.client.StudentApi
 import team.themoment.datagsm.sdk.openapi.model.*
 
 @Service
 class SchoolDataService(
     // 생성자 주입 (권장)
-    private val dataGsmClient: DataGsmClient
+    private val dataGsmClient: DataGsmOpenApiClient
 ) {
 
     fun getStudentsByClass(grade: Int, classNum: Int): List<Student> {
@@ -535,7 +535,7 @@ Spring Boot를 사용하지 않는 일반 Java 애플리케이션에서는 직�
 ### 전체 예제
 
 <CodeTabs>
-  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient;
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.DataGsmOpenApiClient;
 import team.themoment.datagsm.sdk.openapi.client.*;
 import team.themoment.datagsm.sdk.openapi.model.*;
 
@@ -545,7 +545,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // try-with-resources로 자동 리소스 관리
-        try (DataGsmClient client = DataGsmClient.builder("your-api-key-here").build()) {
+        try (DataGsmOpenApiClient client = DataGsmOpenApiClient.builder("your-api-key-here").build()) {
 
             // 학생 정보 조회
             StudentResponse students = client.students().getStudents(
@@ -594,14 +594,14 @@ public class Main {
 
 }`} />
 
-  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmClient
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmOpenApiClient
 import team.themoment.datagsm.sdk.openapi.client.*
 import team.themoment.datagsm.sdk.openapi.model.*
 import java.time.LocalDate
 
 fun main() {
     // use 함수로 자동 리소스 관리
-    DataGsmClient.builder("your-api-key-here").build().use { client ->
+    DataGsmOpenApiClient.builder("your-api-key-here").build().use { client ->
 
         // 학생 정보 조회
         val students = client.students().getStudents(
@@ -653,7 +653,7 @@ API 키는 민감한 정보이므로 절대 코드에 직접 하드코딩하지 
             System.exit(1);
         }
 
-        try (DataGsmClient client = DataGsmClient.builder(apiKey).build()) {
+        try (DataGsmOpenApiClient client = DataGsmOpenApiClient.builder(apiKey).build()) {
             // API 사용
         }
     }
@@ -669,7 +669,7 @@ API 키는 민감한 정보이므로 절대 코드에 직접 하드코딩하지 
         return
     }
 
-    DataGsmClient.builder(apiKey).build().use { client ->
+    DataGsmOpenApiClient.builder(apiKey).build().use { client ->
         // API 사용
     }
 
