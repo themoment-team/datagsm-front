@@ -160,8 +160,8 @@ const LoginPage = () => {
     const clientId = process.env.NEXT_PUBLIC_DATAGSM_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
 
-    // DataGSM 로그인 페이지로 리다이렉트
-    const authUrl = new URL('https://oauth.data.hellogsm.kr/login');
+    // DataGSM OAuth 인가 엔드포인트로 리다이렉트
+    const authUrl = new URL('https://oauth.data.hellogsm.kr/v1/oauth/authorize');
     authUrl.searchParams.append('client_id', clientId);
     authUrl.searchParams.append('redirect_uri', redirectUri);
     authUrl.searchParams.append('state', state);
@@ -345,6 +345,7 @@ Next.js API Routes를 사용하여 Spring Boot 백엔드와 통신합니다.
 
 interface CallbackRequestBody {
   code: string;
+  codeVerifier: string;
 }
 
 interface BackendResponse {
@@ -368,20 +369,24 @@ export default async function handler(
   }
 
   try {
-    const { code } = req.body as CallbackRequestBody;
+    const { code, codeVerifier } = req.body as CallbackRequestBody;
 
     if (!code) {
       return res.status(400).json({ message: 'Authorization code is required' });
     }
 
-    // Spring Boot 백엔드 API 호출
+    if (!codeVerifier) {
+      return res.status(400).json({ message: 'code_verifier is required' });
+    }
+
+    // Spring Boot 백엔드 API 호출 (code + codeVerifier 함께 전달)
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
     const response = await fetch(backendUrl + '/api/auth/oauth/callback', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ code, codeVerifier }),
     });
 
     if (!response.ok) {
@@ -769,13 +774,13 @@ public class UserService {
      * 신규 사용자 생성
      */
     private User createUser(DataGsmUserInfo userInfo) {
+        DataGsmUserInfo.StudentInfo s = userInfo.getStudent();
         User user = User.builder()
                 .email(userInfo.getEmail())
-                .name(userInfo.getName())
-                .grade(userInfo.getGrade())
-                .classNum(userInfo.getClassNum())
-                .number(userInfo.getNumber())
-                .profileImage(userInfo.getProfileImage())
+                .name(s != null ? s.getName() : "")
+                .grade(s != null ? s.getGrade() : 0)
+                .classNum(s != null ? s.getClassNum() : 0)
+                .number(s != null ? s.getNumber() : 0)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -789,11 +794,13 @@ public class UserService {
      * 기존 사용자 정보 업데이트
      */
     private User updateUser(User user, DataGsmUserInfo userInfo) {
-        user.setName(userInfo.getName());
-        user.setGrade(userInfo.getGrade());
-        user.setClassNum(userInfo.getClassNum());
-        user.setNumber(userInfo.getNumber());
-        user.setProfileImage(userInfo.getProfileImage());
+        DataGsmUserInfo.StudentInfo s = userInfo.getStudent();
+        if (s != null) {
+            user.setName(s.getName());
+            user.setGrade(s.getGrade());
+            user.setClassNum(s.getClassNum());
+            user.setNumber(s.getNumber());
+        }
         user.setUpdatedAt(LocalDateTime.now());
 
         User updated = userRepository.save(user);
@@ -955,21 +962,30 @@ public class TokenResponse {
     private Integer expiresIn;
 }
 
-// DataGSM 사용자 정보
+// DataGSM 사용자 정보 (중첩 구조)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class DataGsmUserInfo {
+    private Long id;
     private String email;
-    private String name;
-    private Integer grade;
+    private String role;
+    private Boolean isStudent;
+    private StudentInfo student;
 
-    @JsonProperty("class")
-    private Integer classNum;
-
-    private Integer number;
-    private String profileImage;
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class StudentInfo {
+        private Long id;
+        private String name;
+        private Integer grade;
+        private Integer classNum;
+        private Integer number;
+        private String major;
+    }
 }
 
 // 인증 응답 (JWT + 사용자 정보)

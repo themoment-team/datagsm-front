@@ -60,10 +60,10 @@ https://your-app.com/callback?code={authorization_code}&state={state}
 
 ### 오류 응답
 
-| 상태 코드             | 설명           | 원인                                                                           |
-|-------------------|--------------|------------------------------------------------------------------------------|
-| `400 Bad Request` | 잘못된 요청       | `response_type`이 `code`가 아님, `code_challenge` 없이 `code_challenge_method`만 전달 |
-| `404 Not Found`   | 리소스를 찾을 수 없음 | 존재하지 않는 `client_id` 또는 등록되지 않은 `redirect_uri`                                |
+| 상태 코드               | 설명       | 원인                                                                           |
+|---------------------|----------|------------------------------------------------------------------------------|
+| `400 Bad Request`   | 잘못된 요청   | `response_type`이 `code`가 아님, 등록되지 않은 `redirect_uri`, `code_challenge` 없이 `code_challenge_method`만 전달 |
+| `401 Unauthorized`  | 인증 실패    | 존재하지 않는 `client_id`                                                          |
 
 ### 요청 예시
 

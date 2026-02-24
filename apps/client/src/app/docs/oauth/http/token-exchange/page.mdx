@@ -42,7 +42,7 @@ Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보�
 | 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
 | --- | --- | --- | --- | --- |
 | `grant_type` | `String` | 필수 | 요청 타입 (`authorization_code` 고정) | `authorization_code` |
-| `code` | `String` | 필수 | `/v1/oauth/code`에서 발급받은 Authorization Code | `abc123def456` |
+| `code` | `String` | 필수 | `/v1/oauth/authorize` 플로우에서 발급받은 Authorization Code | `abc123def456` |
 | `client_id` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 ID | `your-client-id` |
 | `redirect_uri` | `String` | 필수 | Authorization Code 발급 시 사용한 리다이렉트 URI | `https://your-app.com/callback` |
 | `code_verifier` | `String` | 필수 | PKCE Code Verifier (Authorization Code 발급 시 생성한 원본 값) | `dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk` |
@@ -67,7 +67,7 @@ Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보�
 | 파라미터 | 타입 | 필수 여부 | 설명 | 예시 |
 | --- | --- | --- | --- | --- |
 | `grant_type` | `String` | 필수 | 요청 타입 (`authorization_code` 고정) | `authorization_code` |
-| `code` | `String` | 필수 | `/v1/oauth/code`에서 발급받은 Authorization Code | `abc123def456` |
+| `code` | `String` | 필수 | `/v1/oauth/authorize` 플로우에서 발급받은 Authorization Code | `abc123def456` |
 | `client_id` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 ID | `your-client-id` |
 | `client_secret` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 시크릿 (**반드시 서버에서만 사용**) | `your-client-secret` |
 | `redirect_uri` | `String` | 필수 | Authorization Code 발급 시 사용한 리다이렉트 URI | `https://your-app.com/callback` |
@@ -81,7 +81,8 @@ Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보�
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "token_type": "Bearer",
   "expires_in": 3600,
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "scope": "self:read"
 }
 ```
 
@@ -91,14 +92,14 @@ Authorization Code를 Access Token과 Refresh Token으로 교환합니다. 보�
 | `token_type` | `String` | 토큰 타입 (`Bearer` 고정) |
 | `expires_in` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
 | `refresh_token` | `String` | Refresh Token (30일 유효) |
+| `scope` | `String` | 발급된 권한 범위 (공백으로 구분) |
 
 ### 오류 응답
 
 | 상태 코드 | 설명 | 원인 |
 | --- | --- | --- |
-| `400 Bad Request` | 잘못된 요청 | 필수 파라미터 누락 또는 잘못된 형식 |
-| `401 Unauthorized` | 인증 실패 | Client Secret이 올바르지 않음 |
-| `404 Not Found` | 리소스를 찾을 수 없음 | Authorization Code가 만료되었거나 존재하지 않음 |
+| `400 Bad Request` | 잘못된 요청 | 필수 파라미터 누락, 잘못된 형식, Authorization Code가 만료되었거나 유효하지 않음 |
+| `401 Unauthorized` | 인증 실패 | Client ID가 존재하지 않거나 Client Secret이 올바르지 않음 |
 
 ### 요청 예시
 
@@ -125,16 +126,17 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
   "token_type": "Bearer",
   "expires_in": 3600,
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "scope": "self:read"
 }
 ```
 
-#### 실패 (404 Not Found)
+#### 실패 (400 Bad Request)
 
 ```json
 {
-  "error": "not_found",
-  "error_description": "Authorization code not found or expired"
+  "error": "invalid_grant",
+  "error_description": "Authorization Code가 유효하지 않거나 만료되었습니다."
 }
 ```
 
@@ -142,8 +144,8 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 
 ```json
 {
-  "error": "unauthorized",
-  "error_description": "Invalid client secret"
+  "error": "invalid_client",
+  "error_description": "클라이언트 인증에 실패했습니다."
 }
 ```
 
@@ -308,7 +310,7 @@ public class OAuthTokenService {
 
     public static void main(String[] args) throws Exception {
         String clientId = "your-client-id";
-        String codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"; // code/page.mdx에서 저장한 값
+        String codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"; // authorize/page.mdx에서 저장한 값
 
         TokenResponse tokens = exchangeToken(
             "abc123def456",
@@ -386,7 +388,7 @@ class OAuthTokenService {
 fun main() {
     val service = OAuthTokenService()
     val clientId = "your-client-id"
-    val codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk" // code/page.mdx에서 저장한 값
+    val codeVerifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk" // authorize/page.mdx에서 저장한 값
 
     val tokens = service.exchangeToken(
         code = "abc123def456",

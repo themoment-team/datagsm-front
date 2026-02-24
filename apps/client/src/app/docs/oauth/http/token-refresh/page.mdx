@@ -23,10 +23,12 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
     <Shield className="h-5 w-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
     <div>
       <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-        client_secret 불필요
+        client_secret 선택사항
       </div>
       <div className="text-blue-800 dark:text-blue-200 text-sm">
-        토큰 갱신 시 <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code>는 필요하지 않습니다. <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">refresh_token</code>만으로 갱신이 가능합니다.
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_id</code>는 필수이며,
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code>는 선택사항입니다.
+        <code className="mx-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">client_secret</code>을 제공하면 서버가 시크릿까지 함께 검증합니다.
       </div>
     </div>
   </div>
@@ -40,6 +42,8 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
 | --- | --- | --- | --- | --- |
 | `grant_type` | `String` | 필수 | 요청 타입 (`refresh_token` 고정) | `refresh_token` |
 | `refresh_token` | `String` | 필수 | 이전에 발급받은 Refresh Token | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `client_id` | `String` | 필수 | DataGSM에서 발급받은 클라이언트 ID | `your-client-id` |
+| `client_secret` | `String` | 선택 | DataGSM에서 발급받은 클라이언트 시크릿 | `your-client-secret` |
 
 ### 응답
 
@@ -50,7 +54,8 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "token_type": "Bearer",
   "expires_in": 3600,
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "scope": "self:read"
 }
 ```
 
@@ -60,14 +65,14 @@ Refresh Token은 **30일의 유효기간**을 가지며, 갱신 시 새로운 Re
 | `token_type` | `String` | 토큰 타입 (`Bearer` 고정) |
 | `expires_in` | `Int` | Access Token의 만료 시간 (초 단위, 3600 = 1시간) |
 | `refresh_token` | `String` | 새로 발급된 Refresh Token (30일 유효) |
+| `scope` | `String` | 발급된 권한 범위 (공백으로 구분) |
 
 ### 오류 응답
 
 | 상태 코드 | 설명 | 원인 |
 | --- | --- | --- |
-| `400 Bad Request` | 잘못된 요청 | 필수 파라미터 누락 또는 잘못된 형식 |
-| `401 Unauthorized` | 인증 실패 | Refresh Token이 유효하지 않거나 만료됨 |
-| `404 Not Found` | 리소스를 찾을 수 없음 | Refresh Token이 존재하지 않음 (이미 사용됨) |
+| `400 Bad Request` | 잘못된 요청 | 필수 파라미터 누락 또는 잘못된 형식, Refresh Token이 유효하지 않거나 만료됨 |
+| `401 Unauthorized` | 인증 실패 | Client ID가 존재하지 않거나 Client Secret이 올바르지 않음 |
 
 ### 요청 예시
 
@@ -78,7 +83,8 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   -H "Content-Type: application/json" \
   -d '{
     "grant_type": "refresh_token",
-    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "client_id": "your-client-id"
   }'
 ```
 
@@ -88,18 +94,11 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-  "expiresIn": 3600
-}
-```
-
-#### 실패 (401 Unauthorized)
-
-```json
-{
-  "error": "unauthorized",
-  "error_description": "Refresh token expired or invalid"
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "scope": "self:read"
 }
 ```
 
@@ -107,8 +106,17 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 
 ```json
 {
-  "error": "invalid_request",
-  "error_description": "Missing required parameter: refreshToken"
+  "error": "invalid_grant",
+  "error_description": "Refresh Token이 유효하지 않거나 만료되었습니다."
+}
+```
+
+#### 실패 (401 Unauthorized)
+
+```json
+{
+  "error": "invalid_client",
+  "error_description": "클라이언트 인증에 실패했습니다."
 }
 ```
 
@@ -117,15 +125,17 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 다음은 여러 언어에서 토큰을 갱신하는 예제입니다.
 
 <CodeTabs>
-  <CodeTab label="JavaScript" language="javascript" code={`async function refreshAccessToken(refreshToken) {
+  <CodeTab label="JavaScript" language="javascript" code={`async function refreshAccessToken(refreshToken, clientId) {
   try {
-    const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/tokens', {
+    const response = await fetch('https://oauth.data.hellogsm.kr/v1/oauth/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        refreshToken,
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: clientId,
       }),
     });
 
@@ -136,9 +146,9 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 
     const data = await response.json();
     return {
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
-      expiresIn: data.expiresIn,
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresIn: data.expires_in,
     };
   } catch (error) {
     console.error('Error:', error.message);
@@ -148,7 +158,7 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
 
 // 사용 예시
 const oldRefreshToken = localStorage.getItem('refreshToken');
-const tokens = await refreshAccessToken(oldRefreshToken);
+const tokens = await refreshAccessToken(oldRefreshToken, 'your-client-id');
 
 // 새 토큰 저장
 sessionStorage.setItem('accessToken', tokens.accessToken);
@@ -158,21 +168,26 @@ console.log('Access Token refreshed successfully');`} />
 
   <CodeTab label="Python" language="python" code={`import requests
 
-def refresh_access_token(refresh_token):
+def refresh_access_token(refresh_token, client_id):
     """
     Refresh Token으로 새로운 Access Token을 발급받습니다.
 
     Args:
         refresh_token: 이전에 발급받은 Refresh Token
+        client_id: 클라이언트 ID
 
     Returns:
-        dict: accessToken, refreshToken, expiresIn 포함
+        dict: access_token, refresh_token, expires_in, scope 포함
     """
     try:
         response = requests.post(
-            'https://oauth.data.hellogsm.kr/v1/oauth/tokens',
+            'https://oauth.data.hellogsm.kr/v1/oauth/token',
             headers={'Content-Type': 'application/json'},
-            json={'refreshToken': refresh_token}
+            json={
+                'grant_type': 'refresh_token',
+                'refresh_token': refresh_token,
+                'client_id': client_id,
+            }
         )
         response.raise_for_status()
         return response.json()
@@ -182,11 +197,11 @@ def refresh_access_token(refresh_token):
 
 # 사용 예시
 old_refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-tokens = refresh_access_token(old_refresh_token)
+tokens = refresh_access_token(old_refresh_token, 'your-client-id')
 
-print(f'New Access Token: {tokens["accessToken"]}')
-print(f'New Refresh Token: {tokens["refreshToken"]}')
-print(f'Expires In: {tokens["expiresIn"]} seconds')`} />
+print(f'New Access Token: {tokens["access_token"]}')
+print(f'New Refresh Token: {tokens["refresh_token"]}')
+print(f'Expires In: {tokens["expires_in"]} seconds')`} />
 
   <CodeTab label="Java" language="java" code={`import java.net.http.*;
 import java.net.URI;
@@ -198,14 +213,18 @@ public class OAuthRefreshService {
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static TokenResponse refreshAccessToken(String refreshToken) throws Exception {
+    public static TokenResponse refreshAccessToken(String refreshToken, String clientId) throws Exception {
         // 요청 본문 생성
-        Map<String, String> requestBody = Map.of("refreshToken", refreshToken);
+        Map<String, String> requestBody = Map.of(
+            "grant_type", "refresh_token",
+            "refresh_token", refreshToken,
+            "client_id", clientId
+        );
         String requestBodyJson = mapper.writeValueAsString(requestBody);
 
         // HTTP 요청 생성
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/tokens"))
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/token"))
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
             .build();
@@ -223,9 +242,9 @@ public class OAuthRefreshService {
 
         JsonNode jsonNode = mapper.readTree(response.body());
         return new TokenResponse(
-            jsonNode.get("accessToken").asText(),
-            jsonNode.get("refreshToken").asText(),
-            jsonNode.get("expiresIn").asInt()
+            jsonNode.get("access_token").asText(),
+            jsonNode.get("refresh_token").asText(),
+            jsonNode.get("expires_in").asInt()
         );
     }
 
@@ -243,7 +262,7 @@ public class OAuthRefreshService {
 
     public static void main(String[] args) throws Exception {
         String oldRefreshToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
-        TokenResponse tokens = refreshAccessToken(oldRefreshToken);
+        TokenResponse tokens = refreshAccessToken(oldRefreshToken, "your-client-id");
 
         System.out.println("New Access Token: " + tokens.accessToken);
         System.out.println("New Refresh Token: " + tokens.refreshToken);
@@ -255,16 +274,22 @@ public class OAuthRefreshService {
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.URI
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
 data class RefreshRequest(
-    val refreshToken: String
+    val grant_type: String = "refresh_token",
+    val refresh_token: String,
+    val client_id: String
 )
 
 data class TokenResponse(
+    @JsonProperty("access_token")
     val accessToken: String,
+    @JsonProperty("refresh_token")
     val refreshToken: String,
+    @JsonProperty("expires_in")
     val expiresIn: Int
 )
 
@@ -272,12 +297,15 @@ class OAuthRefreshService {
     private val client = HttpClient.newHttpClient()
     private val mapper = jacksonObjectMapper()
 
-    fun refreshAccessToken(refreshToken: String): TokenResponse {
-        val requestBody = RefreshRequest(refreshToken)
+    fun refreshAccessToken(refreshToken: String, clientId: String): TokenResponse {
+        val requestBody = RefreshRequest(
+            refresh_token = refreshToken,
+            client_id = clientId
+        )
         val requestBodyJson = mapper.writeValueAsString(requestBody)
 
         val request = HttpRequest.newBuilder()
-            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/tokens"))
+            .uri(URI.create("https://oauth.data.hellogsm.kr/v1/oauth/token"))
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
             .build()
@@ -296,7 +324,7 @@ class OAuthRefreshService {
 fun main() {
     val service = OAuthRefreshService()
     val oldRefreshToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-    val tokens = service.refreshAccessToken(oldRefreshToken)
+    val tokens = service.refreshAccessToken(oldRefreshToken, "your-client-id")
 
     println("New Access Token: \${tokens.accessToken}")
     println("New Refresh Token: \${tokens.refreshToken}")
@@ -334,7 +362,7 @@ class TokenManager {
 
     this.refreshTimer = setTimeout(async () => {
       try {
-        const tokens = await refreshAccessToken(this.refreshToken);
+        const tokens = await refreshAccessToken(this.refreshToken, 'your-client-id');
         this.setTokens(tokens.accessToken, tokens.refreshToken, tokens.expiresIn);
         console.log('Access Token refreshed automatically');
       } catch (error) {
@@ -370,7 +398,7 @@ tokenManager.setTokens(accessToken, refreshToken, 3600);
 
 #### 만료 처리
 
-- Refresh Token이 만료되면 (`401 Unauthorized`) 사용자는 다시 로그인해야 합니다.
+- Refresh Token이 만료되면 (`400 Bad Request`) 사용자는 다시 로그인해야 합니다.
 - 만료 30일 전에 사용자에게 재로그인을 안내하는 것을 권장합니다.
 
 ### 다음 단계
@@ -378,6 +406,6 @@ tokenManager.setTokens(accessToken, refreshToken, 3600);
 토큰 갱신에 성공했다면, 새로운 Access Token으로 API를 호출할 수 있습니다.
 
 - [사용자 정보 조회](/docs/oauth/http/userinfo) - Access Token으로 사용자 정보 획득
-- [토큰 교환](/docs/oauth/http/token) - 처음부터 OAuth 플로우 이해하기
+- [토큰 교환](/docs/oauth/http/token-exchange) - 처음부터 OAuth 플로우 이해하기
 
 실전 구현 예제가 필요하면 [Examples 문서](/docs/oauth/examples)를 참고하세요.
