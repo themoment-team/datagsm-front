@@ -8,13 +8,13 @@ import { docsSections } from '../../model/constants';
 import { DocsSectionItem } from '../../model/types';
 import { SidebarItem } from './SidebarItem';
 
+const STORAGE_KEY = 'docs-sidebar-open-map';
+
 export const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const pathname = usePathname();
 
   // 정확히 일치하는 경우 활성 스타일 적용
   const isActive = (href: string) => pathname === href;
-
-  const STORAGE_KEY = 'docs-sidebar-open-map';
 
   const buildOpenMap = (base: Record<string, boolean>, currentPathname: string) => {
     const result = { ...base };
@@ -40,13 +40,12 @@ export const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) =>
     try {
       const stored = sessionStorage.getItem(STORAGE_KEY);
       if (stored) {
-        const base: Record<string, boolean> = JSON.parse(stored);
-        setOpenMap((prev) => buildOpenMap({ ...base, ...prev }, pathname));
+        const storedMap: Record<string, boolean> = JSON.parse(stored);
+        setOpenMap((prev) => ({ ...storedMap, ...prev }));
       }
     } catch {
       // sessionStorage 사용 불가 환경에서는 무시
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // openMap이 변경될 때마다 sessionStorage에 저장
