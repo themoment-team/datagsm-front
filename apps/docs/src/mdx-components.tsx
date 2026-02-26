@@ -31,7 +31,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
 
     pre: ({ children }) => <div className="my-6">{children}</div>,
 
-    code: ({ children, className }) => {
+    code: ({ children, className }: { children: React.ReactNode; className?: string }) => {
       const match = /language-(\w+)/.exec(className || '');
       const language = match ? match[1] : '';
 
