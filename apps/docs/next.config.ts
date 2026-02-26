@@ -4,9 +4,6 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   transpilePackages: ['@repo/shared'],
 
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   async rewrites() {
     return [
