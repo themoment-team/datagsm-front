@@ -1,5 +1,4 @@
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
-import { Header } from '@repo/shared/ui';
 import type { Metadata } from 'next';
 
 import '@/shared/styles/globals.css';
@@ -27,7 +26,6 @@ export default function RootLayout({
       <body>
         <TanStackProvider>
           <ToastProvider>
-            <Header role="client" />
             {children}
           </ToastProvider>
         </TanStackProvider>
