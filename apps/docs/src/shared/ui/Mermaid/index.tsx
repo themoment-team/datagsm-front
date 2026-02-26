@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useId } from 'react';
 
 interface MermaidProps {
   chart: string;
@@ -9,6 +9,7 @@ interface MermaidProps {
 const Mermaid = ({ chart }: MermaidProps) => {
   const [svg, setSvg] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
+  const mermaidId = useId();
 
   useEffect(() => {
     const renderChart = async () => {
@@ -21,8 +22,7 @@ const Mermaid = ({ chart }: MermaidProps) => {
           fontFamily: 'inherit',
         });
         
-        const id = `mermaid-${Math.random().toString(36).substring(2, 9)}`;
-        const { svg } = await mermaid.render(id, chart);
+        const { svg } = await mermaid.render(mermaidId, chart);
         setSvg(svg);
         setError(false);
       } catch (err) {
@@ -32,7 +32,7 @@ const Mermaid = ({ chart }: MermaidProps) => {
     };
 
     renderChart();
-  }, [chart]);
+  }, [chart, mermaidId]);
 
   if (error) {
     return (
