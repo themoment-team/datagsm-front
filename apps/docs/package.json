@@ -25,7 +25,6 @@
   "devDependencies": {
     "@mdx-js/loader": "^3.1.1",
     "@repo/eslint-config": "workspace:*",
-    "@repo/shared": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^20",
