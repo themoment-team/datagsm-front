@@ -86,7 +86,7 @@ Authorization: Bearer {accessToken}
 | 상태 코드 | 설명 | 원인 |
 | --- | --- | --- |
 | `401 Unauthorized` | 인증 실패 | Access Token이 유효하지 않거나 만료됨 |
-| `403 Forbidden` | 권한 없음 | Access Token이 올바르지 않음 |
+| `403 Forbidden` | 권한 범위 부족 | 요청한 리소스에 대한 권한 범위 부족 |
 | `404 Not Found` | 리소스를 찾을 수 없음 | 사용자 데이터를 찾을 수 없음 |
 
 ### 요청 예시

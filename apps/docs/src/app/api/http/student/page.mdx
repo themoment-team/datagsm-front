@@ -23,7 +23,7 @@ GET /v1/students
 
 ### 권한 범위
 
-`STUDENT_READ` 권한이 필요합니다.
+`STUDENT_READ` 권한 범위가 필요합니다.
 
 ### 요청 파라미터
 
@@ -158,7 +158,7 @@ curl -X GET "https://api.datagsm.com/v1/students?sortBy=NAME&sortDirection=DESC&
 | 상태 코드                   | 설명                  |
 |-------------------------|---------------------|
 | `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
-| `403 Forbidden`         | 필요한 권한 범위가 없음       |
+| `403 Forbidden`         | 권한 범위 부족               |
 | `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
 | `400 Bad Request`       | 잘못된 요청 파라미터         |
 

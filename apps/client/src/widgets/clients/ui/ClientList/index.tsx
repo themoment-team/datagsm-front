@@ -143,7 +143,7 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
             <TableHead>클라이언트 이름</TableHead>
             <TableHead>클라이언트 ID</TableHead>
             <TableHead>리다이렉트 URL</TableHead>
-            <TableHead>권한</TableHead>
+            <TableHead>권한 범위</TableHead>
             <TableHead className={cn('w-[100px]')}>작업</TableHead>
           </TableRow>
         </TableHeader>
