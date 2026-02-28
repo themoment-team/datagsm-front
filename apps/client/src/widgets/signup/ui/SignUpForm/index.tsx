@@ -215,7 +215,7 @@ const SignUpForm = () => {
 
       switch (statusCode) {
         case 400:
-          toast.error('입력 정보를 확인해주세요.');
+          toast.error('입력 데이터를 확인해주세요.');
           break;
         case 404:
           toast.error('인증 코드가 만료되었거나 존재하지 않습니다.');

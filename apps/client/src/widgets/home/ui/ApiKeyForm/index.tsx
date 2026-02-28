@@ -116,7 +116,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
   if (isLoadingApiKey || isLoadingKeyScope) {
     return (
       <Card className={cn('p-6')}>
-        <div className={cn('text-muted-foreground text-sm')}>권한 정보를 불러오는 중...</div>
+        <div className={cn('text-muted-foreground text-sm')}>권한 데이터를 불러오는 중...</div>
       </Card>
     );
   }

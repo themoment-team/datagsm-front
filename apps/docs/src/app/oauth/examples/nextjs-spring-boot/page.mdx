@@ -2,7 +2,7 @@
 
 ### 시나리오
 
-프론트엔드(Next.js)에서 Authorization Code까지 획득하고, 서버(Spring Boot)에서 PKCE 검증 및 Token 교환, 사용자 정보 조회 후 자체 JWT 발급하는 완전한 OAuth 구현 예제입니다.
+프론트엔드(Next.js)에서 Authorization Code까지 획득하고, 서버(Spring Boot)에서 PKCE 검증 및 Token 교환, 사용자 데이터 조회 후 자체 JWT 발급하는 완전한 OAuth 구현 예제입니다.
 
 이 방식은 PKCE를 사용하여 Authorization Code 탈취를 방지하면서 서버 측에서 사용자 인증을 완전히 제어할 수 있는 안전한 구현 방식입니다.
 
@@ -57,8 +57,8 @@ sequenceDiagram
     O->>O: 9. PKCE 검증 (code_verifier → SHA-256 → code_challenge 비교)
     O-->>S: 10. Access Token & Refresh Token
     S->>O: 11. GET /userinfo<br/>(Bearer Token)
-    O-->>S: 12. 사용자 정보
-    S->>D: 13. 사용자 정보 동기화
+    O-->>S: 12. 사용자 데이터
+    S->>D: 13. 사용자 데이터 동기화
     D-->>S: 14. 저장 완료
     S->>S: 15. 자체 JWT 생성
     S-->>N: 16. JWT 반환
@@ -88,8 +88,8 @@ sequenceDiagram
 | --- | --- |
 | **PKCE 검증** | code_verifier를 OAuth 서버로 전달하여 검증 |
 | **토큰 교환** | Authorization Code → Access Token 변환 |
-| **사용자 정보 조회** | DataGSM API에서 사용자 정보 획득 |
-| **DB 동기화** | 사용자 정보를 자체 DB에 저장/업데이트 |
+| **사용자 데이터 조회** | DataGSM API에서 사용자 데이터 획득 |
+| **DB 동기화** | 사용자 데이터를 자체 DB에 저장/업데이트 |
 | **자체 JWT 발급** | 애플리케이션 인증용 JWT 생성 |
 | **비즈니스 로직** | 사용자 권한 관리, 리소스 접근 제어 |
 
@@ -426,7 +426,7 @@ export default async function handler(
 
     const token = authHeader.substring(7);
 
-    // Spring Boot 백엔드에 JWT로 사용자 정보 조회
+    // Spring Boot 백엔드에 JWT로 사용자 데이터 조회
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
     const response = await fetch(backendUrl + '/api/auth/me', {
       method: 'GET',
@@ -477,7 +477,7 @@ graph TD
 
     E --> E1[OAuthCallbackRequest.java<br/><i>콜백 요청 DTO</i>]
     E --> E2[TokenResponse.java<br/><i>토큰 응답 DTO</i>]
-    E --> E3[UserInfoResponse.java<br/><i>사용자 정보 DTO</i>]
+    E --> E3[UserInfoResponse.java<br/><i>사용자 데이터 DTO</i>]
 
     F --> F1[User.java<br/><i>사용자 엔티티</i>]
 
@@ -517,14 +517,14 @@ public class AuthController {
      * OAuth 콜백 처리 및 JWT 발급
      *
      * @param request Authorization Code와 code_verifier를 포함한 요청
-     * @return JWT 토큰 및 사용자 정보
+     * @return JWT 토큰 및 사용자 데이터
      */
     @PostMapping("/oauth/callback")
     public ResponseEntity<AuthResponse> handleOAuthCallback(
             @RequestBody OAuthCallbackRequest request) {
 
         try {
-            // Authorization Code와 code_verifier로 토큰 교환 및 사용자 정보 조회
+            // Authorization Code와 code_verifier로 토큰 교환 및 사용자 데이터 조회
             AuthResponse response = oAuthService.processOAuthCallback(
                 request.getCode(),
                 request.getCodeVerifier()
@@ -539,10 +539,10 @@ public class AuthController {
     }
 
     /**
-     * 현재 로그인한 사용자 정보 조회
+     * 현재 로그인한 사용자 데이터 조회
      *
      * @param authHeader Authorization 헤더 (Bearer 토큰)
-     * @return 사용자 정보
+     * @return 사용자 데이터
      */
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(
@@ -586,7 +586,7 @@ public class AuthController {
 
 ### OAuthService
 
-OAuth 토큰 교환 및 사용자 정보 조회를 담당하는 핵심 서비스입니다.
+OAuth 토큰 교환 및 사용자 데이터 조회를 담당하는 핵심 서비스입니다.
 
 <CodeTabs>
   <CodeTab label="OAuthService.java" language="java" code={`package com.example.app.service;
@@ -636,10 +636,10 @@ public class OAuthService {
         // 1. Authorization Code와 code_verifier로 Access Token 교환
         TokenResponse tokenResponse = exchangeCodeForToken(code, codeVerifier);
 
-        // 2. Access Token으로 사용자 정보 조회
+        // 2. Access Token으로 사용자 데이터 조회
         DataGsmUserInfo userInfo = fetchUserInfo(tokenResponse.getAccessToken());
 
-        // 3. DB에 사용자 정보 저장/업데이트
+        // 3. DB에 사용자 데이터 저장/업데이트
         User user = userService.syncUser(userInfo);
 
         // 4. 자체 JWT 발급
@@ -690,7 +690,7 @@ public class OAuthService {
     }
 
     /**
-     * Access Token으로 DataGSM 사용자 정보 조회
+     * Access Token으로 DataGSM 사용자 데이터 조회
      */
     private DataGsmUserInfo fetchUserInfo(String accessToken) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
@@ -713,7 +713,7 @@ public class OAuthService {
     }
 
     /**
-     * JWT에서 사용자 정보 추출
+     * JWT에서 사용자 데이터 추출
      */
     public UserInfoResponse getUserFromToken(String token) {
         Long userId = jwtService.extractUserId(token);
@@ -735,7 +735,7 @@ public class OAuthService {
 
 ### UserService
 
-사용자 정보를 DB에 동기화하고 관리하는 서비스입니다.
+사용자 데이터를 DB에 동기화하고 관리하는 서비스입니다.
 
 <CodeTabs>
   <CodeTab label="UserService.java" language="java" code={`package com.example.app.service;
@@ -758,10 +758,10 @@ public class UserService {
     private final UserRepository userRepository;
 
     /**
-     * DataGSM 사용자 정보를 DB에 동기화
+     * DataGSM 사용자 데이터를 DB에 동기화
      *
      * - 신규 사용자: 생성
-     * - 기존 사용자: 정보 업데이트
+     * - 기존 사용자: 데이터 업데이트
      */
     @Transactional
     public User syncUser(DataGsmUserInfo userInfo) {
@@ -791,7 +791,7 @@ public class UserService {
     }
 
     /**
-     * 기존 사용자 정보 업데이트
+     * 기존 사용자 데이터 업데이트
      */
     private User updateUser(User user, DataGsmUserInfo userInfo) {
         DataGsmUserInfo.StudentInfo s = userInfo.getStudent();
@@ -962,7 +962,7 @@ public class TokenResponse {
     private Integer expiresIn;
 }
 
-// DataGSM 사용자 정보 (중첩 구조)
+// DataGSM 사용자 데이터 (중첩 구조)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -988,7 +988,7 @@ public class DataGsmUserInfo {
     }
 }
 
-// 인증 응답 (JWT + 사용자 정보)
+// 인증 응답 (JWT + 사용자 데이터)
 @Getter
 @Setter
 @Builder
@@ -999,7 +999,7 @@ public class AuthResponse {
     private UserInfoResponse user;
 }
 
-// 사용자 정보 응답
+// 사용자 데이터 응답
 @Getter
 @Setter
 @Builder

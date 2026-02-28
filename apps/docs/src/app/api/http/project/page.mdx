@@ -45,7 +45,7 @@ GET /v1/projects
 | `status`  | `String` | HTTP 상태 메시지    | `OK`  |
 | `code`    | `Int`    | HTTP 상태 코드     | `200` |
 | `message` | `String` | 응답 메시지         | `OK`  |
-| `data`    | `Object` | 프로젝트 정보 목록 데이터 | -     |
+| `data`    | `Object` | 프로젝트 데이터 목록 | -     |
 
 #### data 객체
 
@@ -66,12 +66,12 @@ GET /v1/projects
 | `id`           | `Long`                     | 프로젝트 ID        | `1`                    |
 | `name`         | `String`                   | 프로젝트 이름        | `DataGSM 프로젝트`         |
 | `description`  | `String`                   | 프로젝트 설명        | `학교 데이터를 제공하는 API 서비스` |
-| `club`         | `ClubSummaryDto`           | 프로젝트 소유 동아리 정보 | -                      |
+| `club`         | `ClubSummaryDto`           | 프로젝트 소유 동아리 데이터 | -                      |
 | `participants` | `List<ParticipantInfoDto>` | 프로젝트 참가자 목록    | -                      |
 
 ### 동아리 요약 객체 (ClubSummaryDto)
 
-프로젝트 응답에 포함된 동아리 정보는 다음 필드를 포함합니다.
+프로젝트 응답에 포함된 동아리 데이터는 다음 필드를 포함합니다.
 
 | 필드     | 타입         | 설명                                                   | 예시           |
 |--------|------------|------------------------------------------------------|--------------|
@@ -79,9 +79,9 @@ GET /v1/projects
 | `name` | `String`   | 동아리 이름                                               | `SW개발동아리`    |
 | `type` | `ClubType` | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
 
-### 참가자 정보 객체 (ParticipantInfoDto)
+### 참가자 데이터 객체 (ParticipantInfoDto)
 
-프로젝트 응답에 포함된 참가자 정보는 다음 필드를 포함합니다.
+프로젝트 응답에 포함된 참가자 데이터는 다음 필드를 포함합니다.
 
 | 필드              | 타입       | 설명                                       | 예시                 |
 |-----------------|----------|------------------------------------------|--------------------|

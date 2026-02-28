@@ -4,7 +4,7 @@
 
 **DataGSM OAuth SDK Java**는 DataGSM OAuth 인증을 Java 및 Kotlin 애플리케이션에서 쉽고 안전하게 구현할 수 있도록 설계된 공식 클라이언트 라이브러리입니다.
 
-이 SDK를 사용하면 복잡한 OAuth 인증 플로우를 직접 구현할 필요 없이, 간단한 인터페이스를 통해 Authorization Code 교환, 토큰 갱신, 사용자 정보 조회 등의 기능을 손쉽게 사용할 수 있습니다.
+이 SDK를 사용하면 복잡한 OAuth 인증 플로우를 직접 구현할 필요 없이, 간단한 인터페이스를 통해 Authorization Code 교환, 토큰 갱신, 사용자 데이터 조회 등의 기능을 손쉽게 사용할 수 있습니다.
 
 ### 주요 특징
 
@@ -140,21 +140,21 @@ val newRefreshToken = newTokenResponse.refreshToken`} />
 
 </CodeTabs>
 
-### 3. 사용자 정보 조회
+### 3. 사용자 데이터 조회
 
 <CodeTabs>
   <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.oauth.model.UserInfo;
 import team.themoment.datagsm.sdk.oauth.model.Student;
 
-// Access Token으로 사용자 정보 조회
+// Access Token으로 사용자 데이터 조회
 UserInfo userInfo = client.getUserInfo(accessToken);
 
-// 기본 사용자 정보
+// 기본 사용자 데이터
 System.out.println("ID: " + userInfo.getId());
 System.out.println("이메일: " + userInfo.getEmail());
 System.out.println("역할: " + userInfo.getRole());
 
-// 학생인 경우 추가 정보 조회
+// 학생인 경우 추가 데이터 조회
 if (userInfo.isStudent()) {
     Student student = userInfo.getStudent();
     System.out.println("이름: " + student.getName());
@@ -167,15 +167,15 @@ if (userInfo.isStudent()) {
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.oauth.model.UserInfo
 import team.themoment.datagsm.sdk.oauth.model.Student
 
-// Access Token으로 사용자 정보 조회
+// Access Token으로 사용자 데이터 조회
 val userInfo = client.getUserInfo(accessToken)
 
-// 기본 사용자 정보
+// 기본 사용자 데이터
 println("ID: \${userInfo.id}")
 println("이메일: \${userInfo.email}")
 println("역할: \${userInfo.role}")
 
-// 학생인 경우 추가 정보 조회
+// 학생인 경우 추가 데이터 조회
 if (userInfo.isStudent) {
     val student = userInfo.student
     println("이름: \${student.name}")
@@ -215,7 +215,7 @@ SDK는 다음과 같은 API 메서드를 제공합니다.
 
 ### Account API
 
-**`client.getUserInfo(accessToken)`** - 사용자 정보 조회
+**`client.getUserInfo(accessToken)`** - 사용자 데이터 조회
 
 | 파라미터         | 타입       | 설명           |
 |--------------|----------|--------------|
@@ -223,7 +223,7 @@ SDK는 다음과 같은 API 메서드를 제공합니다.
 
 | 반환 타입      | 설명                       |
 |------------|--------------------------|
-| `UserInfo` | 사용자 정보 (학생인 경우 학생 정보 포함) |
+| `UserInfo` | 사용자 데이터 (학생인 경우 학생 데이터 포함) |
 
 ## 모델 레퍼런스
 
@@ -238,7 +238,7 @@ OAuth 토큰 응답 모델
 
 ### UserInfo
 
-사용자 정보 모델
+사용자 데이터 모델
 
 | 필드          | 타입            | 설명             |
 |-------------|---------------|----------------|
@@ -246,11 +246,11 @@ OAuth 토큰 응답 모델
 | `email`     | `String`      | 이메일 주소         |
 | `role`      | `AccountRole` | 계정 역할          |
 | `isStudent` | `Boolean`     | 학생 여부          |
-| `student`   | `Student`     | 학생 정보 (학생인 경우) |
+| `student`   | `Student`     | 학생 데이터 (학생인 경우) |
 
 ### Student
 
-학생 정보 모델
+학생 데이터 모델
 
 | 필드               | 타입            | 설명        |
 |------------------|---------------|-----------|
@@ -266,13 +266,13 @@ OAuth 토큰 응답 모델
 | `role`           | `StudentRole` | 학생 역할     |
 | `dormitoryFloor` | `Integer`     | 기숙사 층     |
 | `dormitoryRoom`  | `Integer`     | 기숙사 호실    |
-| `majorClub`      | `ClubInfo`    | 전공동아리 정보  |
-| `jobClub`        | `ClubInfo`    | 취업동아리 정보  |
-| `autonomousClub` | `ClubInfo`    | 창체동아리 정보  |
+| `majorClub`      | `ClubInfo`    | 전공동아리 데이터  |
+| `jobClub`        | `ClubInfo`    | 취업동아리 데이터  |
+| `autonomousClub` | `ClubInfo`    | 찺체동아리 데이터  |
 
 ### ClubInfo
 
-동아리 정보 모델
+동아리 데이터 모델
 
 | 필드     | 타입         | 설명        |
 |--------|------------|-----------|
@@ -612,14 +612,14 @@ public class Main {
 
             System.out.println("Access Token 발급 완료");
 
-            // 2. 사용자 정보 조회
+            // 2. 사용자 데이터 조회
             UserInfo userInfo = client.getUserInfo(tokenResponse.getAccessToken());
 
             System.out.printf("사용자 ID: %d%n", userInfo.getId());
             System.out.printf("이메일: %s%n", userInfo.getEmail());
             System.out.printf("역할: %s%n", userInfo.getRole());
 
-            // 3. 학생 정보 조회 (학생인 경우)
+            // 3. 학생 데이터 조회 (학생인 경우)
             if (userInfo.isStudent()) {
                 Student student = userInfo.getStudent();
                 System.out.printf("이름: %s%n", student.getName());
@@ -628,7 +628,7 @@ public class Main {
                     student.getGrade(), student.getClassNum(), student.getNumber());
                 System.out.printf("전공: %s%n", student.getMajor());
 
-                // 동아리 정보
+                // 동아리 데이터
                 if (student.getMajorClub() != null) {
                     System.out.printf("전공동아리: %s%n", student.getMajorClub().getName());
                 }
@@ -670,14 +670,14 @@ fun main() {
 
             println("Access Token 발급 완료")
 
-            // 2. 사용자 정보 조회
+            // 2. 사용자 데이터 조회
             val userInfo = client.getUserInfo(tokenResponse.accessToken)
 
             println("사용자 ID: \${userInfo.id}")
             println("이메일: \${userInfo.email}")
             println("역할: \${userInfo.role}")
 
-            // 3. 학생 정보 조회 (학생인 경우)
+            // 3. 학생 데이터 조회 (학생인 경우)
             if (userInfo.isStudent) {
                 val student = userInfo.student
                 println("이름: \${student.name}")
@@ -685,7 +685,7 @@ fun main() {
                 println("학년/반/번호: \${student.grade}학년 \${student.classNum}반 \${student.number}번")
                 println("전공: \${student.major}")
 
-                // 동아리 정보
+                // 동아리 데이터
                 student.majorClub?.let { club ->
                     println("전공동아리: \${club.name}")
                 }
@@ -716,7 +716,7 @@ fun main() {
 
 ### Client Secret 관리
 
-Client Secret은 민감한 정보이므로 절대 코드에 직접 하드코딩하지 마세요. 환경 변수나 설정 파일을 통해 안전하게 관리하세요.
+Client Secret은 민감한 데이터이므로 절대 코드에 직접 하드코딩하지 마세요. 환경 변수나 설정 파일을 통해 안전하게 관리하세요.
 
 #### 환경 변수 사용 (권장)
 

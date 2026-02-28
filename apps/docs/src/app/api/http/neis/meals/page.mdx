@@ -1,6 +1,6 @@
-# 급식 정보 API
+# 급식 데이터 API
 
-NEIS 급식 정보 API를 통해 학교의 급식 메뉴, 알레르기 정보, 영양 정보 등을 조회할 수 있습니다.
+NEIS 급식 데이터 API를 통해 학교의 급식 메뉴, 알레르기 데이터, 영양 데이터 등을 조회할 수 있습니다.
 
 ## 엔드포인트
 
@@ -12,14 +12,14 @@ GET /v1/neis/meals
 
 | 파라미터       | 타입          | 필수 여부 | 설명                            | 예시           |
 |------------|-------------|-------|-------------------------------|--------------|
-| `date`     | `LocalDate` | 선택    | 특정 날짜의 급식 정보 조회 (ISO 8601 형식) | `2025-12-15` |
+| `date`     | `LocalDate` | 선택    | 특정 날짜의 급식 데이터 조회 (ISO 8601 형식) | `2025-12-15` |
 | `fromDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)        | `2025-12-01` |
 | `toDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)        | `2025-12-31` |
 
 **날짜 파라미터 사용 규칙:**
 
-- `date`: 특정 날짜의 급식 정보만 조회
-- `fromDate`와 `toDate`: 기간 범위 내의 급식 정보 조회
+- `date`: 특정 날짜의 급식 데이터만 조회
+- `fromDate`와 `toDate`: 기간 범위 내의 급식 데이터 조회
 - 파라미터를 생략하면 오늘 날짜 기준으로 조회
 
 ## 응답 형식
@@ -31,11 +31,11 @@ GET /v1/neis/meals
 | `status`  | `String` | HTTP 상태 메시지     | `OK`  |
 | `code`    | `Int`    | HTTP 상태 코드      | `200` |
 | `message` | `String` | 응답 메시지          | `OK`  |
-| `data`    | `Array`  | 급식 정보 목록 배열 데이터 | -     |
+| `data`    | `Array`  | 급식 데이터 목록 배열 | -     |
 
 ### data 배열
 
-`data` 필드는 급식 정보 객체의 배열이며, 각 급식 객체는 다음 필드를 포함합니다.
+`data` 필드는 급식 데이터 객체의 배열이며, 각 급식 객체는 다음 필드를 포함합니다.
 
 | 필드                | 타입             | 설명                                    | 예시                              |
 |-------------------|----------------|---------------------------------------|---------------------------------|
@@ -47,10 +47,10 @@ GET /v1/neis/meals
 | `mealDate`        | `LocalDate`    | 급식 날짜                                 | `2025-12-15`                    |
 | `mealType`        | `MealType`     | 급식 타입(`BREAKFAST`, `LUNCH`, `DINNER`) | `LUNCH`                         |
 | `mealMenu`        | `List<String>` | 급식 메뉴 목록                              | `["쌀밥", "김치찌개", "돈까스", "배추김치"]` |
-| `mealAllergyInfo` | `List<String>` | 알레르기 정보 목록 (nullable)                 | `["1", "2", "5", "6"]`          |
-| `mealCalories`    | `String`       | 칼로리 정보 (nullable)                     | `650.8 Kcal`                    |
-| `originInfo`      | `String`       | 원산지 정보 (nullable)                     | `쌀:국내산 돼지고기:국내산 배추김치:국내산`       |
-| `nutritionInfo`   | `String`       | 영양 정보 (nullable)                      | `단백질:25.0g 지방:15.0g 탄수화물:90.0g` |
+| `mealAllergyInfo` | `List<String>` | 알레르기 데이터 목록 (nullable)                 | `["1", "2", "5", "6"]`          |
+| `mealCalories`    | `String`       | 칼로리 데이터 (nullable)                     | `650.8 Kcal`                    |
+| `originInfo`      | `String`       | 원산지 데이터 (nullable)                     | `쌌:국내산 돼지고기:국내산 배추김치:국내산`       |
+| `nutritionInfo`   | `String`       | 영양 데이터 (nullable)                      | `단백질:25.0g 지방:15.0g 탄수화물:90.0g` |
 | `mealServeCount`  | `Int`          | 급식 인원수 (nullable)                     | `450`                           |
 
 ## 요청 예시
@@ -103,7 +103,7 @@ curl -X GET "https://api.datagsm.com/v1/neis/meals?fromDate=2025-12-01&toDate=20
 
 ## 사용 예제
 
-다음은 여러 언어에서 급식 정보를 조회하는 예제입니다.
+다음은 여러 언어에서 급식 데이터를 조회하는 예제입니다.
 
 <CodeTabs>
   <CodeTab label="JavaScript" language="javascript" code={`const axios = require('axios');
@@ -180,4 +180,4 @@ fun getMeals(date: String): String {
 ## 관련 문서
 
 - [NEIS 데이터 OpenAPI 개요](/api/http/neis)
-- [학사일정 정보 API](/api/http/neis/schedules)
+- [학사일정 데이터 API](/api/http/neis/schedules)

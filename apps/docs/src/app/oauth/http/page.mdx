@@ -5,9 +5,9 @@
 OAuth HTTP API를 사용하면 HTTP 요청을 통해 직접 OAuth 인증 플로우를 구현할 수 있습니다.
 SDK를 사용하지 않고 REST API를 직접 호출하여 더 세밀한 제어가 필요한 경우에 적합합니다.
 
-이 문서는 DataGSM OAuth의 모든 HTTP 엔드포인트에 대한 상세한 정보를 제공합니다.
+이 문서는 DataGSM OAuth의 모든 HTTP 엔드포인트에 대한 상세한 내용을 다릅니다.
 
-### 기본 정보
+### 기본 설정
 
 #### Base URL
 
@@ -71,7 +71,7 @@ Content-Type: application/json
 | `/v1/oauth/authorize` | `GET`  | OAuth 인증 흐름 시작 (사용자를 로그인 페이지로 리다이렉트)             | [상세 문서](/oauth/http/authorize)      |
 | `/v1/oauth/token`     | `POST` | Authorization Code를 Access Token으로 교환 (통합 엔드포인트) | [상세 문서](/oauth/http/token-exchange) |
 | `/v1/oauth/token`     | `POST` | Refresh Token으로 새 Access Token 발급 (통합 엔드포인트)     | [상세 문서](/oauth/http/token-refresh)  |
-| `/userinfo`           | `GET`  | Access Token으로 사용자 정보 조회                         | [상세 문서](/oauth/http/userinfo)       |
+| `/userinfo`           | `GET`  | Access Token으로 사용자 데이터 조회                         | [상세 문서](/oauth/http/userinfo)       |
 
 ### 에러 처리
 
@@ -120,7 +120,7 @@ curl -X POST "https://oauth.data.hellogsm.kr/v1/oauth/token" \
   }'
 ```
 
-#### 3. 사용자 정보 조회
+#### 3. 사용자 데이터 조회
 
 ```bash
 curl -X GET "https://oauth-userinfo.data.hellogsm.kr/userinfo" \
@@ -153,6 +153,6 @@ curl -X GET "https://oauth-userinfo.data.hellogsm.kr/userinfo" \
 - [인증 흐름 시작](/oauth/http/authorize) - 사용자 인증 및 Authorization Code 획득
 - [토큰 교환](/oauth/http/token-exchange) - Authorization Code를 Access Token으로 교환
 - [토큰 갱신](/oauth/http/token-refresh) - Refresh Token으로 새 Access Token 발급
-- [사용자 정보 조회](/oauth/http/userinfo) - Access Token으로 사용자 정보 획득
+- [사용자 데이터 조회](/oauth/http/userinfo) - Access Token으로 사용자 데이터 획득
 
 실전 예제를 보려면 [Examples 문서](/oauth/examples)를 참고하세요.

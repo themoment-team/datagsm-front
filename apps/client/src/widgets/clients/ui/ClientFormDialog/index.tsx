@@ -67,10 +67,10 @@ const ClientFormDialog = ({
     onSuccess: () => {
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ['clients'] });
-      toast.success('클라이언트 정보가 수정되었습니다.');
+      toast.success('클라이언트 데이터가 수정되었습니다.');
     },
     onError: () => {
-      toast.error('클라이언트 정보 수정에 실패했습니다.');
+      toast.error('클라이언트 데이터 수정에 실패했습니다.');
     },
   });
 

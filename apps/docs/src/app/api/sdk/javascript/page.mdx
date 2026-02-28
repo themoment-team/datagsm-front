@@ -57,7 +57,7 @@ const advancedClient = new DataGsmClient({
 
 ### 2. API 호출 예제
 
-#### 학생 정보 조회
+#### 학생 데이터 조회
 
 <CodeTabs>
   <CodeTab label="JavaScript" language="typescript" code={`
@@ -87,7 +87,7 @@ const advancedClient = new DataGsmClient({
   });`} />
 </CodeTabs>
 
-#### 급식 정보 조회
+#### 급식 데이터 조회
 
 <CodeTabs>
   <CodeTab label="JavaScript" language="typescript" code={`
@@ -96,7 +96,7 @@ const advancedClient = new DataGsmClient({
     date: '2026-02-04' // YYYY-MM-DD 포맷
   });
 
-  // 급식 정보 출력
+  // 급식 데이터 출력
   response.data.forEach((meal) => {
     console.log(\`\${meal.mealType}\`);
     meal.mealMenu.forEach(menu => console.log(\`- \${menu}\`));
@@ -108,7 +108,7 @@ const advancedClient = new DataGsmClient({
     date: '2026-02-04' // YYYY-MM-DD 포맷
   });
 
-  // 급식 정보 출력
+  // 급식 데이터 출력
   response.data.forEach((meal: Meal) => {
     console.log(\`\${meal.mealType}\`);
     meal.mealMenu.forEach(menu => console.log(\`- \${menu}\`));
@@ -167,7 +167,7 @@ const projects = await client.projects().getProjects({
 
 | 메서드                  | 설명           | 반환 타입                       |
 | :---------------------- | :------------- | :------------------------------ |
-| `getMeals(request)`     | 급식 정보 조회 | `Promise<GetMealsResponse>`     |
+| `getMeals(request)`     | 급식 데이터 조회 | `Promise<GetMealsResponse>`     |
 | `getSchedules(request)` | 학사일정 조회  | `Promise<GetSchedulesResponse>` |
 
 ```typescript

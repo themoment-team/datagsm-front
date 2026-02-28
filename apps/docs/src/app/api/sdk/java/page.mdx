@@ -96,7 +96,7 @@ val clientWithCustomUrl = DataGsmOpenApiClient.builder("your-api-key-here")
 
 클라이언트를 생성한 후, 다양한 API를 호출할 수 있습니다.
 
-#### 학생 정보 조회
+#### 학생 데이터 조회
 
 <CodeTabs>
   <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.client.StudentApi;
@@ -137,7 +137,7 @@ response.students.forEach { student ->
 
 </CodeTabs>
 
-#### 급식 정보 조회
+#### 급식 데이터 조회
 
 <CodeTabs>
   <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.client.NeisApi;
@@ -150,7 +150,7 @@ NeisApi.MealRequest request = new NeisApi.MealRequest()
 
 List<Meal> meals = client.neis().getMeals(request);
 
-// 급식 정보 출력
+// 급식 데이터 출력
 for (Meal meal : meals) {
     System.out.println(meal.getMealType() + ":");
     for (String menu : meal.getMealMenu()) {
@@ -168,7 +168,7 @@ val request = NeisApi.MealRequest()
 
 val meals = client.neis().getMeals(request)
 
-// 급식 정보 출력
+// 급식 데이터 출력
 meals.forEach { meal ->
     println("\${meal.mealType}:")
     meal.mealMenu.forEach { menu ->
@@ -189,7 +189,7 @@ SDK는 다음과 같은 API 클라이언트를 제공합니다.
 | 메서드                    | 설명              | 반환 타입             |
 |------------------------|-----------------|-------------------|
 | `getStudents(request)` | 조건에 맞는 학생 목록 조회 | `StudentResponse` |
-| `getStudent(id)`       | 특정 학생의 상세 정보 조회 | `Student`         |
+| `getStudent(id)`       | 특정 학생의 상세 데이터 조회 | `Student`         |
 
 <CodeTabs>
   <CodeTab label="Java" language="java" code={`// 학생 목록 조회
@@ -213,7 +213,7 @@ val student = client.students().getStudent(1L)`} />
 | 메서드                 | 설명               | 반환 타입          |
 |---------------------|------------------|----------------|
 | `getClubs(request)` | 조건에 맞는 동아리 목록 조회 | `ClubResponse` |
-| `getClub(id)`       | 특정 동아리의 상세 정보 조회 | `ClubDetail`   |
+| `getClub(id)`       | 특정 동아리의 상세 데이터 조회 | `ClubDetail`   |
 
 <CodeTabs>
   <CodeTab label="Java" language="java" code={`// 동아리 목록 조회
@@ -237,7 +237,7 @@ val club = client.clubs().getClub(1L)`} />
 | 메서드                    | 설명                | 반환 타입             |
 |------------------------|-------------------|-------------------|
 | `getProjects(request)` | 조건에 맞는 프로젝트 목록 조회 | `ProjectResponse` |
-| `getProject(id)`       | 특정 프로젝트의 상세 정보 조회 | `Project`         |
+| `getProject(id)`       | 특정 프로젝트의 상세 데이터 조회 | `Project`         |
 
 <CodeTabs>
   <CodeTab label="Java" language="java" code={`// 프로젝트 목록 조회
@@ -260,17 +260,17 @@ val project = client.projects().getProject(1L)`} />
 
 | 메서드                     | 설명       | 반환 타입            |
 |-------------------------|----------|------------------|
-| `getMeals(request)`     | 급식 정보 조회 | `List<Meal>`     |
+| `getMeals(request)`     | 급식 데이터 조회 | `List<Meal>`     |
 | `getSchedules(request)` | 학사일정 조회  | `List<Schedule>` |
 
 <CodeTabs>
-  <CodeTab label="Java" language="java" code={`// 급식 정보 조회
+  <CodeTab label="Java" language="java" code={`// 급식 데이터 조회
 List<Meal> meals = client.neis().getMeals(request);
 
 // 학사일정 조회
 List<Schedule> schedules = client.neis().getSchedules(request);`} />
 
-  <CodeTab label="Kotlin" language="kotlin" code={`// 급식 정보 조회
+  <CodeTab label="Kotlin" language="kotlin" code={`// 급식 데이터 조회
 val meals = client.neis().getMeals(request)
 
 // 학사일정 조회
@@ -547,7 +547,7 @@ public class Main {
         // try-with-resources로 자동 리소스 관리
         try (DataGsmOpenApiClient client = DataGsmOpenApiClient.builder("your-api-key-here").build()) {
 
-            // 학생 정보 조회
+            // 학생 데이터 조회
             StudentResponse students = client.students().getStudents(
                 new StudentApi.StudentRequest()
                     .grade(1)
@@ -564,7 +564,7 @@ public class Main {
                 );
             }
 
-            // 급식 정보 조회
+            // 급식 데이터 조회
             List<Meal> meals = client.neis().getMeals(
                 new NeisApi.MealRequest().date(LocalDate.now())
             );
@@ -603,7 +603,7 @@ fun main() {
     // use 함수로 자동 리소스 관리
     DataGsmOpenApiClient.builder("your-api-key-here").build().use { client ->
 
-        // 학생 정보 조회
+        // 학생 데이터 조회
         val students = client.students().getStudents(
             StudentApi.StudentRequest()
                 .grade(1)
@@ -616,7 +616,7 @@ fun main() {
             println("\${student.name} (\${student.studentNumber}) - \${student.email}")
         }
 
-        // 급식 정보 조회
+        // 급식 데이터 조회
         val meals = client.neis().getMeals(
             NeisApi.MealRequest().date(LocalDate.now())
         )
@@ -638,7 +638,7 @@ fun main() {
 
 ### API 키 관리
 
-API 키는 민감한 정보이므로 절대 코드에 직접 하드코딩하지 마세요. 환경 변수나 설정 파일을 통해 안전하게 관리하세요.
+API 키는 민감한 데이터이므로 절대 코드에 직접 하드코딩하지 마세요. 환경 변수나 설정 파일을 통해 안전하게 관리하세요.
 
 #### 환경 변수 사용 (권장)
 

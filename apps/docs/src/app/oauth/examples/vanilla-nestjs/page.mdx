@@ -21,7 +21,7 @@ import { Shield } from 'lucide-react'
 
 ### 시나리오
 
-프론트엔드(Vanilla JavaScript)에서 Authorization Code까지 획득하고, 서버(NestJS)에서 Token 교환 및 사용자 정보 조회 후 세션 기반 인증을 구현하는 OAuth 예제입니다.
+프론트엔드(Vanilla JavaScript)에서 Authorization Code까지 획득하고, 서버(NestJS)에서 Token 교환 및 사용자 데이터 조회 후 세션 기반 인증을 구현하는 OAuth 예제입니다.
 
 이 방식은 프레임워크 없이 순수 JavaScript로 프론트엔드를 구현하면서, 서버 측에서 세션 스토어를 활용한 전통적인 인증 방식을 사용합니다.
 
@@ -64,7 +64,7 @@ graph TB
 
 | 장점 | 설명 |
 | --- | --- |
-| **보안성** | 세션 ID만 클라이언트에 전달되므로 사용자 정보 노출 최소화 |
+| **보안성** | 세션 ID만 클라이언트에 전달되므로 사용자 데이터 노출 최소화 |
 | **서버 제어** | 서버에서 세션을 직접 관리하여 즉시 무효화 가능 |
 | **단순성** | JWT 서명 검증 등의 복잡한 로직 불필요 |
 | **상태 관리** | 서버에서 사용자 상태를 중앙 집중식으로 관리 |
@@ -91,8 +91,8 @@ sequenceDiagram
     N->>O: 6. POST /v1/oauth/token<br/>(code, clientSecret)
     O-->>N: 7. Access Token & Refresh Token
     N->>O: 8. GET /userinfo<br/>(Bearer Token)
-    O-->>N: 9. 사용자 정보
-    N->>D: 10. 사용자 정보 동기화
+    O-->>N: 9. 사용자 데이터
+    N->>D: 10. 사용자 데이터 동기화
     D-->>N: 11. 저장 완료
     N->>S: 12. 세션 생성
     S-->>N: 13. Session ID
@@ -121,8 +121,8 @@ sequenceDiagram
 | --- | --- |
 | **Client Secret 보호** | 환경 변수로 안전하게 관리 |
 | **토큰 교환** | Authorization Code → Access Token 변환 |
-| **사용자 정보 조회** | DataGSM API에서 사용자 정보 획득 |
-| **DB 동기화** | 사용자 정보를 자체 DB에 저장/업데이트 |
+| **사용자 데이터 조회** | DataGSM API에서 사용자 데이터 획득 |
+| **DB 동기화** | 사용자 데이터를 자체 DB에 저장/업데이트 |
 | **세션 관리** | 세션 생성, 갱신, 무효화 |
 | **인증 미들웨어** | 세션 기반 API 접근 제어 |
 | **비즈니스 로직** | 사용자 권한 관리, 리소스 접근 제어 |
@@ -404,7 +404,7 @@ sequenceDiagram
             <div class="spinner"></div>
             <div class="loading-text">
                 <h2>로그인 처리 중</h2>
-                <p id="progressText">인증 정보를 확인하는 중입니다...</p>
+                <p id="progressText">인증 데이터를 확인하는 중입니다...</p>
             </div>
         </div>
 
@@ -613,7 +613,7 @@ function validateState(state) {
  * 백엔드에 Authorization Code 전달
  */
 async function exchangeCodeForSession(code) {
-    updateProgress('서버에서 인증 정보를 처리하는 중...');
+    updateProgress('서버에서 인증 데이터를 처리하는 중...');
 
     const response = await fetch(CONFIG.API_URL + '/api/auth/callback', {
         method: 'POST',
@@ -655,7 +655,7 @@ async function handleOAuthCallback() {
         validateState(state);
 
         // 백엔드에 Code 전달하여 세션 생성
-        updateProgress('사용자 정보를 가져오는 중...');
+        updateProgress('사용자 데이터를 가져오는 중...');
         const result = await exchangeCodeForSession(code);
 
         // 성공 메시지
@@ -685,7 +685,7 @@ const CONFIG = {
 };
 
 /**
- * 현재 사용자 정보 조회
+ * 현재 사용자 데이터 조회
  */
 async function getCurrentUser() {
     const response = await fetch(CONFIG.API_URL + '/api/auth/me', {
@@ -700,7 +700,7 @@ async function getCurrentUser() {
     }
 
     if (!response.ok) {
-        throw new Error('사용자 정보를 가져올 수 없습니다.');
+        throw new Error('사용자 데이터를 가져올 수 없습니다.');
     }
 
     return response.json();
@@ -785,7 +785,7 @@ graph TD
     B --> B5[guards/]
 
     B4 --> B4A[callback.dto.ts<br/><i>콜백 요청 DTO</i>]
-    B4 --> B4B[user-info.dto.ts<br/><i>사용자 정보 DTO</i>]
+    B4 --> B4B[user-info.dto.ts<br/><i>사용자 데이터 DTO</i>]
 
     B5 --> B5A[session.guard.ts<br/><i>세션 인증 가드</i>]
 
@@ -829,7 +829,7 @@ export class AuthController {
    *
    * @param callbackDto Authorization Code를 포함한 요청
    * @param session Express Session 객체
-   * @returns 사용자 정보
+   * @returns 사용자 데이터
    */
   @Post('callback')
   @HttpCode(HttpStatus.OK)
@@ -838,12 +838,12 @@ export class AuthController {
     @Session() session: Record<string, any>,
   ) {
     try {
-      // Authorization Code로 사용자 정보 조회 및 DB 동기화
+      // Authorization Code로 사용자 데이터 조회 및 DB 동기화
       const user = await this.authService.processOAuthCallback(
         callbackDto.code,
       );
 
-      // 세션에 사용자 정보 저장
+      // 세션에 사용자 데이터 저장
       session.userId = user.id;
       session.email = user.email;
 
@@ -867,10 +867,10 @@ export class AuthController {
   }
 
   /**
-   * 현재 로그인한 사용자 정보 조회
+   * 현재 로그인한 사용자 데이터 조회
    *
    * @param session Express Session 객체
-   * @returns 사용자 정보
+   * @returns 사용자 데이터
    */
   @Get('me')
   @UseGuards(SessionGuard)
@@ -918,7 +918,7 @@ export class AuthController {
 
 ### AuthService
 
-OAuth 토큰 교환 및 사용자 정보 조회를 담당하는 핵심 서비스입니다.
+OAuth 토큰 교환 및 사용자 데이터 조회를 담당하는 핵심 서비스입니다.
 
 <CodeTabs>
   <CodeTab label="auth/auth.service.ts" language="typescript" code={`import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
@@ -969,11 +969,11 @@ export class AuthService {
       this.logger.log('Exchanging authorization code for tokens');
       const tokenResponse = await this.exchangeCodeForToken(code, redirectUri);
 
-      // 2. Access Token으로 사용자 정보 조회
+      // 2. Access Token으로 사용자 데이터 조회
       this.logger.log('Fetching user info with access token');
       const userInfo = await this.fetchUserInfo(tokenResponse.accessToken);
 
-      // 3. DB에 사용자 정보 저장/업데이트
+      // 3. DB에 사용자 데이터 저장/업데이트
       this.logger.log(\`Syncing user: \${userInfo.email}\`);
       const user = await this.userService.syncUser(userInfo);
 
@@ -1025,7 +1025,7 @@ export class AuthService {
   }
 
   /**
-   * Access Token으로 DataGSM 사용자 정보 조회
+   * Access Token으로 DataGSM 사용자 데이터 조회
    */
   private async fetchUserInfo(accessToken: string): Promise<DataGsmUserInfo> {
     const userInfoUrl = this.configService.get<string>(
@@ -1063,7 +1063,7 @@ export class AuthService {
 
 ### UserService
 
-사용자 정보를 DB에 동기화하고 관리하는 서비스입니다.
+사용자 데이터를 DB에 동기화하고 관리하는 서비스입니다.
 
 <CodeTabs>
   <CodeTab label="user/user.service.ts" language="typescript" code={`import { Injectable, NotFoundException, Logger } from '@nestjs/common';
@@ -1098,10 +1098,10 @@ export class UserService {
   ) {}
 
   /**
-   * DataGSM 사용자 정보를 DB에 동기화
+   * DataGSM 사용자 데이터를 DB에 동기화
    *
    * - 신규 사용자: 생성
-   * - 기존 사용자: 정보 업데이트
+   * - 기존 사용자: 데이터 업데이트
    */
   async syncUser(userInfo: DataGsmUserInfo): Promise<User> {
     const existingUser = await this.userRepository.findOne({
@@ -1133,7 +1133,7 @@ export class UserService {
   }
 
   /**
-   * 기존 사용자 정보 업데이트
+   * 기존 사용자 데이터 업데이트
    */
   private async updateUser(
     user: User,

@@ -64,7 +64,7 @@ const SignInForm = () => {
 
         switch (statusCode) {
           case 400:
-            toast.error('입력 정보를 확인해주세요.');
+            toast.error('입력 데이터를 확인해주세요.');
             break;
           case 401:
             toast.error('비밀번호가 일치하지 않습니다.');

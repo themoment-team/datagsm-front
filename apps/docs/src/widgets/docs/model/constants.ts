@@ -34,11 +34,11 @@ export const docsSections: DocsSection[] = [
             href: '/api/http/neis',
             children: [
               {
-                label: '급식 정보 API',
+                label: '급식 데이터 API',
                 href: '/api/http/neis/meals',
               },
               {
-                label: '학사일정 정보 API',
+                label: '학사일정 데이터 API',
                 href: '/api/http/neis/schedules',
               },
             ],
@@ -91,7 +91,7 @@ export const docsSections: DocsSection[] = [
             href: '/oauth/http/token-refresh',
           },
           {
-            label: '사용자 정보 조회',
+            label: '사용자 데이터 조회',
             href: '/oauth/http/userinfo',
           },
         ],

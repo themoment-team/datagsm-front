@@ -1,4 +1,4 @@
-# 사용자 정보 조회
+# 사용자 데이터 조회
 
 ### 엔드포인트
 
@@ -8,8 +8,8 @@ GET /userinfo
 
 ### 설명
 
-Access Token을 사용하여 인증된 사용자의 정보를 조회합니다.
-이 엔드포인트는 사용자의 기본 정보와 학생인 경우 학생 상세 정보를 반환합니다.
+Access Token을 사용하여 인증된 사용자의 데이터를 조회합니다.
+이 엔드포인트는 사용자의 기본 데이터와 학생인 경우 학생 상세 데이터를 반환합니다.
 
 ### 인증
 
@@ -52,7 +52,7 @@ Authorization: Bearer {accessToken}
 
 ### 응답 필드
 
-#### 사용자 기본 정보
+#### 사용자 기본 데이터
 
 | 필드 | 타입 | 설명 | 예시 |
 | --- | --- | --- | --- |
@@ -60,9 +60,9 @@ Authorization: Bearer {accessToken}
 | `email` | `String` | 사용자 이메일 주소 | `student@gsm.hs.kr` |
 | `role` | `String` | 사용자 역할 (`USER`, `ADMIN`) | `USER` |
 | `isStudent` | `Boolean` | 학생 여부 | `true` |
-| `student` | `Object?` | 학생 상세 정보 (학생인 경우만 제공, nullable) | - |
+| `student` | `Object?` | 학생 상세 데이터 (학생인 경우만 제공, nullable) | - |
 
-#### 학생 상세 정보 (student 객체)
+#### 학생 상세 데이터 (student 객체)
 
 학생인 경우(`isStudent: true`) 다음 필드를 포함합니다.
 
@@ -87,7 +87,7 @@ Authorization: Bearer {accessToken}
 | --- | --- | --- |
 | `401 Unauthorized` | 인증 실패 | Access Token이 유효하지 않거나 만료됨 |
 | `403 Forbidden` | 권한 없음 | Access Token이 올바르지 않음 |
-| `404 Not Found` | 리소스를 찾을 수 없음 | 사용자 정보를 찾을 수 없음 |
+| `404 Not Found` | 리소스를 찾을 수 없음 | 사용자 데이터를 찾을 수 없음 |
 
 ### 요청 예시
 
@@ -148,7 +148,7 @@ curl -X GET "https://oauth-userinfo.data.hellogsm.kr/userinfo" \
 
 ### 사용 예제
 
-다음은 여러 언어에서 사용자 정보를 조회하는 예제입니다.
+다음은 여러 언어에서 사용자 데이터를 조회하는 예제입니다.
 
 <CodeTabs>
   <CodeTab label="JavaScript" language="javascript" code={`async function getUserInfo(accessToken) {
@@ -190,13 +190,13 @@ if (userInfo.isStudent) {
 
 def get_user_info(access_token):
     """
-    Access Token으로 사용자 정보를 조회합니다.
+    Access Token으로 사용자 데이터를 조회합니다.
 
     Args:
         access_token: Access Token
 
     Returns:
-        dict: 사용자 정보
+        dict: 사용자 데이터
     """
     try:
         response = requests.get(
@@ -386,7 +386,7 @@ fun main() {
 
 - Access Token은 사용자의 개인정보에 접근할 수 있는 권한을 부여합니다.
 - Access Token을 안전하게 저장하고, HTTPS를 통해서만 전송하세요.
-- Access Token이 탈취되면 공격자가 사용자 정보를 조회할 수 있습니다.
+- Access Token이 탈취되면 겵격자가 사용자 데이터를 조회할 수 있습니다.
 
 #### 토큰 만료 처리
 
@@ -411,7 +411,7 @@ async function getUserInfoWithRetry(accessToken, refreshToken) {
 
 ### 다음 단계
 
-사용자 정보를 성공적으로 조회했다면, 이제 애플리케이션에서 사용자를 식별하고 맞춤형 기능을 제공할 수 있습니다.
+사용자 데이터를 성공적으로 조회했다면, 이제 애플리케이션에서 사용자를 식별하고 맞칡형 기능을 제공할 수 있습니다.
 
 - [토큰 갱신](/oauth/http/token-refresh) - Access Token 만료 시 갱신 방법
 - [OAuth 개요](/oauth) - OAuth 전체 플로우 이해하기
