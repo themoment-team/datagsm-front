@@ -5,14 +5,6 @@ const nextConfig: NextConfig = {
   transpilePackages: ['@repo/shared'],
 
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/:path*`,
-      },
-    ];
-  },
 };
 
 const withMDX = createMDX({
