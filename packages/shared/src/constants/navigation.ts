@@ -2,7 +2,7 @@ export const NAV_LINKS = {
   client: [
     { href: '/', label: '메인' },
     { href: '/clients', label: '클라이언트' },
-    { href: '/docs', label: '독스' },
+    { href: '/docs', label: '독스' }, // TODO: docs 애플리케이션 배포 후 링크 수정
   ],
   admin: [
     { href: '/students', label: '학생' },
