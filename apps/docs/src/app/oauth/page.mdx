@@ -38,7 +38,7 @@ PKCE는 `client_secret` 대신 **동적으로 생성되는 일회성 검증자**
 |---------------|-------------------------------------------------------------------------|
 | **JWT 기반 토큰** | 모든 Access Token은 JWT(JSON Web Token) 형식으로 발급되어 서명 검증이 가능합니다.            |
 | **PKCE 지원**   | Authorization Code 탈취 방지를 위해 PKCE (RFC 7636) 표준을 지원합니다.                 |
-| **Redis 쾐싱**  | Redis를 활용하여 토큰 데이터를 쾐싱하고 빠른 검증을 제공합니다.                                   |
+| **Redis 캐싱**  | Redis를 활용하여 토큰 데이터를 캐싱하고 빠른 검증을 제공합니다.                                   |
 | **토큰 유효기간**   | Access Token 1시간, Refresh Token 30일, Authorization Code 5분의 유효기간을 가집니다. |
 | **보안 강화**     | HTTPS 필수, Client Secret 기반 인증, State 파라미터를 통한 CSRF 방지를 지원합니다.           |
 | **표준 준수**     | OAuth 2.0 RFC 6749 및 PKCE RFC 7636 표준을 준수합니다.                           |
