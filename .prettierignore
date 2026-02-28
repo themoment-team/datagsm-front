@@ -14,4 +14,4 @@ package-lock.json
 
 .DS_Store
 
-apps/client/src/app/docs/**/*.mdx
+apps/docs/**/*.mdx

@@ -5,41 +5,41 @@ import { DocsSection } from './types';
 export const docsSections: DocsSection[] = [
   {
     label: 'Overview',
-    href: '/docs',
+    href: '',
     icon: BookOpen,
   },
   {
     label: 'OpenAPI',
-    href: '/docs/api',
+    href: '/api',
     icon: Code2,
     children: [
       {
         label: 'HTTP',
-        href: '/docs/api/http',
+        href: '/api/http',
         children: [
           {
             label: '학생 데이터 OpenAPI',
-            href: '/docs/api/http/student',
+            href: '/api/http/student',
           },
           {
             label: '동아리 데이터 OpenAPI',
-            href: '/docs/api/http/club',
+            href: '/api/http/club',
           },
           {
             label: '프로젝트 데이터 OpenAPI',
-            href: '/docs/api/http/project',
+            href: '/api/http/project',
           },
           {
             label: 'NEIS 데이터 OpenAPI',
-            href: '/docs/api/http/neis',
+            href: '/api/http/neis',
             children: [
               {
                 label: '급식 정보 API',
-                href: '/docs/api/http/neis/meals',
+                href: '/api/http/neis/meals',
               },
               {
                 label: '학사일정 정보 API',
-                href: '/docs/api/http/neis/schedules',
+                href: '/api/http/neis/schedules',
               },
             ],
           },
@@ -47,19 +47,19 @@ export const docsSections: DocsSection[] = [
       },
       {
         label: 'SDK',
-        href: '/docs/api/sdk',
+        href: '/api/sdk',
         children: [
           {
             label: 'Java / Kotlin SDK',
-            href: '/docs/api/sdk/java',
+            href: '/api/sdk/java',
           },
           {
             label: 'Python SDK',
-            href: '/docs/api/sdk/python',
+            href: '/api/sdk/python',
           },
           {
             label: 'JavaScript / TypeScript SDK',
-            href: '/docs/api/sdk/javascript',
+            href: '/api/sdk/javascript',
           },
         ],
       },
@@ -67,68 +67,68 @@ export const docsSections: DocsSection[] = [
   },
   {
     label: 'OAuth',
-    href: '/docs/oauth',
+    href: '/oauth',
     icon: User,
     children: [
       {
         label: 'PKCE 가이드',
-        href: '/docs/oauth/pkce',
+        href: '/oauth/pkce',
       },
       {
         label: 'HTTP',
-        href: '/docs/oauth/http',
+        href: '/oauth/http',
         children: [
           {
             label: '인증 흐름 시작',
-            href: '/docs/oauth/http/authorize',
+            href: '/oauth/http/authorize',
           },
           {
             label: '토큰 교환',
-            href: '/docs/oauth/http/token-exchange',
+            href: '/oauth/http/token-exchange',
           },
           {
             label: '토큰 갱신',
-            href: '/docs/oauth/http/token-refresh',
+            href: '/oauth/http/token-refresh',
           },
           {
             label: '사용자 정보 조회',
-            href: '/docs/oauth/http/userinfo',
+            href: '/oauth/http/userinfo',
           },
         ],
       },
       {
         label: 'Examples',
-        href: '/docs/oauth/examples',
+        href: '/oauth/examples',
         children: [
           {
             label: 'React + Spring Boot (BFF)',
-            href: '/docs/oauth/examples/react-spring-boot-boot',
+            href: '/oauth/examples/react-spring-boot-boot',
           },
           {
             label: 'Next.js + Spring Boot',
-            href: '/docs/oauth/examples/nextjs-spring-boot',
+            href: '/oauth/examples/nextjs-spring-boot',
           },
           {
             label: 'React + Spring Boot (Kotlin)',
-            href: '/docs/oauth/examples/react-spring-boot-kotlin',
+            href: '/oauth/examples/react-spring-boot-kotlin',
           },
           {
             label: 'Vanilla JS + NestJS',
-            href: '/docs/oauth/examples/vanilla-nestjs',
+            href: '/oauth/examples/vanilla-nestjs',
           },
         ],
       },
       {
         label: 'SDK',
-        href: '/docs/oauth/sdk',
+        href: '/oauth/sdk',
         children: [
           {
             label: 'React',
-            href: '/docs/oauth/sdk/react',
+            href: '/oauth/sdk/react',
           },
           {
             label: 'Java / Kotlin SDK',
-            href: '/docs/oauth/sdk/java',
+            href: '/oauth/sdk/java',
           },
         ],
       },
