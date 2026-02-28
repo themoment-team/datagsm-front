@@ -257,10 +257,10 @@ class OAuthService(
     }
 
     /**
-     * Access Token으로 사용자 정보 조회
+     * Access Token으로 사용자 데이터 조회
      *
      * @param accessToken Access Token
-     * @return UserInfo (사용자 정보)
+     * @return UserInfo (사용자 데이터)
      */
     fun getUserInfo(accessToken: String): UserInfo {
         logger.info { "Fetching user info" }
@@ -461,7 +461,7 @@ class AuthController(
 
     /**
      * GET /api/auth/me
-     * 현재 로그인한 사용자 정보 조회
+     * 현재 로그인한 사용자 데이터 조회
      */
     @GetMapping("/me")
     fun getCurrentUser(request: HttpServletRequest): ResponseEntity<Any> {
@@ -599,7 +599,7 @@ export function useAuth() {
   const API_BASE_URL = 'http://localhost:8080/api/auth';
 
   /**
-   * 현재 로그인한 사용자 정보 가져오기
+   * 현재 로그인한 사용자 데이터 가져오기
    */
   const fetchUser = useCallback(async () => {
     try {
@@ -669,7 +669,7 @@ export function useAuth() {
   };
 
   /**
-   * 초기 로드 시 사용자 정보 가져오기
+   * 초기 로드 시 사용자 데이터 가져오기
    */
   useEffect(() => {
     fetchUser();
@@ -860,10 +860,10 @@ export default App;`} />
 
 4. **로깅**
    - 인증 시도, 성공, 실패 로깅
-   - 민감한 정보 (비밀번호, 토큰) 로깅 금지
+   - 민감한 데이터 (비밀번호, 토큰) 로깅 금지
 
 5. **에러 메시지**
-   - 사용자에게 노출되는 에러는 최소한의 정보만 제공
+   - 사용자에게 노출되는 에러는 최소한의 데이터만 제공
    - 상세 에러는 서버 로그에만 기록
 
 ## 테스트
@@ -1035,7 +1035,7 @@ npm start`} />
 ## 다음 단계
 
 - [PKCE 가이드](/oauth/pkce) - PKCE 개념 및 구현 상세 설명
-- [HTTP API 문서](/oauth/http/code) - OAuth API 명세
+- [HTTP API 기술 문서](/oauth/http/code) - OAuth API 명세
 - [토큰 관리](/oauth/http/token-exchange) - 토큰 교환 및 갱신
 
 ## 참고 자료

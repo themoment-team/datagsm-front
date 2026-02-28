@@ -22,7 +22,8 @@ const NotFound = () => {
             <Link href="/">메인으로 돌아가기</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link href="/docs">문서 보기</Link> {/* TODO: docs 애플리케이션 배포 후 링크 수정 */}
+            <Link href="/docs">기술 문서 보기</Link>
+            {/* TODO: docs 애플리케이션 배포 후 링크 수정 */}
           </Button>
         </div>
       </div>

@@ -22,7 +22,7 @@ GET /v1/clubs
 
 ### 권한 범위
 
-`CLUB_READ` 권한이 필요합니다.
+`CLUB_READ` 권한 범위가 필요합니다.
 
 ### 요청 파라미터
 
@@ -46,7 +46,7 @@ GET /v1/clubs
 | `status`  | `String` | HTTP 상태 메시지   | `OK`  |
 | `code`    | `Int`    | HTTP 상태 코드    | `200` |
 | `message` | `String` | 응답 메시지        | `OK`  |
-| `data`    | `Object` | 동아리 정보 목록 데이터 | -     |
+| `data`    | `Object` | 동아리 데이터 목록 | -     |
 
 #### data 객체
 
@@ -67,12 +67,12 @@ GET /v1/clubs
 | `id`           | `Long`                     | 동아리 ID                                               | `1`          |
 | `name`         | `String`                   | 동아리 이름                                               | `SW개발동아리`    |
 | `type`         | `ClubType`                 | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
-| `leader`       | `ParticipantInfoDto`       | 동아리 부장 정보                                            | -            |
+| `leader`       | `ParticipantInfoDto`       | 동아리 부장 데이터                                            | -            |
 | `participants` | `List<ParticipantInfoDto>` | 동아리 부원 목록                                            | -            |
 
-### 부원 정보 객체 (ParticipantInfoDto)
+### 부원 데이터 객체 (ParticipantInfoDto)
 
-동아리 응답에 포함된 부장 및 부원 정보는 다음 필드를 포함합니다.
+동아리 응답에 포함된 부장 및 부원 데이터는 다음 필드를 포함합니다.
 
 | 필드              | 타입       | 설명                                       | 예시                 |
 |-----------------|----------|------------------------------------------|--------------------|
@@ -142,7 +142,7 @@ curl -X GET "https://api.datagsm.com/v1/clubs?sortBy=NAME&sortDirection=ASC&page
 | 상태 코드                   | 설명                  |
 |-------------------------|---------------------|
 | `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
-| `403 Forbidden`         | 필요한 권한 범위가 없음       |
+| `403 Forbidden`         | 권한 범위 부족               |
 | `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
 | `400 Bad Request`       | 잘못된 요청 파라미터         |
 

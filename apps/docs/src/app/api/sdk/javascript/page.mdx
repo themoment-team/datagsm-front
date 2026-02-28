@@ -2,7 +2,7 @@
 
 ### 개요
 
-**DataGSM OpenAPI SDK for JavaScript**는 DataGSM API를 Node.js 및 브라우저 환경에서 쉽고 안전하게 사용할 수 있도록 설계된 공식 클라이언트 라이브러리입니다.
+**DataGSM OpenAPI SDK for JavaScript**는 DataGSM API를 Node.js 및 브라우저 환경에서 쉽고 안전하게 사용할 수 있도록 설계된 공식 클라이언트 SDK입니다.
 
 이 SDK는 모든 API 요청에 대해 최신 TypeScript 타입을 지원하며, Promise 기반의 비동기 인터페이스를 통해 학생, 동아리, 프로젝트, NEIS(급식, 학사일정) 데이터에 효율적으로 접근할 수 있게 해줍니다.
 
@@ -57,7 +57,7 @@ const advancedClient = new DataGsmClient({
 
 ### 2. API 호출 예제
 
-#### 학생 정보 조회
+#### 학생 데이터 조회
 
 <CodeTabs>
   <CodeTab label="JavaScript" language="typescript" code={`
@@ -87,7 +87,7 @@ const advancedClient = new DataGsmClient({
   });`} />
 </CodeTabs>
 
-#### 급식 정보 조회
+#### 급식 데이터 조회
 
 <CodeTabs>
   <CodeTab label="JavaScript" language="typescript" code={`
@@ -96,7 +96,7 @@ const advancedClient = new DataGsmClient({
     date: '2026-02-04' // YYYY-MM-DD 포맷
   });
 
-  // 급식 정보 출력
+  // 급식 데이터 출력
   response.data.forEach((meal) => {
     console.log(\`\${meal.mealType}\`);
     meal.mealMenu.forEach(menu => console.log(\`- \${menu}\`));
@@ -108,7 +108,7 @@ const advancedClient = new DataGsmClient({
     date: '2026-02-04' // YYYY-MM-DD 포맷
   });
 
-  // 급식 정보 출력
+  // 급식 데이터 출력
   response.data.forEach((meal: Meal) => {
     console.log(\`\${meal.mealType}\`);
     meal.mealMenu.forEach(menu => console.log(\`- \${menu}\`));
@@ -167,7 +167,7 @@ const projects = await client.projects().getProjects({
 
 | 메서드                  | 설명           | 반환 타입                       |
 | :---------------------- | :------------- | :------------------------------ |
-| `getMeals(request)`     | 급식 정보 조회 | `Promise<GetMealsResponse>`     |
+| `getMeals(request)`     | 급식 데이터 조회 | `Promise<GetMealsResponse>`     |
 | `getSchedules(request)` | 학사일정 조회  | `Promise<GetSchedulesResponse>` |
 
 ```typescript
@@ -188,7 +188,7 @@ SDK는 발생한 오류 상황에 맞는 전용 에러 클래스를 제공합니
 | :------------------ | :-------- | :------------------------------- |
 | `BadRequestError`   | 400       | 잘못된 요청 파라미터             |
 | `UnauthorizedError` | 401       | 유효하지 않은 API 키             |
-| `ForbiddenError`    | 403       | 요청 권한 부족                   |
+| `ForbiddenError`    | 403       | 요청 권한 범위 부족                |
 | `NotFoundError`     | 404       | 리소스를 찾을 수 없음            |
 | `RateLimitError`    | 429       | 요청 횟수 제한 초과              |
 | `ServerError`       | 500+      | 서버 내부 오류                   |
@@ -249,13 +249,13 @@ const client = new DataGsmClient({
 
 #### 403 Forbidden 오류
 
-**원인**: 요청한 API에 대한 권한이 없음
+**원인**: 요청한 API에 대한 권한 범위 부족
 
 **해결 방법**:
 
-- API 키의 권한 범위(Scope) 확인
-- 필요한 권한이 부여되었는지 확인
-- 권한 추가가 필요한 경우 관리자에게 문의
+- API 키의 권한 범위 확인
+- 필요한 권한 범위가 부여되었는지 확인
+- 권한 범위 추가가 필요한 경우 관리자에게 문의
 
 #### 타임아웃 오류
 

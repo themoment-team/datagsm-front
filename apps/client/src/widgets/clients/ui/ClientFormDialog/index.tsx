@@ -67,10 +67,10 @@ const ClientFormDialog = ({
     onSuccess: () => {
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ['clients'] });
-      toast.success('클라이언트 정보가 수정되었습니다.');
+      toast.success('클라이언트 데이터가 수정되었습니다.');
     },
     onError: () => {
-      toast.error('클라이언트 정보 수정에 실패했습니다.');
+      toast.error('클라이언트 데이터 수정에 실패했습니다.');
     },
   });
 
@@ -236,9 +236,9 @@ const ClientFormDialog = ({
 
           {mode === 'create' && (
             <div className={cn('space-y-2')}>
-              <Label>권한 (Scopes)</Label>
+              <Label>권한 범위</Label>
               <p className={cn('text-muted-foreground text-xs')}>
-                클라이언트가 접근할 수 있는 권한을 선택하세요.
+                클라이언트가 접근할 수 있는 권한 범위를 선택하세요.
               </p>
               <div className={cn('mt-2 space-y-4 rounded-md border p-4')}>
                 {availableScopes?.data?.list.map((category) => {

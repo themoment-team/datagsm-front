@@ -50,7 +50,7 @@ export const useScopeSelection = <T extends FieldValues>({
   const handleScopeToggle = (scope: string) => {
     const currentScopes = (watch(fieldName) as string[]) || [];
 
-    // 전체 scope 선택
+    // 전체 권한 범위 선택
     if (scope.endsWith(':*')) {
       const prefix = scope.split(':')[0];
       const relatedScopes = scopeMap.get(prefix!) ?? [];
@@ -69,7 +69,7 @@ export const useScopeSelection = <T extends FieldValues>({
       return;
     }
 
-    // 일반 scope 단일 토글
+    // 일반 권한 범위 단일 토글
     setValue(
       fieldName,
       (currentScopes.includes(scope)
@@ -82,7 +82,7 @@ export const useScopeSelection = <T extends FieldValues>({
   const isScopeChecked = (scope: string) => {
     const currentScopes = (watch(fieldName) as string[]) || [];
 
-    // 전체 scope일 경우 하위 scope 탐색
+    // 전체 권한 범위일 경우 하위 권한 범위 탐색
     if (scope.endsWith(':*')) {
       const prefix = scope.split(':')[0];
       const relatedScopes = scopeMap.get(prefix!) ?? [];

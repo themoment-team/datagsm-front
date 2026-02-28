@@ -9,7 +9,7 @@ export const ClientFormSchema = z.object({
       }),
     )
     .min(1, { message: '최소 한 개 이상의 리다이렉트 URL이 필요합니다.' }),
-  scopes: z.array(z.string()).min(1, { message: '최소 한 개 이상의 권한을 선택해주세요.' }),
+  scopes: z.array(z.string()).min(1, { message: '최소 한 개 이상의 권한 범위를 선택해주세요.' }),
 });
 
 export type ClientFormType = z.infer<typeof ClientFormSchema>;

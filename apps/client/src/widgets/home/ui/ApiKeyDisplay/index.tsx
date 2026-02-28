@@ -35,7 +35,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
   return (
     <Card className={cn('p-6')}>
       <div className="mb-4">
-        <p className="text-muted-foreground mb-2 text-sm">현재 발급된 API 키의 권한:</p>
+        <p className="text-muted-foreground mb-2 text-sm">현재 발급된 API 키의 권한 범위:</p>
         <div className="flex flex-wrap gap-2">
           {apiKeyData?.data?.scopes.map((scope) => (
             <p key={scope} className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
