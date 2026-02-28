@@ -20,7 +20,7 @@ const TooltipTrigger = ({
   ...props
 }: React.ComponentProps<'div'> & { asChild?: boolean }) => {
   if (asChild && React.isValidElement(children)) {
-    return children;
+    return React.cloneElement(children, props);
   }
   return <div {...props}>{children}</div>;
 };
@@ -34,7 +34,7 @@ const TooltipContent = ({
   <div
     role="tooltip"
     className={cn(
-      'pointer-events-none invisible absolute right-0 top-full z-50 whitespace-nowrap rounded-md border bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md group-hover:visible',
+      'pointer-events-none invisible absolute right-0 top-full z-50 whitespace-nowrap rounded-md border bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md group-hover:visible group-focus-within:visible',
       className,
     )}
     style={{ marginTop: sideOffset }}

@@ -32,15 +32,18 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
 
   const isMasked = apiKeyData.data.apiKey.includes('****');
 
+  const EXPIRATION_WARNING_DAYS = 10;
+
   return (
     <Card className={cn('relative p-6')}>
       <TooltipProvider>
         <Tooltip className="absolute right-4 top-4">
           <TooltipTrigger asChild>
             <div
+              tabIndex={0}
               className={cn(
                 'cursor-default rounded-full px-2 py-0.5 text-xs font-semibold',
-                apiKeyData.data.expiresInDays <= 10
+                apiKeyData.data.expiresInDays <= EXPIRATION_WARNING_DAYS
                   ? 'bg-red-100 text-red-700'
                   : 'bg-muted text-muted-foreground',
               )}
