@@ -1,13 +1,13 @@
 'use client';
 
 import { useCopyToClipboard } from '@repo/shared/hooks';
-import { Button, Card } from '@repo/shared/ui';
+import { Button, Card, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { Check, Copy } from 'lucide-react';
 
 import { ApiKeyResponse } from '@/entities/home';
 
-import { useGetApiKey } from '../../model/useGetApiKey';
+import { useGetApiKey } from '@/widgets/home';
 
 interface ApiKeyDisplayProps {
   initialApiKeyData?: ApiKeyResponse;
@@ -33,7 +33,25 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
   const isMasked = apiKeyData.data.apiKey.includes('****');
 
   return (
-    <Card className={cn('p-6')}>
+    <Card className={cn('relative p-6')}>
+      <TooltipProvider>
+        <Tooltip className="absolute right-4 top-4">
+          <TooltipTrigger asChild>
+            <div
+              className={cn(
+                'cursor-default rounded-full px-2 py-0.5 text-xs font-semibold',
+                apiKeyData.data.expiresInDays <= 10
+                  ? 'bg-red-100 text-red-700'
+                  : 'bg-muted text-muted-foreground',
+              )}
+            >
+              D-{apiKeyData.data.expiresInDays}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>만료일: {apiKeyData.data.expiresAt.split('T')[0]}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
       <div className="mb-4">
         <p className="text-muted-foreground mb-2 text-sm">현재 발급된 API 키의 권한 범위:</p>
         <div className="flex flex-wrap gap-2">
