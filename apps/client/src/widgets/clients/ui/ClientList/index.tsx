@@ -48,7 +48,8 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
 
   return (
     <TableRow>
-      <TableCell className={cn('font-medium')}>{client.name}</TableCell>
+      <TableCell className={cn('font-medium')}>{client.clientName}</TableCell>
+      <TableCell>{client.serviceName}</TableCell>
       <TableCell>
         <div className={cn('flex items-center gap-2')}>
           <code className={cn('bg-muted rounded px-2 py-1 font-mono text-xs')}>{client.id}</code>
@@ -99,8 +100,8 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
               <AlertDialogHeader>
                 <AlertDialogTitle>클라이언트 삭제</AlertDialogTitle>
                 <AlertDialogDescription>
-                  정말로 &apos;{client.name}&apos; 클라이언트를 삭제하시겠습니까? 이 작업은 되돌릴
-                  수 없습니다.
+                  정말로 &apos;{client.clientName}&apos; 클라이언트를 삭제하시겠습니까? 이 작업은
+                  되돌릴 수 없습니다.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -141,10 +142,11 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
         <TableHeader>
           <TableRow>
             <TableHead>클라이언트 이름</TableHead>
+            <TableHead>서비스 명칭</TableHead>
             <TableHead>클라이언트 ID</TableHead>
             <TableHead>리다이렉트 URL</TableHead>
             <TableHead>권한 범위</TableHead>
-            <TableHead className={cn('w-[100px]')}>작업</TableHead>
+            <TableHead className={cn('w-25')}>작업</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -153,6 +155,9 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
               <TableRow key={index}>
                 <TableCell>
                   <Skeleton className={cn('h-4 w-32')} />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className={cn('h-4 w-24')} />
                 </TableCell>
                 <TableCell>
                   <Skeleton className={cn('h-6 w-48')} />
@@ -179,7 +184,7 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className={cn('h-24 text-center')}>
+              <TableCell colSpan={6} className={cn('h-24 text-center')}>
                 등록된 클라이언트가 없습니다.
               </TableCell>
             </TableRow>

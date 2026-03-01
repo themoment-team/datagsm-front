@@ -85,7 +85,8 @@ const ClientFormDialog = ({
   } = useForm<ClientFormType>({
     resolver: zodResolver(ClientFormSchema),
     defaultValues: {
-      name: '',
+      clientName: '',
+      serviceName: '',
       redirectUrls: [{ url: '' }],
       scopes: [],
     },
@@ -108,13 +109,15 @@ const ClientFormDialog = ({
 
     if (mode === 'edit' && client) {
       reset({
-        name: client.name,
+        clientName: client.clientName,
+        serviceName: client.serviceName,
         redirectUrls: client.redirectUrl.map((url) => ({ url })),
         scopes: [...client.scopes],
       });
     } else if (mode === 'create') {
       reset({
-        name: '',
+        clientName: '',
+        serviceName: '',
         redirectUrls: [{ url: '' }],
         scopes: [],
       });
@@ -122,17 +125,21 @@ const ClientFormDialog = ({
   }, [mode, client, open, reset]);
 
   const onSubmit = (data: ClientFormType) => {
-    const formattedData = {
-      ...data,
-      redirectUrls: data.redirectUrls.map((item) => item.url),
-    };
-
     if (mode === 'create') {
-      createClient(formattedData);
+      createClient({
+        clientName: data.clientName,
+        serviceName: data.serviceName,
+        scopes: data.scopes,
+        redirectUrls: data.redirectUrls.map((item) => item.url),
+      });
     } else if (mode === 'edit' && client) {
       updateClient({
         clientId: client.id,
-        data: formattedData,
+        data: {
+          clientName: data.clientName,
+          serviceName: data.serviceName,
+          redirectUrls: data.redirectUrls.map((item) => item.url),
+        },
       });
     }
   };
@@ -176,9 +183,19 @@ const ClientFormDialog = ({
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-4 py-4')}>
           <div className={cn('space-y-2')}>
-            <Label htmlFor="name">클라이언트 이름</Label>
-            <Input id="name" placeholder="클라이언트 이름 입력" {...register('name')} />
-            <FormErrorMessage error={errors.name} />
+            <Label htmlFor="clientName">클라이언트 이름</Label>
+            <Input id="clientName" placeholder="클라이언트 이름 입력" {...register('clientName')} />
+            <FormErrorMessage error={errors.clientName} />
+          </div>
+
+          <div className={cn('space-y-2')}>
+            <Label htmlFor="serviceName">서비스 명칭</Label>
+            <Input
+              id="serviceName"
+              placeholder="로그인 페이지에 노출될 서비스 명칭 입력"
+              {...register('serviceName')}
+            />
+            <FormErrorMessage error={errors.serviceName} />
           </div>
 
           {mode === 'edit' && client && (
