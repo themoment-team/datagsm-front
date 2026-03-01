@@ -114,12 +114,22 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps
           </Button>
 
           {signupHref && (
-            <p className={cn('text-muted-foreground text-center text-sm')}>
-              계정이 없으신가요?{' '}
-              <Link href={signupHref} className={cn('text-primary font-medium hover:underline')}>
-                회원가입
-              </Link>
-            </p>
+            <div className="space-y-2 text-center text-sm">
+              <p className={cn('text-muted-foreground text-center text-sm')}>
+                계정이 없으신가요?{' '}
+                <Link href={signupHref} className={cn('text-primary font-medium hover:underline')}>
+                  회원가입
+                </Link>
+              </p>
+              <p>
+                <Link
+                  href="/signin/reset-password"
+                  className="text-muted-foreground hover:text-primary hover:underline"
+                >
+                  비밀번호를 잊으셨나요?
+                </Link>
+              </p>
+            </div>
           )}
         </CardFooter>
       </form>
