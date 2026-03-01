@@ -1,7 +1,8 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+
+import { useSearchParams } from 'next/navigation';
 
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
@@ -11,6 +12,7 @@ const OAuthAuthorizeForm = () => {
   const [isPending, setIsPending] = useState(false);
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
+  const serviceName = searchParams.get('service_name');
 
   const handleSubmit = async (data: SignInFormType) => {
     setIsPending(true);
@@ -75,7 +77,12 @@ const OAuthAuthorizeForm = () => {
 
   return (
     <div className="max-w-180 flex w-full flex-col items-center gap-6">
-      <SharedSignInForm onSubmit={handleSubmit} isPending={isPending} signupHref="/signup" />
+      <SharedSignInForm
+        onSubmit={handleSubmit}
+        isPending={isPending}
+        signupHref="/signup"
+        serviceName={serviceName || undefined}
+      />
     </div>
   );
 };
