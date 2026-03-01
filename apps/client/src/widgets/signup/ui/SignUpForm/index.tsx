@@ -41,6 +41,7 @@ const SignUpForm = () => {
   const [isPrivacyDialogOpen, setIsPrivacyDialogOpen] = useState(false);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -59,6 +60,7 @@ const SignUpForm = () => {
   const codeValue = watch('code');
   const emailValue = watch('email');
   const passwordValue = watch('password');
+  const confirmPasswordValue = watch('confirmPassword');
   const privacyAgreedValue = watch('privacyAgreed');
   const debouncedCode = useDebounce(codeValue, 1000);
   const lastCheckedCode = useRef('');
@@ -67,6 +69,7 @@ const SignUpForm = () => {
   const isFormValid = SignUpFormSchema.safeParse({
     email: emailValue,
     password: passwordValue,
+    confirmPassword: confirmPasswordValue,
     code: codeValue,
     privacyAgreed: privacyAgreedValue,
   }).success;
@@ -327,7 +330,7 @@ const SignUpForm = () => {
                 type={showPassword ? 'text' : 'password'}
                 placeholder="비밀번호를 입력하세요"
                 {...register('password')}
-                disabled={isSigningUp}
+                disabled={!isCodeVerified || isSigningUp}
                 className={cn('pr-10')}
               />
               <button
@@ -336,9 +339,9 @@ const SignUpForm = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className={cn(
                   'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
-                  isSigningUp && 'cursor-not-allowed opacity-50',
+                  (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
                 )}
-                disabled={isSigningUp}
+                disabled={!isCodeVerified || isSigningUp}
               >
                 {showPassword ? (
                   <EyeOff className={cn('h-4 w-4')} />
@@ -348,6 +351,33 @@ const SignUpForm = () => {
               </button>
             </div>
             <FormErrorMessage error={errors.password} />
+            <div className={cn('relative')}>
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="비밀번호를 다시 입력하세요"
+                {...register('confirmPassword')}
+                disabled={!isCodeVerified || isSigningUp}
+                className={cn('pr-10')}
+              />
+              <button
+                type="button"
+                aria-label={showConfirmPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className={cn(
+                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
+                  (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
+                )}
+                disabled={!isCodeVerified || isSigningUp}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className={cn('h-4 w-4')} />
+                ) : (
+                  <Eye className={cn('h-4 w-4')} />
+                )}
+              </button>
+            </div>
+            <FormErrorMessage error={errors.confirmPassword} />
           </div>
 
           <div className={cn('flex items-center space-x-2')}>
