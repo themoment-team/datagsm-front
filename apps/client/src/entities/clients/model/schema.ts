@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 export const ClientFormSchema = z.object({
-  name: z.string().min(1, { message: '클라이언트 이름을 입력해주세요.' }),
+  clientName: z.string().min(1, { message: '클라이언트 이름을 입력해주세요.' }),
+  serviceName: z.string().min(1, { message: '서비스 명칭을 입력해주세요.' }),
   redirectUrls: z
     .array(
       z.object({
