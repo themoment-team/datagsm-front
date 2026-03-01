@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
-import { Header } from '@repo/shared/ui';
+import { Header, TooltipProvider } from '@repo/shared/ui';
 import type { Metadata } from 'next';
 
 import { COOKIE_KEYS } from '@repo/shared/constants';
@@ -38,8 +38,10 @@ const RootLayout = async ({
         )}
         <TanStackProvider>
           <ToastProvider>
-            {accessToken && <Header role="client" />}
-            {children}
+            <TooltipProvider>
+              {accessToken && <Header role="client" />}
+              {children}
+            </TooltipProvider>
           </ToastProvider>
         </TanStackProvider>
       </body>

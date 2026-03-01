@@ -1,7 +1,7 @@
 'use client';
 
 import { useCopyToClipboard } from '@repo/shared/hooks';
-import { Button, Card, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@repo/shared/ui';
+import { Button, Card, Tooltip, TooltipContent, TooltipTrigger } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { Check, Copy } from 'lucide-react';
 
@@ -36,8 +36,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
 
   return (
     <Card className={cn('relative p-6')}>
-      <TooltipProvider>
-        <Tooltip className="absolute right-4 top-4">
+      <Tooltip className="absolute right-4 top-4">
           <TooltipTrigger asChild>
             <div
               tabIndex={0}
@@ -53,7 +52,6 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
           </TooltipTrigger>
           <TooltipContent>만료일: {apiKeyData.data.expiresAt.split('T')[0]}</TooltipContent>
         </Tooltip>
-      </TooltipProvider>
 
       <div className="mb-4">
         <p className="text-muted-foreground mb-2 text-sm">현재 발급된 API 키의 권한 범위:</p>
