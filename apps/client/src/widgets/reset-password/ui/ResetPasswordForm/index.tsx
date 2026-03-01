@@ -178,8 +178,8 @@ const ResetPasswordForm = () => {
 
   const { mutate: changePassword, isPending: isSigningUp } = useChangePassword({
     onSuccess: () => {
-      router.push('/');
       toast.success('비밀번호가 변경되었습니다.');
+      setTimeout(() => router.push('/'), 1500);
     },
     onError: (error: unknown) => {
       const statusCode =
