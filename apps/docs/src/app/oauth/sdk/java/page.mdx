@@ -320,7 +320,7 @@ System.out.println("Expires In: " + tokenResponse.getExpiresIn());
 val tokenResponse = client.getClientCredentialsToken()
 
 // scope를 지정하여 토큰 발급
-val tokenResponse = client.getClientCredentialsToken("read")
+val tokenResponseWithScope = client.getClientCredentialsToken("read")
 
 println("Access Token: \${tokenResponse.accessToken}")
 println("Token Type: \${tokenResponse.tokenType}")
