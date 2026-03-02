@@ -55,8 +55,14 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
         <div>
           <CardTitle className={cn('text-3xl')}>로그인</CardTitle>
           <CardDescription className={cn('mt-2')}>
-            Data GSM 계정으로{' '}
-            {serviceName ? <strong className={cn('text-primary')}>{serviceName}</strong> : ''}에
+            DataGSM 계정으로{' '}
+            {serviceName ? (
+              <>
+                <strong className={cn('text-primary')}>{serviceName}</strong>에{' '}
+              </>
+            ) : (
+              ''
+            )}
             로그인하세요
           </CardDescription>
         </div>
