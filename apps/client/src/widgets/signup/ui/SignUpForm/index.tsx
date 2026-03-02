@@ -126,12 +126,15 @@ const SignUpForm = () => {
           if (prev === 1) {
             localStorage.removeItem(STORAGE_KEY);
             setCodeSent(false);
-            setIsCodeVerified(false);
-            lastCheckedCode.current = '';
-            setValue('code', '');
-            if (!hasShownExpiredToast.current) {
-              hasShownExpiredToast.current = true;
-              toast.error('인증 시간이 만료되었습니다. 다시 인증해주세요.');
+
+            if (!isCodeVerified) {
+              setIsCodeVerified(false);
+              lastCheckedCode.current = '';
+              setValue('code', '');
+              if (!hasShownExpiredToast.current) {
+                hasShownExpiredToast.current = true;
+                toast.error('인증 시간이 만료되었습니다. 다시 인증해주세요.');
+              }
             }
             return 0;
           }
@@ -141,7 +144,7 @@ const SignUpForm = () => {
 
       return () => clearInterval(timer);
     }
-  }, [remainingTime, setValue]);
+  }, [remainingTime, setValue, isCodeVerified]);
 
   const { mutate: sendEmailCode, isPending: isSendingCode } = useSendEmailCode({
     onSuccess: () => {
