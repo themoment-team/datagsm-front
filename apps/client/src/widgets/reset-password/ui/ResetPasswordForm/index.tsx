@@ -19,7 +19,6 @@ import {
   Label,
 } from '@repo/shared/ui';
 import { cn, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
-import { AxiosError } from 'axios';
 import { Database, Eye, EyeOff } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
