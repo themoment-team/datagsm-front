@@ -18,7 +18,7 @@ import {
   Input,
   Label,
 } from '@repo/shared/ui';
-import { cn, minutesToMs } from '@repo/shared/utils';
+import { cn, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
 import { AxiosError } from 'axios';
 import { Database, Eye, EyeOff } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -119,8 +119,7 @@ const ResetPasswordForm = () => {
       toast.success('인증 코드가 이메일로 전송되었습니다.');
     },
     onError: (error: unknown) => {
-      const statusCode =
-        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
+      const statusCode = getApiErrorCode(error);
 
       switch (statusCode) {
         case 404:
@@ -141,8 +140,7 @@ const ResetPasswordForm = () => {
       toast.success('인증 코드가 확인되었습니다.');
     },
     onError: (error: unknown) => {
-      const statusCode =
-        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
+      const statusCode = getApiErrorCode(error);
 
       switch (statusCode) {
         case 400:
@@ -182,8 +180,7 @@ const ResetPasswordForm = () => {
       setTimeout(() => router.push('/'), 1500);
     },
     onError: (error: unknown) => {
-      const statusCode =
-        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
+      const statusCode = getApiErrorCode(error);
 
       switch (statusCode) {
         case 400:
