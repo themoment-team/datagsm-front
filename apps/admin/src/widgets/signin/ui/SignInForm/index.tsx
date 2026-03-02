@@ -12,7 +12,6 @@ import {
   getApiErrorCode,
   setCookie,
 } from '@repo/shared/utils';
-import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 import { useRequestOAuthCode } from '../../model/useRequestOAuthCode';
