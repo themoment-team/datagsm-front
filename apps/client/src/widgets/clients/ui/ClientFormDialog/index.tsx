@@ -125,12 +125,12 @@ const ClientFormDialog = ({
   }, [mode, client, open, reset]);
 
   const onSubmit = (data: ClientFormType) => {
+    const redirectUrls = data.redirectUrls.map((item) => item.url);
+
     if (mode === 'create') {
       createClient({
-        clientName: data.clientName,
-        serviceName: data.serviceName,
-        scopes: data.scopes,
-        redirectUrls: data.redirectUrls.map((item) => item.url),
+        ...data,
+        redirectUrls,
       });
     } else if (mode === 'edit' && client) {
       updateClient({
@@ -138,7 +138,7 @@ const ClientFormDialog = ({
         data: {
           clientName: data.clientName,
           serviceName: data.serviceName,
-          redirectUrls: data.redirectUrls.map((item) => item.url),
+          redirectUrls,
         },
       });
     }
