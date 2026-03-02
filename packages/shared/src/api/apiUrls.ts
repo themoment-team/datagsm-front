@@ -34,6 +34,7 @@ export const authUrl = {
   getApiKey: () => '/v1/auth/api-keys/my',
   putApiKey: () => '/v1/auth/api-keys/my',
   postApiKey: () => '/v1/auth/api-keys/my',
+  postRotateApiKey: () => '/v1/auth/api-keys/my/rotations',
   deleteApiKey: () => '/v1/auth/api-keys/my',
   getApiKeys: (page?: number, size?: number, accountEmail?: string) => {
     const params = new URLSearchParams();

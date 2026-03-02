@@ -22,6 +22,7 @@ import {
   useCreateApiKey,
   useGetApiKey,
   useGetAvailableScope,
+  useRotateApiKey,
   useUpdateApiKey,
 } from '@/widgets/home';
 
@@ -64,6 +65,17 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     },
   });
 
+  const { isPending: isRotatingApiKey, mutate: rotateApiKey } = useRotateApiKey({
+    onSuccess: (data) => {
+      // 마스킹되지 않은 갱신된 키를 캐시에 즉시 설정
+      queryClient.setQueryData(authQueryKeys.getApiKey(), data);
+      toast.success('API Key가 갱신되었습니다.');
+    },
+    onError: () => {
+      toast.error('API Key 갱신에 실패했습니다. 다시 시도해주세요.');
+    },
+  });
+
   const {
     handleSubmit,
     watch,
@@ -90,7 +102,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
 
   const buttonText = isCreatingApiKey
     ? 'API 키 생성 중...'
-    : isUpdatingApiKey
+    : isUpdatingApiKey || isRotatingApiKey
       ? 'API 키 갱신 중...'
       : apiKeyData?.data?.apiKey
         ? 'API 키 갱신하기'
@@ -103,14 +115,25 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     fieldName: 'scopes',
   });
 
-  const onSubmit = ({ scopes, description }: ApiKeyFormType) => {
-    const data = { scopes, description };
+  const onSubmit = (data: ApiKeyFormType) => {
+    const { scopes, description } = data;
 
-    if (apiKeyData?.data?.apiKey) {
-      updateApiKey(data);
-    } else {
+    if (!apiKeyData?.data?.apiKey) {
       createApiKey(data);
+      return;
     }
+
+    const isScopesSame =
+      apiKeyData.data.scopes.length === scopes.length &&
+      apiKeyData.data.scopes.every((s) => scopes.includes(s));
+    const isDescriptionSame = apiKeyData.data.description === description;
+
+    if (isScopesSame && isDescriptionSame) {
+      rotateApiKey(data);
+      return;
+    }
+
+    updateApiKey(data);
   };
 
   if (isLoadingApiKey || isLoadingKeyScope) {
@@ -174,7 +197,11 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
           />
           <Input placeholder="설명을 작성해주세요." {...register('description')} />
           <FormErrorMessage error={errors.description} />
-          <Button disabled={isCreatingApiKey || isUpdatingApiKey} size="lg" type="submit">
+          <Button
+            disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
+            size="lg"
+            type="submit"
+          >
             {buttonText}
           </Button>
         </div>
