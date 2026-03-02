@@ -26,9 +26,10 @@ interface SignInFormProps {
   onSubmit: (data: SignInFormType) => void;
   isPending?: boolean;
   signupHref?: string;
+  serviceName?: string;
 }
 
-const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps) => {
+const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: SignInFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -53,7 +54,17 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps
         </div>
         <div>
           <CardTitle className={cn('text-3xl')}>로그인</CardTitle>
-          <CardDescription className={cn('mt-2')}>Data GSM 계정으로 로그인하세요</CardDescription>
+          <CardDescription className={cn('mt-2')}>
+            DataGSM 계정으로{' '}
+            {serviceName ? (
+              <>
+                <strong className={cn('text-primary')}>{serviceName}</strong>에{' '}
+              </>
+            ) : (
+              ''
+            )}
+            로그인하세요
+          </CardDescription>
         </div>
       </CardHeader>
 

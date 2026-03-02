@@ -2,7 +2,8 @@ import { ApiResponse } from '@repo/shared/types';
 
 export interface Client {
   id: string;
-  name: string;
+  clientName: string;
+  serviceName: string;
   redirectUrl: string[];
   scopes: string[];
 }
@@ -16,7 +17,8 @@ export interface ClientListData {
 export type ClientListResponse = ApiResponse<ClientListData>;
 
 export interface CreateClientRequest {
-  name: string;
+  clientName: string;
+  serviceName: string;
   scopes: string[];
   redirectUrls: string[];
 }
@@ -24,20 +26,24 @@ export interface CreateClientRequest {
 export interface CreateClientData {
   clientId: string;
   clientSecret: string;
-  name: string;
+  clientName: string;
+  serviceName: string;
   redirectUrls: string[];
+  scopes: string[];
 }
 
 export type CreateClientResponse = ApiResponse<CreateClientData>;
 
 export interface UpdateClientRequest {
-  name: string;
-  redirectUrls: string[];
+  clientName?: string;
+  serviceName?: string;
+  redirectUrls?: string[];
 }
 
 export interface UpdateClientData {
   id: string;
-  name: string;
+  clientName: string;
+  serviceName: string;
   redirectUrl: string[];
   scopes: string[];
 }

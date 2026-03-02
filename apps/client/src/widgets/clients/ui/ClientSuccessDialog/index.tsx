@@ -55,7 +55,12 @@ const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialog
           <div className={cn('space-y-3')}>
             <div className={cn('space-y-1.5')}>
               <Label className={cn('text-muted-foreground text-xs')}>클라이언트 이름</Label>
-              <p className={cn('font-medium')}>{client.name}</p>
+              <p className={cn('font-medium')}>{client.clientName}</p>
+            </div>
+
+            <div className={cn('space-y-1.5')}>
+              <Label className={cn('text-muted-foreground text-xs')}>서비스 명칭</Label>
+              <p className={cn('font-medium')}>{client.serviceName}</p>
             </div>
 
             <div className={cn('space-y-1.5')}>
