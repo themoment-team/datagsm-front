@@ -9,123 +9,15 @@
   ],
   "exports": {
     "./styles/globals.css": "./dist/styles/globals.css",
-    "./ui": {
-      "types": "./dist/ui/index.d.ts",
-      "default": "./dist/ui/index.js"
-    },
-    "./ui/*": {
-      "types": "./src/ui/*.ts",
-      "default": "./dist/ui/*.js"
-    },
-    "./assets": {
-      "types": "./dist/assets/index.d.ts",
-      "default": "./dist/assets/index.js"
-    },
-    "./assets/*": {
-      "types": "./src/assets/*.ts",
-      "default": "./dist/assets/*.js"
-    },
-    "./api": {
-      "types": "./dist/api/index.d.ts",
-      "default": "./dist/api/index.js"
-    },
-    "./api/*": {
-      "types": "./src/api/*.ts",
-      "default": "./dist/api/*.js"
-    },
-    "./types": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./dist/types/index.js"
-    },
-    "./types/*": {
-      "types": "./src/types/*.ts",
-      "default": "./dist/types/*.js"
-    },
-    "./lib": {
-      "types": "./dist/lib/index.d.ts",
-      "default": "./dist/lib/index.js"
-    },
-    "./lib/*": {
-      "types": "./src/lib/*.ts",
-      "default": "./dist/lib/*.js"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "default": "./dist/utils/index.js"
-    },
-    "./utils/*": {
-      "types": "./src/utils/*.ts",
-      "default": "./dist/utils/*.js"
-    },
-    "./constants": {
-      "types": "./dist/constants/index.d.ts",
-      "default": "./dist/constants/index.js"
-    },
-    "./constants/*": {
-      "types": "./src/constants/*.ts",
-      "default": "./dist/constants/*.js"
-    },
-    "./hooks": {
-      "types": "./dist/hooks/index.d.ts",
-      "default": "./dist/hooks/index.js"
-    },
-    "./hooks/*": {
-      "types": "./dist/hooks/*.d.ts",
-      "default": "./dist/hooks/*.js"
-    }
+    "./api": "./src/api/index.ts",
+    "./assets": "./src/assets/index.ts",
+    "./constants": "./src/constants/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./lib": "./src/lib/index.ts",
+    "./types": "./src/types/index.ts",
+    "./ui": "./src/ui/index.ts",
+    "./utils": "./src/utils/index.ts"
   },
-  "typesVersions": {
-  "*": {
-    "ui": [
-      "./dist/ui/index.d.ts"
-    ],
-    "ui/*": [
-      "./src/ui/*"
-    ],
-    "assets": [
-      "./dist/assets/index.d.ts"
-    ],
-    "assets/*": [
-      "./src/assets/*"
-    ],
-    "api": [
-      "./dist/api/index.d.ts"
-    ],
-    "api/*": [
-      "./src/api/*"
-    ],
-    "types": [
-      "./dist/types/index.d.ts"
-    ],
-    "types/*": [
-      "./src/types/*"
-    ],
-    "lib": [
-      "./dist/lib/index.d.ts"
-    ],
-    "lib/*": [
-      "./src/lib/*"
-    ],
-    "utils": [
-      "./dist/utils/index.d.ts"
-    ],
-    "utils/*": [
-      "./src/utils/*"
-    ],
-    "constants": [
-      "./dist/constants/index.d.ts"
-    ],
-    "constants/*": [
-      "./src/constants/*"
-    ],
-    "hooks": [
-      "./dist/hooks/index.d.ts"
-    ],
-    "hooks/*": [
-      "./src/hooks/*"
-    ]
-  }
-},
   "license": "MIT",
   "scripts": {
     "build": "pnpm run build:components && pnpm run build:styles",

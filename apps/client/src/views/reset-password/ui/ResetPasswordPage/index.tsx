@@ -1,13 +1,13 @@
 import { cn } from '@repo/shared/utils';
 
-import { SignUpForm } from '@/widgets/signup';
+import { ResetPasswordForm } from '@/widgets/reset-password';
 
-const SignUpPage = () => {
+const ResetPasswordPage = () => {
   return (
     <div className={cn('bg-background flex min-h-screen items-center justify-center px-4')}>
-      <SignUpForm />
+      <ResetPasswordForm />
     </div>
   );
 };
 
-export default SignUpPage;
+export default ResetPasswordPage;
