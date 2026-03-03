@@ -7,17 +7,8 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
-  // OAuth callback 감지 (code 파라미터가 있으면 외부 OAuth callback)
-  if (request.nextUrl.searchParams.has('code')) {
-    return NextResponse.next();
-  }
-
   // OAuth 플로우는 미들웨어 적용 안 함
   if (pathname.startsWith('/oauth') || pathname.startsWith('/api/')) {
-    return NextResponse.next();
-  }
-
-  if (pathname === '/signup') {
     return NextResponse.next();
   }
 
