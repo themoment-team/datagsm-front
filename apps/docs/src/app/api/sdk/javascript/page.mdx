@@ -28,9 +28,9 @@
 프로젝트에서 사용하는 패키지 매니저에 맞춰 설치하세요.
 
 <CodeTabs>
-  <CodeTab label="npm" language="bash" code={`npm install datagsm-openapi-sdk-javascript`} />
-  <CodeTab label="pnpm" language="bash" code={`pnpm add datagsm-openapi-sdk-javascript`} />
-  <CodeTab label="yarn" language="bash" code={`yarn add datagsm-openapi-sdk-javascript`} />
+  <CodeTab label="npm" language="bash" code={`npm install @themoment-team/datagsm-openapi`} />
+  <CodeTab label="pnpm" language="bash" code={`pnpm add @themoment-team/datagsm-openapi`} />
+  <CodeTab label="yarn" language="bash" code={`yarn add @themoment-team/datagsm-openapi`} />
 </CodeTabs>
 
 ## 빠른 시작
@@ -40,7 +40,7 @@
 먼저 `DataGsmClient` 인스턴스를 생성합니다. API 키는 필수 파라미터입니다.
 
 ```typescript
-import { DataGsmClient } from 'datagsm-openapi-sdk-javascript';
+import { DataGsmClient } from '@themoment-team/datagsm-openapi';
 
 // 기본 설정으로 클라이언트 생성
 const client = new DataGsmClient({
@@ -197,7 +197,7 @@ SDK는 발생한 오류 상황에 맞는 전용 에러 클래스를 제공합니
 ### 예외 처리 예제
 
 ```typescript
-import { DataGsmError, RateLimitError, UnauthorizedError } from 'datagsm-openapi-sdk-javascript';
+import { DataGsmError, RateLimitError, UnauthorizedError } from '@themoment-team/datagsm-openapi';
 
 try {
   const response = await client.students().getStudents();
