@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { COOKIE_KEYS } from '@repo/shared/constants';
+import { isValidRelativePath } from '@repo/shared/utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -50,8 +51,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // 리다이렉트 응답 생성X
-    const targetPath = state && state !== '/' ? state : '/';
+    const targetPath = state && isValidRelativePath(state) ? state : '/';
     const redirectUrl = new URL(targetPath, request.url);
     const response = NextResponse.redirect(redirectUrl);
 
