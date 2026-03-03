@@ -102,7 +102,7 @@ export const docsSections: DocsSection[] = [
         children: [
           {
             label: 'React + Spring Boot (BFF)',
-            href: '/oauth/examples/react-spring-boot-boot',
+            href: '/oauth/examples/react-spring-boot',
           },
           {
             label: 'Next.js + Spring Boot',
