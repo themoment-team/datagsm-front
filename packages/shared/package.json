@@ -9,66 +9,14 @@
   ],
   "exports": {
     "./styles/globals.css": "./dist/styles/globals.css",
-    "./ui/*": {
-      "types": "./src/ui/*.ts",
-      "default": "./dist/ui/*.js"
-    },
-    "./assets/*": {
-      "types": "./src/assets/*.ts",
-      "default": "./dist/assets/*.js"
-    },
-    "./api/*": {
-      "types": "./src/api/*.ts",
-      "default": "./dist/api/*.js"
-    },
-    "./types/*": {
-      "types": "./src/types/*.ts",
-      "default": "./dist/types/*.js"
-    },
-    "./lib/*": {
-      "types": "./src/lib/*.ts",
-      "default": "./dist/lib/*.js"
-    },
-    "./utils/*": {
-      "types": "./src/utils/*.ts",
-      "default": "./dist/utils/*.js"
-    },
-    "./constants/*": {
-      "types": "./src/constants/*.ts",
-      "default": "./dist/constants/*.js"
-    },
-    "./hooks": {
-      "types": "./src/hooks/*.ts",
-      "default": "./dist/hooks/*.js"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "ui/*": [
-        "./src/ui/*"
-      ],
-      "assets/*": [
-        "./src/assets/*"
-      ],
-      "api/*": [
-        "./src/api/*"
-      ],
-      "types/*": [
-        "./src/types/*"
-      ],
-      "lib/*": [
-        "./src/lib/*"
-      ],
-      "utils/*": [
-        "./src/utils/*"
-      ],
-      "constants/*": [
-        "./src/constants/*"
-      ],
-      "hooks": [
-        "./src/hooks/*"
-      ]
-    }
+    "./api": "./src/api/index.ts",
+    "./assets": "./src/assets/index.ts",
+    "./constants": "./src/constants/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./lib": "./src/lib/index.ts",
+    "./types": "./src/types/index.ts",
+    "./ui": "./src/ui/index.ts",
+    "./utils": "./src/utils/index.ts"
   },
   "license": "MIT",
   "scripts": {

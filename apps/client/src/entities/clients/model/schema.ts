@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 export const ClientFormSchema = z.object({
-  name: z.string().min(1, { message: '클라이언트 이름을 입력해주세요.' }),
+  clientName: z.string().min(1, { message: '클라이언트 이름을 입력해주세요.' }),
+  serviceName: z.string().min(1, { message: '서비스 명칭을 입력해주세요.' }),
   redirectUrls: z
     .array(
       z.object({
@@ -9,7 +10,7 @@ export const ClientFormSchema = z.object({
       }),
     )
     .min(1, { message: '최소 한 개 이상의 리다이렉트 URL이 필요합니다.' }),
-  scopes: z.array(z.string()).min(1, { message: '최소 한 개 이상의 권한을 선택해주세요.' }),
+  scopes: z.array(z.string()).min(1, { message: '최소 한 개 이상의 권한 범위를 선택해주세요.' }),
 });
 
 export type ClientFormType = z.infer<typeof ClientFormSchema>;

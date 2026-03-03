@@ -3,6 +3,7 @@ import { ApiResponse } from '@repo/shared/types';
 export interface ApiKeyData {
   apiKey: string;
   expiresAt: string;
+  expiresInDays: number;
   scopes: string[];
   description: string;
 }

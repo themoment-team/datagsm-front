@@ -1,0 +1,137 @@
+import { BookOpen, Code2, User } from 'lucide-react';
+
+import { DocsSection } from './types';
+
+export const docsSections: DocsSection[] = [
+  {
+    label: 'Overview',
+    href: '/',
+    icon: BookOpen,
+  },
+  {
+    label: 'OpenAPI',
+    href: '/api',
+    icon: Code2,
+    children: [
+      {
+        label: 'HTTP',
+        href: '/api/http',
+        children: [
+          {
+            label: '학생 데이터 OpenAPI',
+            href: '/api/http/student',
+          },
+          {
+            label: '동아리 데이터 OpenAPI',
+            href: '/api/http/club',
+          },
+          {
+            label: '프로젝트 데이터 OpenAPI',
+            href: '/api/http/project',
+          },
+          {
+            label: 'NEIS 데이터 OpenAPI',
+            href: '/api/http/neis',
+            children: [
+              {
+                label: '급식 데이터 API',
+                href: '/api/http/neis/meals',
+              },
+              {
+                label: '학사일정 데이터 API',
+                href: '/api/http/neis/schedules',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        label: 'SDK',
+        href: '/api/sdk',
+        children: [
+          {
+            label: 'Java / Kotlin SDK',
+            href: '/api/sdk/java',
+          },
+          {
+            label: 'Python SDK',
+            href: '/api/sdk/python',
+          },
+          {
+            label: 'JavaScript / TypeScript SDK',
+            href: '/api/sdk/javascript',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'OAuth',
+    href: '/oauth',
+    icon: User,
+    children: [
+      {
+        label: 'PKCE 가이드',
+        href: '/oauth/pkce',
+      },
+      {
+        label: 'HTTP',
+        href: '/oauth/http',
+        children: [
+          {
+            label: '인증 흐름 시작',
+            href: '/oauth/http/authorize',
+          },
+          {
+            label: '토큰 교환',
+            href: '/oauth/http/token-exchange',
+          },
+          {
+            label: '토큰 갱신',
+            href: '/oauth/http/token-refresh',
+          },
+          {
+            label: '사용자 데이터 조회',
+            href: '/oauth/http/userinfo',
+          },
+        ],
+      },
+      {
+        label: 'Examples',
+        href: '/oauth/examples',
+        children: [
+          {
+            label: 'React + Spring Boot (BFF)',
+            href: '/oauth/examples/react-spring-boot-boot',
+          },
+          {
+            label: 'Next.js + Spring Boot',
+            href: '/oauth/examples/nextjs-spring-boot',
+          },
+          {
+            label: 'React + Spring Boot (Kotlin)',
+            href: '/oauth/examples/react-spring-boot-kotlin',
+          },
+          {
+            label: 'Vanilla JS + NestJS',
+            href: '/oauth/examples/vanilla-nestjs',
+          },
+        ],
+      },
+      {
+        label: 'SDK',
+        href: '/oauth/sdk',
+        children: [
+          {
+            label: 'React',
+            href: '/oauth/sdk/react',
+          },
+          {
+            label: 'Java / Kotlin SDK',
+            href: '/oauth/sdk/java',
+          },
+        ],
+      },
+    ],
+  },
+];

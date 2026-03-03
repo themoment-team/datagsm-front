@@ -17,3 +17,6 @@ export const put = async <T>(...args: Parameters<typeof axiosInstance.put>) =>
 
 export const oauthPost = async <T>(...args: Parameters<typeof oauthAxiosInstance.post>) =>
   await oauthAxiosInstance.post<T, T>(...args);
+
+export const oauthPut = async <T>(...args: Parameters<typeof oauthAxiosInstance.put>) =>
+  await oauthAxiosInstance.put<T, T>(...args);

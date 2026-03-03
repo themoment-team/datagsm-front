@@ -116,7 +116,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
   if (isLoadingApiKey || isLoadingKeyScope) {
     return (
       <Card className={cn('p-6')}>
-        <div className={cn('text-muted-foreground text-sm')}>권한 정보를 불러오는 중...</div>
+        <div className={cn('text-muted-foreground text-sm')}>권한 범위를 불러오는 중...</div>
       </Card>
     );
   }
@@ -126,9 +126,9 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={cn('mb-6 flex flex-col gap-4')}>
           <div>
-            <p className={cn('mb-2 text-lg font-extrabold')}>API 권한 선택</p>
+            <p className={cn('mb-2 text-lg font-extrabold')}>API 권한 범위 선택</p>
             <p className={cn('text-muted-foreground text-sm')}>
-              API 키로 접근할 수 있는 권한을 선택하세요. 여러 개를 선택할 수 있습니다.
+              API 키로 접근할 수 있는 권한 범위를 선택하세요. 여러 개를 선택할 수 있습니다.
             </p>
           </div>
           <div className={cn('mb-4 space-y-6')}>

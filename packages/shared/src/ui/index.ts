@@ -11,6 +11,7 @@ export * from './Table';
 export * from './Textarea';
 export * from './Skeleton';
 export * from './CheckBox';
+export * from './Tooltip';
 export { default as SignInForm } from './SignInForm';
 export { default as Header } from './Header';
 export { default as FormErrorMessage } from './FormErrorMessage';

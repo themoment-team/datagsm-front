@@ -19,8 +19,7 @@ import {
   Label,
 } from '@repo/shared/ui';
 import { Checkbox, Dialog, DialogContent, DialogHeader, DialogTitle } from '@repo/shared/ui';
-import { cn, minutesToMs } from '@repo/shared/utils';
-import { AxiosError } from 'axios';
+import { cn, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
 import { Database, Eye, EyeOff } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -41,6 +40,7 @@ const SignUpForm = () => {
   const [isPrivacyDialogOpen, setIsPrivacyDialogOpen] = useState(false);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -59,6 +59,7 @@ const SignUpForm = () => {
   const codeValue = watch('code');
   const emailValue = watch('email');
   const passwordValue = watch('password');
+  const confirmPasswordValue = watch('confirmPassword');
   const privacyAgreedValue = watch('privacyAgreed');
   const debouncedCode = useDebounce(codeValue, 1000);
   const lastCheckedCode = useRef('');
@@ -67,6 +68,7 @@ const SignUpForm = () => {
   const isFormValid = SignUpFormSchema.safeParse({
     email: emailValue,
     password: passwordValue,
+    confirmPassword: confirmPasswordValue,
     code: codeValue,
     privacyAgreed: privacyAgreedValue,
   }).success;
@@ -124,12 +126,15 @@ const SignUpForm = () => {
           if (prev === 1) {
             localStorage.removeItem(STORAGE_KEY);
             setCodeSent(false);
-            setIsCodeVerified(false);
-            lastCheckedCode.current = '';
-            setValue('code', '');
-            if (!hasShownExpiredToast.current) {
-              hasShownExpiredToast.current = true;
-              toast.error('인증 시간이 만료되었습니다. 다시 인증해주세요.');
+
+            if (!isCodeVerified) {
+              setIsCodeVerified(false);
+              lastCheckedCode.current = '';
+              setValue('code', '');
+              if (!hasShownExpiredToast.current) {
+                hasShownExpiredToast.current = true;
+                toast.error('인증 시간이 만료되었습니다. 다시 인증해주세요.');
+              }
             }
             return 0;
           }
@@ -139,7 +144,7 @@ const SignUpForm = () => {
 
       return () => clearInterval(timer);
     }
-  }, [remainingTime, setValue]);
+  }, [remainingTime, setValue, isCodeVerified]);
 
   const { mutate: sendEmailCode, isPending: isSendingCode } = useSendEmailCode({
     onSuccess: () => {
@@ -151,8 +156,7 @@ const SignUpForm = () => {
       toast.success('인증 코드가 이메일로 전송되었습니다.');
     },
     onError: (error: unknown) => {
-      const statusCode =
-        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
+      const statusCode = getApiErrorCode(error);
 
       switch (statusCode) {
         case 400:
@@ -173,8 +177,7 @@ const SignUpForm = () => {
       toast.success('인증 코드가 확인되었습니다.');
     },
     onError: (error: unknown) => {
-      const statusCode =
-        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
+      const statusCode = getApiErrorCode(error);
 
       switch (statusCode) {
         case 400:
@@ -207,15 +210,14 @@ const SignUpForm = () => {
   const { mutate: signUp, isPending: isSigningUp } = useSignUp({
     onSuccess: () => {
       toast.success('회원가입이 완료되었습니다. 로그인해주세요.');
-      router.push('/');
+      setTimeout(() => router.push('/'), 1500);
     },
     onError: (error: unknown) => {
-      const statusCode =
-        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
+      const statusCode = getApiErrorCode(error);
 
       switch (statusCode) {
         case 400:
-          toast.error('입력 정보를 확인해주세요.');
+          toast.error('입력 데이터를 확인해주세요.');
           break;
         case 404:
           toast.error('인증 코드가 만료되었거나 존재하지 않습니다.');
@@ -327,7 +329,7 @@ const SignUpForm = () => {
                 type={showPassword ? 'text' : 'password'}
                 placeholder="비밀번호를 입력하세요"
                 {...register('password')}
-                disabled={isSigningUp}
+                disabled={!isCodeVerified || isSigningUp}
                 className={cn('pr-10')}
               />
               <button
@@ -336,9 +338,9 @@ const SignUpForm = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className={cn(
                   'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
-                  isSigningUp && 'cursor-not-allowed opacity-50',
+                  (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
                 )}
-                disabled={isSigningUp}
+                disabled={!isCodeVerified || isSigningUp}
               >
                 {showPassword ? (
                   <EyeOff className={cn('h-4 w-4')} />
@@ -348,6 +350,33 @@ const SignUpForm = () => {
               </button>
             </div>
             <FormErrorMessage error={errors.password} />
+            <div className={cn('relative')}>
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="비밀번호를 다시 입력하세요"
+                {...register('confirmPassword')}
+                disabled={!isCodeVerified || isSigningUp}
+                className={cn('pr-10')}
+              />
+              <button
+                type="button"
+                aria-label={showConfirmPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className={cn(
+                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
+                  (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
+                )}
+                disabled={!isCodeVerified || isSigningUp}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className={cn('h-4 w-4')} />
+                ) : (
+                  <Eye className={cn('h-4 w-4')} />
+                )}
+              </button>
+            </div>
+            <FormErrorMessage error={errors.confirmPassword} />
           </div>
 
           <div className={cn('flex items-center space-x-2')}>

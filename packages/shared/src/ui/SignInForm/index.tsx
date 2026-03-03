@@ -26,9 +26,10 @@ interface SignInFormProps {
   onSubmit: (data: SignInFormType) => void;
   isPending?: boolean;
   signupHref?: string;
+  serviceName?: string;
 }
 
-const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps) => {
+const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: SignInFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -53,7 +54,17 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps
         </div>
         <div>
           <CardTitle className={cn('text-3xl')}>로그인</CardTitle>
-          <CardDescription className={cn('mt-2')}>Data GSM 계정으로 로그인하세요</CardDescription>
+          <CardDescription className={cn('mt-2')}>
+            DataGSM 계정으로{' '}
+            {serviceName ? (
+              <>
+                <strong className={cn('text-primary')}>{serviceName}</strong>에{' '}
+              </>
+            ) : (
+              ''
+            )}
+            로그인하세요
+          </CardDescription>
         </div>
       </CardHeader>
 
@@ -114,12 +125,22 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref }: SignInFormProps
           </Button>
 
           {signupHref && (
-            <p className={cn('text-muted-foreground text-center text-sm')}>
-              계정이 없으신가요?{' '}
-              <Link href={signupHref} className={cn('text-primary font-medium hover:underline')}>
-                회원가입
-              </Link>
-            </p>
+            <div className="space-y-2 text-center text-sm">
+              <p className={cn('text-muted-foreground text-center text-sm')}>
+                계정이 없으신가요?{' '}
+                <Link href={signupHref} className={cn('text-primary font-medium hover:underline')}>
+                  회원가입
+                </Link>
+              </p>
+              <p>
+                <Link
+                  href="/signin/reset-password"
+                  className="text-muted-foreground hover:text-primary hover:underline"
+                >
+                  비밀번호를 잊으셨나요?
+                </Link>
+              </p>
+            </div>
           )}
         </CardFooter>
       </form>

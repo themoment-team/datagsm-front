@@ -70,11 +70,11 @@ const ClubFormDialog = ({
     onSuccess: () => {
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ['clubs'] });
-      toast.success('동아리 정보가 수정되었습니다.');
+      toast.success('동아리 데이터가 수정되었습니다.');
     },
     onError: (error) => {
-      console.error('동아리 정보 수정 실패:', error);
-      toast.error('동아리 정보 수정에 실패했습니다.');
+      console.error('동아리 데이터 수정 실패:', error);
+      toast.error('동아리 데이터 수정에 실패했습니다.');
     },
   });
 
@@ -115,7 +115,7 @@ const ClubFormDialog = ({
   };
 
   const isPending = mode === 'create' ? isCreating : isUpdating;
-  const title = mode === 'create' ? '동아리 추가' : '동아리 정보 수정';
+  const title = mode === 'create' ? '동아리 추가' : '동아리 데이터 수정';
   const submitText = mode === 'create' ? '추가' : '수정';
   const loadingText = mode === 'create' ? '추가 중...' : '수정 중...';
 

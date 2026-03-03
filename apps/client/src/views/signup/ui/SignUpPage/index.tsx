@@ -1,5 +1,3 @@
-'use client';
-
 import { cn } from '@repo/shared/utils';
 
 import { SignUpForm } from '@/widgets/signup';
