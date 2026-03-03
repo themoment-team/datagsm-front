@@ -5,7 +5,7 @@ import { DocsSection } from './types';
 export const docsSections: DocsSection[] = [
   {
     label: 'Overview',
-    href: '',
+    href: '/',
     icon: BookOpen,
   },
   {
