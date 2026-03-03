@@ -1,8 +1,10 @@
+export const DOCS_URL = process.env.NEXT_PUBLIC_DOCS_URL ?? 'http://localhost:3002';
+
 export const NAV_LINKS = {
   client: [
     { href: '/', label: '메인' },
     { href: '/clients', label: '클라이언트' },
-    { href: '/docs', label: '독스' }, // TODO: docs 애플리케이션 배포 후 링크 수정
+    { href: DOCS_URL, label: '독스' },
   ],
   admin: [
     { href: '/students', label: '학생' },

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { DOCS_URL } from '@repo/shared/constants';
 import { Button } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
@@ -22,8 +23,7 @@ const NotFound = () => {
             <Link href="/">메인으로 돌아가기</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link href="/docs">기술 문서 보기</Link>
-            {/* TODO: docs 애플리케이션 배포 후 링크 수정 */}
+            <Link href={DOCS_URL}>기술 문서 보기</Link>
           </Button>
         </div>
       </div>
