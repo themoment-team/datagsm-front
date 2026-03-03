@@ -6,8 +6,12 @@ import { COOKIE_KEYS } from '@repo/shared/constants';
 import { useExchangeToken } from '@repo/shared/hooks';
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
-import { generateCodeChallenge, generateCodeVerifier, setCookie } from '@repo/shared/utils';
-import { AxiosError } from 'axios';
+import {
+  generateCodeChallenge,
+  generateCodeVerifier,
+  getApiErrorCode,
+  setCookie,
+} from '@repo/shared/utils';
 import { toast } from 'sonner';
 
 import { useRequestOAuthCode } from '../../model/useRequestOAuthCode';
@@ -31,8 +35,7 @@ const SignInForm = () => {
       router.push('/students');
     },
     onError: (error: unknown) => {
-      const statusCode =
-        error instanceof AxiosError ? (error.response?.data as { code?: number })?.code : undefined;
+      const statusCode = getApiErrorCode(error);
 
       switch (statusCode) {
         case 400:
@@ -57,10 +60,7 @@ const SignInForm = () => {
         });
       },
       onError: (error: unknown) => {
-        const statusCode =
-          error instanceof AxiosError
-            ? (error.response?.data as { code?: number })?.code
-            : undefined;
+        const statusCode = getApiErrorCode(error);
 
         switch (statusCode) {
           case 400:

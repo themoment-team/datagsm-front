@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const SignUpFormSchema = z
+export const ResetPasswordFormSchema = z
   .object({
     email: z
       .string()
@@ -9,6 +9,10 @@ export const SignUpFormSchema = z
       .refine((email) => email.endsWith('@gsm.hs.kr'), {
         message: '@gsm.hs.kr 도메인 계정만 사용 가능합니다.',
       }),
+    code: z
+      .string()
+      .min(1, { message: '인증 코드를 입력해주세요.' })
+      .length(8, { message: '인증 코드는 8자리입니다.' }),
     password: z
       .string()
       .min(1, { message: '비밀번호를 입력해주세요.' })
@@ -18,18 +22,16 @@ export const SignUpFormSchema = z
         message: '비밀번호는 영문과 숫자를 포함해야 합니다.',
       }),
     confirmPassword: z.string().min(1, { message: '비밀번호 확인을 입력해주세요.' }),
-    code: z
-      .string()
-      .min(1, { message: '인증 코드를 입력해주세요.' })
-      .length(8, { message: '인증 코드는 8자리입니다.' }),
-    privacyAgreed: z.boolean().refine((val) => val === true, {
-      message: '개인정보 처리방침에 동의해주세요.',
-    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: '비밀번호가 일치하지 않습니다.',
     path: ['confirmPassword'],
   });
 
-export type SignUpFormType = z.infer<typeof SignUpFormSchema>;
-export type SignUpRequestType = Omit<SignUpFormType, 'privacyAgreed' | 'confirmPassword'>;
+export type ResetPasswordFormType = z.infer<typeof ResetPasswordFormSchema>;
+
+export type ChangePasswordRequestType = {
+  email: string;
+  code: string;
+  newPassword: string;
+};
