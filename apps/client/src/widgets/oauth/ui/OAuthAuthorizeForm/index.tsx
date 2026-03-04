@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
@@ -9,10 +9,25 @@ import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
 import { toast } from 'sonner';
 
 const OAuthAuthorizeForm = () => {
+  const [serviceName, setServiceName] = useState<string | undefined>();
   const [isPending, setIsPending] = useState(false);
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
-  const serviceName = searchParams.get('service_name');
+
+  useEffect(() => {
+    if (!token) return;
+    console.log('Fetching service name for token:', token);
+
+    fetch(`/api/oauth/sessions/${token}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.data?.service_name) {
+          setServiceName(data.data.service_name);
+          console.log('서비스 이름:', data.data.service_name);
+        }
+      })
+      .catch(() => {});
+  }, [token]);
 
   const handleSubmit = async (data: SignInFormType) => {
     setIsPending(true);
