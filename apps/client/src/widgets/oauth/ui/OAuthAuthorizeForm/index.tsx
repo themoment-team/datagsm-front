@@ -16,14 +16,12 @@ const OAuthAuthorizeForm = () => {
 
   useEffect(() => {
     if (!token) return;
-    console.log('Fetching service name for token:', token);
 
     fetch(`/api/oauth/sessions/${token}`)
       .then((res) => res.json())
       .then((data) => {
         if (data?.data?.service_name) {
           setServiceName(data.data.service_name);
-          console.log('서비스 이름:', data.data.service_name);
         }
       })
       .catch(() => {});
