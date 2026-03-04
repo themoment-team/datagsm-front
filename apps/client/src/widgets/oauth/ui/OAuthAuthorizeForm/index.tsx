@@ -24,7 +24,9 @@ const OAuthAuthorizeForm = () => {
           setServiceName(data.data.service_name);
         }
       })
-      .catch(() => {});
+      .catch((error) => {
+        console.error('서비스 이름 조회 실패:', error);
+      });
   }, [token]);
 
   const handleSubmit = async (data: SignInFormType) => {
