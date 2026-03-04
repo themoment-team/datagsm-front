@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   Label,
   Select,
   SelectContent,
@@ -112,12 +113,30 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체</SelectItem>
-                <SelectItem value="false">재학</SelectItem>
-                <SelectItem value="true">자퇴</SelectItem>
+                <SelectItem value="ENROLLED">재학</SelectItem>
+                <SelectItem value="GRADUATE">졸업</SelectItem>
+                <SelectItem value="WITHDRAWN">자퇴</SelectItem>
               </SelectContent>
             </Select>
           )}
         />
+      </div>
+
+      <div className={cn('ml-auto flex items-center gap-2')}>
+        <Controller
+          control={control}
+          name="includeGraduates"
+          render={({ field }) => (
+            <Checkbox
+              id="includeGraduates"
+              checked={field.value}
+              onCheckedChange={field.onChange}
+            />
+          )}
+        />
+        <Label htmlFor="includeGraduates" className={cn('cursor-pointer text-sm')}>
+          졸업생 포함
+        </Label>
       </div>
     </div>
   );
