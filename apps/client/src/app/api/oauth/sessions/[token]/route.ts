@@ -16,15 +16,19 @@ export async function GET(
   }
 
   try {
-    const response = await fetch(`${oauthBaseUrl}/v1/oauth/sessions/${token}`, {
+    const response = await fetch(`${oauthBaseUrl}/v1/oauth/sessions/${encodeURIComponent(token)}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     });
+
     const data = await response.json();
 
-    return NextResponse.json(data, { status: response.status });
+    return NextResponse.json(
+      { data: { service_name: data?.data?.service_name } },
+      { status: response.status },
+    );
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
     return NextResponse.json(
