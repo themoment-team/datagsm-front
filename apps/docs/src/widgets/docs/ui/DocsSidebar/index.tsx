@@ -6,6 +6,9 @@ import { Menu, X } from 'lucide-react';
 
 import { SidebarContent } from './SidebarContent';
 
+const scrollbarStyles =
+  '[&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border';
+
 const DocsSidebar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -21,7 +24,9 @@ const DocsSidebar = () => {
         </button>
       </div>
 
-      <aside className="[&::-webkit-scrollbar-thumb]:bg-border sticky top-24 hidden max-h-[calc(100vh-7rem)] w-64 shrink-0 overflow-y-auto lg:block [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-1">
+      <aside
+        className={`${scrollbarStyles} sticky top-24 hidden max-h-[calc(100vh-7rem)] w-64 shrink-0 overflow-y-auto lg:block`}
+      >
         <h2 className="text-muted-foreground mb-4 text-sm font-semibold">목차</h2>
         <SidebarContent />
       </aside>
@@ -43,7 +48,7 @@ const DocsSidebar = () => {
               </button>
             </div>
 
-            <div className="[&::-webkit-scrollbar-thumb]:bg-border flex-1 overflow-y-auto p-4 pt-4 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-1">
+            <div className={`${scrollbarStyles} flex-1 overflow-y-auto p-4 pt-4`}>
               <SidebarContent onLinkClick={() => setMobileMenuOpen(false)} />
             </div>
           </aside>
