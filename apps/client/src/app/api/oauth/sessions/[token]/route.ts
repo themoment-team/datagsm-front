@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(_request: NextRequest, { params }: { params: { token: string } }) {
-  const { token } = params;
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ token: string }> },
+) {
+  const { token } = await params;
 
   const oauthBaseUrl = process.env.NEXT_PUBLIC_OAUTH_BASE_URL;
 
@@ -14,6 +17,7 @@ export async function GET(_request: NextRequest, { params }: { params: { token: 
 
   console.log('요청 URL:', `${oauthBaseUrl}/v1/oauth/sessions/${token}`);
   console.log('oauthBaseUrl:', oauthBaseUrl);
+  console.log('최종 요청 URL:', `${oauthBaseUrl}/v1/oauth/sessions/${token}`);
   console.log('token:', token);
 
   try {
@@ -21,7 +25,6 @@ export async function GET(_request: NextRequest, { params }: { params: { token: 
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Origin: oauthBaseUrl,
       },
     });
     console.log('응답 status:', response.status);
