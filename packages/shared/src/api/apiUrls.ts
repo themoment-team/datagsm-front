@@ -9,7 +9,7 @@ export const studentUrl = {
     classNum?: number,
     sex?: StudentSex,
     role?: StudentRole,
-    isLeaveSchool?: boolean,
+    includeGraduates?: boolean,
   ) => {
     const params = new URLSearchParams();
 
@@ -19,7 +19,7 @@ export const studentUrl = {
     if (classNum !== undefined) params.append('classNum', classNum.toString());
     if (sex !== undefined) params.append('sex', sex);
     if (role !== undefined) params.append('role', role);
-    if (isLeaveSchool !== undefined) params.append('isLeaveSchool', isLeaveSchool.toString());
+    if (includeGraduates !== undefined) params.append('includeGraduates', includeGraduates.toString());
 
     return `/v1/students?${params.toString()}`;
   },
