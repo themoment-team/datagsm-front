@@ -42,6 +42,7 @@ const StudentsPage = () => {
       sex: searchParams.get('sex') || 'all',
       role: searchParams.get('role') || 'all',
       status: searchParams.get('status') || 'all',
+      includeGraduates: searchParams.get('includeGraduates') === 'true',
       page: Number(searchParams.get('page')) || 0,
     }),
     [searchParams],
@@ -55,6 +56,7 @@ const StudentsPage = () => {
       sex: initialValues.sex,
       role: initialValues.role,
       status: initialValues.status,
+      includeGraduates: initialValues.includeGraduates,
     },
   });
 
@@ -72,7 +74,8 @@ const StudentsPage = () => {
       filters.classNum !== initialValues.classNum ||
       filters.sex !== initialValues.sex ||
       filters.role !== initialValues.role ||
-      filters.status !== initialValues.status;
+      filters.status !== initialValues.status ||
+      filters.includeGraduates !== initialValues.includeGraduates;
 
     if (hasChanged) {
       updateURL(filters, 0);
@@ -83,11 +86,13 @@ const StudentsPage = () => {
     filters.sex,
     filters.role,
     filters.status,
+    filters.includeGraduates,
     initialValues.grade,
     initialValues.classNum,
     initialValues.sex,
     initialValues.role,
     initialValues.status,
+    initialValues.includeGraduates,
     updateURL,
     filters,
   ]);
@@ -102,8 +107,15 @@ const StudentsPage = () => {
     grade: filters.grade !== 'all' ? Number(filters.grade) : undefined,
     classNum: filters.classNum !== 'all' ? Number(filters.classNum) : undefined,
     sex: filters.sex !== 'all' ? (filters.sex as StudentSex) : undefined,
-    role: filters.role !== 'all' ? (filters.role as StudentRole) : undefined,
-    isLeaveSchool: filters.status !== 'all' ? filters.status === 'true' : undefined,
+    role:
+      filters.status === 'WITHDRAWN'
+        ? ('WITHDRAWN' as StudentRole)
+        : filters.status === 'GRADUATE'
+          ? ('GRADUATE' as StudentRole)
+          : filters.role !== 'all'
+            ? (filters.role as StudentRole)
+            : undefined,
+    includeGraduates: filters.includeGraduates,
   };
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(queryParams);
