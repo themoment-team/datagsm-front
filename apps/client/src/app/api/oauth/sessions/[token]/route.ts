@@ -15,11 +15,6 @@ export async function GET(
     );
   }
 
-  console.log('요청 URL:', `${oauthBaseUrl}/v1/oauth/sessions/${token}`);
-  console.log('oauthBaseUrl:', oauthBaseUrl);
-  console.log('최종 요청 URL:', `${oauthBaseUrl}/v1/oauth/sessions/${token}`);
-  console.log('token:', token);
-
   try {
     const response = await fetch(`${oauthBaseUrl}/v1/oauth/sessions/${token}`, {
       method: 'GET',
@@ -27,8 +22,6 @@ export async function GET(
         'Content-Type': 'application/json',
       },
     });
-    console.log('응답 status:', response.status);
-
     const data = await response.json();
 
     return NextResponse.json(data, { status: response.status });
