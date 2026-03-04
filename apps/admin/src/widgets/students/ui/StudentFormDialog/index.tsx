@@ -97,7 +97,6 @@ const StudentFormDialog = ({
             number: student.number,
             role: student.role,
             dormitoryRoomNumber: student.dormitoryRoom,
-            isLeaveSchool: student.isLeaveSchool,
             majorClubId: student.majorClub?.id || null,
             jobClubId: student.jobClub?.id || null,
             autonomousClubId: student.autonomousClub?.id || null,
@@ -116,7 +115,6 @@ const StudentFormDialog = ({
         number: student.number,
         role: student.role,
         dormitoryRoomNumber: student.dormitoryRoom,
-        isLeaveSchool: student.isLeaveSchool,
         majorClubId: student.majorClub?.id || null,
         jobClubId: student.jobClub?.id || null,
         autonomousClubId: student.autonomousClub?.id || null,
@@ -264,6 +262,8 @@ const StudentFormDialog = ({
                       <SelectItem value="GENERAL_STUDENT">일반학생</SelectItem>
                       <SelectItem value="STUDENT_COUNCIL">학생회</SelectItem>
                       <SelectItem value="DORMITORY_MANAGER">기자위</SelectItem>
+                      <SelectItem value="GRADUATE">졸업생</SelectItem>
+                      <SelectItem value="WITHDRAWN">자퇴생</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -388,30 +388,6 @@ const StudentFormDialog = ({
               />
               <FormErrorMessage error={errors.autonomousClubId} />
             </div>
-            {mode === 'edit' && (
-              <div className={cn('space-y-2')}>
-                <Label htmlFor="isLeaveSchool">자퇴 여부</Label>
-                <Controller
-                  control={control}
-                  name="isLeaveSchool"
-                  render={({ field }) => (
-                    <Select
-                      value={field.value ? 'true' : 'false'}
-                      onValueChange={(val) => field.onChange(val === 'true')}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="자퇴 여부 선택" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="false">재학중</SelectItem>
-                        <SelectItem value="true">자퇴</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                <FormErrorMessage error={errors.isLeaveSchool} />
-              </div>
-            )}
           </div>
           <div className={cn('flex justify-end')}>
             <Button type="submit" disabled={isPending}>
