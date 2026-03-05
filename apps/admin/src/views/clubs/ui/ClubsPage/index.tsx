@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@rep
 import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
 
-import { ClubFilterSchema, ClubFilterType } from '@/entities/club';
+import { AddClubSchema, AddClubType, ClubFilterSchema, ClubFilterType } from '@/entities/club';
 import { useGetClubs } from '@/views/clubs';
 import { useGetStudents } from '@/views/students';
 import { ClubExcelActions, ClubFilter, ClubFormDialog, ClubList } from '@/widgets/clubs';
@@ -25,9 +25,20 @@ const ClubsPage = () => {
   const [editingClub, setEditingClub] = useState<Club | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
+  // 동아리 추가/수정을 위한 폼 선언
+  const clubForm = useForm<AddClubType>({
+    resolver: zodResolver(AddClubSchema),
+  });
+
   const handleEditClub = (club: Club) => {
     setEditingClub(club);
     setIsEditDialogOpen(true);
+    // 수정 시 폼 데이터 초기화
+    clubForm.reset({
+      name: club.name,
+      type: club.type,
+      leaderId: club.leader.id,
+    });
   };
 
   const initialValues = useMemo(
@@ -38,14 +49,14 @@ const ClubsPage = () => {
     [searchParams],
   );
 
-  const form = useForm<ClubFilterType>({
+  const filterForm = useForm<ClubFilterType>({
     resolver: zodResolver(ClubFilterSchema),
     defaultValues: {
       clubType: initialValues.clubType,
     },
   });
 
-  const { control } = form;
+  const { control } = filterForm;
 
   const filters = useWatch({
     control,
@@ -72,7 +83,13 @@ const ClubsPage = () => {
 
   const { data: clubsData, isLoading: isLoadingClubs } = useGetClubs(queryParams);
 
-  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents({});
+  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(
+    {},
+    {
+      staleTime: Infinity,
+      gcTime: 1000 * 60 * 30,
+    },
+  );
 
   const clubs = clubsData?.data.clubs || [];
 
@@ -91,6 +108,7 @@ const ClubsPage = () => {
                   mode="create"
                   students={studentsData?.data.students}
                   isLoadingStudents={isLoadingStudents}
+                  form={clubForm}
                 />
               </div>
             </div>
@@ -116,6 +134,7 @@ const ClubsPage = () => {
             open={isEditDialogOpen}
             onOpenChange={setIsEditDialogOpen}
             isLoadingStudents={isLoadingStudents}
+            form={clubForm}
           />
         )}
       </main>

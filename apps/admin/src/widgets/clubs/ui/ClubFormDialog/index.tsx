@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Club, Student } from '@repo/shared/types';
 import {
   Button,
@@ -21,10 +20,10 @@ import {
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Pencil, Plus } from 'lucide-react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { AddClubSchema, AddClubType } from '@/entities/club';
+import { AddClubType } from '@/entities/club';
 import { useCreateClub, useUpdateClub } from '@/widgets/clubs';
 
 interface ClubFormDialogProps {
@@ -35,6 +34,7 @@ interface ClubFormDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   isLoadingStudents?: boolean;
+  form: UseFormReturn<AddClubType>;
 }
 
 const ClubFormDialog = ({
@@ -45,13 +45,37 @@ const ClubFormDialog = ({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
   isLoadingStudents = false,
+  form,
 }: ClubFormDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
 
+  const {
+    control,
+    handleSubmit,
+    register,
+    reset,
+    watch,
+    formState: { errors },
+  } = form;
+
   const queryClient = useQueryClient();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const currentLeaderId = watch('leaderId');
+
+  // 검색 필터링 로직: 현재 선택된 부장은 검색 결과와 상관없이 목록에 유지 (포커스 유실 방지)
+  const filteredStudents = useMemo(() => {
+    if (!searchTerm) return students;
+    return students?.filter(
+      (student) =>
+        (student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+        (student.studentNumber?.toString().includes(searchTerm) ?? false) ||
+        student.id === Number(currentLeaderId),
+    );
+  }, [students, searchTerm, currentLeaderId]);
 
   const { isPending: isCreating, mutate: createClub } = useCreateClub({
     onSuccess: () => {
@@ -78,33 +102,30 @@ const ClubFormDialog = ({
     },
   });
 
-  const {
-    control,
-    handleSubmit,
-    register,
-    reset,
-    formState: { errors },
-  } = useForm<AddClubType>({
-    resolver: zodResolver(AddClubSchema),
-    defaultValues:
-      mode === 'edit' && club
-        ? {
-            name: club.name,
-            type: club.type,
-            leaderId: club.leader.id,
-          }
-        : undefined,
-  });
-
   useEffect(() => {
-    if (mode === 'edit' && club && open) {
-      reset({
-        name: club.name,
-        type: club.type,
-        leaderId: club.leader.id,
-      });
+    if (open) {
+      if (mode === 'edit' && club) {
+        reset({
+          name: club.name,
+          type: club.type,
+          leaderId: club.leader.id,
+        });
+      } else if (mode === 'create') {
+        reset({
+          name: '',
+          type: undefined,
+          leaderId: undefined,
+        });
+      }
     }
   }, [mode, club, open, reset]);
+
+  // 모달이 닫힐 때 검색어 초기화
+  useEffect(() => {
+    if (!open) {
+      setSearchTerm('');
+    }
+  }, [open]);
 
   const onSubmit: SubmitHandler<AddClubType> = (data) => {
     if (mode === 'create') {
@@ -182,14 +203,48 @@ const ClubFormDialog = ({
                     onValueChange={(value) => field.onChange(Number(value))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="부장 선택" />
+                      {field.value ? (
+                        <div className={cn('flex gap-2')}>
+                          {(() => {
+                            const selectedStudent = students?.find(
+                              (s) => s.id === Number(field.value),
+                            );
+                            return selectedStudent
+                              ? `${selectedStudent.studentNumber} ${selectedStudent.name}`
+                              : '부장 선택';
+                          })()}
+                        </div>
+                      ) : (
+                        <SelectValue placeholder="부장 선택" />
+                      )}
                     </SelectTrigger>
                     <SelectContent>
-                      {students?.map((student) => (
-                        <SelectItem key={student.id} value={student.id.toString()}>
-                          {student.studentNumber} {student.name}
-                        </SelectItem>
-                      ))}
+                      <div className={cn('bg-popover sticky top-0 z-10 p-2')}>
+                        <Input
+                          placeholder="이름 또는 학번 검색..."
+                          value={searchTerm}
+                          autoFocus
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === ' ') e.stopPropagation();
+                            e.stopPropagation();
+                          }}
+                          onPointerDown={(e) => e.stopPropagation()}
+                        />
+                      </div>
+                      <div className={cn('max-h-[200px] overflow-y-auto')}>
+                        {filteredStudents && filteredStudents.length > 0 ? (
+                          filteredStudents.map((student) => (
+                            <SelectItem key={student.id} value={student.id.toString()}>
+                              {student.studentNumber} {student.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <div className={cn('text-muted-foreground p-4 text-center text-sm')}>
+                            검색 결과가 없습니다.
+                          </div>
+                        )}
+                      </div>
                     </SelectContent>
                   </Select>
                 )}
