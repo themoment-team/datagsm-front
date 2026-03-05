@@ -25,19 +25,24 @@ const ClubsPage = () => {
   const [editingClub, setEditingClub] = useState<Club | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  // 동아리 추가/수정을 위한 폼 선언
+  // 동아리 추가/수정을 위한 폼 선언 (participants 명칭 사용)
   const clubForm = useForm<AddClubType>({
     resolver: zodResolver(AddClubSchema),
+    defaultValues: {
+      name: '',
+      participants: [],
+    },
   });
 
   const handleEditClub = (club: Club) => {
     setEditingClub(club);
     setIsEditDialogOpen(true);
-    // 수정 시 폼 데이터 초기화
+    // 수정 시 폼 데이터 초기화 (participants)
     clubForm.reset({
       name: club.name,
       type: club.type,
       leaderId: club.leader.id,
+      participants: club.participants.map((p) => p.id),
     });
   };
 
