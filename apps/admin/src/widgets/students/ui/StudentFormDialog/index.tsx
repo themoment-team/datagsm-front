@@ -91,7 +91,7 @@ const StudentFormDialog = ({
     register,
     reset,
     watch,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm<AddStudentType>({
     resolver: zodResolver(AddStudentSchema),
     defaultValues:
@@ -136,37 +136,25 @@ const StudentFormDialog = ({
   const onSubmit: SubmitHandler<AddStudentType> = (data) => {
     if (mode === 'create') {
       createStudent(data);
-    } else if (mode === 'edit' && student) {
-      const isRoleChanged = data.role !== student.role;
-      const isOtherDataChanged =
-        data.name !== student.name ||
-        data.sex !== student.sex ||
-        data.email !== student.email ||
-        data.grade !== student.grade ||
-        data.classNum !== student.classNum ||
-        data.number !== student.number ||
-        data.dormitoryRoomNumber !== student.dormitoryRoom ||
-        data.majorClubId !== (student.majorClub?.id || null) ||
-        data.jobClubId !== (student.jobClub?.id || null) ||
-        data.autonomousClubId !== (student.autonomousClub?.id || null);
+      return;
+    }
 
-      if (isRoleChanged && !isOtherDataChanged) {
+    if (mode === 'edit' && student) {
+      const isRoleChanged = !!dirtyFields.role;
+      const isOtherDataChanged = Object.keys(dirtyFields).some((key) => key !== 'role');
+
+      if (isRoleChanged) {
         updateStatus(
           { studentId: student.id, role: data.role },
           {
             onSuccess: () => {
-              setOpen(false);
-              queryClient.invalidateQueries({ queryKey: ['students'] });
-              toast.success('학생 상태가 수정되었습니다.');
-            },
-          },
-        );
-      } else if (isRoleChanged && isOtherDataChanged) {
-        updateStatus(
-          { studentId: student.id, role: data.role },
-          {
-            onSuccess: () => {
-              updateStudent({ studentId: student.id, data });
+              if (isOtherDataChanged) {
+                updateStudent({ studentId: student.id, data });
+              } else {
+                setOpen(false);
+                queryClient.invalidateQueries({ queryKey: ['students'] });
+                toast.success('학생 상태가 수정되었습니다.');
+              }
             },
           },
         );
