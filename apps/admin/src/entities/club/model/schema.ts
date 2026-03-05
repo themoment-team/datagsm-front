@@ -12,6 +12,7 @@ export const AddClubSchema = z.object({
     message: '동아리 타입을 선택해주세요.',
   }),
   leaderId: z.number({ message: '동아리 부장을 선택해주세요.' }).min(1),
+  participants: z.array(z.number()).min(1, { message: '한 명 이상의 팀원을 선택해주세요.' }),
 });
 
 export type AddClubType = z.infer<typeof AddClubSchema>;
