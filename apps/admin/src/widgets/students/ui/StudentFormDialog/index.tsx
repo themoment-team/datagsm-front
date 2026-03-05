@@ -137,7 +137,31 @@ const StudentFormDialog = ({
     if (mode === 'create') {
       createStudent(data);
     } else if (mode === 'edit' && student) {
-      if (data.role !== student.role) {
+      const isRoleChanged = data.role !== student.role;
+      const isOtherDataChanged =
+        data.name !== student.name ||
+        data.sex !== student.sex ||
+        data.email !== student.email ||
+        data.grade !== student.grade ||
+        data.classNum !== student.classNum ||
+        data.number !== student.number ||
+        data.dormitoryRoomNumber !== student.dormitoryRoom ||
+        data.majorClubId !== (student.majorClub?.id || null) ||
+        data.jobClubId !== (student.jobClub?.id || null) ||
+        data.autonomousClubId !== (student.autonomousClub?.id || null);
+
+      if (isRoleChanged && !isOtherDataChanged) {
+        updateStatus(
+          { studentId: student.id, role: data.role },
+          {
+            onSuccess: () => {
+              setOpen(false);
+              queryClient.invalidateQueries({ queryKey: ['students'] });
+              toast.success('학생 상태가 수정되었습니다.');
+            },
+          },
+        );
+      } else if (isRoleChanged && isOtherDataChanged) {
         updateStatus(
           { studentId: student.id, role: data.role },
           {
@@ -146,7 +170,7 @@ const StudentFormDialog = ({
             },
           },
         );
-      } else {
+      } else if (isOtherDataChanged) {
         updateStudent({ studentId: student.id, data });
       }
     }
@@ -230,60 +254,90 @@ const StudentFormDialog = ({
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="grade">학년</Label>
-              <Controller
-                control={control}
-                name="grade"
-                render={({ field }) => (
-                  <Select
-                    value={field.value ? String(field.value) : undefined}
-                    onValueChange={(val) => field.onChange(Number(val))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="학년 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1학년</SelectItem>
-                      <SelectItem value="2">2학년</SelectItem>
-                      <SelectItem value="3">3학년</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              <FormErrorMessage error={errors.grade} />
+              {isInactive ? (
+                <div
+                  className={cn(
+                    'border-input h-10 w-full cursor-not-allowed rounded-md border bg-gray-100 dark:bg-gray-800',
+                  )}
+                />
+              ) : (
+                <>
+                  <Controller
+                    control={control}
+                    name="grade"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value ? String(field.value) : undefined}
+                        onValueChange={(val) => field.onChange(Number(val))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="학년 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1학년</SelectItem>
+                          <SelectItem value="2">2학년</SelectItem>
+                          <SelectItem value="3">3학년</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <FormErrorMessage error={errors.grade} />
+                </>
+              )}
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="classNum">반</Label>
-              <Controller
-                control={control}
-                name="classNum"
-                render={({ field }) => (
-                  <Select
-                    value={field.value ? String(field.value) : undefined}
-                    onValueChange={(val) => field.onChange(Number(val))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="반 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1반</SelectItem>
-                      <SelectItem value="2">2반</SelectItem>
-                      <SelectItem value="3">3반</SelectItem>
-                      <SelectItem value="4">4반</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              <FormErrorMessage error={errors.classNum} />
+              {isInactive ? (
+                <div
+                  className={cn(
+                    'border-input h-10 w-full cursor-not-allowed rounded-md border bg-gray-100 dark:bg-gray-800',
+                  )}
+                />
+              ) : (
+                <>
+                  <Controller
+                    control={control}
+                    name="classNum"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value ? String(field.value) : undefined}
+                        onValueChange={(val) => field.onChange(Number(val))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="반 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1반</SelectItem>
+                          <SelectItem value="2">2반</SelectItem>
+                          <SelectItem value="3">3반</SelectItem>
+                          <SelectItem value="4">4반</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <FormErrorMessage error={errors.classNum} />
+                </>
+              )}
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="number">번호</Label>
-              <Input
-                id="number"
-                type="number"
-                placeholder="번호 입력"
-                {...register('number', { valueAsNumber: true })}
-              />
-              <FormErrorMessage error={errors.number} />
+              {isInactive ? (
+                <div
+                  className={cn(
+                    'border-input h-10 w-full cursor-not-allowed rounded-md border bg-gray-100 dark:bg-gray-800',
+                  )}
+                />
+              ) : (
+                <>
+                  <Input
+                    id="number"
+                    type="number"
+                    placeholder="번호 입력"
+                    {...register('number', { valueAsNumber: true })}
+                  />
+                  <FormErrorMessage error={errors.number} />
+                </>
+              )}
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="role">구분</Label>
@@ -467,7 +521,11 @@ const StudentFormDialog = ({
             </div>
           </div>
           <div className={cn('flex justify-end')}>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              disabled={isPending}
+              variant={isInactive ? 'destructive' : 'default'}
+            >
               {isPending ? loadingText : submitText}
             </Button>
           </div>
