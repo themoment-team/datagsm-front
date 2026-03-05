@@ -121,23 +121,6 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
           )}
         />
       </div>
-
-      <div className={cn('ml-auto flex items-center gap-2')}>
-        <Controller
-          control={control}
-          name="includeGraduates"
-          render={({ field }) => (
-            <Checkbox
-              id="includeGraduates"
-              checked={field.value}
-              onCheckedChange={field.onChange}
-            />
-          )}
-        />
-        <Label htmlFor="includeGraduates" className={cn('cursor-pointer text-sm')}>
-          졸업생 포함
-        </Label>
-      </div>
     </div>
   );
 };

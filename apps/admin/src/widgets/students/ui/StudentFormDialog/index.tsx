@@ -25,7 +25,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { AddStudentSchema, AddStudentType } from '@/entities/student';
-import { useCreateStudent, useUpdateStudent } from '@/widgets/students';
+import { useCreateStudent, useUpdateStudent, useUpdateStudentStatus } from '@/widgets/students';
 
 interface StudentFormDialogProps {
   clubs?: ClubListData;
@@ -78,11 +78,19 @@ const StudentFormDialog = ({
     },
   });
 
+  const { isPending: isUpdatingStatus, mutate: updateStatus } = useUpdateStudentStatus({
+    onError: (error) => {
+      console.error('학생 상태 수정 실패:', error);
+      toast.error('학생 상태 수정에 실패했습니다.');
+    },
+  });
+
   const {
     control,
     handleSubmit,
     register,
     reset,
+    watch,
     formState: { errors },
   } = useForm<AddStudentType>({
     resolver: zodResolver(AddStudentSchema),
@@ -122,18 +130,47 @@ const StudentFormDialog = ({
     }
   }, [mode, student, open, reset]);
 
+  const currentRole = watch('role');
+  const isInactive = currentRole === 'GRADUATE' || currentRole === 'WITHDRAWN';
+
   const onSubmit: SubmitHandler<AddStudentType> = (data) => {
     if (mode === 'create') {
       createStudent(data);
     } else if (mode === 'edit' && student) {
-      updateStudent({ studentId: student.id, data });
+      if (data.role !== student.role) {
+        updateStatus(
+          { studentId: student.id, role: data.role },
+          {
+            onSuccess: () => {
+              updateStudent({ studentId: student.id, data });
+            },
+          },
+        );
+      } else {
+        updateStudent({ studentId: student.id, data });
+      }
     }
   };
 
-  const isPending = mode === 'create' ? isCreating : isUpdating;
+  const isPending = mode === 'create' ? isCreating : isUpdating || isUpdatingStatus;
   const title = mode === 'create' ? '학생 추가' : '학생 데이터 수정';
-  const submitText = mode === 'create' ? '추가' : '수정';
-  const loadingText = mode === 'create' ? '추가 중...' : '수정 중...';
+
+  const getSubmitText = () => {
+    if (mode === 'create') return '추가';
+    if (currentRole === 'WITHDRAWN') return '자퇴생 처리';
+    if (currentRole === 'GRADUATE') return '졸업생 처리';
+    return '수정';
+  };
+
+  const getLoadingText = () => {
+    if (mode === 'create') return '추가 중...';
+    if (currentRole === 'WITHDRAWN') return '처리 중...';
+    if (currentRole === 'GRADUATE') return '처리 중...';
+    return '수정 중...';
+  };
+
+  const submitText = getSubmitText();
+  const loadingText = getLoadingText();
 
   const defaultTrigger =
     mode === 'create' ? (
@@ -272,121 +309,161 @@ const StudentFormDialog = ({
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="dormitoryRoomNumber">기숙사 호실</Label>
-              <Input
-                id="dormitoryRoomNumber"
-                type="number"
-                placeholder="호실 입력"
-                {...register('dormitoryRoomNumber', { valueAsNumber: true })}
-              />
-              <FormErrorMessage error={errors.dormitoryRoomNumber} />
+              {isInactive ? (
+                <div
+                  className={cn(
+                    'border-input h-10 w-full cursor-not-allowed rounded-md border bg-gray-100 dark:bg-gray-800',
+                  )}
+                />
+              ) : (
+                <>
+                  <Input
+                    id="dormitoryRoomNumber"
+                    type="number"
+                    placeholder="호실 입력"
+                    {...register('dormitoryRoomNumber', { valueAsNumber: true })}
+                  />
+                  <FormErrorMessage error={errors.dormitoryRoomNumber} />
+                </>
+              )}
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="majorClubId">전공 동아리</Label>
-              <Controller
-                control={control}
-                name="majorClubId"
-                render={({ field }) => (
-                  <Select
-                    value={
-                      field.value === null && mode === 'edit'
-                        ? 'none'
-                        : field.value
-                          ? String(field.value)
-                          : undefined
-                    }
-                    onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="전공 동아리 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none" className={cn('text-gray-500')}>
-                        선택 안 함
-                      </SelectItem>
-                      {clubs?.clubs
-                        .filter((club) => club.type === 'MAJOR_CLUB')
-                        .map((club) => (
-                          <SelectItem key={club.id} value={String(club.id)}>
-                            {club.name}
+              {isInactive ? (
+                <div
+                  className={cn(
+                    'border-input h-10 w-full cursor-not-allowed rounded-md border bg-gray-100 dark:bg-gray-800',
+                  )}
+                />
+              ) : (
+                <>
+                  <Controller
+                    control={control}
+                    name="majorClubId"
+                    render={({ field }) => (
+                      <Select
+                        value={
+                          field.value === null && mode === 'edit'
+                            ? 'none'
+                            : field.value
+                              ? String(field.value)
+                              : undefined
+                        }
+                        onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="전공 동아리 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none" className={cn('text-gray-500')}>
+                            선택 안 함
                           </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              <FormErrorMessage error={errors.majorClubId} />
+                          {clubs?.clubs
+                            .filter((club) => club.type === 'MAJOR_CLUB')
+                            .map((club) => (
+                              <SelectItem key={club.id} value={String(club.id)}>
+                                {club.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <FormErrorMessage error={errors.majorClubId} />
+                </>
+              )}
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="jobClubId">취업 동아리</Label>
-              <Controller
-                control={control}
-                name="jobClubId"
-                render={({ field }) => (
-                  <Select
-                    value={
-                      field.value === null && mode === 'edit'
-                        ? 'none'
-                        : field.value
-                          ? String(field.value)
-                          : undefined
-                    }
-                    onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="취업 동아리 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none" className={cn('text-gray-500')}>
-                        선택 안 함
-                      </SelectItem>
-                      {clubs?.clubs
-                        .filter((club) => club.type === 'JOB_CLUB')
-                        .map((club) => (
-                          <SelectItem key={club.id} value={String(club.id)}>
-                            {club.name}
+              {isInactive ? (
+                <div
+                  className={cn(
+                    'border-input h-10 w-full cursor-not-allowed rounded-md border bg-gray-100 dark:bg-gray-800',
+                  )}
+                />
+              ) : (
+                <>
+                  <Controller
+                    control={control}
+                    name="jobClubId"
+                    render={({ field }) => (
+                      <Select
+                        value={
+                          field.value === null && mode === 'edit'
+                            ? 'none'
+                            : field.value
+                              ? String(field.value)
+                              : undefined
+                        }
+                        onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="취업 동아리 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none" className={cn('text-gray-500')}>
+                            선택 안 함
                           </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              <FormErrorMessage error={errors.jobClubId} />
+                          {clubs?.clubs
+                            .filter((club) => club.type === 'JOB_CLUB')
+                            .map((club) => (
+                              <SelectItem key={club.id} value={String(club.id)}>
+                                {club.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <FormErrorMessage error={errors.jobClubId} />
+                </>
+              )}
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="autonomousClubId">자율 동아리</Label>
-              <Controller
-                control={control}
-                name="autonomousClubId"
-                render={({ field }) => (
-                  <Select
-                    value={
-                      field.value === null && mode === 'edit'
-                        ? 'none'
-                        : field.value
-                          ? String(field.value)
-                          : undefined
-                    }
-                    onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="자율 동아리 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none" className={cn('text-gray-500')}>
-                        선택 안 함
-                      </SelectItem>
-                      {clubs?.clubs
-                        .filter((club) => club.type === 'AUTONOMOUS_CLUB')
-                        .map((club) => (
-                          <SelectItem key={club.id} value={String(club.id)}>
-                            {club.name}
+              {isInactive ? (
+                <div
+                  className={cn(
+                    'border-input h-10 w-full cursor-not-allowed rounded-md border bg-gray-100 dark:bg-gray-800',
+                  )}
+                />
+              ) : (
+                <>
+                  <Controller
+                    control={control}
+                    name="autonomousClubId"
+                    render={({ field }) => (
+                      <Select
+                        value={
+                          field.value === null && mode === 'edit'
+                            ? 'none'
+                            : field.value
+                              ? String(field.value)
+                              : undefined
+                        }
+                        onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="자율 동아리 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none" className={cn('text-gray-500')}>
+                            선택 안 함
                           </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              <FormErrorMessage error={errors.autonomousClubId} />
+                          {clubs?.clubs
+                            .filter((club) => club.type === 'AUTONOMOUS_CLUB')
+                            .map((club) => (
+                              <SelectItem key={club.id} value={String(club.id)}>
+                                {club.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <FormErrorMessage error={errors.autonomousClubId} />
+                </>
+              )}
             </div>
           </div>
           <div className={cn('flex justify-end')}>
