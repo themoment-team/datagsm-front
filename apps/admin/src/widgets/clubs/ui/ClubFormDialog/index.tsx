@@ -177,7 +177,7 @@ const ClubFormDialog = ({
               <FormErrorMessage error={errors.name} />
             </div>
             <div className={cn('space-y-2')}>
-              <Label htmlFor="type">동아리 타입</Label>
+              <Label htmlFor="type">동아리 종류</Label>
               <Controller
                 control={control}
                 name="type"
