@@ -39,21 +39,37 @@ GET /v1/students
 | `role`             | `StudentRole`   | 선택    | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`, `WITHDRAWN`)          | `GENERAL_STUDENT`   |
 | `dormitoryRoom`    | `Int`           | 선택    | 기숙사 호실                                                                                              | `301`               |
 | `includeGraduates` | `Boolean`       | 선택    | 졸업생 포함 여부 (기본값: false)                                                                              | `false`             |
+| `includeWithdrawn` | `Boolean`       | 선택    | 자퇴생 포함 여부 (기본값: false)                                                                              | `false`             |
+| `onlyEnrolled`     | `Boolean`       | 선택    | 재학생만 조회 여부 — `true`이면 졸업생·자퇴생 모두 제외 (기본값: false)                                                    | `false`             |
 | `page`             | `Int`           | 선택    | 페이지 번호 (기본값: 0)                                                                                     | `0`                 |
 | `size`             | `Int`           | 선택    | 페이지 크기 (기본값: 300)                                                                                   | `300`               |
 | `sortBy`           | `StudentSortBy` | 선택    | 정렬 기준 (ID, NAME, EMAIL, STUDENT_NUMBER, GRADE, CLASS_NUM, NUMBER, MAJOR, ROLE, SEX, DORMITORY_ROOM) | `STUDENT_NUMBER`    |
 | `sortDirection`    | `SortDirection` | 선택    | 정렬 방향 (ASC, DESC) (기본값: ASC)                                                                        | `ASC`               |
 
+### 파라미터 우선순위
+
+재학 상태 필터 파라미터 간에는 다음과 같은 우선순위가 적용됩니다.
+
+`onlyEnrolled` > `includeGraduates` > `includeWithdrawn`
+
+- **`onlyEnrolled = true`** — 가장 높은 우선순위. `includeGraduates`·`includeWithdrawn` 값에
+  무관하게 **재학생만** 반환됩니다.
+- **`includeGraduates`** — `onlyEnrolled`가 `false`일 때 유효. `false`이면 졸업생을 제외합니다.
+- **`includeWithdrawn`** — `onlyEnrolled`가 `false`일 때 유효. `false`이면 자퇴생을 제외합니다.
+
+> 기본값(`includeGraduates=false`, `includeWithdrawn=false`, `onlyEnrolled=false`)으로 호출하면
+> 졸업생·자퇴생이 모두 제외된 재학생 목록이 반환됩니다.
+
 ### 응답 형식
 
 모든 성공 응답은 다음과 같은 구조로 반환됩니다.
 
-| 필드        | 타입       | 설명           | 예시    |
-|-----------|----------|--------------|-------|
-| `status`  | `String` | HTTP 상태 메시지  | `OK`  |
-| `code`    | `Int`    | HTTP 상태 코드   | `200` |
-| `message` | `String` | 응답 메시지       | `OK`  |
-| `data`    | `Object` | 학생 데이터 목록 | -     |
+| 필드        | 타입       | 설명          | 예시    |
+|-----------|----------|-------------|-------|
+| `status`  | `String` | HTTP 상태 메시지 | `OK`  |
+| `code`    | `Int`    | HTTP 상태 코드  | `200` |
+| `message` | `String` | 응답 메시지      | `OK`  |
+| `data`    | `Object` | 학생 데이터 목록   | -     |
 
 #### data 객체
 
@@ -158,7 +174,7 @@ curl -X GET "https://api.datagsm.com/v1/students?sortBy=NAME&sortDirection=DESC&
 | 상태 코드                   | 설명                  |
 |-------------------------|---------------------|
 | `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
-| `403 Forbidden`         | 권한 범위 부족               |
+| `403 Forbidden`         | 권한 범위 부족            |
 | `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
 | `400 Bad Request`       | 잘못된 요청 파라미터         |
 
