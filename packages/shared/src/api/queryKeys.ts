@@ -1,4 +1,4 @@
-import { UserRoleType } from '../types';
+import { UserRoleType } from '../types/userRole';
 
 export const studentQueryKeys = {
   putStudentById: () => ['students', 'update'] as const,
@@ -35,7 +35,8 @@ export const authQueryKeys = {
 export const projectQueryKeys = {
   putProjectById: () => ['projects', 'update'] as const,
   deleteProjectById: () => ['projects', 'delete'] as const,
-  getProjects: (page?: number, size?: number) => ['projects', 'list', { page, size }] as const,
+  getProjects: (params: { page?: number; size?: number; projectName?: string; clubId?: number }) =>
+    ['projects', 'list', params] as const,
   postProject: () => ['projects', 'create'] as const,
 } as const;
 
