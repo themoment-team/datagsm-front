@@ -220,36 +220,36 @@ val student = client.students().getStudent(1L)`} />
   <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.model.EnrollmentFilter;
 
 // 재학생만 조회
-StudentApi.StudentRequest request = new StudentApi.StudentRequest()
+StudentApi.StudentRequest onlyEnrolledRequest = new StudentApi.StudentRequest()
     .enrollmentFilter(EnrollmentFilter.onlyEnrolled());
 
 // 졸업생 포함 조회
-StudentApi.StudentRequest request = new StudentApi.StudentRequest()
+StudentApi.StudentRequest includeGraduatesRequest = new StudentApi.StudentRequest()
     .enrollmentFilter(EnrollmentFilter.detailed().includeGraduates(true));
 
 // 자퇴생 포함 조회
-StudentApi.StudentRequest request = new StudentApi.StudentRequest()
+StudentApi.StudentRequest includeWithdrawnRequest = new StudentApi.StudentRequest()
     .enrollmentFilter(EnrollmentFilter.detailed().includeWithdrawn(true));
 
 // 서버 기본값 사용 (파라미터 미전송)
-StudentApi.StudentRequest request = new StudentApi.StudentRequest();`} />
+StudentApi.StudentRequest defaultRequest = new StudentApi.StudentRequest();`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.model.EnrollmentFilter
 
 // 재학생만 조회
-val request = StudentApi.StudentRequest()
+val onlyEnrolledRequest = StudentApi.StudentRequest()
     .enrollmentFilter(EnrollmentFilter.onlyEnrolled())
 
 // 졸업생 포함 조회
-val request = StudentApi.StudentRequest()
+val includeGraduatesRequest = StudentApi.StudentRequest()
     .enrollmentFilter(EnrollmentFilter.detailed().includeGraduates(true))
 
 // 자퇴생 포함 조회
-val request = StudentApi.StudentRequest()
+val includeWithdrawnRequest = StudentApi.StudentRequest()
     .enrollmentFilter(EnrollmentFilter.detailed().includeWithdrawn(true))
 
 // 서버 기본값 사용 (파라미터 미전송)
-val request = StudentApi.StudentRequest()`} />
+val defaultRequest = StudentApi.StudentRequest()`} />
 
 </CodeTabs>
 
