@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Project } from '@repo/shared/types';
+import { Club, Project } from '@repo/shared/types';
 import {
   Button,
   Dialog,
@@ -11,17 +11,23 @@ import {
   FormErrorMessage,
   Input,
   Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Textarea,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { Pencil, Plus } from 'lucide-react';
-import { SubmitHandler, UseFormReturn } from 'react-hook-form';
+import { Controller, SubmitHandler, UseFormReturn } from 'react-hook-form';
 
 import { AddProjectType } from '@/entities/project';
 
 interface ProjectFormDialogProps {
   mode: 'create' | 'edit';
   project?: Project;
+  clubs: Club[];
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -31,6 +37,7 @@ interface ProjectFormDialogProps {
 const ProjectFormDialog = ({
   mode,
   project,
+  clubs,
   trigger,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
@@ -45,6 +52,7 @@ const ProjectFormDialog = ({
     handleSubmit,
     register,
     reset,
+    control,
     formState: { errors },
   } = form;
 
@@ -54,11 +62,13 @@ const ProjectFormDialog = ({
         reset({
           name: project.name,
           description: project.description,
+          clubId: project.club?.id.toString() || '',
         });
       } else if (mode === 'create') {
         reset({
           name: '',
           description: '',
+          clubId: '',
         });
       }
     }
@@ -114,6 +124,28 @@ const ProjectFormDialog = ({
                 {...register('description')}
               />
               <FormErrorMessage error={errors.description} />
+            </div>
+            <div className={cn('space-y-2')}>
+              <Label htmlFor="clubId">동아리</Label>
+              <Controller
+                control={control}
+                name="clubId"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="동아리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {clubs.map((club) => (
+                        <SelectItem key={club.id} value={club.id.toString()}>
+                          {club.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FormErrorMessage error={errors.clubId} />
             </div>
           </div>
           <div className={cn('flex justify-end pt-2')}>
