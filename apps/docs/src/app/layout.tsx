@@ -5,10 +5,16 @@ import '@/shared/styles/globals.css';
 import { DocsSidebar } from '@/widgets/docs';
 
 export const metadata: Metadata = {
-  title: 'DataGSM Docs',
+  title: {
+    template: 'DataGSM Docs | %s',
+    default: 'DataGSM Docs',
+  },
   description: '광주소프트웨어마이스터고등학교 DataGSM 기술 문서',
   openGraph: {
-    title: 'DataGSM Docs',
+    title: {
+      template: 'DataGSM Docs | %s',
+      default: 'DataGSM Docs',
+    },
     description: '광주소프트웨어마이스터고등학교 DataGSM 기술 문서',
     url: 'https://datagsm-front-client.vercel.app/',
     siteName: 'DataGSM',
