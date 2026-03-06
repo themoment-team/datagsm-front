@@ -1,3 +1,4 @@
+import { Club } from '@repo/shared/types';
 import {
   Input,
   Label,
@@ -11,7 +12,6 @@ import { cn } from '@repo/shared/utils';
 import { Search } from 'lucide-react';
 import { Control, Controller, UseFormRegister } from 'react-hook-form';
 
-import { Club } from '@repo/shared/types';
 import { ProjectFilterType } from '@/entities/project';
 
 interface ProjectFilterProps {
@@ -26,9 +26,7 @@ const ProjectFilter = ({ register, control, clubs }: ProjectFilterProps) => {
       <div className={cn('flex items-center gap-2')}>
         <div className={cn('relative flex-1')}>
           <Search
-            className={cn(
-              'text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2',
-            )}
+            className={cn('text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2')}
           />
           <Input
             placeholder="프로젝트 이름으로 검색"
@@ -40,7 +38,7 @@ const ProjectFilter = ({ register, control, clubs }: ProjectFilterProps) => {
 
       <div className={cn('flex flex-wrap items-center gap-4')}>
         <div className={cn('flex items-center gap-2')}>
-          <Label className={cn('text-sm shrink-0')}>동아리:</Label>
+          <Label className={cn('shrink-0 text-sm')}>동아리:</Label>
           <Controller
             control={control}
             name="clubId"

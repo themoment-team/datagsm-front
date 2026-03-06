@@ -161,7 +161,7 @@ const ProjectFormDialog = ({
       }}
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
-      <DialogContent className={cn('max-w-2xl overflow-y-auto max-h-[90vh]')}>
+      <DialogContent className={cn('max-h-[90vh] max-w-2xl overflow-y-auto')}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
@@ -198,7 +198,7 @@ const ProjectFormDialog = ({
               />
               <FormErrorMessage error={errors.clubId} />
             </div>
-            <div className={cn('space-y-2 col-span-2')}>
+            <div className={cn('col-span-2 space-y-2')}>
               <Label htmlFor="description">설명</Label>
               <Textarea
                 id="description"
@@ -209,7 +209,7 @@ const ProjectFormDialog = ({
               <FormErrorMessage error={errors.description} />
             </div>
 
-            <div className={cn('space-y-2 col-span-2')}>
+            <div className={cn('col-span-2 space-y-2')}>
               <Label>팀원 추가</Label>
               <Controller
                 control={control}
@@ -243,7 +243,9 @@ const ProjectFormDialog = ({
                       <div className={cn('max-h-[200px] overflow-y-auto')}>
                         {filteredStudents && filteredStudents.length > 0 ? (
                           filteredStudents
-                            .filter((s) => Array.isArray(field.value) && !field.value.includes(s.id))
+                            .filter(
+                              (s) => Array.isArray(field.value) && !field.value.includes(s.id),
+                            )
                             .map((student) => (
                               <SelectItem key={student.id} value={student.id.toString()}>
                                 {student.studentNumber} {student.name}
