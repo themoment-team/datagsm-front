@@ -1,4 +1,6 @@
-import { ClubType, StudentRole, StudentSex, UserRoleType } from '@repo/shared/types';
+import { ClubType, StudentRole, StudentSex } from '@repo/shared/types';
+
+import { UserRoleType } from '../types/userRole';
 
 export const studentUrl = {
   putStudentById: (studentId: number) => `/v1/students/${studentId}`,
@@ -19,7 +21,8 @@ export const studentUrl = {
     if (classNum !== undefined) params.append('classNum', classNum.toString());
     if (sex !== undefined) params.append('sex', sex);
     if (role !== undefined) params.append('role', role);
-    if (includeGraduates !== undefined) params.append('includeGraduates', includeGraduates.toString());
+    if (includeGraduates !== undefined)
+      params.append('includeGraduates', includeGraduates.toString());
 
     return `/v1/students?${params.toString()}`;
   },
@@ -54,13 +57,20 @@ export const authUrl = {
 export const projectUrl = {
   putProjectById: (projectId: number) => `/v1/projects/${projectId}`,
   deleteProjectById: (projectId: number) => `/v1/projects/${projectId}`,
-  getProjects: (page?: number, size?: number) => {
-    const params = new URLSearchParams();
+  getProjects: (params: {
+    page?: number;
+    size?: number;
+    projectName?: string;
+    clubId?: number;
+  }) => {
+    const urlParams = new URLSearchParams();
 
-    if (page !== undefined) params.append('page', page.toString());
-    if (size !== undefined) params.append('size', size.toString());
+    if (params.page !== undefined) urlParams.append('page', params.page.toString());
+    if (params.size !== undefined) urlParams.append('size', params.size.toString());
+    if (params.projectName) urlParams.append('projectName', params.projectName);
+    if (params.clubId !== undefined) urlParams.append('clubId', params.clubId.toString());
 
-    const queryString = params.toString();
+    const queryString = urlParams.toString();
     return queryString ? `/v1/projects?${queryString}` : '/v1/projects';
   },
   postProject: () => '/v1/projects',
