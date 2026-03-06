@@ -32,7 +32,7 @@
 
 <CodeTabs>
   <CodeTab label="Gradle (Kotlin DSL)" language="kotlin" code={`dependencies {
-    implementation("com.github.themoment-team:datagsm-openapi-sdk-java:1.1.1")
+    implementation("com.github.themoment-team:datagsm-openapi-sdk-java:1.2.0")
 }
 
 repositories {
@@ -40,7 +40,7 @@ repositories {
 }`} />
 
   <CodeTab label="Gradle (Groovy)" language="groovy" code={`dependencies {
-    implementation 'com.github.themoment-team:datagsm-openapi-sdk-java:1.1.1'
+    implementation 'com.github.themoment-team:datagsm-openapi-sdk-java:1.2.0'
 }
 
 repositories {
@@ -58,7 +58,7 @@ repositories {
     <dependency>
         <groupId>com.github.themoment-team</groupId>
         <artifactId>datagsm-openapi-sdk-java</artifactId>
-        <version>1.1.1</version>
+        <version>1.2.0</version>
     </dependency>
 </dependencies>`} />
 </CodeTabs>
@@ -203,6 +203,53 @@ val students = client.students().getStudents(request)
 
 // 특정 학생 조회
 val student = client.students().getStudent(1L)`} />
+
+</CodeTabs>
+
+#### 재학 상태 필터링 (`EnrollmentFilter`)
+
+`StudentRequest`의 재학 상태 필터링은 `EnrollmentFilter` Type-State DSL을 통해 구성합니다. 우선순위를 위반하는 파라미터 조합(예: `onlyEnrolled=true` + `includeGraduates=true`)은 타입 시스템에 의해 **컴파일 타임에 방지**됩니다.
+
+| 생성 방법                           | 설명                                          |
+|-----------------------------------|---------------------------------------------|
+| `EnrollmentFilter.onlyEnrolled()` | 재학생만 조회. `includeGraduates` / `includeWithdrawn` 사용 불가 |
+| `EnrollmentFilter.detailed()`     | 졸업생·자퇴생 포함 여부를 세밀하게 설정                      |
+| _(필터 미설정)_                      | 서버 기본값 사용                                   |
+
+<CodeTabs>
+  <CodeTab label="Java" language="java" code={`import team.themoment.datagsm.sdk.openapi.model.EnrollmentFilter;
+
+// 재학생만 조회
+StudentApi.StudentRequest request = new StudentApi.StudentRequest()
+    .enrollmentFilter(EnrollmentFilter.onlyEnrolled());
+
+// 졸업생 포함 조회
+StudentApi.StudentRequest request = new StudentApi.StudentRequest()
+    .enrollmentFilter(EnrollmentFilter.detailed().includeGraduates(true));
+
+// 자퇴생 포함 조회
+StudentApi.StudentRequest request = new StudentApi.StudentRequest()
+    .enrollmentFilter(EnrollmentFilter.detailed().includeWithdrawn(true));
+
+// 서버 기본값 사용 (파라미터 미전송)
+StudentApi.StudentRequest request = new StudentApi.StudentRequest();`} />
+
+  <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.model.EnrollmentFilter
+
+// 재학생만 조회
+val request = StudentApi.StudentRequest()
+    .enrollmentFilter(EnrollmentFilter.onlyEnrolled())
+
+// 졸업생 포함 조회
+val request = StudentApi.StudentRequest()
+    .enrollmentFilter(EnrollmentFilter.detailed().includeGraduates(true))
+
+// 자퇴생 포함 조회
+val request = StudentApi.StudentRequest()
+    .enrollmentFilter(EnrollmentFilter.detailed().includeWithdrawn(true))
+
+// 서버 기본값 사용 (파라미터 미전송)
+val request = StudentApi.StudentRequest()`} />
 
 </CodeTabs>
 
