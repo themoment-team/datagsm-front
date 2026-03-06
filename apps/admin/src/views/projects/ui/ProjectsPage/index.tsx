@@ -135,7 +135,7 @@ const ProjectsPage = () => {
           <CardHeader>
             <div className={cn('flex items-center justify-between')}>
               <CardTitle className={cn('text-2xl')}>프로젝트 관리</CardTitle>
-              <ProjectFormDialog mode="create" form={projectForm} />
+              <ProjectFormDialog mode="create" form={projectForm} clubs={clubs} />
             </div>
 
             <ProjectFilter register={register} control={control} clubs={clubs} />
@@ -163,6 +163,7 @@ const ProjectsPage = () => {
             open={isEditDialogOpen}
             onOpenChange={setIsEditDialogOpen}
             form={projectForm}
+            clubs={clubs}
           />
         )}
       </main>
