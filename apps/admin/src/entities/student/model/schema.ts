@@ -7,6 +7,8 @@ export const StudentFilterSchema = z.object({
   role: z.string().optional(),
   status: z.string().optional(),
   includeGraduates: z.boolean().optional(),
+  includeWithdrawn: z.boolean().optional(),
+  onlyEnrolled: z.boolean().optional(),
 });
 
 export type StudentFilterType = z.infer<typeof StudentFilterSchema>;

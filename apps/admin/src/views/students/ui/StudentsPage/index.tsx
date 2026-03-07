@@ -41,8 +41,10 @@ const StudentsPage = () => {
       classNum: searchParams.get('classNum') || 'all',
       sex: searchParams.get('sex') || 'all',
       role: searchParams.get('role') || 'all',
-      status: searchParams.get('status') || 'all',
+      status: searchParams.get('status') || 'ENROLLED',
       includeGraduates: searchParams.get('includeGraduates') === 'true',
+      includeWithdrawn: searchParams.get('includeWithdrawn') === 'true',
+      onlyEnrolled: searchParams.get('onlyEnrolled') === 'true' || !searchParams.has('status'),
       page: Number(searchParams.get('page')) || 0,
     }),
     [searchParams],
@@ -57,6 +59,8 @@ const StudentsPage = () => {
       role: initialValues.role,
       status: initialValues.status,
       includeGraduates: initialValues.includeGraduates,
+      includeWithdrawn: initialValues.includeWithdrawn,
+      onlyEnrolled: initialValues.onlyEnrolled,
     },
   });
 
@@ -75,7 +79,9 @@ const StudentsPage = () => {
       filters.sex !== initialValues.sex ||
       filters.role !== initialValues.role ||
       filters.status !== initialValues.status ||
-      filters.includeGraduates !== initialValues.includeGraduates;
+      filters.includeGraduates !== initialValues.includeGraduates ||
+      filters.includeWithdrawn !== initialValues.includeWithdrawn ||
+      filters.onlyEnrolled !== initialValues.onlyEnrolled;
 
     if (hasChanged) {
       updateURL(filters, 0);
@@ -87,12 +93,16 @@ const StudentsPage = () => {
     filters.role,
     filters.status,
     filters.includeGraduates,
+    filters.includeWithdrawn,
+    filters.onlyEnrolled,
     initialValues.grade,
     initialValues.classNum,
     initialValues.sex,
     initialValues.role,
     initialValues.status,
     initialValues.includeGraduates,
+    initialValues.includeWithdrawn,
+    initialValues.onlyEnrolled,
     updateURL,
     filters,
   ]);
@@ -115,7 +125,9 @@ const StudentsPage = () => {
           : filters.role !== 'all'
             ? (filters.role as StudentRole)
             : undefined,
-    includeGraduates: filters.includeGraduates,
+    includeGraduates: filters.status === 'GRADUATE',
+    includeWithdrawn: filters.status === 'WITHDRAWN',
+    onlyEnrolled: filters.status === 'ENROLLED',
   };
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(queryParams);

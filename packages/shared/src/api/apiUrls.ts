@@ -12,6 +12,8 @@ export const studentUrl = {
     sex?: StudentSex,
     role?: StudentRole,
     includeGraduates?: boolean,
+    includeWithdrawn?: boolean,
+    onlyEnrolled?: boolean,
   ) => {
     const params = new URLSearchParams();
 
@@ -23,6 +25,9 @@ export const studentUrl = {
     if (role !== undefined) params.append('role', role);
     if (includeGraduates !== undefined)
       params.append('includeGraduates', includeGraduates.toString());
+    if (includeWithdrawn !== undefined)
+      params.append('includeWithdrawn', includeWithdrawn.toString());
+    if (onlyEnrolled !== undefined) params.append('onlyEnrolled', onlyEnrolled.toString());
 
     return `/v1/students?${params.toString()}`;
   },
