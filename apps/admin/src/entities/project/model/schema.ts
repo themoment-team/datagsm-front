@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const ProjectFilterSchema = z.object({
-  searchTerm: z.string().optional(),
+  projectName: z.string().optional(),
   clubId: z.number().optional(),
 });
 

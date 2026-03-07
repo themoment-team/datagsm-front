@@ -33,7 +33,7 @@ const ProjectFilter = ({ register, control, clubs }: ProjectFilterProps) => {
           <Input
             placeholder="프로젝트 이름으로 검색"
             className={cn('pl-9')}
-            {...register('searchTerm')}
+            {...register('projectName')}
           />
         </div>
       </div>

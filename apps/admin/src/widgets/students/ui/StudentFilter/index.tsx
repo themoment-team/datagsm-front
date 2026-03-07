@@ -1,5 +1,4 @@
 import {
-  Checkbox,
   Label,
   Select,
   SelectContent,

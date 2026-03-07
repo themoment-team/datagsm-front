@@ -112,14 +112,14 @@ const ClubFormDialog = ({
           name: club.name,
           type: club.type,
           leaderId: club.leader.id,
-          participants: club.participants.map((p) => p.id),
+          participantIds: club.participants.map((p) => p.id),
         });
       } else if (mode === 'create') {
         reset({
           name: '',
           type: undefined,
           leaderId: undefined,
-          participants: [],
+          participantIds: [],
         });
       }
     }
@@ -208,11 +208,11 @@ const ClubFormDialog = ({
                       const id = Number(value);
                       field.onChange(id);
 
-                      const participants = getValues('participants') || [];
-                      if (participants.includes(id)) {
+                      const participantIds = getValues('participantIds') || [];
+                      if (participantIds.includes(id)) {
                         setValue(
-                          'participants',
-                          participants.filter((pId) => pId !== id),
+                          'participantIds',
+                          participantIds.filter((pId) => pId !== id),
                         );
                       }
                     }}
@@ -271,7 +271,7 @@ const ClubFormDialog = ({
               <Label>팀원 추가</Label>
               <Controller
                 control={control}
-                name="participants"
+                name="participantIds"
                 render={({ field }) => (
                   <Select
                     value=""
@@ -323,7 +323,7 @@ const ClubFormDialog = ({
                 )}
               />
               <FormErrorMessage
-                error={!Array.isArray(errors.participants) ? errors.participants : undefined}
+                error={!Array.isArray(errors.participantIds) ? errors.participantIds : undefined}
               />
             </div>
           </div>
@@ -332,7 +332,7 @@ const ClubFormDialog = ({
             <Label className={cn('text-foreground text-base font-bold')}>팀원</Label>
             <Controller
               control={control}
-              name="participants"
+              name="participantIds"
               render={({ field }) => {
                 const selectedIds = Array.isArray(field.value) ? field.value : [];
                 const selectedStudents = students?.filter((s) => selectedIds.includes(s.id)) || [];

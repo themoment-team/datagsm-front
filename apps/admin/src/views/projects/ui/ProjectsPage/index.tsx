@@ -52,7 +52,7 @@ const ProjectsPage = () => {
 
   const initialValues = useMemo(
     (): ProjectFilterType & { page: number } => ({
-      searchTerm: searchParams.get('projectName') || '',
+      projectName: searchParams.get('projectName') || '',
       clubId: searchParams.get('clubId') ? Number(searchParams.get('clubId')) : undefined,
       page: Number(searchParams.get('page')) || 0,
     }),
@@ -62,7 +62,7 @@ const ProjectsPage = () => {
   const filterForm = useForm<ProjectFilterType>({
     resolver: zodResolver(ProjectFilterSchema),
     defaultValues: {
-      searchTerm: initialValues.searchTerm,
+      projectName: initialValues.projectName,
       clubId: initialValues.clubId,
     },
   });
@@ -78,13 +78,14 @@ const ProjectsPage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       const hasChanged =
-        filters.searchTerm !== initialValues.searchTerm || filters.clubId !== initialValues.clubId;
+        filters.projectName !== initialValues.projectName ||
+        filters.clubId !== initialValues.clubId;
 
       if (hasChanged) {
         updateURL(
           {
-            projectName: filters.searchTerm,
-            clubId: filters.clubId?.toString(),
+            projectName: filters.projectName,
+            clubId: filters.clubId,
           },
           0,
         );
@@ -97,9 +98,9 @@ const ProjectsPage = () => {
   const handlePageChange = (page: number) => {
     updateURL(
       {
-        projectName: filters.searchTerm,
-        clubId: filters.clubId?.toString(),
-      } as any,
+        projectName: filters.projectName,
+        clubId: filters.clubId,
+      },
       page,
     );
   };
@@ -107,7 +108,7 @@ const ProjectsPage = () => {
   const queryParams = {
     page: currentPage,
     size: PAGE_SIZE,
-    projectName: filters.searchTerm || undefined,
+    projectName: filters.projectName || undefined,
     clubId: filters.clubId,
   };
 
