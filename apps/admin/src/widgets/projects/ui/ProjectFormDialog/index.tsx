@@ -101,10 +101,14 @@ const ProjectFormDialog = ({
   }, [mode, project, open, reset]);
 
   const onSubmit: SubmitHandler<AddProjectType> = (data) => {
+    const formattedData = {
+      ...data,
+      clubId: data.clubId === 0 ? undefined : data.clubId,
+    };
     if (mode === 'create') {
-      createProject(data);
+      createProject(formattedData);
     } else if (mode === 'edit' && project) {
-      updateProject({ projectId: project.id, data });
+      updateProject({ projectId: project.id, data: formattedData });
     }
   };
 
