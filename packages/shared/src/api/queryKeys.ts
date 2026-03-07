@@ -10,7 +10,14 @@ export const studentQueryKeys = {
     sex?: string,
     role?: string,
     includeGraduates?: boolean,
-  ) => ['students', 'list', { page, size, grade, classNum, sex, role, includeGraduates }] as const,
+    includeWithdrawn?: boolean,
+    onlyEnrolled?: boolean,
+  ) =>
+    [
+      'students',
+      'list',
+      { page, size, grade, classNum, sex, role, includeGraduates, includeWithdrawn, onlyEnrolled },
+    ] as const,
   postStudent: () => ['students', 'create'] as const,
   patchStudentStatus: () => ['students', 'status', 'update'] as const,
   postStudentBatchOperation: () => ['students', 'batch-operations'] as const,
