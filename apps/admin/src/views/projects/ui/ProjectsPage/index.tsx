@@ -7,26 +7,21 @@ import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useURLFilters } from '@repo/shared/hooks';
 import { Project } from '@repo/shared/types';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CommonPagination,
-} from '@repo/shared/ui';
+import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import {
   AddProjectSchema,
+  AddProjectType,
   ProjectFilterSchema,
   ProjectFilterType,
 } from '@/entities/project';
-import { ProjectFilter, ProjectFormDialog, ProjectList } from '@/widgets/projects';
-import { useQueryClient } from '@tanstack/react-query';
-
 import { useGetClubs } from '@/views/clubs';
+import { ProjectFilter, ProjectFormDialog, ProjectList } from '@/widgets/projects';
+
 import { useDeleteProject, useGetProjects } from '../../model';
 
 const PAGE_SIZE = 20;
@@ -58,7 +53,7 @@ const ProjectsPage = () => {
   const initialValues = useMemo(
     (): ProjectFilterType & { page: number } => ({
       searchTerm: searchParams.get('projectName') || '',
-      clubId: searchParams.get('clubId') || 'all',
+      clubId: searchParams.get('clubId') ? Number(searchParams.get('clubId')) : undefined,
       page: Number(searchParams.get('page')) || 0,
     }),
     [searchParams],
@@ -83,15 +78,14 @@ const ProjectsPage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       const hasChanged =
-        filters.searchTerm !== initialValues.searchTerm ||
-        filters.clubId !== initialValues.clubId;
+        filters.searchTerm !== initialValues.searchTerm || filters.clubId !== initialValues.clubId;
 
       if (hasChanged) {
         updateURL(
           {
             projectName: filters.searchTerm,
-            clubId: filters.clubId,
-          } as any,
+            clubId: filters.clubId?.toString(),
+          },
           0,
         );
       }
@@ -104,7 +98,7 @@ const ProjectsPage = () => {
     updateURL(
       {
         projectName: filters.searchTerm,
-        clubId: filters.clubId,
+        clubId: filters.clubId?.toString(),
       } as any,
       page,
     );
@@ -114,7 +108,7 @@ const ProjectsPage = () => {
     page: currentPage,
     size: PAGE_SIZE,
     projectName: filters.searchTerm || undefined,
-    clubId: filters.clubId !== 'all' ? Number(filters.clubId) : undefined,
+    clubId: filters.clubId,
   };
 
   const { data: projectsData, isLoading: isLoadingProjects } = useGetProjects(queryParams);
@@ -124,7 +118,7 @@ const ProjectsPage = () => {
   const totalPages = projectsData?.data.totalPages || 0;
   const clubs = clubsData?.data.clubs || [];
 
-  const projectForm = useForm({
+  const projectForm = useForm<AddProjectType>({
     resolver: zodResolver(AddProjectSchema),
   });
 

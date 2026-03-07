@@ -19,10 +19,13 @@ import {
   Textarea,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Pencil, Plus } from 'lucide-react';
 import { Controller, SubmitHandler, UseFormReturn } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { AddProjectType } from '@/entities/project';
+import { useCreateProject, useUpdateProject } from '@/views/projects/model';
 
 interface ProjectFormDialogProps {
   mode: 'create' | 'edit';
@@ -43,6 +46,7 @@ const ProjectFormDialog = ({
   onOpenChange: controlledOnOpenChange,
   form,
 }: ProjectFormDialogProps) => {
+  const queryClient = useQueryClient();
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -56,28 +60,52 @@ const ProjectFormDialog = ({
     formState: { errors },
   } = form;
 
+  const { mutate: createProject } = useCreateProject({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      toast.success('프로젝트가 등록되었습니다.');
+      setOpen(false);
+    },
+    onError: () => {
+      toast.error('프로젝트 등록에 실패했습니다.');
+    },
+  });
+
+  const { mutate: updateProject } = useUpdateProject({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      toast.success('프로젝트 데이터가 수정되었습니다.');
+      setOpen(false);
+    },
+    onError: () => {
+      toast.error('프로젝트 데이터 수정에 실패했습니다.');
+    },
+  });
+
   useEffect(() => {
     if (open) {
       if (mode === 'edit' && project) {
         reset({
           name: project.name,
           description: project.description,
-          clubId: project.club?.id.toString() || '',
+          clubId: project.club?.id || 0,
         });
       } else if (mode === 'create') {
         reset({
           name: '',
           description: '',
-          clubId: '',
+          clubId: 0,
         });
       }
     }
   }, [mode, project, open, reset]);
 
   const onSubmit: SubmitHandler<AddProjectType> = (data) => {
-    console.log('Project Form Data:', data);
-    // API 연동 전까지 콘솔 로그로 대체
-    setOpen(false);
+    if (mode === 'create') {
+      createProject(data);
+    } else if (mode === 'edit' && project) {
+      updateProject({ projectId: project.id, data });
+    }
   };
 
   const title = mode === 'create' ? '프로젝트 추가' : '프로젝트 데이터 수정';
@@ -131,13 +159,16 @@ const ProjectFormDialog = ({
                 control={control}
                 name="clubId"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value ? String(field.value) : undefined}
+                    onValueChange={(val) => field.onChange(Number(val))}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="동아리 선택" />
                     </SelectTrigger>
                     <SelectContent>
                       {clubs.map((club) => (
-                        <SelectItem key={club.id} value={club.id.toString()}>
+                        <SelectItem key={club.id} value={String(club.id)}>
                           {club.name}
                         </SelectItem>
                       ))}
