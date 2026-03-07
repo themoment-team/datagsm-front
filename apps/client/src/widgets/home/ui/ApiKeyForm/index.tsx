@@ -5,7 +5,16 @@ import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authQueryKeys } from '@repo/shared/api';
 import { UserRoleType } from '@repo/shared/types';
-import { Button, Card, Checkbox, FormErrorMessage, Input } from '@repo/shared/ui';
+import {
+  Button,
+  Card,
+  Checkbox,
+  FormErrorMessage,
+  Input,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -56,9 +65,8 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
 
   const { isPending: isUpdatingApiKey, mutate: updateApiKey } = useUpdateApiKey({
     onSuccess: (data) => {
-      // 마스킹되지 않은 갱신된 키를 캐시에 즉시 설정
+      // 기본 성공 처리 (필요시)
       queryClient.setQueryData(authQueryKeys.getApiKey(), data);
-      toast.success('API Key가 갱신되었습니다.');
     },
     onError: () => {
       toast.error('API Key 갱신에 실패했습니다. 다시 시도해주세요.');
@@ -67,9 +75,8 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
 
   const { isPending: isRotatingApiKey, mutate: rotateApiKey } = useRotateApiKey({
     onSuccess: (data) => {
-      // 마스킹되지 않은 갱신된 키를 캐시에 즉시 설정
+      // 기본 성공 처리 (필요시)
       queryClient.setQueryData(authQueryKeys.getApiKey(), data);
-      toast.success('API Key가 갱신되었습니다.');
     },
     onError: () => {
       toast.error('API Key 갱신에 실패했습니다. 다시 시도해주세요.');
@@ -91,6 +98,18 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     },
   });
 
+  const watchedScopes = watch('scopes');
+  const watchedDescription = watch('description');
+
+  const isScopesEqual =
+    apiKeyData?.data?.scopes &&
+    apiKeyData.data.scopes.length === watchedScopes.length &&
+    apiKeyData.data.scopes.every((s) => watchedScopes.includes(s));
+
+  const isDescriptionEqual = apiKeyData?.data?.description === watchedDescription;
+
+  const isApiKeyDataEqual = !!apiKeyData?.data?.apiKey && isScopesEqual && isDescriptionEqual;
+
   useEffect(() => {
     if (apiKeyData?.data) {
       reset({
@@ -108,6 +127,12 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
         ? 'API 키 갱신하기'
         : 'API 키 생성하기';
 
+  const buttonTooptipText = !apiKeyData?.data?.apiKey
+    ? '새로운 API 키를 발급합니다.'
+    : isApiKeyDataEqual
+      ? '기존 API 키를 폐기하고 권한 범위와 설명이 같은 새로운 키를 발급합니다.'
+      : 'API 키의 권한 범위 및 설명을 수정한 새로운 키를 발급합니다.';
+
   const { handleScopeToggle, isScopeChecked, getIndentation } = useScopeSelection({
     availableScopes: availableKeyScope,
     watch,
@@ -116,24 +141,27 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
   });
 
   const onSubmit = (data: ApiKeyFormType) => {
-    const { scopes, description } = data;
-
     if (!apiKeyData?.data?.apiKey) {
       createApiKey(data);
       return;
     }
 
-    const isScopesSame =
-      apiKeyData.data.scopes.length === scopes.length &&
-      apiKeyData.data.scopes.every((s) => scopes.includes(s));
-    const isDescriptionSame = apiKeyData.data.description === description;
-
-    if (isScopesSame && isDescriptionSame) {
-      rotateApiKey(data);
+    if (isApiKeyDataEqual) {
+      rotateApiKey(data, {
+        onSuccess: (res) => {
+          queryClient.setQueryData(authQueryKeys.getApiKey(), res);
+          toast.success('갱신에 성공하였습니다.');
+        },
+      });
       return;
     }
 
-    updateApiKey(data);
+    updateApiKey(data, {
+      onSuccess: (res) => {
+        queryClient.setQueryData(authQueryKeys.getApiKey(), res);
+        toast.success('갱신에 성공하였습니다.');
+      },
+    });
   };
 
   if (isLoadingApiKey || isLoadingKeyScope) {
@@ -197,13 +225,47 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
           />
           <Input placeholder="설명을 작성해주세요." {...register('description')} />
           <FormErrorMessage error={errors.description} />
-          <Button
-            disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
-            size="lg"
-            type="submit"
-          >
-            {buttonText}
-          </Button>
+          <div className={cn('flex flex-col gap-2')}>
+            <Tooltip className="w-full">
+              <TooltipTrigger asChild>
+                <Button
+                  className="w-full"
+                  disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
+                  size="lg"
+                  type="submit"
+                >
+                  {buttonText}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{buttonTooptipText}</TooltipContent>
+            </Tooltip>
+          </div>
+          {isApiKeyDataEqual && (
+            <div className={cn('flex flex-col gap-2')}>
+              <Tooltip className="w-full">
+                <TooltipTrigger asChild>
+                  <Button
+                    className="w-full"
+                    disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
+                    size="lg"
+                    type="button"
+                    variant="outline"
+                    onClick={handleSubmit((data) =>
+                      updateApiKey(data, {
+                        onSuccess: (res) => {
+                          queryClient.setQueryData(authQueryKeys.getApiKey(), res);
+                          toast.success('연장에 성공하였습니다.');
+                        },
+                      }),
+                    )}
+                  >
+                    기한 연장하기
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>API 키의 만료 기한을 연장합니다.</TooltipContent>
+              </Tooltip>
+            </div>
+          )}
         </div>
       </form>
     </Card>
