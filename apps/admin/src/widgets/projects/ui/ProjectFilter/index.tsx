@@ -45,14 +45,17 @@ const ProjectFilter = ({ register, control, clubs }: ProjectFilterProps) => {
             control={control}
             name="clubId"
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                value={field.value ? String(field.value) : 'all'}
+                onValueChange={(val) => field.onChange(val === 'all' ? undefined : Number(val))}
+              >
                 <SelectTrigger className={cn('w-40')}>
                   <SelectValue placeholder="전체" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">전체</SelectItem>
                   {clubs.map((club) => (
-                    <SelectItem key={club.id} value={club.id.toString()}>
+                    <SelectItem key={club.id} value={String(club.id)}>
                       {club.name}
                     </SelectItem>
                   ))}
