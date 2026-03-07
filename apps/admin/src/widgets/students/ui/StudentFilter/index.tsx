@@ -112,7 +112,6 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
                 <SelectItem value="ENROLLED">재학</SelectItem>
                 <SelectItem value="GRADUATE">졸업</SelectItem>
                 <SelectItem value="WITHDRAWN">자퇴</SelectItem>
