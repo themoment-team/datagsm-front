@@ -31,8 +31,15 @@ export const authQueryKeys = {
   postApiKey: () => ['auth', 'api-keys', 'my', 'create'] as const,
   postRotateApiKey: () => ['auth', 'api-keys', 'my', 'rotate'] as const,
   deleteApiKey: () => ['auth', 'api-keys', 'my', 'delete'] as const,
-  getApiKeys: (page?: number, size?: number, accountEmail?: string) =>
-    ['auth', 'api-keys', 'list', { page, size, accountEmail }] as const,
+  getApiKeys: (params: {
+    page?: number;
+    size?: number;
+    id?: number;
+    accountId?: number;
+    scope?: string;
+    isExpired?: boolean;
+    isRenewable?: boolean;
+  }) => ['auth', 'api-keys', 'list', params] as const,
   getApiScope: (scopeName: string) => ['auth', 'api-keys', 'scopes', scopeName] as const,
   getAvailableScope: (userRole: UserRoleType) =>
     ['auth', 'api-keys', 'available-scopes', userRole] as const,

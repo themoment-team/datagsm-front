@@ -72,3 +72,21 @@ export interface RefreshTokenRequest {
 }
 
 export type RefreshTokenResponse = ApiResponse<OAuthTokenResponseData>;
+
+export interface ApiKey {
+  id: number;
+  apiKey: string;
+  expiresAt: string;
+  expiresInDays: number;
+  scopes: string[];
+  description: string;
+}
+
+export interface ApiKeyListData {
+  totalPages: number;
+  totalElements: number;
+  apiKeys: ApiKey[];
+}
+
+export type ApiKeyListResponse = ApiResponse<ApiKeyListData>;
+
