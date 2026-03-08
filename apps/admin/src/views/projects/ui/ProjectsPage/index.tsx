@@ -20,6 +20,7 @@ import {
   ProjectFilterType,
 } from '@/entities/project';
 import { useGetClubs } from '@/views/clubs';
+import { useGetStudents } from '@/views/students';
 import { ProjectFilter, ProjectFormDialog, ProjectList } from '@/widgets/projects';
 
 import { useDeleteProject, useGetProjects } from '../../model';
@@ -114,6 +115,13 @@ const ProjectsPage = () => {
 
   const { data: projectsData, isLoading: isLoadingProjects } = useGetProjects(queryParams);
   const { data: clubsData } = useGetClubs({ size: 100 });
+  const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(
+    {},
+    {
+      staleTime: Infinity,
+      gcTime: 1000 * 60 * 30,
+    },
+  );
 
   const projectList = projectsData?.data.projects || [];
   const totalPages = projectsData?.data.totalPages || 0;
@@ -130,7 +138,13 @@ const ProjectsPage = () => {
           <CardHeader>
             <div className={cn('flex items-center justify-between')}>
               <CardTitle className={cn('text-2xl')}>프로젝트 관리</CardTitle>
-              <ProjectFormDialog mode="create" form={projectForm} clubs={clubs} />
+              <ProjectFormDialog
+                mode="create"
+                form={projectForm}
+                clubs={clubs}
+                students={studentsData?.data.students}
+                isLoadingStudents={isLoadingStudents}
+              />
             </div>
 
             <ProjectFilter register={register} control={control} clubs={clubs} />
@@ -159,6 +173,8 @@ const ProjectsPage = () => {
             onOpenChange={setIsEditDialogOpen}
             form={projectForm}
             clubs={clubs}
+            students={studentsData?.data.students}
+            isLoadingStudents={isLoadingStudents}
           />
         )}
       </main>

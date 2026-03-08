@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { Club, Project } from '@repo/shared/types';
+import { Club, Project, Student } from '@repo/shared/types';
 import {
+  Badge,
   Button,
   Dialog,
   DialogContent,
@@ -20,7 +21,7 @@ import {
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { Pencil, Plus } from 'lucide-react';
+import { Pencil, Plus, X } from 'lucide-react';
 import { Controller, SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -31,9 +32,11 @@ interface ProjectFormDialogProps {
   mode: 'create' | 'edit';
   project?: Project;
   clubs: Club[];
+  students?: Student[];
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  isLoadingStudents?: boolean;
   form: UseFormReturn<AddProjectType>;
 }
 
@@ -41,9 +44,11 @@ const ProjectFormDialog = ({
   mode,
   project,
   clubs,
+  students,
   trigger,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
+  isLoadingStudents = false,
   form,
 }: ProjectFormDialogProps) => {
   const queryClient = useQueryClient();
@@ -59,6 +64,17 @@ const ProjectFormDialog = ({
     control,
     formState: { errors },
   } = form;
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredStudents = useMemo(() => {
+    if (!searchTerm) return students;
+    return students?.filter(
+      (student) =>
+        (student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+        (student.studentNumber?.toString().includes(searchTerm) ?? false),
+    );
+  }, [students, searchTerm]);
 
   const { mutate: createProject } = useCreateProject({
     onSuccess: () => {
@@ -89,22 +105,31 @@ const ProjectFormDialog = ({
           name: project.name,
           description: project.description,
           clubId: project.club?.id || 0,
+          participantIds: project.participants.map((p) => p.id),
         });
       } else if (mode === 'create') {
         reset({
           name: '',
           description: '',
           clubId: 0,
+          participantIds: [],
         });
       }
     }
   }, [mode, project, open, reset]);
 
+  useEffect(() => {
+    if (!open) {
+      setSearchTerm('');
+    }
+  }, [open]);
+
   const onSubmit: SubmitHandler<AddProjectType> = (data) => {
     const formattedData = {
       ...data,
-      clubId: data.clubId === 0 ? undefined : data.clubId,
+      clubId: data.clubId === 0 ? null : data.clubId,
     };
+
     if (mode === 'create') {
       createProject(formattedData);
     } else if (mode === 'edit' && project) {
@@ -117,12 +142,12 @@ const ProjectFormDialog = ({
 
   const defaultTrigger =
     mode === 'create' ? (
-      <Button size="sm" className={cn('gap-2')}>
+      <Button size="sm" className={cn('gap-2')} disabled={isLoadingStudents}>
         <Plus className={cn('h-4 w-4')} />
         프로젝트 추가
       </Button>
     ) : (
-      <Button variant="ghost" size="icon">
+      <Button variant="ghost" size="icon" disabled={isLoadingStudents}>
         <Pencil className={cn('h-4 w-4')} />
       </Button>
     );
@@ -136,26 +161,16 @@ const ProjectFormDialog = ({
       }}
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
-      <DialogContent className={cn('max-w-md')}>
+      <DialogContent className={cn('max-w-2xl overflow-y-auto max-h-[90vh]')}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-4')}>
-          <div className={cn('space-y-4 py-4')}>
+        <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-6')}>
+          <div className={cn('grid grid-cols-2 gap-4 pt-4')}>
             <div className={cn('space-y-2')}>
               <Label htmlFor="name">프로젝트명</Label>
               <Input id="name" placeholder="프로젝트명 입력" {...register('name')} />
               <FormErrorMessage error={errors.name} />
-            </div>
-            <div className={cn('space-y-2')}>
-              <Label htmlFor="description">설명</Label>
-              <Textarea
-                id="description"
-                placeholder="프로젝트 설명 입력"
-                className={cn('min-h-[100px] resize-none')}
-                {...register('description')}
-              />
-              <FormErrorMessage error={errors.description} />
             </div>
             <div className={cn('space-y-2')}>
               <Label htmlFor="clubId">동아리</Label>
@@ -164,13 +179,14 @@ const ProjectFormDialog = ({
                 name="clubId"
                 render={({ field }) => (
                   <Select
-                    value={field.value ? String(field.value) : undefined}
-                    onValueChange={(val) => field.onChange(Number(val))}
+                    value={field.value ? String(field.value) : 'none'}
+                    onValueChange={(val) => field.onChange(val === 'none' ? 0 : Number(val))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="동아리 선택" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="none">선택 안 함</SelectItem>
                       {clubs.map((club) => (
                         <SelectItem key={club.id} value={String(club.id)}>
                           {club.name}
@@ -182,7 +198,150 @@ const ProjectFormDialog = ({
               />
               <FormErrorMessage error={errors.clubId} />
             </div>
+            <div className={cn('space-y-2 col-span-2')}>
+              <Label htmlFor="description">설명</Label>
+              <Textarea
+                id="description"
+                placeholder="프로젝트 설명 입력"
+                className={cn('min-h-[100px] resize-none')}
+                {...register('description')}
+              />
+              <FormErrorMessage error={errors.description} />
+            </div>
+
+            <div className={cn('space-y-2 col-span-2')}>
+              <Label>팀원 추가</Label>
+              <Controller
+                control={control}
+                name="participantIds"
+                render={({ field }) => (
+                  <Select
+                    value=""
+                    onValueChange={(value) => {
+                      const id = Number(value);
+                      if (Array.isArray(field.value) && !field.value.includes(id)) {
+                        field.onChange([...field.value, id]);
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="팀원 추가" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <div className={cn('bg-popover sticky top-0 z-10 p-2')}>
+                        <Input
+                          placeholder="이름 또는 학번 검색..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === ' ') e.stopPropagation();
+                            e.stopPropagation();
+                          }}
+                          onPointerDown={(e) => e.stopPropagation()}
+                        />
+                      </div>
+                      <div className={cn('max-h-[200px] overflow-y-auto')}>
+                        {filteredStudents && filteredStudents.length > 0 ? (
+                          filteredStudents
+                            .filter((s) => Array.isArray(field.value) && !field.value.includes(s.id))
+                            .map((student) => (
+                              <SelectItem key={student.id} value={student.id.toString()}>
+                                {student.studentNumber} {student.name}
+                              </SelectItem>
+                            ))
+                        ) : (
+                          <div className={cn('text-muted-foreground p-4 text-center text-sm')}>
+                            검색 결과가 없습니다.
+                          </div>
+                        )}
+                      </div>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FormErrorMessage
+                error={Array.isArray(errors.participantIds) ? undefined : errors.participantIds}
+              />
+            </div>
           </div>
+
+          <div className={cn('bg-muted/30 flex flex-col gap-6 rounded-xl')}>
+            <Label className={cn('text-foreground text-base font-bold')}>팀원</Label>
+            <Controller
+              control={control}
+              name="participantIds"
+              render={({ field }) => {
+                const selectedIds = Array.isArray(field.value) ? field.value : [];
+                const selectedStudents = students?.filter((s) => selectedIds.includes(s.id)) || [];
+
+                const grades = [1, 2, 3];
+
+                return (
+                  <div className={cn('grid grid-cols-3 gap-8')}>
+                    {grades.map((grade) => (
+                      <div key={grade} className={cn('flex flex-col gap-4')}>
+                        <div
+                          className={cn(
+                            'text-foreground border-primary/20 flex items-center gap-2 border-b-2 pb-2 text-sm font-bold',
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              'bg-primary flex h-6 w-6 items-center justify-center rounded-full text-[12px] text-white',
+                            )}
+                          >
+                            {grade}
+                          </span>
+                          {grade}학년
+                        </div>
+                        <div
+                          className={cn(
+                            '[&::-webkit-scrollbar-thumb]:bg-border flex max-h-[300px] flex-col gap-2.5 overflow-y-auto overflow-x-hidden pr-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-1',
+                          )}
+                        >
+                          {selectedStudents
+                            .filter((s) => s.grade === grade)
+                            .map((student) => (
+                              <Badge
+                                key={student.id}
+                                variant="secondary"
+                                className={cn(
+                                  'hover:bg-secondary/80 flex w-full cursor-pointer items-center justify-between gap-2 px-3 py-2 transition-colors',
+                                )}
+                                onClick={() =>
+                                  field.onChange(
+                                    field.value.filter((id: number) => id !== student.id),
+                                  )
+                                }
+                              >
+                                <span className={cn('text-xs font-medium')}>
+                                  {student.studentNumber} {student.name}
+                                </span>
+                                <X
+                                  className={cn(
+                                    'text-muted-foreground hover:text-destructive h-4 w-4 shrink-0 transition-colors',
+                                  )}
+                                />
+                              </Badge>
+                            ))}
+                          {selectedStudents.filter((s) => s.grade === grade).length === 0 && (
+                            <div
+                              className={cn(
+                                'text-muted-foreground/40 py-4 text-center text-xs italic',
+                              )}
+                            >
+                              등록된 팀원 없음
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              }}
+            />
+          </div>
+
           <div className={cn('flex justify-end pt-2')}>
             <Button type="submit">{submitText}</Button>
           </div>
