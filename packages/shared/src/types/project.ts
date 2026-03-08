@@ -1,10 +1,11 @@
-import { ApiResponse, Club } from '@repo/shared/types';
+import { ApiResponse, Club, ClubMember } from '@repo/shared/types';
 
 export interface Project {
   id: number;
   name: string;
   description: string;
   club: Club;
+  participants: ClubMember[];
 }
 
 export interface ProjectListData {
