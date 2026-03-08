@@ -44,14 +44,27 @@ export const authUrl = {
   postApiKey: () => '/v1/auth/api-keys/my',
   postRotateApiKey: () => '/v1/auth/api-keys/my/rotations',
   deleteApiKey: () => '/v1/auth/api-keys/my',
-  getApiKeys: (page?: number, size?: number, accountEmail?: string) => {
-    const params = new URLSearchParams();
+  getApiKeys: (params: {
+    page?: number;
+    size?: number;
+    id?: number;
+    accountId?: number;
+    scope?: string;
+    isExpired?: boolean;
+    isRenewable?: boolean;
+  }) => {
+    const urlParams = new URLSearchParams();
 
-    if (page !== undefined) params.append('page', page.toString());
-    if (size !== undefined) params.append('size', size.toString());
-    if (accountEmail !== undefined) params.append('accountEmail', accountEmail);
+    if (params.page !== undefined) urlParams.append('page', params.page.toString());
+    if (params.size !== undefined) urlParams.append('size', params.size.toString());
+    if (params.id !== undefined) urlParams.append('id', params.id.toString());
+    if (params.accountId !== undefined) urlParams.append('accountId', params.accountId.toString());
+    if (params.scope) urlParams.append('scope', params.scope);
+    if (params.isExpired !== undefined) urlParams.append('isExpired', params.isExpired.toString());
+    if (params.isRenewable !== undefined)
+      urlParams.append('isRenewable', params.isRenewable.toString());
 
-    const queryString = params.toString();
+    const queryString = urlParams.toString();
     return queryString ? `/v1/auth/api-keys?${queryString}` : '/v1/auth/api-keys';
   },
   getApiScope: (scopeName: string) => `/v1/auth/api-keys/scopes/${scopeName}`,
