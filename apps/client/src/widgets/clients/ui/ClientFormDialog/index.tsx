@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useScopeSelection } from '@repo/shared/hooks';
 import {
   Button,
   Checkbox,
@@ -22,7 +23,6 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Client, ClientFormSchema, ClientFormType, CreateClientData } from '@/entities/clients';
-import { useScopeSelection } from '@/shared/hooks';
 import { useCreateClient, useGetAvailableScopes, useUpdateClient } from '@/widgets/clients';
 
 interface ClientFormDialogProps {
