@@ -22,6 +22,7 @@ export const authQueryKeys = {
   getApiKey: () => ['auth', 'api-keys', 'my', 'get'] as const,
   putApiKey: () => ['auth', 'api-keys', 'my', 'update'] as const,
   postApiKey: () => ['auth', 'api-keys', 'my', 'create'] as const,
+  postRotateApiKey: () => ['auth', 'api-keys', 'my', 'rotate'] as const,
   deleteApiKey: () => ['auth', 'api-keys', 'my', 'delete'] as const,
   getApiKeys: (page?: number, size?: number, accountEmail?: string) =>
     ['auth', 'api-keys', 'list', { page, size, accountEmail }] as const,
