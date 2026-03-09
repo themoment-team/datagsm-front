@@ -64,26 +64,26 @@ GET /v1/clubs
 
 각 동아리 객체는 다음 필드를 포함합니다.
 
-| 필드             | 타입                         | 설명                                                   | 예시           |
-|----------------|----------------------------|------------------------------------------------------|--------------|
-| `id`           | `Long`                     | 동아리 ID                                               | `1`          |
-| `name`         | `String`                   | 동아리 이름                                               | `SW개발동아리`    |
-| `type`         | `ClubType`                 | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
-| `leader`       | `ParticipantInfoDto`       | 동아리 부장 데이터                                            | -            |
-| `participants` | `List<ParticipantInfoDto>` | 동아리 부원 목록                                            | -            |
+| 필드             | 타입                           | 설명                                                   | 예시           |
+|----------------|------------------------------|------------------------------------------------------|--------------|
+| `id`           | `Long`                       | 동아리 ID                                               | `1`          |
+| `name`         | `String`                     | 동아리 이름                                               | `SW개발동아리`    |
+| `type`         | `ClubType`                   | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
+| `leader`       | `ParticipantInfoDto \| null` | 동아리 부장 데이터. 부장이 없는 경우 `null`                         | -            |
+| `participants` | `List<ParticipantInfoDto>`   | 동아리 부원 목록                                            | -            |
 
 ### 부원 데이터 객체 (ParticipantInfoDto)
 
 동아리 응답에 포함된 부장 및 부원 데이터는 다음 필드를 포함합니다.
 
-| 필드              | 타입       | 설명                                       | 예시                 |
-|-----------------|----------|------------------------------------------|--------------------|
-| `id`            | `Long`   | 학생 ID                                    | `1`                |
-| `name`          | `String` | 학생 이름                                    | `홍길동`              |
-| `email`         | `String` | 학생 이메일                                   | `s24080@gsm.hs.kr` |
-| `studentNumber` | `Int`    | 학번                                       | `1201`             |
-| `major`         | `Major`  | 학과 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`) | `SW_DEVELOPMENT`   |
-| `sex`           | `Sex`    | 성별 (`MAN`, `WOMAN`)                      | `MAN`              |
+| 필드              | 타입              | 설명                                                            | 예시                 |
+|-----------------|-----------------|---------------------------------------------------------------|--------------------|
+| `id`            | `Long`          | 학생 ID                                                         | `1`                |
+| `name`          | `String`        | 학생 이름                                                         | `홍길동`              |
+| `email`         | `String`        | 학생 이메일                                                        | `s24080@gsm.hs.kr` |
+| `studentNumber` | `Int \| null`   | 학번 (졸업/자퇴 등의 경우 null)                                         | `1201`             |
+| `major`         | `Major \| null` | 학과 (졸업/자퇴 등의 경우 null, 값: `SW_DEVELOPMENT`, `SMART_IOT`, `AI`) | `SW_DEVELOPMENT`   |
+| `sex`           | `Sex`           | 성별 (`MAN`, `WOMAN`)                                           | `MAN`              |
 
 ### 요청 예시
 
@@ -139,12 +139,37 @@ curl -X GET "https://api.datagsm.com/v1/clubs?sortBy=NAME&sortDirection=ASC&page
 }
 ```
 
+#### 부장이 없는 동아리 응답 예시
+
+동아리 부장이 자퇴 또는 졸업 처리된 경우 `leader` 필드는 `null`로 반환됩니다.
+
+```json
+{
+  "status": "OK",
+  "code": 200,
+  "message": "OK",
+  "data": {
+    "totalPages": 1,
+    "totalElements": 1,
+    "clubs": [
+      {
+        "id": 1,
+        "name": "SW개발동아리",
+        "type": "MAJOR_CLUB",
+        "leader": null,
+        "participants": []
+      }
+    ]
+  }
+}
+```
+
 ### 오류 응답
 
 | 상태 코드                   | 설명                  |
 |-------------------------|---------------------|
 | `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
-| `403 Forbidden`         | 권한 범위 부족               |
+| `403 Forbidden`         | 권한 범위 부족            |
 | `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
 | `400 Bad Request`       | 잘못된 요청 파라미터         |
 
