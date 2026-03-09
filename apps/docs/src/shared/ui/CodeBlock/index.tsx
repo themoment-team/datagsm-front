@@ -1,5 +1,6 @@
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
+import groovy from 'react-syntax-highlighter/dist/esm/languages/prism/groovy';
 import http from 'react-syntax-highlighter/dist/esm/languages/prism/http';
 import java from 'react-syntax-highlighter/dist/esm/languages/prism/java';
 import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
@@ -25,6 +26,7 @@ SyntaxHighlighter.registerLanguage('powershell', powershell);
 SyntaxHighlighter.registerLanguage('python', python);
 SyntaxHighlighter.registerLanguage('typescript', typescript);
 SyntaxHighlighter.registerLanguage('yaml', yaml);
+SyntaxHighlighter.registerLanguage('groovy', groovy);
 
 interface CodeBlockProps {
   language: string;
