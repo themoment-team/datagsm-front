@@ -2,24 +2,10 @@ import { useMemo } from 'react';
 
 import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
-export interface ScopeItem {
-  scope: string;
-  description?: string;
-}
-
-export interface ScopeCategory {
-  title: string;
-  scopes: ScopeItem[];
-}
-
-export interface ScopeSelectionData {
-  data?: {
-    list: ScopeCategory[];
-  };
-}
+import { AvailableScopeListResponse } from '../types';
 
 interface UseScopeSelectionParams<T extends FieldValues> {
-  availableScopes?: ScopeSelectionData;
+  availableScopes?: AvailableScopeListResponse;
   watch: UseFormWatch<T>;
   setValue: UseFormSetValue<T>;
   fieldName: Path<T>;

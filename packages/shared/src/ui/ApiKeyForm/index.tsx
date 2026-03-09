@@ -4,7 +4,21 @@ import { useEffect } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authQueryKeys } from '@repo/shared/api';
-import { UserRoleType } from '@repo/shared/types';
+import {
+  useCreateApiKey,
+  useGetApiKey,
+  useGetAvailableScope,
+  useRotateApiKey,
+  useScopeSelection,
+  useUpdateApiKey,
+} from '@repo/shared/hooks';
+import {
+  ApiKeyFormSchema,
+  ApiKeyFormType,
+  ApiKeyResponse,
+  AvailableScopeListResponse,
+  UserRoleType,
+} from '@repo/shared/types';
 import {
   Button,
   Card,
@@ -19,21 +33,6 @@ import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-
-import {
-  ApiKeyFormSchema,
-  ApiKeyFormType,
-  ApiKeyResponse,
-  AvailableScopeListResponse,
-} from '@/entities/home';
-import { useScopeSelection } from '@/shared/hooks';
-import {
-  useCreateApiKey,
-  useGetApiKey,
-  useGetAvailableScope,
-  useRotateApiKey,
-  useUpdateApiKey,
-} from '@/widgets/home';
 
 interface ApiKeyFormProps {
   initialApiKeyData?: ApiKeyResponse;

@@ -1,13 +1,10 @@
 'use client';
 
-import { useCopyToClipboard } from '@repo/shared/hooks';
+import { useCopyToClipboard, useGetApiKey } from '@repo/shared/hooks';
+import { ApiKeyResponse } from '@repo/shared/types';
 import { Button, Card, Tooltip, TooltipContent, TooltipTrigger } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { Check, Copy } from 'lucide-react';
-
-import { ApiKeyResponse } from '@/entities/home';
-
-import { useGetApiKey } from '@/widgets/home';
 
 interface ApiKeyDisplayProps {
   initialApiKeyData?: ApiKeyResponse;
