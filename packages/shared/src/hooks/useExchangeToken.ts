@@ -1,7 +1,9 @@
+﻿'use client';
+
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { post, oauthQueryKeys, oauthUrl } from '../api';
+import { oauthQueryKeys, oauthUrl, post } from '../api';
 import { OAuthTokenResponse } from '../types';
 
 interface ExchangeTokenInput {

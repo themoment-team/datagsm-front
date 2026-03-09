@@ -1,3 +1,4 @@
+﻿'use client';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
@@ -23,3 +24,4 @@ export const useRefreshToken = (
       }),
     ...options,
   });
+
