@@ -1,0 +1,227 @@
+import { Download } from 'lucide-react'
+
+export const metadata = { title: 'DataGSM Docs | Login Button Design' }
+
+export const LoginButton = ({ type = 'default', variant = 'white' }) => {
+  const isWhite = variant === 'white';
+  const isBlack = variant === 'black';
+  const isGray = variant === 'gray';
+  
+  const styles = {
+    height: type === 'icon' ? '70px' : '40px',
+    width: type === 'icon' ? '70px' : 'auto',
+    padding: type === 'icon' ? '0' : '0 12px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: type === 'icon' ? '50%' : '1 px',
+    cursor: 'pointer',
+    fontWeight: '500',
+    fontSize: '14px',
+    fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif",
+    transition: 'all 0.2s ease-in-out',
+    border: isGray ? '1px solid #E5E5E5' : 'none',
+    backgroundColor: isWhite ? '#FFFFFF' : isBlack ? '#000000' : '#EFEFEF',
+    color: isWhite ? '#000000' : isBlack ? '#FFFFFF' : '#000000',
+  };
+
+  const logoSrc = (isWhite || isGray) ? '/images/docs/DG_black.png' : '/images/docs/DG_white.png';
+
+  return (
+    <div style={styles} className="hover:opacity-90 active:scale-[0.98] shadow-sm">
+      <img src={logoSrc} alt="logo" style={{ height: '16px'}} />
+      {type === 'default' && <span style={{ marginLeft: '16px', fontSize: '16px' }}>DataGSM으로 로그인</span>}
+    </div>
+  );
+};
+
+export const ButtonGrid = ({ type }) => (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+    <div className="flex flex-col gap-3 text-center">
+      <div className="bg-[#000000] h-32 rounded-xl flex items-center justify-center border border-white/10">
+        <LoginButton type={type} variant="white"  />
+      </div>
+      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">On Black BG</span>
+    </div>
+    <div className="flex flex-col gap-3 text-center">
+      <div className="bg-[#FFFFFF] h-32 rounded-xl flex items-center justify-center border border-gray-100 shadow-inner">
+        <LoginButton type={type} variant="black" />
+      </div>
+      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">On White BG</span>
+    </div>
+    <div className="flex flex-col gap-3 text-center">
+      <div className="bg-[#FFFFFF] h-32 rounded-xl flex items-center justify-center border border-gray-100 shadow-inner">
+        <LoginButton type={type} variant="gray" />
+      </div>
+      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">On White BG (Gray)</span>
+    </div>
+  </div>
+);
+
+# Login Button Design Guidelines
+
+이 문서는 DataGSM의 로그인 버튼의 디자인에 대해 서술합니다. 로그인 버튼은 상황에 맞게 변형하여 사용하되 아이콘과 텍스트는 변경하지 않습니다. 아이콘과 텍스트 사이의 간격은 content에 기반합니다. hover 상태에 대해 권장 양식이 있습니다. 
+
+<br />
+이 디자인 문서는 figma를 기준으로 작성되었습니다.
+
+<br />
+
+## 로고 다운로드
+
+DataGSM 로그인 버튼에서 사용하는 로고 아이콘 자산입니다. 환경에 맞춰 적절한 형식을 선택하여 사용하세요.
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+  {[
+    { name: 'DG_white.svg', format: 'SVG (Vector)', path: '/images/docs/DG_white.svg', bgColor: 'bg-gray-800' },
+    { name: 'DG_black.svg', format: 'SVG (Vector)', path: '/images/docs/DG_black.svg', bgColor: 'bg-gray-100' },
+    { name: 'DG_white.png', format: 'PNG (Raster)', path: '/images/docs/DG_white.png', bgColor: 'bg-gray-800' },
+    { name: 'DG_black.png', format: 'PNG (Raster)', path: '/images/docs/DG_black.png', bgColor: 'bg-gray-100' },
+  ].map((file) => (
+    <a
+      key={file.name}
+      href={file.path}
+      download
+      className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors group no-underline"
+    >
+      <div className="flex items-center gap-4">
+        <div className={`w-12 h-12 flex items-center justify-center rounded ${file.bgColor} p-2 shrink-0`}>
+          <img src={file.path} alt={file.name} className="w-full h-full object-contain" />
+        </div>
+        <div>
+          <div className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary-600 transition-colors">{file.name}</div>
+          <div className="text-sm text-gray-500">{file.format}</div>
+        </div>
+      </div>
+      <Download className="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" />
+    </a>
+  ))}
+</div>
+
+<br />
+
+## 로그인 버튼 종류
+
+DataGSM 로그인 버튼은 두 가지 형태로 제공됩니다.
+
+<br />
+
+### 1) Default Button
+
+아이콘과 텍스트를 함께 사용하는 기본적인 로그인 버튼입니다. 가이드라인에 따른 3가지 색상 변형입니다.
+
+<ButtonGrid type="default" />
+
+<CodeTabs>
+  <CodeTab label="ON BLACK BG" language="css" code={`
+.datagsm-button {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  background-color: #FFFFFF;
+  color: #000000;
+  border-radius: 1px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}`} />
+
+  <CodeTab label="ON WHITE BG" language="css" code={`.datagsm-button {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  background-color: #000000;
+  color: #FFFFFF;
+  border-radius: 1px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}`} />
+
+  <CodeTab label="ON WHITE BG (Gray)" language="css" code={`.datagsm-button {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  background-color: #EFEFEF;
+  color: #000000;
+  border: 1px solid #E5E5E5;
+  border-radius: 1px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}`} />
+</CodeTabs>
+
+<br />
+
+### 2) Icon Button
+
+아이콘을 단독사용하는 축약형 버튼입니다. 가이드라인에 따른 3가지 색상 변형입니다.
+
+<ButtonGrid type="icon" />
+
+<CodeTabs>
+  <CodeTab label="ON BLACK BG" language="css" code={`.datagsm-button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  cursor: pointer;
+}`} />
+
+  <CodeTab label="ON WHITE BG" language="css" code={`.datagsm-button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background-color: #000000;
+  border-radius: 50%;
+  cursor: pointer;
+}`} />
+
+  <CodeTab label="ON WHITE BG (Gray)" language="css" code={`.datagsm-button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background-color: #EFEFEF;
+  border: 1px solid #E5E5E5;
+  border-radius: 50%;
+  cursor: pointer;
+}`} />
+</CodeTabs>
+
+<br />
+
+## 레이아웃
+
+로그인 버튼은 아이콘 + 텍스트를 순서대로 나열하는 구조를 기본으로 합니다. 아래 표는 기본적인 로그인 버튼 레이아웃입니다.
+
+| 요소 | 규칙 |
+| :--- | :--- |
+| **아이콘 위치** | 좌측 정렬 |
+| **텍스트 크기 및 정렬** | 16px 좌측 정렬 |
+| **아이콘-텍스트 간격** | 16px |
+| **버튼 높이** | 40px |
+| **내부 패딩** | 12px 12px |
+
+<br />
+
+아이콘의 높이는 텍스트 크기에 비례하며 기본적으로 1 : 1입니다. 모든 레이아웃은 content에 기반하여 변경될 수 있으나 아이콘의 높이와 텍스트의 크기 비례는 예외사항으로 제외합니다.
+
+<br />
+
+## Hover 상태
+
+Hover 상태에서는 배경색을 한 단계 밝거나 어둡게 변경하는 것을 권장합니다. Transition은 150–200ms 범위를 권장합니다.
