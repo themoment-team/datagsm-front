@@ -663,7 +663,7 @@ fun main() {
 
         // 결과 출력
         students.students.forEach { student ->
-            println("\${student.name} (\${student.getStudentNumber().orElse("N/A")}) - \${student.email}")
+            println("\${student.name} (\${student.studentNumber.orElse("N/A")}) - \${student.email}")
         }
 
         // 급식 데이터 조회
