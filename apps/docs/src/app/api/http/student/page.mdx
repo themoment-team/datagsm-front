@@ -102,18 +102,17 @@ GET /v1/students
 | `dormitoryFloor` | `Int?`            | 기숙사 층 (비기숙사생인 경우 `null`)                                                                   | `3`                 |
 | `dormitoryRoom`  | `Int?`            | 기숙사 호실 (비기숙사생인 경우 `null`)                                                                  | `301`               |
 | `majorClub`      | `ClubSummaryDto?` | 전공 동아리 (미소속인 경우 `null`)                                                                    | -                   |
-| `jobClub`        | `ClubSummaryDto?` | 취업 동아리 (미소속인 경우 `null`)                                                                    | -                   |
 | `autonomousClub` | `ClubSummaryDto?` | 자율 동아리 (미소속인 경우 `null`)                                                                    | -                   |
 
 ### 동아리 객체 (ClubSummaryDto)
 
 학생 응답에 포함된 동아리 데이터는 다음 필드를 포함합니다.
 
-| 필드     | 타입         | 설명                                                  | 예시           |
-|--------|------------|-----------------------------------------------------|--------------|
-| `id`   | `Long`     | 동아리 ID                                              | `1`          |
-| `name` | `String`   | 동아리 이름                                              | `SW개발동아리`    |
-| `type` | `ClubType` | 동아리 종류(`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
+| 필드     | 타입         | 설명                                      | 예시           |
+|--------|------------|-----------------------------------------|--------------|
+| `id`   | `Long`     | 동아리 ID                                  | `1`          |
+| `name` | `String`   | 동아리 이름                                  | `SW개발동아리`    |
+| `type` | `ClubType` | 동아리 종류(`MAJOR_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
 
 ### 요청 예시
 
@@ -163,7 +162,6 @@ curl -X GET "https://api.datagsm.com/v1/students?sortBy=NAME&sortDirection=DESC&
           "name": "SW개발동아리",
           "type": "MAJOR_CLUB"
         },
-        "jobClub": null,
         "autonomousClub": null
       }
     ]

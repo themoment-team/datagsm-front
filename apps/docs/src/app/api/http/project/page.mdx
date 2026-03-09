@@ -75,24 +75,24 @@ GET /v1/projects
 
 프로젝트 응답에 포함된 동아리 데이터는 다음 필드를 포함합니다.
 
-| 필드     | 타입         | 설명                                                   | 예시           |
-|--------|------------|------------------------------------------------------|--------------|
-| `id`   | `Long`     | 동아리 ID                                               | `1`          |
-| `name` | `String`   | 동아리 이름                                               | `SW개발동아리`    |
-| `type` | `ClubType` | 동아리 종류 (`MAJOR_CLUB`, `JOB_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
+| 필드     | 타입         | 설명                                       | 예시           |
+|--------|------------|------------------------------------------|--------------|
+| `id`   | `Long`     | 동아리 ID                                   | `1`          |
+| `name` | `String`   | 동아리 이름                                   | `SW개발동아리`    |
+| `type` | `ClubType` | 동아리 종류 (`MAJOR_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
 
 ### 참가자 데이터 객체 (ParticipantInfoDto)
 
 프로젝트 응답에 포함된 참가자 데이터는 다음 필드를 포함합니다.
 
-| 필드              | 타입       | 설명                                                            | 예시                 |
-|-----------------|----------|---------------------------------------------------------------|--------------------|
-| `id`            | `Long`   | 학생 ID                                                         | `1`                |
-| `name`          | `String` | 학생 이름                                                         | `홍길동`              |
-| `email`         | `String` | 학생 이메일                                                        | `s24080@gsm.hs.kr` |
-| `studentNumber` | `Int?`   | 학번 (졸업/자퇴 시 `null`)                                          | `1201`             |
+| 필드              | 타입       | 설명                                                          | 예시                 |
+|-----------------|----------|-------------------------------------------------------------|--------------------|
+| `id`            | `Long`   | 학생 ID                                                       | `1`                |
+| `name`          | `String` | 학생 이름                                                       | `홍길동`              |
+| `email`         | `String` | 학생 이메일                                                      | `s24080@gsm.hs.kr` |
+| `studentNumber` | `Int?`   | 학번 (졸업/자퇴 시 `null`)                                         | `1201`             |
 | `major`         | `Major?` | 학과 (졸업/자퇴 시 `null`, 값: `SW_DEVELOPMENT`, `SMART_IOT`, `AI`) | `SW_DEVELOPMENT`   |
-| `sex`           | `Sex`    | 성별 (`MAN`, `WOMAN`)                                           | `MAN`              |
+| `sex`           | `Sex`    | 성별 (`MAN`, `WOMAN`)                                         | `MAN`              |
 
 ### 요청 예시
 
@@ -158,7 +158,7 @@ curl -X GET "https://api.datagsm.com/v1/projects?sortBy=NAME&sortDirection=ASC&p
 | 상태 코드                   | 설명                  |
 |-------------------------|---------------------|
 | `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
-| `403 Forbidden`         | 권한 범위 부족               |
+| `403 Forbidden`         | 권한 범위 부족            |
 | `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
 | `400 Bad Request`       | 잘못된 요청 파라미터         |
 
