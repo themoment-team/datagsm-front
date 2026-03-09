@@ -49,10 +49,10 @@ GET /v1/neis/schedules
 | `scheduleDate`     | `LocalDate` | 학사일정 날짜                      | `2025-12-15`       |
 | `academicYear`     | `String`    | 학년도                          | `2025`             |
 | `eventName`        | `String`    | 행사명                          | `기말고사`             |
-| `eventContent`     | `String`    | 행사내용 (nullable)              | `2025학년도 2학기 기말고사` |
-| `dayCategory`      | `String`    | 수업공제일명 (공휴일/휴업일 등, nullable) | `휴업일`              |
-| `schoolCourseType` | `String`    | 학교과정명 (nullable)             | `고등학교`             |
-| `dayNightType`     | `String`    | 주야과정명 (nullable)             | `주간`               |
+| `eventContent`     | `String?`   | 행사내용 (없는 경우 `null`)              | `2025학년도 2학기 기말고사` |
+| `dayCategory`      | `String?`   | 수업공제일명 (공휴일/휴업일 등, 없는 경우 `null`) | `휴업일`              |
+| `schoolCourseType` | `String?`   | 학교과정명 (없는 경우 `null`)             | `고등학교`             |
+| `dayNightType`     | `String?`   | 주야과정명 (없는 경우 `null`)             | `주간`               |
 | `targetGrades`     | `List<Int>` | 해당 학년 목록                     | `[1, 2, 3]`        |
 
 ## 요청 예시
