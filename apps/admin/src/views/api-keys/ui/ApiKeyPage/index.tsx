@@ -12,7 +12,7 @@ import { useForm, useWatch } from 'react-hook-form';
 
 import { ApiKeyFilterSchema, ApiKeyFilterType } from '@/entities/api-key';
 import { useGetApiKeys } from '@/views/api-keys';
-import { ApiKeyFilter, ApiKeyList } from '@/widgets/api-keys';
+import { ApiKeyFilter, ApiKeyFormDialog, ApiKeyList } from '@/widgets/api-keys';
 
 const PAGE_SIZE = 10;
 
@@ -94,6 +94,7 @@ const ApiKeyPage = () => {
           <CardHeader>
             <div className={cn('flex items-center justify-between')}>
               <CardTitle className={cn('text-2xl')}>API Key 관리</CardTitle>
+              <ApiKeyFormDialog userRole="ADMIN" />
             </div>
             <ApiKeyFilter control={control} />
           </CardHeader>

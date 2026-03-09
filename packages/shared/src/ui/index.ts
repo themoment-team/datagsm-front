@@ -15,6 +15,7 @@ export * from './Tooltip';
 export { default as ApiKeyForm } from './ApiKeyForm';
 export { default as ApiKeyDisplay } from './ApiKeyDisplay';
 export { default as ApiKeyHeader } from './ApiKeyHeader';
+export { default as ApiKeyFormDialog } from './ApiKeyFormDialog';
 export { default as SignInForm } from './SignInForm';
 export { default as Header } from './Header';
 export { default as FormErrorMessage } from './FormErrorMessage';
