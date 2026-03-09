@@ -2,9 +2,7 @@ import { cookies } from 'next/headers';
 
 import { authUrl } from '@repo/shared/api';
 import { COOKIE_KEYS } from '@repo/shared/constants';
-import { UserRoleType } from '@repo/shared/types';
-
-import { AvailableScopeListResponse } from '@/entities/home';
+import { AvailableScopeListResponse, UserRoleType } from '@repo/shared/types';
 
 export const getAvailableScope = async (
   userRole: UserRoleType,

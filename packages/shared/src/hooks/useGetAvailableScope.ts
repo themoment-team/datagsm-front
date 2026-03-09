@@ -3,7 +3,7 @@ import { UserRoleType } from '@repo/shared/types';
 import { minutesToMs } from '@repo/shared/utils';
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { AvailableScopeListResponse } from '@/entities/home';
+import { AvailableScopeListResponse } from '../types';
 
 export const useGetAvailableScope = (
   userRole: UserRoleType,
