@@ -34,21 +34,21 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
   return (
     <Card className={cn('relative p-6')}>
       <Tooltip className="absolute right-4 top-4">
-          <TooltipTrigger asChild>
-            <div
-              tabIndex={0}
-              className={cn(
-                'cursor-default rounded-full px-2 py-0.5 text-xs font-semibold',
-                apiKeyData.data.expiresInDays <= EXPIRATION_WARNING_DAYS
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-muted text-muted-foreground',
-              )}
-            >
-              D-{apiKeyData.data.expiresInDays}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>만료일: {apiKeyData.data.expiresAt.split('T')[0]}</TooltipContent>
-        </Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            tabIndex={0}
+            className={cn(
+              'cursor-default rounded-full px-2 py-0.5 text-xs font-semibold',
+              apiKeyData.data.expiresInDays <= EXPIRATION_WARNING_DAYS
+                ? 'bg-red-100 text-red-700'
+                : 'bg-muted text-muted-foreground',
+            )}
+          >
+            D-{apiKeyData.data.expiresInDays}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>만료일: {apiKeyData.data.expiresAt.split('T')[0]}</TooltipContent>
+      </Tooltip>
 
       <div className="mb-4">
         <p className="text-muted-foreground mb-2 text-sm">현재 발급된 API 키의 권한 범위:</p>

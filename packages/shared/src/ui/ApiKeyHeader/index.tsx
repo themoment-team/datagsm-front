@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@repo/shared/utils';
 import { Key } from 'lucide-react';
 
