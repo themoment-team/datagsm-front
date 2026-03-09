@@ -1,6 +1,15 @@
 import { z } from 'zod';
 
 import { ApiResponse } from './base';
+import { UserRoleType } from './userRole';
+
+export interface Account {
+  id: number;
+  email: string;
+  role: UserRoleType;
+}
+
+export type AccountResponse = ApiResponse<Account>;
 
 interface SignInResponseData {
   accessToken: string;
