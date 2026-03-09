@@ -16,11 +16,16 @@ interface AuthGuardProps {
 }
 
 const AuthGuard = ({ children }: AuthGuardProps) => {
+  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
   const queryClient = useQueryClient();
   const accessToken = getCookie(COOKIE_KEYS.ACCESS_TOKEN);
   const { data: role, isLoading, isError, refetch } = useGetRole();
   const [isRedirecting, setIsRedirecting] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (accessToken) {
@@ -54,6 +59,11 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
       return () => clearTimeout(timer);
     }
   }, [isRedirecting, queryClient]);
+
+  // 서버 사이드 렌더링 결과와 클라이언트의 첫 렌더링 결과를 일치킨다.
+  if (!isMounted) {
+    return <>{children}</>;
+  }
 
   if (accessToken && (isLoading || isRedirecting)) {
     return null;
