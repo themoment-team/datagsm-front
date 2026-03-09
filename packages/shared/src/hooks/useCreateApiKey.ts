@@ -1,3 +1,5 @@
+﻿'use client';
+
 import { authQueryKeys, authUrl, post } from '@repo/shared/api';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';

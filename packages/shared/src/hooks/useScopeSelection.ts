@@ -1,3 +1,5 @@
+﻿'use client';
+
 import { useMemo } from 'react';
 
 import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from 'react-hook-form';
@@ -68,7 +70,6 @@ export const useScopeSelection = <T extends FieldValues>({
   const isScopeChecked = (scope: string) => {
     const currentScopes = (watch(fieldName) as string[]) || [];
 
-    // 전체 권한 범위일 경우 하위 권한 범위 탐색
     if (scope.endsWith(':*')) {
       const prefix = scope.split(':')[0];
       const relatedScopes = scopeMap.get(prefix!) ?? [];
