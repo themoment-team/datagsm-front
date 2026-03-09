@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { usePathname } from 'next/navigation';
 
@@ -20,6 +20,7 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
   const queryClient = useQueryClient();
   const accessToken = getCookie(COOKIE_KEYS.ACCESS_TOKEN);
   const { data: role, isLoading, isError, refetch } = useGetRole();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     if (accessToken) {
@@ -28,30 +29,35 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
   }, [pathname, accessToken, refetch]);
 
   useEffect(() => {
-    if (!accessToken) return;
+    if (!accessToken || isLoading || isRedirecting) return;
 
-    if (isLoading) return;
+    if (isError || (role && role !== 'ADMIN' && role !== 'ROOT')) {
+      setIsRedirecting(true);
 
-    if (isError) {
-      toast.error('사용자 정보를 가져오는 데 실패했습니다. 다시 로그인해주세요.');
-      queryClient.clear();
-      deleteCookie(COOKIE_KEYS.ACCESS_TOKEN);
-      deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
-      window.location.href = '/';
-      return;
+      const message = isError
+        ? '인증 세션이 만료되었습니다. 다시 로그인해주세요.'
+        : '접근 권한이 없습니다. 관리자 계정으로 로그인해주세요.';
+
+      toast.error(message);
     }
+  }, [role, isLoading, isError, accessToken, isRedirecting]);
 
-    // 권한 확인 (ADMIN 또는 ROOT가 아닌 경우)
-    if (role && role !== 'ADMIN' && role !== 'ROOT') {
-      toast.error('접근 권한이 없습니다. 관리자 계정으로 로그인해주세요.');
+  useEffect(() => {
+    if (isRedirecting) {
+      const timer = setTimeout(() => {
+        queryClient.clear();
+        deleteCookie(COOKIE_KEYS.ACCESS_TOKEN);
+        deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
+        window.location.href = '/';
+      }, 3000);
 
-      queryClient.clear();
-      deleteCookie(COOKIE_KEYS.ACCESS_TOKEN);
-      deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
-
-      window.location.href = '/';
+      return () => clearTimeout(timer);
     }
-  }, [role, isLoading, isError, accessToken, queryClient]);
+  }, [isRedirecting, queryClient]);
+
+  if (accessToken && (isLoading || isRedirecting)) {
+    return null;
+  }
 
   return <>{children}</>;
 };
