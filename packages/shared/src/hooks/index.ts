@@ -9,3 +9,4 @@ export * from './useGetAvailableScope';
 export * from './useRotateApiKey';
 export * from './useUpdateApiKey';
 export * from './useDeleteApiKey';
+export * from './useDeleteApiKeyById';

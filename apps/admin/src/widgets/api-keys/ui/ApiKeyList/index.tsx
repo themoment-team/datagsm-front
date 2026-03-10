@@ -19,8 +19,11 @@ import {
   TableRow,
 } from '@repo/shared/ui';
 import { cn, formatDate } from '@repo/shared/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { useDeleteApiKeyById } from '@repo/shared/hooks';
 
 interface ApiKeyListProps {
   apiKeys?: ApiKey[];
@@ -28,6 +31,18 @@ interface ApiKeyListProps {
 }
 
 const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteApiKey } = useDeleteApiKeyById({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auth', 'api-keys', 'list'] });
+      toast.success('API Key가 삭제되었습니다.');
+    },
+    onError: () => {
+      toast.error('API Key 삭제에 실패했습니다.');
+    },
+  });
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success('API Key가 복사되었습니다.');
@@ -92,7 +107,7 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                     <AlertDialogFooter>
                       <AlertDialogCancel>취소</AlertDialogCancel>
                       <AlertDialogAction
-                        // onClick={() => onDelete?.(project.id)}
+                        onClick={() => deleteApiKey(apiKey.id)}
                         className={cn('bg-destructive hover:bg-destructive/90 text-white')}
                       >
                         삭제
