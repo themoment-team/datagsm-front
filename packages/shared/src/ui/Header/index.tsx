@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { COOKIE_KEYS, NAV_LINKS } from '@repo/shared/constants';
 import { Button } from '@repo/shared/ui';
@@ -16,17 +16,18 @@ interface HeaderProps {
 
 const Header = ({ role = 'client' }: HeaderProps) => {
   const pathname = usePathname();
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const handleLogout = () => {
-    queryClient.removeQueries({ queryKey: ['auth', 'api-key'] });
+    queryClient.clear();
 
     deleteCookie(COOKIE_KEYS.ACCESS_TOKEN);
     deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
 
     toast.success('로그아웃 되었습니다.');
-    router.push('/');
+
+    // 상태 초기화를 위해 새로고침하며 이동
+    window.location.href = '/';
   };
 
   const PUBLIC_ROUTES = ['/signup'];

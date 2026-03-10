@@ -1,7 +1,8 @@
 export const setCookie = (name: string, value: string): void => {
   if (typeof document === 'undefined') return;
 
-  const cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; Path=/; SameSite=Lax; Secure`;
+  const isSecure = window.location.protocol === 'https:';
+  const cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; Path=/; SameSite=Lax${isSecure ? '; Secure' : ''}`;
 
   document.cookie = cookieString;
 };
@@ -25,7 +26,8 @@ export const getCookie = (name: string): string | null => {
 export const deleteCookie = (name: string): void => {
   if (typeof document === 'undefined') return;
 
-  const cookieString = `${encodeURIComponent(name)}=; Path=/; SameSite=Lax; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure`;
+  const isSecure = window.location.protocol === 'https:';
+  const cookieString = `${encodeURIComponent(name)}=; Path=/; SameSite=Lax; Expires=Thu, 01 Jan 1970 00:00:00 GMT${isSecure ? '; Secure' : ''}`;
 
   document.cookie = cookieString;
 };
