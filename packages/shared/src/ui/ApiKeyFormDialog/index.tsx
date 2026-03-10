@@ -40,7 +40,7 @@ const ApiKeyFormDialog = ({
   const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
 
   const defaultTrigger = (
-    <Button variant="outline" className="gap-2">
+    <Button variant="default" className="gap-2">
       <Key className="h-4 w-4" />
       API 키 관리
     </Button>
