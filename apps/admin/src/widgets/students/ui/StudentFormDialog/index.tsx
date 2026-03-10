@@ -106,7 +106,6 @@ const StudentFormDialog = ({
             role: student.role,
             dormitoryRoomNumber: student.dormitoryRoom,
             majorClubId: student.majorClub?.id || null,
-            jobClubId: student.jobClub?.id || null,
             autonomousClubId: student.autonomousClub?.id || null,
           }
         : undefined,
@@ -124,7 +123,6 @@ const StudentFormDialog = ({
         role: student.role,
         dormitoryRoomNumber: student.dormitoryRoom,
         majorClubId: student.majorClub?.id || null,
-        jobClubId: student.jobClub?.id || null,
         autonomousClubId: student.autonomousClub?.id || null,
       });
     }
@@ -412,52 +410,6 @@ const StudentFormDialog = ({
                     )}
                   />
                   <FormErrorMessage error={errors.majorClubId} />
-                </>
-              )}
-            </div>
-            <div className={cn('space-y-2')}>
-              <Label htmlFor="jobClubId">취업 동아리</Label>
-              {isInactive ? (
-                <div
-                  className={cn(
-                    'border-input h-10 w-full cursor-not-allowed rounded-md border bg-gray-100 dark:bg-gray-800',
-                  )}
-                />
-              ) : (
-                <>
-                  <Controller
-                    control={control}
-                    name="jobClubId"
-                    render={({ field }) => (
-                      <Select
-                        value={
-                          field.value === null && mode === 'edit'
-                            ? 'none'
-                            : field.value
-                              ? String(field.value)
-                              : undefined
-                        }
-                        onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="취업 동아리 선택" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none" className={cn('text-gray-500')}>
-                            선택 안 함
-                          </SelectItem>
-                          {clubs?.clubs
-                            .filter((club) => club.type === 'JOB_CLUB')
-                            .map((club) => (
-                              <SelectItem key={club.id} value={String(club.id)}>
-                                {club.name}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  <FormErrorMessage error={errors.jobClubId} />
                 </>
               )}
             </div>

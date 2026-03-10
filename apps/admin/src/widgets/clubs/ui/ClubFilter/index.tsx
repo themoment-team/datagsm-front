@@ -31,7 +31,6 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
               <SelectContent>
                 <SelectItem value="all">전체</SelectItem>
                 <SelectItem value="MAJOR_CLUB">전공</SelectItem>
-                <SelectItem value="JOB_CLUB">취업</SelectItem>
                 <SelectItem value="AUTONOMOUS_CLUB">자율</SelectItem>
               </SelectContent>
             </Select>
