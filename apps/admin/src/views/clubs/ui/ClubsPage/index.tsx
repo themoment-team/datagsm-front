@@ -30,6 +30,8 @@ const ClubsPage = () => {
     resolver: zodResolver(AddClubSchema),
     defaultValues: {
       name: '',
+      type: undefined,
+      leaderId: undefined,
       participantIds: [],
     },
   });

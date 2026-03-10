@@ -202,6 +202,9 @@ const ClubFormDialog = ({
                 render={({ field }) => (
                   <Select
                     value={field.value?.toString()}
+                    onOpenChange={(v) => {
+                      if (!v) setSearchTerm('');
+                    }}
                     onValueChange={(value) => {
                       const id = Number(value);
                       field.onChange(id);
@@ -213,6 +216,7 @@ const ClubFormDialog = ({
                           participantIds.filter((pId) => pId !== id),
                         );
                       }
+                      setSearchTerm('');
                     }}
                   >
                     <SelectTrigger>
@@ -273,11 +277,15 @@ const ClubFormDialog = ({
                 render={({ field }) => (
                   <Select
                     value=""
+                    onOpenChange={(v) => {
+                      if (!v) setSearchTerm('');
+                    }}
                     onValueChange={(value) => {
                       const id = Number(value);
                       if (Array.isArray(field.value) && !field.value.includes(id)) {
                         field.onChange([...field.value, id]);
                       }
+                      setSearchTerm('');
                     }}
                   >
                     <SelectTrigger>
