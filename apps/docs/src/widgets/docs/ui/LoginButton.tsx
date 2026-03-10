@@ -1,41 +1,38 @@
 'use client';
 
+import { cn } from '@repo/shared/utils';
+
 interface LoginButtonProps {
   type?: 'default' | 'icon';
   variant?: 'white' | 'black' | 'gray';
+  className?: string;
 }
 
-export const LoginButton = ({ type = 'default', variant = 'white' }: LoginButtonProps) => {
-  const isWhite = variant === 'white';
-  const isBlack = variant === 'black';
-  const isGray = variant === 'gray';
+export const LoginButton = ({ type = 'default', variant = 'white', className }: LoginButtonProps) => {
+  const isIcon = type === 'icon';
 
-  const styles = {
-    height: type === 'icon' ? '70px' : '40px',
-    width: type === 'icon' ? '70px' : 'auto',
-    padding: type === 'icon' ? '0' : '0 12px',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: type === 'icon' ? '50%' : '8px',
-    cursor: 'pointer',
-    fontWeight: '500',
-    fontSize: '14px',
-    fontFamily:
-      "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif",
-    transition: 'all 0.2s ease-in-out',
-    border: isGray ? '1px solid #E5E5E5' : 'none',
-    backgroundColor: isWhite ? '#FFFFFF' : isBlack ? '#000000' : '#EFEFEF',
-    color: isWhite ? '#000000' : isBlack ? '#FFFFFF' : '#000000',
+  const variantStyles = {
+    white: 'bg-[#FFFFFF] text-[#000000] border-none',
+    black: 'bg-[#000000] text-[#FFFFFF] border-none',
+    gray: 'bg-[#EFEFEF] text-[#000000] border border-[#E5E5E5]',
   };
 
-  const logoSrc = isWhite || isGray ? '/images/docs/DG_black.png' : '/images/docs/DG_white.png';
+  const logoSrc = variant === 'black' ? '/images/docs/DG_white.png' : '/images/docs/DG_black.png';
 
   return (
-    <div style={styles} className="shadow-sm hover:opacity-90 active:scale-[0.98]">
-      <img src={logoSrc} alt="logo" style={{ height: '16px' }} />
-      {type === 'default' && (
-        <span style={{ marginLeft: '16px', fontSize: '16px' }}>DataGSM으로 로그인</span>
+    <div
+      className={cn(
+        'inline-flex items-center justify-center cursor-pointer font-medium transition-all duration-200 active:scale-[0.98] shadow-sm hover:opacity-90',
+        isIcon ? 'h-10 w-10 rounded-full' : 'h-10 rounded-lg px-3 gap-4',
+        variantStyles[variant],
+        className,
+      )}
+    >
+      <img src={logoSrc} alt="logo" className={cn(isIcon ? 'h-[10px]' : 'h-[14px]')} />
+      {!isIcon && (
+        <span className={cn('text-[14px] leading-none')} style={{ fontFamily: 'Pretendard, sans-serif' }}>
+          DataGSM으로 로그인
+        </span>
       )}
     </div>
   );
