@@ -14,16 +14,29 @@ interface CodeTabProps {
 
 interface CodeTabsProps {
   children: ReactNode;
+  activeTabIndex?: number;
+  onChange?: (index: number) => void;
 }
 
 export const CodeTab = () => null;
 
-const CodeTabs = ({ children }: CodeTabsProps) => {
+const CodeTabs = ({ children, activeTabIndex, onChange }: CodeTabsProps) => {
   const tabs = Children.toArray(children).filter(
     (child): child is React.ReactElement<CodeTabProps> => isValidElement(child),
   );
 
-  const [activeTab, setActiveTab] = useState(0);
+  const [internalActiveTab, setInternalActiveTab] = useState(0);
+  
+  const isControlled = activeTabIndex !== undefined;
+  const activeTab = isControlled ? activeTabIndex : internalActiveTab;
+
+  const handleTabChange = (index: number) => {
+    if (!isControlled) {
+      setInternalActiveTab(index);
+    }
+    onChange?.(index);
+  };
+
   const { copied, copy } = useCopyToClipboard();
 
   const handleCopy = () => {
@@ -40,7 +53,7 @@ const CodeTabs = ({ children }: CodeTabsProps) => {
           {tabs.map((tab, index) => (
             <button
               key={tab.props.label}
-              onClick={() => setActiveTab(index)}
+              onClick={() => handleTabChange(index)}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === index
                   ? 'border-b-2 border-blue-500 bg-gray-900 text-blue-400'

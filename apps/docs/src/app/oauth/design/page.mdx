@@ -2,62 +2,6 @@ import { Download } from 'lucide-react'
 
 export const metadata = { title: 'DataGSM Docs | Login Button Design' }
 
-export const LoginButton = ({ type = 'default', variant = 'white' }) => {
-  const isWhite = variant === 'white';
-  const isBlack = variant === 'black';
-  const isGray = variant === 'gray';
-  
-  const styles = {
-    height: type === 'icon' ? '70px' : '40px',
-    width: type === 'icon' ? '70px' : 'auto',
-    padding: type === 'icon' ? '0' : '0 12px',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: type === 'icon' ? '50%' : '1 px',
-    cursor: 'pointer',
-    fontWeight: '500',
-    fontSize: '14px',
-    fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif",
-    transition: 'all 0.2s ease-in-out',
-    border: isGray ? '1px solid #E5E5E5' : 'none',
-    backgroundColor: isWhite ? '#FFFFFF' : isBlack ? '#000000' : '#EFEFEF',
-    color: isWhite ? '#000000' : isBlack ? '#FFFFFF' : '#000000',
-  };
-
-  const logoSrc = (isWhite || isGray) ? '/images/docs/DG_black.png' : '/images/docs/DG_white.png';
-
-  return (
-    <div style={styles} className="hover:opacity-90 active:scale-[0.98] shadow-sm">
-      <img src={logoSrc} alt="logo" style={{ height: '16px'}} />
-      {type === 'default' && <span style={{ marginLeft: '16px', fontSize: '16px' }}>DataGSM으로 로그인</span>}
-    </div>
-  );
-};
-
-export const ButtonGrid = ({ type }) => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
-    <div className="flex flex-col gap-3 text-center">
-      <div className="bg-[#000000] h-32 rounded-xl flex items-center justify-center border border-white/10">
-        <LoginButton type={type} variant="white"  />
-      </div>
-      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">On Black BG</span>
-    </div>
-    <div className="flex flex-col gap-3 text-center">
-      <div className="bg-[#FFFFFF] h-32 rounded-xl flex items-center justify-center border border-gray-100 shadow-inner">
-        <LoginButton type={type} variant="black" />
-      </div>
-      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">On White BG</span>
-    </div>
-    <div className="flex flex-col gap-3 text-center">
-      <div className="bg-[#FFFFFF] h-32 rounded-xl flex items-center justify-center border border-gray-100 shadow-inner">
-        <LoginButton type={type} variant="gray" />
-      </div>
-      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">On White BG (Gray)</span>
-    </div>
-  </div>
-);
-
 # Login Button Design Guidelines
 
 이 문서는 DataGSM의 로그인 버튼의 디자인에 대해 서술합니다. 로그인 버튼은 상황에 맞게 변형하여 사용하되 아이콘과 텍스트는 변경하지 않습니다. 아이콘과 텍스트 사이의 간격은 content에 기반합니다. hover 상태에 대해 권장 양식이 있습니다. 
@@ -110,8 +54,7 @@ DataGSM 로그인 버튼은 두 가지 형태로 제공됩니다.
 
 아이콘과 텍스트를 함께 사용하는 기본적인 로그인 버튼입니다. 가이드라인에 따른 3가지 색상 변형입니다.
 
-<ButtonGrid type="default" />
-
+<LoginButtonInteractiveDemo type="default">
 <CodeTabs>
   <CodeTab label="ON BLACK BG" language="css" code={`
 .datagsm-button {
@@ -157,6 +100,7 @@ DataGSM 로그인 버튼은 두 가지 형태로 제공됩니다.
   cursor: pointer;
 }`} />
 </CodeTabs>
+</LoginButtonInteractiveDemo>
 
 <br />
 
@@ -164,8 +108,7 @@ DataGSM 로그인 버튼은 두 가지 형태로 제공됩니다.
 
 아이콘을 단독사용하는 축약형 버튼입니다. 가이드라인에 따른 3가지 색상 변형입니다.
 
-<ButtonGrid type="icon" />
-
+<LoginButtonInteractiveDemo type="icon">
 <CodeTabs>
   <CodeTab label="ON BLACK BG" language="css" code={`.datagsm-button-icon {
   display: inline-flex;
@@ -201,6 +144,8 @@ DataGSM 로그인 버튼은 두 가지 형태로 제공됩니다.
   cursor: pointer;
 }`} />
 </CodeTabs>
+</LoginButtonInteractiveDemo>
+
 
 <br />
 

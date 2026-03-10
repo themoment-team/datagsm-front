@@ -4,6 +4,8 @@ import NextLink from 'next/link';
 import type { MDXComponents } from 'mdx/types';
 
 import CodeTabs, { CodeTab } from '@/widgets/docs/ui/CodeTabs';
+import { LoginButton } from '@/widgets/docs/ui/LoginButton';
+import { LoginButtonInteractiveDemo } from '@/widgets/docs/ui/LoginButtonInteractiveDemo';
 
 import { CodeBlock, Mermaid } from './shared/ui';
 
@@ -117,6 +119,8 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
 
     CodeTabs,
     CodeTab,
+    LoginButton,
+    LoginButtonInteractiveDemo,
 
     ...components,
   };
