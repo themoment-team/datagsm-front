@@ -25,7 +25,6 @@ export interface Student {
   dormitoryFloor: number;
   dormitoryRoom: number;
   majorClub: Club | null;
-  jobClub: Club | null;
   autonomousClub: Club | null;
 }
 
