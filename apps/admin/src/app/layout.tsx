@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 
 import '@/shared/styles/globals.css';
 
+import AuthGuard from './AuthGuard';
+
 export const metadata: Metadata = {
   title: 'datagsm-admin',
   description: '광주소프트웨어마이스터고등학교 OpenAPI 서비스 관리 페이지',
@@ -17,12 +19,14 @@ const RootLayout = ({
   return (
     <html lang="ko">
       <body>
-          <TanStackProvider>
-            <ToastProvider>
+        <TanStackProvider>
+          <ToastProvider>
+            <AuthGuard>
               <Header role="admin" />
               {children}
-            </ToastProvider>
-          </TanStackProvider>
+            </AuthGuard>
+          </ToastProvider>
+        </TanStackProvider>
       </body>
     </html>
   );
