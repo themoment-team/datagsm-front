@@ -36,7 +36,7 @@ export const metadata = { title: 'Java / Kotlin SDK' }
 
 <CodeTabs>
   <CodeTab label="Gradle (Kotlin DSL)" language="kotlin" code={`dependencies {
-    implementation("com.github.themoment-team:datagsm-oauth-sdk-java:1.1.0")
+    implementation("com.github.themoment-team:datagsm-oauth-sdk-java:1.2.0")
 }
 
 repositories {
@@ -44,7 +44,7 @@ repositories {
 }`} />
 
   <CodeTab label="Gradle (Groovy)" language="groovy" code={`dependencies {
-    implementation 'com.github.themoment-team:datagsm-oauth-sdk-java:1.1.0'
+    implementation 'com.github.themoment-team:datagsm-oauth-sdk-java:1.2.0'
 }
 
 repositories {
@@ -62,7 +62,7 @@ repositories {
     <dependency>
         <groupId>com.github.themoment-team</groupId>
         <artifactId>datagsm-oauth-sdk-java</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </dependency>
 </dependencies>`} />
 </CodeTabs>
@@ -1012,19 +1012,6 @@ java -jar your-application.jar
 - **PKCE 사용**: 모바일/SPA 앱에서는 반드시 PKCE를 활성화하여 Code 탈취를 방지하세요.
 - **HTTPS 사용**: 모든 통신은 반드시 HTTPS를 통해 이루어져야 합니다.
 - **State 파라미터**: Authorization URL 생성 시 CSRF 방지를 위해 `state` 파라미터를 설정하세요.
-
-## 마이그레이션 가이드
-
-### 1.0.x → 1.1.0
-
-버전 1.0.1부터 `DataGsmClient`가 deprecated되고 `DataGsmOAuthClient`로 대체되었습니다.
-
-| 변경 전 (1.0.x)                                      | 변경 후 (1.1.0)                                                      |
-|----------------------------------------------------|---------------------------------------------------------------------|
-| `DataGsmClient`                                   | `DataGsmOAuthClient`                                                |
-| `builder("client-secret")`                        | `builder("client-id", "client-secret")`                             |
-| `exchangeToken(code)`                             | `exchangeCodeForToken(code, redirectUri)`                            |
-| `client.refreshToken(token)`                      | `client.refreshToken(token)` (동일, scope 오버로드 추가)                   |
 
 ## 문제 해결
 
