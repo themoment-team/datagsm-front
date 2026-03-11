@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SignInFormSchema, SignInFormType } from '@repo/shared/types';
+import { SignInFormType } from '@repo/shared/types';
 import {
   Button,
   Card,
@@ -21,6 +21,20 @@ import {
 import { cn } from '@repo/shared/utils';
 import { Database, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const signInLocalFormSchema = z.object({
+  emailLocal: z.string().min(1, { message: '이메일을 입력해주세요.' }),
+  password: z
+    .string()
+    .min(1, { message: '비밀번호를 입력해주세요.' })
+    .min(8, { message: '비밀번호는 최소 8자 이상이어야 합니다.' })
+    .regex(/^(?=.*[a-zA-Z])(?=.*[0-9])/, {
+      message: '비밀번호는 영문과 숫자를 포함해야 합니다.',
+    }),
+});
+
+type SignInLocalFormType = z.infer<typeof signInLocalFormSchema>;
 
 interface SignInFormProps {
   onSubmit: (data: SignInFormType) => void;
@@ -36,11 +50,13 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignInFormType>({
-    resolver: zodResolver(SignInFormSchema),
+  } = useForm<SignInLocalFormType>({
+    resolver: zodResolver(signInLocalFormSchema),
   });
 
-  const handleFormSubmit = handleSubmit(onSubmit);
+  const handleFormSubmit = handleSubmit((data) =>
+    onSubmit({ email: `${data.emailLocal}@gsm.hs.kr`, password: data.password }),
+  );
 
   return (
     <Card className={cn('w-full max-w-md')}>
@@ -71,15 +87,25 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
       <form onSubmit={handleFormSubmit}>
         <CardContent className={cn('space-y-4')}>
           <div className={cn('space-y-2')}>
-            <Label htmlFor="email">이메일</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="example@gsm.hs.kr"
-              {...register('email')}
-              disabled={isPending}
-            />
-            <FormErrorMessage error={errors.email} />
+            <Label htmlFor="emailLocal">이메일</Label>
+            <div className={cn('flex items-center')}>
+              <Input
+                id="emailLocal"
+                type="text"
+                placeholder="이메일을 입력하세요"
+                {...register('emailLocal')}
+                disabled={isPending}
+                className={cn('rounded-r-none')}
+              />
+              <span
+                className={cn(
+                  'border-input bg-muted text-muted-foreground flex h-9 items-center rounded-r-md border border-l-0 px-3 text-sm whitespace-nowrap',
+                )}
+              >
+                @gsm.hs.kr
+              </span>
+            </div>
+            <FormErrorMessage error={errors.emailLocal} />
           </div>
 
           <div className={cn('space-y-2')}>
