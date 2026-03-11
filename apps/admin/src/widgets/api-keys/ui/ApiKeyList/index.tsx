@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { useDeleteApiKeyById, useUpdateApiKeyExpirationById } from '@repo/shared/hooks';
 import { ApiKey } from '@repo/shared/types';
 import {
@@ -11,6 +13,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
   Button,
+  Input,
+  Label,
   Skeleton,
   Table,
   TableBody,
@@ -28,6 +32,94 @@ interface ApiKeyListProps {
   apiKeys?: ApiKey[];
   isLoading: boolean;
 }
+
+const ApiKeyRow = ({
+  apiKey,
+  onUpdateExpiration,
+  onDelete,
+}: {
+  apiKey: ApiKey;
+  onUpdateExpiration: (apiKeyId: number, days: number) => void;
+  onDelete: (apiKeyId: number) => void;
+}) => {
+  const [days, setDays] = useState<number>(30);
+
+  return (
+    <TableRow key={apiKey.id}>
+      <TableCell className={cn('font-medium')}>{apiKey.id}</TableCell>
+      <TableCell className={cn('w-[200px] truncate')} title={apiKey.description}>
+        {apiKey.description}
+      </TableCell>
+      <TableCell className={cn('break-all font-mono text-[11px]')}>{apiKey.apiKey}</TableCell>
+      <TableCell>{formatDate(apiKey.expiresAt)}</TableCell>
+      <TableCell>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <RefreshCw />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Api Key 기한 연장</AlertDialogTitle>
+              <AlertDialogDescription asChild>
+                <div className={cn('space-y-4')}>
+                  <div className={cn('text-muted-foreground text-sm')}>
+                    &apos;{apiKey.description}&apos;의 기한을 연장하시겠습니까?
+                  </div>
+                  <div className={cn('space-y-2')}>
+                    <Label htmlFor={`days-${apiKey.id}`}>연장할 기간 (일 단위)</Label>
+                    <Input
+                      id={`days-${apiKey.id}`}
+                      type="number"
+                      value={days}
+                      onChange={(e) => setDays(Number(e.target.value))}
+                      min={1}
+                    />
+                  </div>
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>취소</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => onUpdateExpiration(apiKey.id, days)}
+                className={cn('bg-black text-white hover:bg-black/50')}
+              >
+                연장
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="icon" className={cn('text-destructive')}>
+              <Trash2 className={cn('h-4 w-4')} />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Api Key 삭제</AlertDialogTitle>
+              <AlertDialogDescription>
+                정말로 &apos;{apiKey.description}&apos;를 삭제하시겠습니까? 이 작업은 되돌릴 수
+                없습니다.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>취소</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => onDelete(apiKey.id)}
+                className={cn('bg-destructive hover:bg-destructive/90 text-white')}
+              >
+                삭제
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </TableCell>
+    </TableRow>
+  );
+};
 
 const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
   const queryClient = useQueryClient();
@@ -84,67 +176,12 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
         </TableHeader>
         <TableBody>
           {apiKeys.map((apiKey) => (
-            <TableRow key={apiKey.id}>
-              <TableCell className={cn('font-medium')}>{apiKey.id}</TableCell>
-              <TableCell className={cn('w-[200px] truncate')} title={apiKey.description}>
-                {apiKey.description}
-              </TableCell>
-              <TableCell className={cn('break-all font-mono text-[11px]')}>
-                {apiKey.apiKey}
-              </TableCell>
-              <TableCell>{formatDate(apiKey.expiresAt)}</TableCell>
-              <TableCell>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <RefreshCw />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Api Key 기한 연장</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        &apos;{apiKey.description}&apos;의 기한을 연장하시겠습니까?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>취소</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => updateApiKeyExpiration(apiKey.id)}
-                        className={cn('bg-black text-white hover:bg-black/50')}
-                      >
-                        연장
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className={cn('text-destructive')}>
-                      <Trash2 className={cn('h-4 w-4')} />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Api Key 삭제</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        정말로 &apos;{apiKey.description}&apos;를 삭제하시겠습니까? 이 작업은 되돌릴
-                        수 없습니다.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>취소</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteApiKey(apiKey.id)}
-                        className={cn('bg-destructive hover:bg-destructive/90 text-white')}
-                      >
-                        삭제
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </TableCell>
-            </TableRow>
+            <ApiKeyRow
+              key={apiKey.id}
+              apiKey={apiKey}
+              onUpdateExpiration={(apiKeyId, days) => updateApiKeyExpiration({ apiKeyId, days })}
+              onDelete={(apiKeyId) => deleteApiKey(apiKeyId)}
+            />
           ))}
         </TableBody>
       </Table>
