@@ -71,6 +71,7 @@ export const authUrl = {
   getAvailableScope: (userRole: UserRoleType) =>
     `/v1/auth/api-keys/available-scopes?role=${userRole}`,
   deleteApiKeyById: (apiKeyId: number) => `/v1/auth/api-keys/${apiKeyId}`,
+  patchApiKeyExpirationById: (apiKeyId: number) => `/v1/auth/api-keys/${apiKeyId}/expiration`,
 } as const;
 
 export const projectUrl = {

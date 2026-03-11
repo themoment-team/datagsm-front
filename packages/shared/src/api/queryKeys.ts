@@ -44,6 +44,7 @@ export const authQueryKeys = {
   getAvailableScope: (userRole: UserRoleType) =>
     ['auth', 'api-keys', 'available-scopes', userRole] as const,
   deleteApiKeyById: () => ['auth', 'api-keys', 'delete'] as const,
+  patchApiKeyExpirationById: () => ['auth', 'api-keys', 'expiration', 'update'] as const,
 } as const;
 
 export const projectQueryKeys = {

@@ -1,4 +1,8 @@
-import { useDeleteApiKeyById } from '@repo/shared/hooks';
+import {
+  useDeleteApiKeyById,
+  useRotateApiKey,
+  useUpdateApiKeyExpirationById,
+} from '@repo/shared/hooks';
 import { ApiKey } from '@repo/shared/types';
 import {
   AlertDialog,
@@ -21,7 +25,7 @@ import {
 } from '@repo/shared/ui';
 import { cn, formatDate } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { Trash2 } from 'lucide-react';
+import { RefreshCw, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ApiKeyListProps {
@@ -39,6 +43,16 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
     },
     onError: () => {
       toast.error('API Key 삭제에 실패했습니다.');
+    },
+  });
+
+  const { mutate: updateApiKeyExpiration } = useUpdateApiKeyExpirationById({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auth', 'api-keys', 'list'] });
+      toast.success('API Key 기한이 연장되었습니다.');
+    },
+    onError: () => {
+      toast.error('API Key 기한 연장에 실패했습니다.');
     },
   });
 
@@ -84,6 +98,30 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
               </TableCell>
               <TableCell>{formatDate(apiKey.expiresAt)}</TableCell>
               <TableCell>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <RefreshCw />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Api Key 기한 연장</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        '{apiKey.description}'의 기한을 연장하시겠습니까?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>취소</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => updateApiKeyExpiration(apiKey.id)}
+                        className={cn('bg-black text-white hover:bg-black/50')}
+                      >
+                        연장
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="ghost" size="icon" className={cn('text-destructive')}>

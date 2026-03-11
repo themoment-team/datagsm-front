@@ -10,3 +10,4 @@ export * from './useRotateApiKey';
 export * from './useUpdateApiKey';
 export * from './useDeleteApiKey';
 export * from './useDeleteApiKeyById';
+export * from './useUpdateApiKeyExpirationById';
