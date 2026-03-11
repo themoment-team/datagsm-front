@@ -221,6 +221,7 @@ const ProjectFormDialog = ({
                       const id = Number(value);
                       if (Array.isArray(field.value) && !field.value.includes(id)) {
                         field.onChange([...field.value, id]);
+                        setSearchTerm('');
                       }
                     }}
                   >
