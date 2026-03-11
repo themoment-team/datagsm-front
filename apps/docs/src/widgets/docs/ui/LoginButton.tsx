@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { cn } from '@repo/shared/utils';
 
 interface LoginButtonProps {
@@ -32,7 +34,7 @@ export const LoginButton = ({
         className,
       )}
     >
-      <img src={logoSrc} alt="logo" className={cn(isIcon ? 'h-[10px]' : 'h-[14px]')} />
+      <Image src={logoSrc} alt="logo" width={isIcon ? 27 : 38} height={isIcon ? 10 : 14} />
       {!isIcon && (
         <span
           className={cn('text-[14px] leading-none')}
