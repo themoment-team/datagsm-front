@@ -1,3 +1,4 @@
+import { useDeleteApiKeyById } from '@repo/shared/hooks';
 import { ApiKey } from '@repo/shared/types';
 import {
   AlertDialog,
@@ -23,8 +24,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useDeleteApiKeyById } from '@repo/shared/hooks';
-
 interface ApiKeyListProps {
   apiKeys?: ApiKey[];
   isLoading: boolean;
@@ -42,11 +41,6 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
       toast.error('API Key 삭제에 실패했습니다.');
     },
   });
-
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success('API Key가 복사되었습니다.');
-  };
 
   if (isLoading) {
     return (
