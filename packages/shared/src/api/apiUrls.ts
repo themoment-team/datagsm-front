@@ -36,6 +36,7 @@ export const studentUrl = {
   postStudentBatchOperation: () => '/v1/students/batch-operations',
   postStudentImport: () => '/v1/students/imports',
   getStudentExport: () => '/v1/students/exports/excel',
+  postGraduateThirdGrade: () => '/v1/students/graduate/third-grade',
 } as const;
 
 export const authUrl = {

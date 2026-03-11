@@ -15,6 +15,7 @@ import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
 import { useGetClubs } from '@/views/clubs';
 import { useGetStudents } from '@/views/students';
 import {
+  GraduateThirdGradeButton,
   StudentExcelActions,
   StudentFilter,
   StudentFormDialog,
@@ -146,6 +147,7 @@ const StudentsPage = () => {
             <div className={cn('flex items-center justify-between')}>
               <CardTitle className={cn('text-2xl')}>학생 관리</CardTitle>
               <div className={cn('flex items-center gap-2')}>
+                <GraduateThirdGradeButton />
                 <StudentExcelActions />
                 <StudentFormDialog
                   mode="create"
