@@ -75,6 +75,10 @@ export const docsSections: DocsSection[] = [
         href: '/oauth/pkce',
       },
       {
+        label: 'Design 가이드',
+        href: '/oauth/design',
+      },
+      {
         label: 'HTTP',
         href: '/oauth/http',
         children: [
