@@ -55,6 +55,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     onSuccess: (data) => {
       // 마스킹되지 않은 새 키를 캐시에 즉시 설정
       queryClient.setQueryData(authQueryKeys.getApiKey(), data);
+      queryClient.invalidateQueries({ queryKey: ['auth', 'api-keys', 'list'] });
       toast.success('API Key가 생성되었습니다.');
     },
     onError: () => {
@@ -66,6 +67,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     onSuccess: (data) => {
       // 기본 성공 처리 (필요시)
       queryClient.setQueryData(authQueryKeys.getApiKey(), data);
+      queryClient.invalidateQueries({ queryKey: ['auth', 'api-keys', 'list'] });
     },
     onError: () => {
       toast.error('API Key 갱신에 실패했습니다. 다시 시도해주세요.');
@@ -76,6 +78,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     onSuccess: (data) => {
       // 기본 성공 처리 (필요시)
       queryClient.setQueryData(authQueryKeys.getApiKey(), data);
+      queryClient.invalidateQueries({ queryKey: ['auth', 'api-keys', 'list'] });
     },
     onError: () => {
       toast.error('API Key 갱신에 실패했습니다. 다시 시도해주세요.');
