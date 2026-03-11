@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-import { Check, Pencil, X } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 
 import { getMajorLabel, getRoleBadgeVariant, getRoleLabel, getSexLabel } from '@/entities/student';
 
@@ -35,9 +35,7 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
             <TableHead>구분</TableHead>
             <TableHead>기숙사 호실</TableHead>
             <TableHead>전공동아리</TableHead>
-            <TableHead>취업동아리</TableHead>
             <TableHead>자율동아리</TableHead>
-            <TableHead>재학 여부</TableHead>
             <TableHead className={cn('w-20')}>수정</TableHead>
           </TableRow>
         </TableHeader>
@@ -73,12 +71,6 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                     <Skeleton className={cn('h-4 w-20')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className={cn('h-4 w-20')} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className={cn('h-4 w-4')} />
-                  </TableCell>
-                  <TableCell>
                     <Skeleton className={cn('h-8 w-8')} />
                   </TableCell>
                 </TableRow>
@@ -99,15 +91,7 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                     {student.dormitoryRoom ? `${student.dormitoryRoom}호` : '없음'}
                   </TableCell>
                   <TableCell>{student.majorClub?.name ?? '없음'}</TableCell>
-                  <TableCell>{student.jobClub?.name ?? '없음'}</TableCell>
                   <TableCell>{student.autonomousClub?.name ?? '없음'}</TableCell>
-                  <TableCell>
-                    {student.isLeaveSchool ? (
-                      <X className={cn('h-4 w-4 text-red-500')} />
-                    ) : (
-                      <Check className={cn('h-4 w-4 text-green-500')} />
-                    )}
-                  </TableCell>
 
                   <TableCell>
                     <Button variant="ghost" size="icon" onClick={() => onEdit?.(student)}>

@@ -6,13 +6,9 @@ import { cn } from '@repo/shared/utils';
 
 const TooltipProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
-const Tooltip = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => <div className={cn('group relative inline-block', className)}>{children}</div>;
+const Tooltip = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={cn('group relative inline-block', className)}>{children}</div>
+);
 
 const TooltipTrigger = ({
   children,
@@ -34,7 +30,7 @@ const TooltipContent = ({
   <div
     role="tooltip"
     className={cn(
-      'pointer-events-none invisible absolute right-0 top-full z-50 whitespace-nowrap rounded-md border bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md group-hover:visible group-focus-within:visible',
+      'bg-popover text-popover-foreground pointer-events-none invisible absolute right-0 top-full z-50 whitespace-nowrap rounded-md border px-3 py-1.5 text-xs shadow-md group-focus-within:visible group-hover:visible',
       className,
     )}
     style={{ marginTop: sideOffset }}

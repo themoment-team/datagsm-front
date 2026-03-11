@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useId } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 interface MermaidProps {
   chart: string;
@@ -21,7 +21,7 @@ const Mermaid = ({ chart }: MermaidProps) => {
           securityLevel: 'loose',
           fontFamily: 'inherit',
         });
-        
+
         const { svg } = await mermaid.render(mermaidId, chart);
         setSvg(svg);
         setError(false);
@@ -51,9 +51,9 @@ const Mermaid = ({ chart }: MermaidProps) => {
   }
 
   return (
-    <div 
+    <div
       className="my-6 flex justify-center overflow-x-auto"
-      dangerouslySetInnerHTML={{ __html: svg }} 
+      dangerouslySetInnerHTML={{ __html: svg }}
     />
   );
 };

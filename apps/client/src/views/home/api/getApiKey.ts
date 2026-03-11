@@ -2,8 +2,7 @@ import { cookies } from 'next/headers';
 
 import { authUrl } from '@repo/shared/api';
 import { COOKIE_KEYS } from '@repo/shared/constants';
-
-import { ApiKeyResponse } from '@/entities/home';
+import { ApiKeyResponse } from '@repo/shared/types';
 
 export const getApiKey = async (): Promise<ApiKeyResponse | undefined> => {
   try {

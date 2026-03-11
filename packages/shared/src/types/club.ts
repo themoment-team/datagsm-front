@@ -1,6 +1,6 @@
 import { ApiResponse, StudentMajor, StudentSex } from '@repo/shared/types';
 
-export type ClubType = 'MAJOR_CLUB' | 'JOB_CLUB' | 'AUTONOMOUS_CLUB';
+export type ClubType = 'MAJOR_CLUB' | 'AUTONOMOUS_CLUB';
 
 export interface ClubMember {
   id: number;

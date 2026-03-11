@@ -13,6 +13,7 @@ export const useSignUp = (
 ) =>
   useMutation({
     mutationKey: accountQueryKeys.postAccount(),
-    mutationFn: (data: SignUpRequestType) => oauthPost<BaseApiResponse>(accountUrl.postAccount(), data),
+    mutationFn: (data: SignUpRequestType) =>
+      oauthPost<BaseApiResponse>(accountUrl.postAccount(), data),
     ...options,
   });

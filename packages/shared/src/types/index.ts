@@ -1,5 +1,6 @@
-export * from './base';
 export * from './auth';
-export * from './student';
+export * from './base';
 export * from './club';
-export * from './userRole';
+export * from './student';
+export * from './project';
+export type { UserRoleType } from './userRole';
