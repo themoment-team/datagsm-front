@@ -14,8 +14,7 @@ import {
 import { cn } from '@repo/shared/utils';
 import { Key } from 'lucide-react';
 
-import ApiKeyDisplay from '../ApiKeyDisplay';
-import ApiKeyForm from '../ApiKeyForm';
+import ApiKeyManager from '../ApiKeyManager';
 
 interface ApiKeyFormDialogProps {
   trigger?: React.ReactNode;
@@ -55,18 +54,18 @@ const ApiKeyFormDialog = ({
             <div className="bg-primary/10 inline-flex h-16 w-16 items-center justify-center rounded-full">
               <Key className="text-primary h-8 w-8" />
             </div>
-            <DialogTitle className="text-3xl font-bold">ADMIN API Key</DialogTitle>
+            <DialogTitle className="text-3xl font-bold">
+              {userRole === 'ADMIN' ? 'ADMIN API Key' : 'API Key Management'}
+            </DialogTitle>
           </div>
         </DialogHeader>
 
-        <div className={cn('flex flex-col gap-6 p-6')}>
-          <ApiKeyForm
-            initialApiKeyData={initialApiKeyData}
-            initialAvailableScope={initialAvailableScope}
-            userRole={userRole}
-          />
-          <ApiKeyDisplay initialApiKeyData={initialApiKeyData} />
-        </div>
+        <ApiKeyManager
+          className="p-6"
+          initialApiKeyData={initialApiKeyData}
+          initialAvailableScope={initialAvailableScope}
+          userRole={userRole}
+        />
       </DialogContent>
     </Dialog>
   );
