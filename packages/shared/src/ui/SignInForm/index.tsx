@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SignInFormType } from '@repo/shared/types';
+import { SignInFormSchema, SignInFormType } from '@repo/shared/types';
 import {
   Button,
   Card,
@@ -23,18 +23,7 @@ import { Database, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const signInLocalFormSchema = z.object({
-  emailLocal: z.string().min(1, { message: '이메일을 입력해주세요.' }),
-  password: z
-    .string()
-    .min(1, { message: '비밀번호를 입력해주세요.' })
-    .min(8, { message: '비밀번호는 최소 8자 이상이어야 합니다.' })
-    .regex(/^(?=.*[a-zA-Z])(?=.*[0-9])/, {
-      message: '비밀번호는 영문과 숫자를 포함해야 합니다.',
-    }),
-});
-
-type SignInLocalFormType = z.infer<typeof signInLocalFormSchema>;
+type SignInLocalFormType = z.infer<typeof SignInFormSchema>;
 
 interface SignInFormProps {
   onSubmit: (data: SignInFormType) => void;
@@ -51,11 +40,11 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
     handleSubmit,
     formState: { errors },
   } = useForm<SignInLocalFormType>({
-    resolver: zodResolver(signInLocalFormSchema),
+    resolver: zodResolver(SignInFormSchema),
   });
 
   const handleFormSubmit = handleSubmit((data) =>
-    onSubmit({ email: `${data.emailLocal}@gsm.hs.kr`, password: data.password }),
+    onSubmit({ email: `${data.email}@gsm.hs.kr`, password: data.password }),
   );
 
   return (
@@ -93,19 +82,19 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
                 id="emailLocal"
                 type="text"
                 placeholder="이메일을 입력하세요"
-                {...register('emailLocal')}
+                {...register('email')}
                 disabled={isPending}
                 className={cn('rounded-r-none')}
               />
               <span
                 className={cn(
-                  'border-input bg-muted text-muted-foreground flex h-9 items-center rounded-r-md border border-l-0 px-3 text-sm whitespace-nowrap',
+                  'border-input bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap rounded-r-md border border-l-0 px-3 text-sm',
                 )}
               >
                 @gsm.hs.kr
               </span>
             </div>
-            <FormErrorMessage error={errors.emailLocal} />
+            <FormErrorMessage error={errors.email} />
           </div>
 
           <div className={cn('space-y-2')}>
