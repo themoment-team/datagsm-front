@@ -134,9 +134,9 @@ student = client.students.get_student(1)
 
 **`client.clubs`** - 동아리 데이터 조회 및 관리
 
-| 메서드                  | 설명               | 반환 타입          |
-|----------------------|------------------|----------------|
-| `get_clubs(request)` | 조건에 맞는 동아리 목록 조회 | `ClubResponse` |
+| 메서드                  | 설명                | 반환 타입          |
+|----------------------|-------------------|----------------|
+| `get_clubs(request)` | 조건에 맞는 동아리 목록 조회  | `ClubResponse` |
 | `get_club(id)`       | 특정 동아리의 상세 데이터 조회 | `ClubDetail`   |
 
 ```python
@@ -151,9 +151,9 @@ club = client.clubs.get_club(1)
 
 **`client.projects`** - 프로젝트 데이터 조회 및 관리
 
-| 메서드                     | 설명                | 반환 타입             |
-|-------------------------|-------------------|-------------------|
-| `get_projects(request)` | 조건에 맞는 프로젝트 목록 조회 | `ProjectResponse` |
+| 메서드                     | 설명                 | 반환 타입             |
+|-------------------------|--------------------|-------------------|
+| `get_projects(request)` | 조건에 맞는 프로젝트 목록 조회  | `ProjectResponse` |
 | `get_project(id)`       | 특정 프로젝트의 상세 데이터 조회 | `Project`         |
 
 ```python
@@ -168,10 +168,10 @@ project = client.projects.get_project(1)
 
 **`client.neis`** - 나이스 교육정보시스템 데이터 조회
 
-| 메서드                     | 설명       | 반환 타입            |
-|-------------------------|----------|------------------|
+| 메서드                      | 설명        | 반환 타입            |
+|--------------------------|-----------|------------------|
 | `get_meals(request)`     | 급식 데이터 조회 | `list[Meal]`     |
-| `get_schedules(request)` | 학사일정 조회  | `list[Schedule]` |
+| `get_schedules(request)` | 학사일정 조회   | `list[Schedule]` |
 
 ```python
 # 급식 데이터 조회
