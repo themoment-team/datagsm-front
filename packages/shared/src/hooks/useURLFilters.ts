@@ -14,7 +14,7 @@ export const useURLFilters = <T extends object>() => {
       const params = new URLSearchParams(searchParams.toString());
 
       // 필터 업데이트
-      Object.entries(newFilters as Record<string, any>).forEach(([key, value]) => {
+      Object.entries(newFilters as Record<string, unknown>).forEach(([key, value]) => {
         if (value && value !== 'all') {
           params.set(key, String(value));
         } else {

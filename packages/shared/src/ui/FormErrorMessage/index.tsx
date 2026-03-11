@@ -1,7 +1,8 @@
 import { cn } from '@repo/shared/utils';
+import { FieldError } from 'react-hook-form';
 
 interface FormErrorMessageProps {
-  error?: { message?: string } | any;
+  error?: FieldError | { message?: string };
   className?: string;
 }
 
