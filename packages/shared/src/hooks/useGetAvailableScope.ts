@@ -1,4 +1,5 @@
 ﻿'use client';
+
 import { authQueryKeys, authUrl, get } from '@repo/shared/api';
 import { UserRoleType } from '@repo/shared/types';
 import { minutesToMs } from '@repo/shared/utils';
@@ -20,4 +21,3 @@ export const useGetAvailableScope = (
     refetchOnWindowFocus: false,
     ...options,
   });
-

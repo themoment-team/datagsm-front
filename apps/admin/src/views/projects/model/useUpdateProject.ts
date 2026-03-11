@@ -2,6 +2,7 @@ import { projectQueryKeys, projectUrl, put } from '@repo/shared/api';
 import { BaseApiResponse } from '@repo/shared/types';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+
 import { AddProjectType } from '@/entities/project';
 
 export interface UpdateProjectRequest {
@@ -17,6 +18,7 @@ export const useUpdateProject = (
 ) =>
   useMutation({
     mutationKey: projectQueryKeys.putProjectById(),
-    mutationFn: ({ projectId, data }) => put<BaseApiResponse>(projectUrl.putProjectById(projectId), data),
+    mutationFn: ({ projectId, data }) =>
+      put<BaseApiResponse>(projectUrl.putProjectById(projectId), data),
     ...options,
   });

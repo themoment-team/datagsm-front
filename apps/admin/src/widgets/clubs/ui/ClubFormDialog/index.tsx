@@ -188,7 +188,8 @@ const ClubFormDialog = ({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="MAJOR_CLUB">전공</SelectItem>
-                      <SelectItem value="AUTONOMOUS_CLUB">자율</SelectItem>                    </SelectContent>
+                      <SelectItem value="AUTONOMOUS_CLUB">자율</SelectItem>
+                    </SelectContent>
                   </Select>
                 )}
               />

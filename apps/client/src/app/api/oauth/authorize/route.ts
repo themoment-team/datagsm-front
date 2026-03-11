@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     if (!oauthBaseUrl) {
       return NextResponse.json(
         { error: 'server_error', error_description: 'OAuth 서버 URL이 설정되지 않았습니다.' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       if (!location) {
         return NextResponse.json(
           { error: 'invalid_response', error_description: 'Redirect location missing' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
     return NextResponse.json(
       { error: 'server_error', error_description: errorMessage },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

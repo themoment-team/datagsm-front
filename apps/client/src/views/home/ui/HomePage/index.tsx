@@ -17,7 +17,7 @@ const HomePage = async () => {
       <main className={cn('container mx-auto px-4 py-16')}>
         <div className={cn('mx-auto max-w-2xl')}>
           <ApiKeyHeader />
-          <div className={cn('flex flex-col gap-6 items-center')}>
+          <div className={cn('flex flex-col items-center gap-6')}>
             <ApiKeyDisplay initialApiKeyData={initialApiKeyData} />
             <ApiKeyFormDialog
               initialApiKeyData={initialApiKeyData}

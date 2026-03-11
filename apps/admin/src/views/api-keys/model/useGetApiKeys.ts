@@ -1,7 +1,7 @@
 import { authQueryKeys, authUrl, get } from '@repo/shared/api';
 import { ApiKeyListResponse } from '@repo/shared/types';
 import { minutesToMs } from '@repo/shared/utils';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
 interface UseGetApiKeysParams {
   page?: number;
