@@ -4,7 +4,12 @@ export type StudentSex = 'MAN' | 'WOMAN';
 
 export type StudentMajor = 'SW_DEVELOPMENT' | 'SMART_IOT' | 'AI';
 
-export type StudentRole = 'GENERAL_STUDENT' | 'STUDENT_COUNCIL' | 'DORMITORY_MANAGER';
+export type StudentRole =
+  | 'GENERAL_STUDENT'
+  | 'STUDENT_COUNCIL'
+  | 'DORMITORY_MANAGER'
+  | 'GRADUATE'
+  | 'WITHDRAWN';
 
 export interface Student {
   id: number;
@@ -19,9 +24,7 @@ export interface Student {
   role: StudentRole;
   dormitoryFloor: number;
   dormitoryRoom: number;
-  isLeaveSchool: boolean;
   majorClub: Club | null;
-  jobClub: Club | null;
   autonomousClub: Club | null;
 }
 
