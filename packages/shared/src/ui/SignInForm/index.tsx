@@ -23,6 +23,8 @@ import { Database, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+const EMAIL_DOMAIN = '@gsm.hs.kr';
+
 type SignInLocalFormType = z.infer<typeof SignInFormSchema>;
 
 interface SignInFormProps {
@@ -44,7 +46,7 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
   });
 
   const handleFormSubmit = handleSubmit((data) =>
-    onSubmit({ email: `${data.email}@gsm.hs.kr`, password: data.password }),
+    onSubmit({ email: `${data.email}${EMAIL_DOMAIN}`, password: data.password }),
   );
 
   return (
@@ -91,7 +93,7 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
                   'border-input bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap rounded-r-md border border-l-0 px-3 text-sm',
                 )}
               >
-                @gsm.hs.kr
+                {EMAIL_DOMAIN}
               </span>
             </div>
             <FormErrorMessage error={errors.email} />
