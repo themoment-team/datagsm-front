@@ -89,7 +89,7 @@ const ProjectList = ({ projects, isLoading, onEdit, onDelete }: ProjectListProps
                             <AlertDialogHeader>
                               <AlertDialogTitle>프로젝트 삭제</AlertDialogTitle>
                               <AlertDialogDescription>
-                                정말로 '{project.name}' 프로젝트를 삭제하시겠습니까? 이 작업은
+                                정말로 &apos;{project.name}&apos; 프로젝트를 삭제하시겠습니까? 이 작업은
                                 되돌릴 수 없습니다.
                               </AlertDialogDescription>
                             </AlertDialogHeader>

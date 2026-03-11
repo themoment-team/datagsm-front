@@ -1,8 +1,4 @@
-import {
-  useDeleteApiKeyById,
-  useRotateApiKey,
-  useUpdateApiKeyExpirationById,
-} from '@repo/shared/hooks';
+import { useDeleteApiKeyById, useUpdateApiKeyExpirationById } from '@repo/shared/hooks';
 import { ApiKey } from '@repo/shared/types';
 import {
   AlertDialog,
@@ -108,7 +104,7 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Api Key 기한 연장</AlertDialogTitle>
                       <AlertDialogDescription>
-                        '{apiKey.description}'의 기한을 연장하시겠습니까?
+                        &apos;{apiKey.description}&apos;의 기한을 연장하시겠습니까?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -132,7 +128,7 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Api Key 삭제</AlertDialogTitle>
                       <AlertDialogDescription>
-                        정말로 '{apiKey.description}'를 삭제하시겠습니까? 이 작업은 되돌릴 수
+                        정말로 &apos;{apiKey.description}&apos;를 삭제하시겠습니까? 이 작업은 되돌릴 수
                         없습니다.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
