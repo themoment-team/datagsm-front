@@ -17,7 +17,7 @@ interface StudentFilterProps {
 
 const StudentFilter = ({ control }: StudentFilterProps) => {
   return (
-    <div className={cn('mt-4 flex items-center gap-4')}>
+    <div className={cn('mt-4 flex flex-wrap items-center gap-4')}>
       <div className={cn('flex items-center gap-2')}>
         <Label className={cn('text-sm')}>학년:</Label>
         <Controller
@@ -111,9 +111,38 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
-                <SelectItem value="false">재학</SelectItem>
-                <SelectItem value="true">자퇴</SelectItem>
+                <SelectItem value="ENROLLED">재학</SelectItem>
+                <SelectItem value="GRADUATE">졸업</SelectItem>
+                <SelectItem value="WITHDRAWN">자퇴</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
+      </div>
+
+      <div className={cn('flex items-center gap-2')}>
+        <Label className={cn('text-sm')}>정렬 기준:</Label>
+        <Controller
+          control={control}
+          name="sortBy"
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger className={cn('w-32')}>
+                <SelectValue placeholder="기본" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">기본</SelectItem>
+                <SelectItem value="ID">ID</SelectItem>
+                <SelectItem value="NAME">이름</SelectItem>
+                <SelectItem value="EMAIL">이메일</SelectItem>
+                <SelectItem value="STUDENT_NUMBER">학번</SelectItem>
+                <SelectItem value="GRADE">학년</SelectItem>
+                <SelectItem value="CLASS_NUM">반</SelectItem>
+                <SelectItem value="NUMBER">번호</SelectItem>
+                <SelectItem value="MAJOR">전공</SelectItem>
+                <SelectItem value="ROLE">역할</SelectItem>
+                <SelectItem value="SEX">성별</SelectItem>
+                <SelectItem value="DORMITORY_ROOM">기숙사 호실</SelectItem>
               </SelectContent>
             </Select>
           )}

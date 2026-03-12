@@ -6,6 +6,10 @@ export const getRoleBadgeVariant = (role: StudentRole) => {
       return 'default';
     case 'DORMITORY_MANAGER':
       return 'secondary';
+    case 'GRADUATE':
+      return 'outline';
+    case 'WITHDRAWN':
+      return 'destructive';
     default:
       return 'outline';
   }
@@ -19,6 +23,10 @@ export const getRoleLabel = (role: StudentRole) => {
       return '기자위';
     case 'GENERAL_STUDENT':
       return '일반학생';
+    case 'GRADUATE':
+      return '졸업생';
+    case 'WITHDRAWN':
+      return '자퇴생';
   }
 };
 

@@ -10,18 +10,54 @@ interface UseGetStudentsParams {
   classNum?: number;
   sex?: StudentSex;
   role?: StudentRole;
-  isLeaveSchool?: boolean;
+  includeGraduates?: boolean;
+  includeWithdrawn?: boolean;
+  onlyEnrolled?: boolean;
+  sortBy?: string;
 }
 
 export const useGetStudents = (
-  { page, size, grade, classNum, sex, role, isLeaveSchool }: UseGetStudentsParams,
+  {
+    page,
+    size,
+    grade,
+    classNum,
+    sex,
+    role,
+    includeGraduates,
+    includeWithdrawn,
+    onlyEnrolled,
+    sortBy,
+  }: UseGetStudentsParams,
   options?: Omit<UseQueryOptions<StudentListResponse>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery({
-    queryKey: studentQueryKeys.getStudents(page, size, grade, classNum, sex, role, isLeaveSchool),
+    queryKey: studentQueryKeys.getStudents(
+      page,
+      size,
+      grade,
+      classNum,
+      sex,
+      role,
+      includeGraduates,
+      includeWithdrawn,
+      onlyEnrolled,
+      sortBy,
+    ),
     queryFn: () =>
       get<StudentListResponse>(
-        studentUrl.getStudents(page, size, grade, classNum, sex, role, isLeaveSchool),
+        studentUrl.getStudents(
+          page,
+          size,
+          grade,
+          classNum,
+          sex,
+          role,
+          includeGraduates,
+          includeWithdrawn,
+          onlyEnrolled,
+          sortBy,
+        ),
       ),
     staleTime: minutesToMs(5),
     gcTime: minutesToMs(10),

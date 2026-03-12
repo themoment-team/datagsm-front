@@ -1,4 +1,4 @@
-import { UserRoleType } from '../types';
+import { UserRoleType } from '../types/userRole';
 
 export const studentQueryKeys = {
   putStudentById: () => ['students', 'update'] as const,
@@ -9,13 +9,33 @@ export const studentQueryKeys = {
     classNum?: number,
     sex?: string,
     role?: string,
-    isLeaveSchool?: boolean,
-  ) => ['students', 'list', { page, size, grade, classNum, sex, role, isLeaveSchool }] as const,
+    includeGraduates?: boolean,
+    includeWithdrawn?: boolean,
+    onlyEnrolled?: boolean,
+    sortBy?: string,
+  ) =>
+    [
+      'students',
+      'list',
+      {
+        page,
+        size,
+        grade,
+        classNum,
+        sex,
+        role,
+        includeGraduates,
+        includeWithdrawn,
+        onlyEnrolled,
+        sortBy,
+      },
+    ] as const,
   postStudent: () => ['students', 'create'] as const,
   patchStudentStatus: () => ['students', 'status', 'update'] as const,
   postStudentBatchOperation: () => ['students', 'batch-operations'] as const,
   postStudentImport: () => ['students', 'imports'] as const,
   getStudentExport: () => ['students', 'exports', 'excel'] as const,
+  postGraduateThirdGrade: () => ['students', 'graduate', 'third-grade'] as const,
 } as const;
 
 export const authQueryKeys = {
@@ -24,18 +44,27 @@ export const authQueryKeys = {
   postApiKey: () => ['auth', 'api-keys', 'my', 'create'] as const,
   postRotateApiKey: () => ['auth', 'api-keys', 'my', 'rotate'] as const,
   deleteApiKey: () => ['auth', 'api-keys', 'my', 'delete'] as const,
-  getApiKeys: (page?: number, size?: number, accountEmail?: string) =>
-    ['auth', 'api-keys', 'list', { page, size, accountEmail }] as const,
+  getApiKeys: (params: {
+    page?: number;
+    size?: number;
+    id?: number;
+    accountId?: number;
+    scope?: string;
+    isExpired?: boolean;
+    isRenewable?: boolean;
+  }) => ['auth', 'api-keys', 'list', params] as const,
   getApiScope: (scopeName: string) => ['auth', 'api-keys', 'scopes', scopeName] as const,
   getAvailableScope: (userRole: UserRoleType) =>
     ['auth', 'api-keys', 'available-scopes', userRole] as const,
   deleteApiKeyById: () => ['auth', 'api-keys', 'delete'] as const,
+  patchApiKeyExpirationById: () => ['auth', 'api-keys', 'expiration', 'update'] as const,
 } as const;
 
 export const projectQueryKeys = {
   putProjectById: () => ['projects', 'update'] as const,
   deleteProjectById: () => ['projects', 'delete'] as const,
-  getProjects: (page?: number, size?: number) => ['projects', 'list', { page, size }] as const,
+  getProjects: (params: { page?: number; size?: number; projectName?: string; clubId?: number }) =>
+    ['projects', 'list', params] as const,
   postProject: () => ['projects', 'create'] as const,
 } as const;
 

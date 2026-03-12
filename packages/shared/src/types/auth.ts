@@ -31,13 +31,7 @@ interface SignInResponseData {
 export type SignInResponse = ApiResponse<SignInResponseData>;
 
 export const SignInFormSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: '이메일을 입력해주세요.' })
-    .pipe(z.email({ message: '올바른 이메일 형식이 아닙니다.' }))
-    .refine((email) => email.endsWith('@gsm.hs.kr'), {
-      message: '@gsm.hs.kr 도메인 계정만 사용 가능합니다.',
-    }),
+  email: z.string().min(1, { message: '이메일을 입력해주세요.' }),
   password: z
     .string()
     .min(1, { message: '비밀번호를 입력해주세요.' })
@@ -48,6 +42,37 @@ export const SignInFormSchema = z.object({
 });
 
 export type SignInFormType = z.infer<typeof SignInFormSchema>;
+
+export interface ApiKeyData {
+  apiKey: string;
+  expiresAt: string;
+  expiresInDays: number;
+  scopes: string[];
+  description: string;
+}
+
+export type ApiKeyResponse = ApiResponse<ApiKeyData>;
+
+export interface AvailableScopeData {
+  scope: string;
+  description: string;
+}
+
+export interface AvailableScopeGroupData {
+  title: string;
+  scopes: AvailableScopeData[];
+}
+
+export type AvailableScopeListResponse = ApiResponse<{
+  list: AvailableScopeGroupData[];
+}>;
+
+export const ApiKeyFormSchema = z.object({
+  scopes: z.array(z.string()).min(1, { message: '권한 범위를 최소 1개 이상 선택해주세요.' }),
+  description: z.string().min(1, { message: '설명을 입력해주세요.' }),
+});
+
+export type ApiKeyFormType = z.infer<typeof ApiKeyFormSchema>;
 
 export interface OAuthCodeRequest {
   email: string;
@@ -84,3 +109,20 @@ export interface RefreshTokenRequest {
 }
 
 export type RefreshTokenResponse = ApiResponse<OAuthTokenResponseData>;
+
+export interface ApiKey {
+  id: number;
+  apiKey: string;
+  expiresAt: string;
+  expiresInDays: number;
+  scopes: string[];
+  description: string;
+}
+
+export interface ApiKeyListData {
+  totalPages: number;
+  totalElements: number;
+  apiKeys: ApiKey[];
+}
+
+export type ApiKeyListResponse = ApiResponse<ApiKeyListData>;

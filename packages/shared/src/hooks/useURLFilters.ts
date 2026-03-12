@@ -1,8 +1,10 @@
+﻿'use client';
+
 import { useCallback } from 'react';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export const useURLFilters = <T extends Record<string, string | number>>() => {
+export const useURLFilters = <T extends object>() => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -12,7 +14,7 @@ export const useURLFilters = <T extends Record<string, string | number>>() => {
       const params = new URLSearchParams(searchParams.toString());
 
       // 필터 업데이트
-      Object.entries(newFilters).forEach(([key, value]) => {
+      Object.entries(newFilters as Record<string, unknown>).forEach(([key, value]) => {
         if (value && value !== 'all') {
           params.set(key, String(value));
         } else {

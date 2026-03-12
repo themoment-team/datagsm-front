@@ -1,4 +1,6 @@
-import { ClubType, StudentRole, StudentSex, UserRoleType } from '@repo/shared/types';
+import { ClubType, StudentRole, StudentSex } from '@repo/shared/types';
+
+import { UserRoleType } from '../types/userRole';
 
 export const studentUrl = {
   putStudentById: (studentId: number) => `/v1/students/${studentId}`,
@@ -9,7 +11,10 @@ export const studentUrl = {
     classNum?: number,
     sex?: StudentSex,
     role?: StudentRole,
-    isLeaveSchool?: boolean,
+    includeGraduates?: boolean,
+    includeWithdrawn?: boolean,
+    onlyEnrolled?: boolean,
+    sortBy?: string,
   ) => {
     const params = new URLSearchParams();
 
@@ -19,7 +24,12 @@ export const studentUrl = {
     if (classNum !== undefined) params.append('classNum', classNum.toString());
     if (sex !== undefined) params.append('sex', sex);
     if (role !== undefined) params.append('role', role);
-    if (isLeaveSchool !== undefined) params.append('isLeaveSchool', isLeaveSchool.toString());
+    if (includeGraduates !== undefined)
+      params.append('includeGraduates', includeGraduates.toString());
+    if (includeWithdrawn !== undefined)
+      params.append('includeWithdrawn', includeWithdrawn.toString());
+    if (onlyEnrolled !== undefined) params.append('onlyEnrolled', onlyEnrolled.toString());
+    if (sortBy !== undefined) params.append('sortBy', sortBy);
 
     return `/v1/students?${params.toString()}`;
   },
@@ -28,6 +38,7 @@ export const studentUrl = {
   postStudentBatchOperation: () => '/v1/students/batch-operations',
   postStudentImport: () => '/v1/students/imports',
   getStudentExport: () => '/v1/students/exports/excel',
+  postGraduateThirdGrade: () => '/v1/students/graduate/third-grade',
 } as const;
 
 export const authUrl = {
@@ -36,32 +47,53 @@ export const authUrl = {
   postApiKey: () => '/v1/auth/api-keys/my',
   postRotateApiKey: () => '/v1/auth/api-keys/my/rotations',
   deleteApiKey: () => '/v1/auth/api-keys/my',
-  getApiKeys: (page?: number, size?: number, accountEmail?: string) => {
-    const params = new URLSearchParams();
+  getApiKeys: (params: {
+    page?: number;
+    size?: number;
+    id?: number;
+    accountId?: number;
+    scope?: string;
+    isExpired?: boolean;
+    isRenewable?: boolean;
+  }) => {
+    const urlParams = new URLSearchParams();
 
-    if (page !== undefined) params.append('page', page.toString());
-    if (size !== undefined) params.append('size', size.toString());
-    if (accountEmail !== undefined) params.append('accountEmail', accountEmail);
+    if (params.page !== undefined) urlParams.append('page', params.page.toString());
+    if (params.size !== undefined) urlParams.append('size', params.size.toString());
+    if (params.id !== undefined) urlParams.append('id', params.id.toString());
+    if (params.accountId !== undefined) urlParams.append('accountId', params.accountId.toString());
+    if (params.scope) urlParams.append('scope', params.scope);
+    if (params.isExpired !== undefined) urlParams.append('isExpired', params.isExpired.toString());
+    if (params.isRenewable !== undefined)
+      urlParams.append('isRenewable', params.isRenewable.toString());
 
-    const queryString = params.toString();
+    const queryString = urlParams.toString();
     return queryString ? `/v1/auth/api-keys?${queryString}` : '/v1/auth/api-keys';
   },
   getApiScope: (scopeName: string) => `/v1/auth/api-keys/scopes/${scopeName}`,
   getAvailableScope: (userRole: UserRoleType) =>
     `/v1/auth/api-keys/available-scopes?role=${userRole}`,
   deleteApiKeyById: (apiKeyId: number) => `/v1/auth/api-keys/${apiKeyId}`,
+  patchApiKeyExpirationById: (apiKeyId: number) => `/v1/auth/api-keys/${apiKeyId}/expiration`,
 } as const;
 
 export const projectUrl = {
   putProjectById: (projectId: number) => `/v1/projects/${projectId}`,
   deleteProjectById: (projectId: number) => `/v1/projects/${projectId}`,
-  getProjects: (page?: number, size?: number) => {
-    const params = new URLSearchParams();
+  getProjects: (params: {
+    page?: number;
+    size?: number;
+    projectName?: string;
+    clubId?: number;
+  }) => {
+    const urlParams = new URLSearchParams();
 
-    if (page !== undefined) params.append('page', page.toString());
-    if (size !== undefined) params.append('size', size.toString());
+    if (params.page !== undefined) urlParams.append('page', params.page.toString());
+    if (params.size !== undefined) urlParams.append('size', params.size.toString());
+    if (params.projectName) urlParams.append('projectName', params.projectName);
+    if (params.clubId !== undefined) urlParams.append('clubId', params.clubId.toString());
 
-    const queryString = params.toString();
+    const queryString = urlParams.toString();
     return queryString ? `/v1/projects?${queryString}` : '/v1/projects';
   },
   postProject: () => '/v1/projects',
