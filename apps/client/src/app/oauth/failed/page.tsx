@@ -1,7 +1,7 @@
 import { LoginFailedPage } from '@/views/oauth';
 
-const failed = () => {
+const FailedPage = () => {
   return <LoginFailedPage />;
 };
 
-export default failed;
+export default FailedPage;
