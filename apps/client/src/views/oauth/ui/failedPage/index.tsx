@@ -1,5 +1,3 @@
-'use client';
-
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/shared/ui';
 import { ExternalLink, X } from 'lucide-react';
 
