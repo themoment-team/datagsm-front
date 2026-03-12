@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm as SharedSignInForm } from '@repo/shared/ui';
@@ -13,6 +13,8 @@ const OAuthAuthorizeForm = () => {
   const [isPending, setIsPending] = useState(false);
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!token) return;
@@ -62,21 +64,16 @@ const OAuthAuthorizeForm = () => {
       }
 
       if (!response.ok) {
-        const errorData = await response.json();
-
-        if (errorData.error_description) {
-          toast.error(errorData.error_description);
-        } else {
-          switch (response.status) {
-            case 400:
-              toast.error('세션이 만료되었습니다. 다시 시도해주세요.');
-              break;
-            case 401:
-              toast.error('이메일 또는 비밀번호가 일치하지 않습니다.');
-              break;
-            default:
-              toast.error('로그인에 실패했습니다.');
-          }
+        switch (response.status) {
+          case 400:
+            console.log('400');
+            router.push('/oauth/failed');
+            break;
+          case 401:
+            toast.error('이메일 또는 비밀번호가 일치하지 않습니다.');
+            break;
+          default:
+            toast.error('로그인에 실패했습니다.');
         }
       }
     } catch (error) {
