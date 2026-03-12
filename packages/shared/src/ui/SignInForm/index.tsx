@@ -17,6 +17,7 @@ import {
   FormErrorMessage,
   Input,
   Label,
+  Skeleton,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { Database, Eye, EyeOff } from 'lucide-react';
@@ -32,9 +33,10 @@ interface SignInFormProps {
   isPending?: boolean;
   signupHref?: string;
   serviceName?: string;
+  isLoadingServiceName?: boolean;
 }
 
-const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: SignInFormProps) => {
+const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName, isLoadingServiceName = false }: SignInFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -61,17 +63,21 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
         </div>
         <div>
           <CardTitle className={cn('text-3xl')}>로그인</CardTitle>
-          <CardDescription className={cn('mt-2')}>
-            DataGSM 계정으로{' '}
-            {serviceName ? (
-              <>
-                <strong className={cn('text-primary')}>{serviceName}</strong>에{' '}
-              </>
-            ) : (
-              ''
-            )}
-            로그인하세요
-          </CardDescription>
+          {isLoadingServiceName ? (
+            <Skeleton className={cn('mt-2 mx-auto h-4 w-64')} />
+          ) : (
+            <CardDescription className={cn('mt-2')}>
+              DataGSM 계정으로{' '}
+              {serviceName ? (
+                <>
+                  <strong className={cn('text-primary')}>{serviceName}</strong>에{' '}
+                </>
+              ) : (
+                ''
+              )}
+              로그인하세요
+            </CardDescription>
+          )}
         </div>
       </CardHeader>
 
