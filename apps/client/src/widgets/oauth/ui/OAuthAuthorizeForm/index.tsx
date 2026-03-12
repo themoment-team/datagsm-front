@@ -66,7 +66,6 @@ const OAuthAuthorizeForm = () => {
       if (!response.ok) {
         switch (response.status) {
           case 400:
-            console.log('400');
             router.push('/oauth/failed');
             break;
           case 401:
