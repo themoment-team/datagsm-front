@@ -114,7 +114,7 @@ const ProjectsPage = () => {
   };
 
   const { data: projectsData, isLoading: isLoadingProjects } = useGetProjects(queryParams);
-  const { data: clubsData } = useGetClubs({ size: 100 });
+  const { data: clubsData } = useGetClubs({ size: 100, clubType: 'MAJOR_CLUB' });
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(
     {},
     {
