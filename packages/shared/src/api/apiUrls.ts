@@ -14,6 +14,7 @@ export const studentUrl = {
     includeGraduates?: boolean,
     includeWithdrawn?: boolean,
     onlyEnrolled?: boolean,
+    sortBy?: string,
   ) => {
     const params = new URLSearchParams();
 
@@ -28,6 +29,7 @@ export const studentUrl = {
     if (includeWithdrawn !== undefined)
       params.append('includeWithdrawn', includeWithdrawn.toString());
     if (onlyEnrolled !== undefined) params.append('onlyEnrolled', onlyEnrolled.toString());
+    if (sortBy !== undefined) params.append('sortBy', sortBy);
 
     return `/v1/students?${params.toString()}`;
   },
@@ -36,6 +38,7 @@ export const studentUrl = {
   postStudentBatchOperation: () => '/v1/students/batch-operations',
   postStudentImport: () => '/v1/students/imports',
   getStudentExport: () => '/v1/students/exports/excel',
+  postGraduateThirdGrade: () => '/v1/students/graduate/third-grade',
 } as const;
 
 export const authUrl = {

@@ -15,6 +15,7 @@ import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
 import { useGetClubs } from '@/views/clubs';
 import { useGetStudents } from '@/views/students';
 import {
+  GraduateThirdGradeButton,
   StudentExcelActions,
   StudentFilter,
   StudentFormDialog,
@@ -45,6 +46,7 @@ const StudentsPage = () => {
       includeGraduates: searchParams.get('includeGraduates') === 'true',
       includeWithdrawn: searchParams.get('includeWithdrawn') === 'true',
       onlyEnrolled: searchParams.get('onlyEnrolled') === 'true' || !searchParams.has('status'),
+      sortBy: searchParams.get('sortBy') || 'all',
       page: Number(searchParams.get('page')) || 0,
     }),
     [searchParams],
@@ -61,6 +63,7 @@ const StudentsPage = () => {
       includeGraduates: initialValues.includeGraduates,
       includeWithdrawn: initialValues.includeWithdrawn,
       onlyEnrolled: initialValues.onlyEnrolled,
+      sortBy: initialValues.sortBy,
     },
   });
 
@@ -81,7 +84,8 @@ const StudentsPage = () => {
       filters.status !== initialValues.status ||
       filters.includeGraduates !== initialValues.includeGraduates ||
       filters.includeWithdrawn !== initialValues.includeWithdrawn ||
-      filters.onlyEnrolled !== initialValues.onlyEnrolled;
+      filters.onlyEnrolled !== initialValues.onlyEnrolled ||
+      filters.sortBy !== initialValues.sortBy;
 
     if (hasChanged) {
       updateURL(filters, 0);
@@ -95,6 +99,7 @@ const StudentsPage = () => {
     filters.includeGraduates,
     filters.includeWithdrawn,
     filters.onlyEnrolled,
+    filters.sortBy,
     initialValues.grade,
     initialValues.classNum,
     initialValues.sex,
@@ -103,6 +108,7 @@ const StudentsPage = () => {
     initialValues.includeGraduates,
     initialValues.includeWithdrawn,
     initialValues.onlyEnrolled,
+    initialValues.sortBy,
     updateURL,
     filters,
   ]);
@@ -128,6 +134,7 @@ const StudentsPage = () => {
     includeGraduates: filters.status === 'GRADUATE',
     includeWithdrawn: filters.status === 'WITHDRAWN',
     onlyEnrolled: filters.status === 'ENROLLED',
+    sortBy: filters.sortBy !== 'all' ? filters.sortBy : undefined,
   };
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(queryParams);
@@ -146,6 +153,7 @@ const StudentsPage = () => {
             <div className={cn('flex items-center justify-between')}>
               <CardTitle className={cn('text-2xl')}>학생 관리</CardTitle>
               <div className={cn('flex items-center gap-2')}>
+                <GraduateThirdGradeButton />
                 <StudentExcelActions />
                 <StudentFormDialog
                   mode="create"

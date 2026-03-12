@@ -12,17 +12,30 @@ export const studentQueryKeys = {
     includeGraduates?: boolean,
     includeWithdrawn?: boolean,
     onlyEnrolled?: boolean,
+    sortBy?: string,
   ) =>
     [
       'students',
       'list',
-      { page, size, grade, classNum, sex, role, includeGraduates, includeWithdrawn, onlyEnrolled },
+      {
+        page,
+        size,
+        grade,
+        classNum,
+        sex,
+        role,
+        includeGraduates,
+        includeWithdrawn,
+        onlyEnrolled,
+        sortBy,
+      },
     ] as const,
   postStudent: () => ['students', 'create'] as const,
   patchStudentStatus: () => ['students', 'status', 'update'] as const,
   postStudentBatchOperation: () => ['students', 'batch-operations'] as const,
   postStudentImport: () => ['students', 'imports'] as const,
   getStudentExport: () => ['students', 'exports', 'excel'] as const,
+  postGraduateThirdGrade: () => ['students', 'graduate', 'third-grade'] as const,
 } as const;
 
 export const authQueryKeys = {
