@@ -8,7 +8,7 @@ let isRefreshing = false;
 let refreshQueue: ((token: string) => void)[] = [];
 
 export const axiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   timeout: 10000,
 });
 

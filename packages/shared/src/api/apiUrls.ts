@@ -120,6 +120,7 @@ export const accountUrl = {
   postEmailVerificationVerify: () => '/v1/accounts/email-verifications/verify',
   postAccount: () => '/v1/accounts',
   getMy: () => '/v1/accounts/my',
+  deleteMy: () => '/v1/accounts/my',
   postPasswordReset: () => '/v1/accounts/password-resets', // 비밀번호 재설정 요청 (이메일 발송)
   postPasswordResetVerification: () => '/v1/accounts/password-resets/verification', // 비밀번호 재설정 코드 검증
   putPassword: () => '/v1/accounts/password', // 비밀번호 변경 (인증된 사용자)
