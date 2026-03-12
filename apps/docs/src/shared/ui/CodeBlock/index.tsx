@@ -30,7 +30,7 @@ SyntaxHighlighter.registerLanguage('python', python);
 SyntaxHighlighter.registerLanguage('typescript', typescript);
 SyntaxHighlighter.registerLanguage('yaml', yaml);
 SyntaxHighlighter.registerLanguage('groovy', groovy);
-SyntaxHighlighter.registerLanguage('c#', csharp);
+SyntaxHighlighter.registerLanguage('csharp', csharp);
 
 interface CodeBlockProps {
   language: string;
