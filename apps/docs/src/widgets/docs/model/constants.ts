@@ -61,6 +61,10 @@ export const docsSections: DocsSection[] = [
             label: 'JavaScript / TypeScript SDK',
             href: '/api/sdk/javascript',
           },
+          {
+            label: ' .NET SDK ',
+            href: '/api/sdk/dotnet',
+          }
         ],
       },
     ],
