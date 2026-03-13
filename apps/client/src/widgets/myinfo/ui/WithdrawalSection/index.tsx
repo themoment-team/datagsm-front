@@ -31,8 +31,12 @@ export const WithdrawalSection = () => {
       toast.success('회원 탈퇴가 완료되었습니다.');
       window.location.href = '/';
     },
-    onError: () => {
-      toast.error('비밀번호가 일치하지 않거나 오류가 발생했습니다.');
+    onError: (error) => {
+      if (error.response?.status === 401) {
+        toast.error('비밀번호가 일치하지 않습니다.');
+      } else {
+        toast.error('오류가 발생했습니다.');
+      }
     },
   });
 
