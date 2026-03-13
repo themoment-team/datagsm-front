@@ -5,7 +5,7 @@ import { CheckCircle2, ExternalLink } from 'lucide-react';
 
 const SignUpSuccessPage = () => {
   const handleClose = () => {
-    // Try to close the window (works if opened via window.open)
+    // 윈도우 탭 닫아버리기
     window.close();
   };
 
