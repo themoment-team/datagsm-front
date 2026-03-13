@@ -210,7 +210,7 @@ const SignUpForm = () => {
   const { mutate: signUp, isPending: isSigningUp } = useSignUp({
     onSuccess: () => {
       toast.success('회원가입이 완료되었습니다. 로그인해주세요.');
-      setTimeout(() => router.push('/'), 1500);
+      setTimeout(() => router.push('/signup/success'), 1500);
     },
     onError: (error: unknown) => {
       const statusCode = getApiErrorCode(error);

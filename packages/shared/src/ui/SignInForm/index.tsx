@@ -145,9 +145,14 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
             <div className="space-y-2 text-center text-sm">
               <p className={cn('text-muted-foreground text-center text-sm')}>
                 계정이 없으신가요?{' '}
-                <Link href={signupHref} className={cn('text-primary font-medium hover:underline')}>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={signupHref}
+                  className={cn('text-primary font-medium hover:underline')}
+                >
                   회원가입
-                </Link>
+                </a>
               </p>
               <p>
                 <Link
