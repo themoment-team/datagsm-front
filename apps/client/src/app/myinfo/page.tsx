@@ -1,5 +1,7 @@
 import MyInfoPage from '@/views/mypage/ui/MyInfoPage';
 
-export default function MyInfo() {
+const MyInfo = () => {
   return <MyInfoPage />;
-}
+};
+
+export default MyInfo;
