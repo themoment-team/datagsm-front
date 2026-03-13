@@ -2,9 +2,9 @@
 
 import { Skeleton } from '@repo/shared/ui';
 
-import { ProfileInfo, WithdrawalSection, useGetMy } from '@/widgets/mypage';
+import { ProfileInfo, WithdrawalSection, useGetMy } from '@/widgets/myinfo';
 
-export const MyPageView = () => {
+const MyInfoPage = () => {
   const { data: myData, isLoading, isError } = useGetMy();
 
   if (isLoading) {
@@ -37,3 +37,5 @@ export const MyPageView = () => {
     </div>
   );
 };
+
+export default MyInfoPage;

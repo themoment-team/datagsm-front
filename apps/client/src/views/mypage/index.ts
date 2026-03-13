@@ -1,1 +1,1 @@
-export * from './ui/MyPageView';
+export { default as MyInfoPage } from './ui/MyInfoPage';
