@@ -82,12 +82,12 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-flow-col grid-rows-3 gap-4">
             <InfoItem label="이름" value={student.name} />
-            <InfoItem label="학년" value={`${student.grade}학년`} />
             <InfoItem label="학과" value={MAJOR_MAP[student.major] || student.major} />
-            <InfoItem label="반" value={`${student.classNum}반`} />
             <InfoItem label="성별" value={SEX_MAP[student.sex] || student.sex} />
+            <InfoItem label="학년" value={`${student.grade}학년`} />
+            <InfoItem label="반" value={`${student.classNum}반`} />
             <InfoItem label="번호" value={`${student.number}번`} />
           </div>
         </CardContent>
