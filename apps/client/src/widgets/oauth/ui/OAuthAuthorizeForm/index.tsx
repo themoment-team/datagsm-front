@@ -11,11 +11,15 @@ import { toast } from 'sonner';
 const OAuthAuthorizeForm = () => {
   const [serviceName, setServiceName] = useState<string | undefined>();
   const [isPending, setIsPending] = useState(false);
+  const [isLoadingServiceName, setIsLoadingServiceName] = useState(true);
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      setIsLoadingServiceName(false);
+      return;
+    }
 
     fetch(`/api/oauth/sessions/${token}`)
       .then((res) => res.json())
@@ -26,6 +30,9 @@ const OAuthAuthorizeForm = () => {
       })
       .catch((error) => {
         console.error('서비스 이름 조회 실패:', error);
+      })
+      .finally(() => {
+        setIsLoadingServiceName(false);
       });
   }, [token]);
 
@@ -97,6 +104,7 @@ const OAuthAuthorizeForm = () => {
         isPending={isPending}
         signupHref="/signup"
         serviceName={serviceName || undefined}
+        isLoadingServiceName={isLoadingServiceName}
       />
     </div>
   );
