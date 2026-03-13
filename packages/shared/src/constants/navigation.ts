@@ -2,10 +2,10 @@ export const DOCS_URL = process.env.NEXT_PUBLIC_DOCS_URL ?? 'http://localhost:30
 
 export const NAV_LINKS = {
   client: [
-    { href: '/', label: 'APIKEY' },
-    { href: '/clients', label: 'CLIENT' },
-    { href: DOCS_URL, label: 'DOCS' },
-    { href: './myinfo', label: 'MY' },
+    { href: '/', label: 'APIKey' },
+    { href: '/clients', label: 'Client' },
+    { href: DOCS_URL, label: 'Docs' },
+    { href: './myinfo', label: 'My' },
   ],
   admin: [
     { href: '/students', label: '학생' },
