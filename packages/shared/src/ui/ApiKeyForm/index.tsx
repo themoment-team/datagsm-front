@@ -172,33 +172,29 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
 
   const onRenewConfirm = () => {
     if (!pendingFormData) return;
+    const sharedOptions = {
+      onSuccess: (res: ApiKeyResponse) => {
+        queryClient.setQueryData(authQueryKeys.getApiKey(), res);
+        toast.success('갱신에 성공하였습니다.');
+      },
+      onSettled: () => setIsRenewConfirmOpen(false),
+    };
     if (isApiKeyDataEqual) {
-      rotateApiKey(pendingFormData, {
-        onSuccess: (res) => {
-          queryClient.setQueryData(authQueryKeys.getApiKey(), res);
-          toast.success('갱신에 성공하였습니다.');
-        },
-      });
+      rotateApiKey(pendingFormData, sharedOptions);
     } else {
-      updateApiKey(pendingFormData, {
-        onSuccess: (res) => {
-          queryClient.setQueryData(authQueryKeys.getApiKey(), res);
-          toast.success('갱신에 성공하였습니다.');
-        },
-      });
+      updateApiKey(pendingFormData, sharedOptions);
     }
-    setIsRenewConfirmOpen(false);
   };
 
   const onExtendConfirm = () => {
     if (!pendingFormData) return;
     updateApiKey(pendingFormData, {
-      onSuccess: (res) => {
+      onSuccess: (res: ApiKeyResponse) => {
         queryClient.setQueryData(authQueryKeys.getApiKey(), res);
         toast.success('연장에 성공하였습니다.');
       },
+      onSettled: () => setIsExtendConfirmOpen(false),
     });
-    setIsExtendConfirmOpen(false);
   };
 
   if (isLoadingApiKey || isLoadingKeyScope) {

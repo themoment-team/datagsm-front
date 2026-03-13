@@ -154,15 +154,17 @@ const ClientFormDialog = ({
     const data = pendingFormData.current;
     if (!data || !client) return;
     const redirectUrls = data.redirectUrls.map((item) => item.url);
-    updateClient({
-      clientId: client.id,
-      data: {
-        clientName: data.clientName,
-        serviceName: data.serviceName,
-        redirectUrls,
+    updateClient(
+      {
+        clientId: client.id,
+        data: {
+          clientName: data.clientName,
+          serviceName: data.serviceName,
+          redirectUrls,
+        },
       },
-    });
-    setIsConfirmOpen(false);
+      { onSettled: () => setIsConfirmOpen(false) },
+    );
   };
 
   const isPending = isCreating || isUpdating;
