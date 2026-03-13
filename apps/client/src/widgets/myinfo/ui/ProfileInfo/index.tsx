@@ -1,4 +1,12 @@
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/shared/ui';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@repo/shared/ui';
 import { GraduationCap, Home, Mail, Shield, User } from 'lucide-react';
 
 import { MyAccount } from '@/entities/mypage';
@@ -25,7 +33,9 @@ const SEX_MAP: Record<string, string> = {
 };
 
 export const ProfileInfo = ({ data }: ProfileInfoProps) => {
-  const { student, email } = data;
+  const { student, email, isStudent, role } = data;
+
+  const isAdmin = role === 'ROOT' || role === 'ADMIN';
 
   if (!student) {
     return (
@@ -54,6 +64,33 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
     );
   }
 
+  if (!isStudent) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <div className="bg-primary flex h-16 w-16 items-center justify-center rounded-full">
+                <User className="text-primary-foreground h-8 w-8" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl">선생님</CardTitle>
+                <CardDescription className="mt-1 flex items-center gap-2">
+                  <Badge variant="outline">{email}</Badge>
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-muted-foreground">어서오세요! DataGSM입니다.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* 프로필 헤더 */}
@@ -67,6 +104,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
               <CardTitle className="text-2xl">{student.name}</CardTitle>
               <CardDescription className="mt-1 flex items-center gap-2">
                 <Badge variant="secondary">{MAJOR_MAP[student.major] || student.major}</Badge>
+                {isAdmin && <Badge variant="destructive">Role: {role}</Badge>}
               </CardDescription>
             </div>
           </div>
@@ -129,7 +167,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
               value={email}
               icon={<Mail className="text-muted-foreground h-4 w-4" />}
             />
-            <InfoItem label="학생 권한" value={ROLE_MAP[student.role] || student.role} />
+            <InfoItem label="학생 역할" value={ROLE_MAP[student.role] || student.role} />
           </div>
         </CardContent>
       </Card>
