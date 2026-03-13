@@ -58,7 +58,7 @@ export const WithdrawalSection = () => {
 
   return (
     <div className="mt-12 border-t pt-8">
-      <div className="border-destructive/20 bg-destructive/3 flex items-center justify-between rounded-lg border p-6">
+      <div className="border-destructive/20 bg-destructive/3 flex flex-col items-start justify-between gap-4 rounded-lg border p-6">
         <div>
           <h3 className="text-destructive flex items-center gap-2 text-lg font-semibold">
             <AlertTriangle className="h-5 w-5" />
