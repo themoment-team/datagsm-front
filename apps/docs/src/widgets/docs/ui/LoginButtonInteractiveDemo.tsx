@@ -69,9 +69,16 @@ export const LoginButtonInteractiveDemo = ({ type, children }: LoginButtonIntera
 
       {React.Children.map(children, (child) => {
         if (isValidElement(child)) {
-          return cloneElement(child as React.ReactElement<{ activeTabIndex?: number }>, {
-            activeTabIndex: activeIndex,
-          });
+          return cloneElement(
+            child as React.ReactElement<{
+              activeTabIndex?: number;
+              onChange?: (index: number) => void;
+            }>,
+            {
+              activeTabIndex: activeIndex,
+              onChange: setActiveIndex,
+            },
+          );
         }
         return child;
       })}
