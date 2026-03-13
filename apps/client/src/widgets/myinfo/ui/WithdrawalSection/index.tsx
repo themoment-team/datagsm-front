@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { COOKIE_KEYS } from '@repo/shared/constants';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -16,6 +17,7 @@ import {
   Input,
   Label,
 } from '@repo/shared/ui';
+import { deleteCookie } from '@repo/shared/utils';
 import { AlertTriangle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -29,7 +31,9 @@ export const WithdrawalSection = () => {
   const { mutate: withdraw, isPending } = useWithdrawal({
     onSuccess: () => {
       toast.success('회원 탈퇴가 완료되었습니다.');
-      window.location.href = '/';
+      deleteCookie(COOKIE_KEYS.ACCESS_TOKEN);
+      deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
+      window.location.reload();
     },
     onError: (error) => {
       if (error.response?.status === 401) {
