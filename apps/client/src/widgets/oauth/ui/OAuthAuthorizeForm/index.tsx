@@ -61,22 +61,18 @@ const OAuthAuthorizeForm = () => {
   useEffect(() => {
     if (!token) return;
 
-    const storedData = localStorage.getItem(STORAGE_KEY);
     const now = Date.now();
+    const storedData = localStorage.getItem(STORAGE_KEY);
     let startTime = now;
 
-    if (storedData) {
-      try {
-        const { token: storedToken, startTime: storedStartTime } = JSON.parse(storedData);
-        if (storedToken === token) {
-          startTime = storedStartTime;
-        } else {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, startTime: now }));
-        }
-      } catch (e) {
+    try {
+      const parsed = storedData ? JSON.parse(storedData) : null;
+      if (parsed?.token === token && typeof parsed?.startTime === 'number') {
+        startTime = parsed.startTime;
+      } else {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, startTime: now }));
       }
-    } else {
+    } catch {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, startTime: now }));
     }
 
