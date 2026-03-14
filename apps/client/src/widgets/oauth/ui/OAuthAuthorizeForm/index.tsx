@@ -27,22 +27,39 @@ const OAuthAuthorizeForm = () => {
   const hasShownExpired = useRef(false);
 
   useEffect(() => {
-    const lastStartTime = localStorage.getItem(STORAGE_KEY);
+    if (!token) return;
+
+    const storedData = localStorage.getItem(STORAGE_KEY);
     const now = Date.now();
 
-    if (lastStartTime) {
-      const elapsed = now - parseInt(lastStartTime, 10);
-      if (elapsed >= SESSION_TIMEOUT_MS) {
-        setIsExpired(true);
-        setRemainingTime(0);
-      } else {
-        setRemainingTime(Math.ceil((SESSION_TIMEOUT_MS - elapsed) / 1000));
+    if (storedData) {
+      try {
+        const { token: storedToken, startTime } = JSON.parse(storedData);
+
+        if (storedToken === token) {
+          // 같은 토큰인 경우 기존 시작 시간 유지
+          const elapsed = now - startTime;
+          if (elapsed >= SESSION_TIMEOUT_MS) {
+            setIsExpired(true);
+            setRemainingTime(0);
+          } else {
+            setRemainingTime(Math.ceil((SESSION_TIMEOUT_MS - elapsed) / 1000));
+          }
+          return;
+        }
+      } catch (e) {
+        console.error('세션 데이터 파싱 실패:', e);
       }
-    } else {
-      localStorage.setItem(STORAGE_KEY, now.toString());
-      setRemainingTime(SESSION_TIMEOUT_MS / 1000);
     }
-  }, []);
+
+    // 새로운 토큰이거나 데이터가 없는 경우 새로 시작
+    const sessionData = { token, startTime: now };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
+    setRemainingTime(SESSION_TIMEOUT_MS / 1000);
+    setIsExpired(false);
+    hasShownWarning.current = false;
+    hasShownExpired.current = false;
+  }, [token]);
 
   useEffect(() => {
     if (remainingTime !== null && remainingTime > 0) {
@@ -52,7 +69,7 @@ const OAuthAuthorizeForm = () => {
           if (prev <= 1) {
             clearInterval(timer);
             setIsExpired(true);
-            localStorage.removeItem(STORAGE_KEY);
+            // 만료되어도 localStorage에서 지우지 않음 (새로고침 시 차단 유지)
             if (!hasShownExpired.current) {
               hasShownExpired.current = true;
               toast.error('인증 세션이 만료되었습니다. 처음부터 다시 시도해주세요.');
