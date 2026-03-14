@@ -1,10 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useScopeSelection } from '@repo/shared/hooks';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
   Button,
   Checkbox,
   Dialog,
@@ -43,6 +51,8 @@ const ClientFormDialog = ({
   onCreateSuccess,
 }: ClientFormDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const pendingFormData = useRef<ClientFormType | null>(null);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
@@ -132,16 +142,29 @@ const ClientFormDialog = ({
         ...data,
         redirectUrls,
       });
-    } else if (mode === 'edit' && client) {
-      updateClient({
+    }
+  };
+
+  const onSaveClick = handleSubmit((data) => {
+    pendingFormData.current = data;
+    setIsConfirmOpen(true);
+  });
+
+  const onConfirmSave = () => {
+    const data = pendingFormData.current;
+    if (!data || !client) return;
+    const redirectUrls = data.redirectUrls.map((item) => item.url);
+    updateClient(
+      {
         clientId: client.id,
         data: {
           clientName: data.clientName,
           serviceName: data.serviceName,
           redirectUrls,
         },
-      });
-    }
+      },
+      { onSettled: () => setIsConfirmOpen(false) },
+    );
   };
 
   const isPending = isCreating || isUpdating;
@@ -304,9 +327,31 @@ const ClientFormDialog = ({
           )}
 
           <div className={cn('flex justify-end pt-4')}>
-            <Button type="submit" disabled={isPending}>
-              {submitText}
-            </Button>
+            {mode === 'edit' ? (
+              <>
+                <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>클라이언트 수정</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        정말로 &apos;{client?.clientName}&apos; 클라이언트 정보를 수정하시겠습니까?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>취소</AlertDialogCancel>
+                      <AlertDialogAction onClick={onConfirmSave}>저장</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <Button type="button" disabled={isPending} onClick={onSaveClick}>
+                  저장
+                </Button>
+              </>
+            ) : (
+              <Button type="submit" disabled={isPending}>
+                {submitText}
+              </Button>
+            )}
           </div>
         </form>
       </DialogContent>
