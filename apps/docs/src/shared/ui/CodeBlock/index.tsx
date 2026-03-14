@@ -13,6 +13,7 @@ import powershell from 'react-syntax-highlighter/dist/esm/languages/prism/powers
 import python from 'react-syntax-highlighter/dist/esm/languages/prism/python';
 import typescript from 'react-syntax-highlighter/dist/esm/languages/prism/typescript';
 import yaml from 'react-syntax-highlighter/dist/esm/languages/prism/yaml';
+import csharp from 'react-syntax-highlighter/dist/esm/languages/prism/csharp';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 SyntaxHighlighter.registerLanguage('bash', bash);
@@ -29,6 +30,7 @@ SyntaxHighlighter.registerLanguage('python', python);
 SyntaxHighlighter.registerLanguage('typescript', typescript);
 SyntaxHighlighter.registerLanguage('yaml', yaml);
 SyntaxHighlighter.registerLanguage('groovy', groovy);
+SyntaxHighlighter.registerLanguage('csharp', csharp);
 
 interface CodeBlockProps {
   language: string;
