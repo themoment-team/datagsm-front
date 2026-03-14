@@ -37,7 +37,6 @@ const OAuthAuthorizeForm = () => {
         const { token: storedToken, startTime } = JSON.parse(storedData);
 
         if (storedToken === token) {
-          // 같은 토큰인 경우 기존 시작 시간 유지
           const elapsed = now - startTime;
           if (elapsed >= SESSION_TIMEOUT_MS) {
             setIsExpired(true);
@@ -52,7 +51,6 @@ const OAuthAuthorizeForm = () => {
       }
     }
 
-    // 새로운 토큰이거나 데이터가 없는 경우 새로 시작
     const sessionData = { token, startTime: now };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
     setRemainingTime(SESSION_TIMEOUT_MS / 1000);
@@ -69,7 +67,6 @@ const OAuthAuthorizeForm = () => {
           if (prev <= 1) {
             clearInterval(timer);
             setIsExpired(true);
-            // 만료되어도 localStorage에서 지우지 않음 (새로고침 시 차단 유지)
             if (!hasShownExpired.current) {
               hasShownExpired.current = true;
               toast.error('인증 세션이 만료되었습니다. 처음부터 다시 시도해주세요.');
@@ -150,21 +147,16 @@ const OAuthAuthorizeForm = () => {
       }
 
       if (!response.ok) {
-        const errorData = await response.json();
-
-        if (errorData.error_description) {
-          toast.error(errorData.error_description);
-        } else {
-          switch (response.status) {
-            case 400:
-              toast.error('세션이 만료되었습니다. 다시 시도해주세요.');
-              break;
-            case 401:
-              toast.error('이메일 또는 비밀번호가 일치하지 않습니다.');
-              break;
-            default:
-              toast.error('로그인에 실패했습니다.');
-          }
+        switch (response.status) {
+          case 400:
+            toast.error('세션이 만료되었습니다. 다시 시도해주세요.');
+            setIsExpired(true);
+            break;
+          case 401:
+            toast.error('이메일 또는 비밀번호가 일치하지 않습니다.');
+            break;
+          default:
+            toast.error('로그인에 실패했습니다.');
         }
       }
     } catch (error) {
