@@ -11,7 +11,10 @@ import { AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SESSION_TIMEOUT_MS = minutesToMs(10);
-const WARNING_THRESHOLD_S = 30;
+const WARNING_TIMES = {
+  ONE_MIN: 60,
+  THIRTY_SEC: 30,
+} as const;
 const STORAGE_KEY = 'oauth_session_timestamp';
 
 const OAuthAuthorizeForm = () => {
@@ -23,69 +26,85 @@ const OAuthAuthorizeForm = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
-  const hasShownWarning = useRef(false);
-  const hasShownExpired = useRef(false);
+  const sessionStartTime = useRef<number | null>(null);
+  const hasShownWarnings = useRef({ oneMin: false, thirtySec: false, expired: false });
+
+  const updateRemainingTime = () => {
+    if (!sessionStartTime.current) return false;
+
+    const now = Date.now();
+    const elapsed = now - sessionStartTime.current;
+    const remaining = Math.max(0, Math.ceil((SESSION_TIMEOUT_MS - elapsed) / 1000));
+
+    setRemainingTime(remaining);
+
+    if (remaining <= 0) {
+      setIsExpired(true);
+      if (!hasShownWarnings.current.expired) {
+        hasShownWarnings.current.expired = true;
+        toast.error('인증 세션이 만료되었습니다. 처음부터 다시 시도해주세요.');
+      }
+      return true;
+    }
+
+    if (remaining <= WARNING_TIMES.ONE_MIN && !hasShownWarnings.current.oneMin) {
+      hasShownWarnings.current.oneMin = true;
+      toast.info('1분 후 세션이 만료됩니다.');
+    }
+    if (remaining <= WARNING_TIMES.THIRTY_SEC && !hasShownWarnings.current.thirtySec) {
+      hasShownWarnings.current.thirtySec = true;
+      toast.info('30초 후 세션이 만료됩니다.');
+    }
+    return false;
+  };
 
   useEffect(() => {
     if (!token) return;
 
     const storedData = localStorage.getItem(STORAGE_KEY);
     const now = Date.now();
+    let startTime = now;
 
     if (storedData) {
       try {
-        const { token: storedToken, startTime } = JSON.parse(storedData);
-
+        const { token: storedToken, startTime: storedStartTime } = JSON.parse(storedData);
         if (storedToken === token) {
-          const elapsed = now - startTime;
-          if (elapsed >= SESSION_TIMEOUT_MS) {
-            setIsExpired(true);
-            setRemainingTime(0);
-          } else {
-            setRemainingTime(Math.ceil((SESSION_TIMEOUT_MS - elapsed) / 1000));
-          }
-          return;
+          startTime = storedStartTime;
+        } else {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, startTime: now }));
         }
       } catch (e) {
-        console.error('세션 데이터 파싱 실패:', e);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, startTime: now }));
       }
+    } else {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, startTime: now }));
     }
 
-    const sessionData = { token, startTime: now };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
-    setRemainingTime(SESSION_TIMEOUT_MS / 1000);
-    setIsExpired(false);
-    hasShownWarning.current = false;
-    hasShownExpired.current = false;
+    sessionStartTime.current = startTime;
+    updateRemainingTime();
   }, [token]);
 
   useEffect(() => {
-    if (remainingTime !== null && remainingTime > 0) {
-      const timer = setInterval(() => {
-        setRemainingTime((prev) => {
-          if (prev === null) return null;
-          if (prev <= 1) {
-            clearInterval(timer);
-            setIsExpired(true);
-            if (!hasShownExpired.current) {
-              hasShownExpired.current = true;
-              toast.error('인증 세션이 만료되었습니다. 처음부터 다시 시도해주세요.');
-            }
-            return 0;
-          }
+    if (isExpired) return;
 
-          if (prev <= WARNING_THRESHOLD_S && !hasShownWarning.current) {
-            hasShownWarning.current = true;
-            toast.info('30초 후 세션이 만료됩니다.');
-          }
+    const timer = setInterval(() => {
+      const expired = updateRemainingTime();
+      if (expired) clearInterval(timer);
+    }, 1000);
 
-          return prev - 1;
-        });
-      }, 1000);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        updateRemainingTime();
+      }
+    };
 
-      return () => clearInterval(timer);
-    }
-  }, [remainingTime]);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isExpired]);
 
   useEffect(() => {
     if (!token) {
