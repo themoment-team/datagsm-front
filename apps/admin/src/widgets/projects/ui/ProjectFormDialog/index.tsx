@@ -71,9 +71,10 @@ const ProjectFormDialog = ({
 
   useEffect(() => {
     if (isMemberSelectOpen) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         memberSearchRef.current?.querySelector('input')?.focus();
       });
+      return () => clearTimeout(timer);
     }
   }, [isMemberSelectOpen]);
 
@@ -227,7 +228,10 @@ const ProjectFormDialog = ({
                 render={({ field }) => (
                   <Select
                     value=""
-                    onOpenChange={(open) => setIsMemberSelectOpen(open)}
+                    onOpenChange={(open) => {
+                      setIsMemberSelectOpen(open);
+                      if (!open) setSearchTerm('');
+                    }}
                     onValueChange={(value) => {
                       const id = Number(value);
                       if (Array.isArray(field.value) && !field.value.includes(id)) {
