@@ -13,11 +13,11 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/api/server3/:path*',
-        destination: `${process.env.NEXT_PUBLIC_OAUTH_RESOURCE_SERVER_URL}/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_OAUTH_AUTH_SERVER_URL}/:path*`,
       },
       {
         source: '/api/server4/:path*',
-        destination: `${process.env.NEXT_PUBLIC_OAUTH_AUTH_SERVER_URL}/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_OAUTH_RESOURCE_SERVER_URL}/:path*`,
       },
     ];
   },
