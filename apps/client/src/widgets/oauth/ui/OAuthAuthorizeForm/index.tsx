@@ -6,35 +6,40 @@ import { useSearchParams } from 'next/navigation';
 
 import { SignInFormType } from '@repo/shared/types';
 import { SignInForm } from '@repo/shared/ui';
-import { cn, minutesToMs } from '@repo/shared/utils';
+import { cn } from '@repo/shared/utils';
 import { AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-const SESSION_TIMEOUT_MS = minutesToMs(10);
+import { useGetOAuthSession } from '@/widgets/oauth';
+
 const WARNING_TIMES = {
   ONE_MIN: 60,
   THIRTY_SEC: 30,
 } as const;
+const BUFFER_TIME_MS = 30000;
 const STORAGE_KEY = 'oauth_session_timestamp';
 
 const OAuthAuthorizeForm = () => {
-  const [serviceName, setServiceName] = useState<string | undefined>();
   const [isPending, setIsPending] = useState(false);
-  const [isLoadingServiceName, setIsLoadingServiceName] = useState(true);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const [isExpired, setIsExpired] = useState(false);
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
-  const sessionStartTime = useRef<number | null>(null);
+  const sessionExpiresAt = useRef<number | null>(null);
   const hasShownWarnings = useRef({ oneMin: false, thirtySec: false, expired: false });
 
+  const { data: sessionResponse, isLoading: isLoadingServiceName } = useGetOAuthSession(token);
+  const sessionData = sessionResponse?.data;
+  const serviceName = sessionData?.serviceName;
+
   const updateRemainingTime = () => {
-    if (!sessionStartTime.current) return false;
+    if (!sessionExpiresAt.current) return false;
 
     const now = Date.now();
-    const elapsed = now - sessionStartTime.current;
-    const remaining = Math.max(0, Math.ceil((SESSION_TIMEOUT_MS - elapsed) / 1000));
+
+    const clientExpiresAt = sessionExpiresAt.current - BUFFER_TIME_MS;
+    const remaining = Math.max(0, Math.ceil((clientExpiresAt - now) / 1000));
 
     setRemainingTime(remaining);
 
@@ -58,27 +63,25 @@ const OAuthAuthorizeForm = () => {
     return false;
   };
 
+  // 서버에서 받은 세션 정보 로컬스토리지 백업 및 타이머 동기화
   useEffect(() => {
-    if (!token) return;
+    if (!sessionData?.expiresAt || !sessionData?.serviceName || !token) return;
 
-    const now = Date.now();
-    const storedData = localStorage.getItem(STORAGE_KEY);
-    let startTime = now;
+    const { expiresAt, serviceName } = sessionData;
+    sessionExpiresAt.current = expiresAt;
 
-    try {
-      const parsed = storedData ? JSON.parse(storedData) : null;
-      if (parsed?.token === token && typeof parsed?.startTime === 'number') {
-        startTime = parsed.startTime;
-      } else {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, startTime: now }));
-      }
-    } catch {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, startTime: now }));
-    }
+    // 새로고침 시 훅에서 즉시 불러오기 위해 localStorage에 저장
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        token,
+        expiresAt,
+        serviceName,
+      }),
+    );
 
-    sessionStartTime.current = startTime;
     updateRemainingTime();
-  }, [token]);
+  }, [sessionData, sessionData?.expiresAt, sessionData?.serviceName, token]);
 
   useEffect(() => {
     if (isExpired) return;
@@ -101,27 +104,6 @@ const OAuthAuthorizeForm = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [isExpired]);
-
-  useEffect(() => {
-    if (!token) {
-      setIsLoadingServiceName(false);
-      return;
-    }
-
-    fetch(`/api/oauth/sessions/${token}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.data?.service_name) {
-          setServiceName(data.data.service_name);
-        }
-      })
-      .catch((error) => {
-        console.error('서비스 이름 조회 실패:', error);
-      })
-      .finally(() => {
-        setIsLoadingServiceName(false);
-      });
-  }, [token]);
 
   const handleSubmit = async (data: SignInFormType) => {
     if (isExpired) {
