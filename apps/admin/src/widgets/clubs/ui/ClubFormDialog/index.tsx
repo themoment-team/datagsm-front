@@ -71,9 +71,10 @@ const ClubFormDialog = ({
 
   useEffect(() => {
     if (isMemberSelectOpen) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         memberSearchRef.current?.querySelector('input')?.focus();
       });
+      return () => clearTimeout(timer);
     }
   }, [isMemberSelectOpen]);
 
