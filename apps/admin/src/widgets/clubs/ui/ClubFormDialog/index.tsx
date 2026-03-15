@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Club, Student } from '@repo/shared/types';
 import {
@@ -66,6 +66,16 @@ const ClubFormDialog = ({
 
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isMemberSelectOpen, setIsMemberSelectOpen] = useState(false);
+  const memberSearchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isMemberSelectOpen) {
+      setTimeout(() => {
+        memberSearchRef.current?.querySelector('input')?.focus();
+      });
+    }
+  }, [isMemberSelectOpen]);
 
   const currentLeaderId = watch('leaderId');
 
@@ -278,8 +288,9 @@ const ClubFormDialog = ({
                 render={({ field }) => (
                   <Select
                     value=""
-                    onOpenChange={(v) => {
-                      if (!v) setSearchTerm('');
+                    onOpenChange={(open) => {
+                      setIsMemberSelectOpen(open);
+                      if (!open) setSearchTerm('');
                     }}
                     onValueChange={(value) => {
                       const id = Number(value);
@@ -293,7 +304,7 @@ const ClubFormDialog = ({
                       <SelectValue placeholder="팀원 추가" />
                     </SelectTrigger>
                     <SelectContent>
-                      <div className={cn('bg-popover sticky top-0 z-10 p-2')}>
+                      <div ref={memberSearchRef} className={cn('bg-popover sticky top-0 z-10 p-2')}>
                         <Input
                           placeholder="이름 또는 학번 검색..."
                           value={searchTerm}
