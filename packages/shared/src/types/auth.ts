@@ -62,6 +62,13 @@ export const ApiKeyFormSchema = z.object({
 
 export type ApiKeyFormType = z.infer<typeof ApiKeyFormSchema>;
 
+export interface OAuthSessionData {
+  serviceName: string;
+  expiresAt: number;
+}
+
+export type OAuthSessionResponse = ApiResponse<OAuthSessionData>;
+
 export interface OAuthCodeRequest {
   email: string;
   password: string;
