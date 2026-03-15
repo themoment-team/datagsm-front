@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
@@ -35,12 +35,11 @@ const OAuthAuthorizeForm = () => {
     thirtySec: false,
     expired: false,
   });
-
   const { data: sessionResponse, isLoading: isLoadingServiceName } = useGetOAuthSession(token);
   const sessionData = sessionResponse?.data;
   const serviceName = sessionData?.serviceName;
 
-  const updateRemainingTime = () => {
+  const updateRemainingTime = useCallback(() => {
     if (!sessionExpiresAt.current) return false;
 
     const now = Date.now();
@@ -67,7 +66,7 @@ const OAuthAuthorizeForm = () => {
     }
 
     return false;
-  };
+  }, []);
 
   useEffect(() => {
     if (!sessionData?.expiresAt || !sessionData?.serviceName || !token) return;
@@ -85,7 +84,7 @@ const OAuthAuthorizeForm = () => {
     );
 
     updateRemainingTime();
-  }, [sessionData, sessionData?.expiresAt, sessionData?.serviceName, token]);
+  }, [sessionData, sessionData?.expiresAt, sessionData?.serviceName, token, updateRemainingTime]);
 
   useEffect(() => {
     if (isExpired) return;
@@ -107,7 +106,7 @@ const OAuthAuthorizeForm = () => {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isExpired]);
+  }, [isExpired, updateRemainingTime]);
 
   const handleSubmit = async (data: SignInFormType) => {
     if (isExpired) {
