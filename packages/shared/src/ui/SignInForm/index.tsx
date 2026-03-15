@@ -93,7 +93,7 @@ const SignInForm = ({
             </CardDescription>
           )}
         </div>
-        {remainingTime !== null && remainingTime !== undefined && (
+        {remainingTime !== null && remainingTime !== undefined && remainingTime <= 300 && (
           <div
             className={cn(
               'flex items-center justify-center gap-1.5 text-sm font-medium transition-colors',

@@ -12,12 +12,14 @@ import { toast } from 'sonner';
 
 import { useGetOAuthSession } from '@/widgets/oauth';
 
-const WARNING_TIMES = {
-  ONE_MIN: 60,
-  THIRTY_SEC: 30,
-} as const;
 const BUFFER_TIME_MS = 30000;
 const STORAGE_KEY = 'oauth_session_timestamp';
+
+const WARNING_CONFIG = [
+  { time: 300, key: 'fiveMin', message: '5분 후 세션이 만료됩니다.' },
+  { time: 60, key: 'oneMin', message: '1분 후 세션이 만료됩니다.' },
+  { time: 30, key: 'thirtySec', message: '30초 후 세션이 만료됩니다.' },
+] as const;
 
 const OAuthAuthorizeForm = () => {
   const [isPending, setIsPending] = useState(false);
@@ -27,7 +29,12 @@ const OAuthAuthorizeForm = () => {
   const token = searchParams.get('token');
 
   const sessionExpiresAt = useRef<number | null>(null);
-  const hasShownWarnings = useRef({ oneMin: false, thirtySec: false, expired: false });
+  const hasShownWarnings = useRef<Record<string, boolean>>({
+    fiveMin: false,
+    oneMin: false,
+    thirtySec: false,
+    expired: false,
+  });
 
   const { data: sessionResponse, isLoading: isLoadingServiceName } = useGetOAuthSession(token);
   const sessionData = sessionResponse?.data;
@@ -37,7 +44,6 @@ const OAuthAuthorizeForm = () => {
     if (!sessionExpiresAt.current) return false;
 
     const now = Date.now();
-
     const clientExpiresAt = sessionExpiresAt.current - BUFFER_TIME_MS;
     const remaining = Math.max(0, Math.ceil((clientExpiresAt - now) / 1000));
 
@@ -52,25 +58,23 @@ const OAuthAuthorizeForm = () => {
       return true;
     }
 
-    if (remaining <= WARNING_TIMES.ONE_MIN && !hasShownWarnings.current.oneMin) {
-      hasShownWarnings.current.oneMin = true;
-      toast.info('1분 후 세션이 만료됩니다.');
+    for (const { time, key, message } of WARNING_CONFIG) {
+      if (remaining <= time && !hasShownWarnings.current[key]) {
+        hasShownWarnings.current[key] = true;
+        toast.info(message);
+        break;
+      }
     }
-    if (remaining <= WARNING_TIMES.THIRTY_SEC && !hasShownWarnings.current.thirtySec) {
-      hasShownWarnings.current.thirtySec = true;
-      toast.info('30초 후 세션이 만료됩니다.');
-    }
+
     return false;
   };
 
-  // 서버에서 받은 세션 정보 로컬스토리지 백업 및 타이머 동기화
   useEffect(() => {
     if (!sessionData?.expiresAt || !sessionData?.serviceName || !token) return;
 
     const { expiresAt, serviceName } = sessionData;
     sessionExpiresAt.current = expiresAt;
 
-    // 새로고침 시 훅에서 즉시 불러오기 위해 localStorage에 저장
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
