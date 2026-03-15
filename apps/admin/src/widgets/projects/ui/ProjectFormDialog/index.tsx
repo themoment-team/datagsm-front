@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Club, Project, Student } from '@repo/shared/types';
 import {
@@ -66,6 +66,16 @@ const ProjectFormDialog = ({
   } = form;
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [isMemberSelectOpen, setIsMemberSelectOpen] = useState(false);
+  const memberSearchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isMemberSelectOpen) {
+      setTimeout(() => {
+        memberSearchRef.current?.querySelector('input')?.focus();
+      });
+    }
+  }, [isMemberSelectOpen]);
 
   const filteredStudents = useMemo(() => {
     if (!searchTerm) return students;
@@ -217,6 +227,7 @@ const ProjectFormDialog = ({
                 render={({ field }) => (
                   <Select
                     value=""
+                    onOpenChange={(open) => setIsMemberSelectOpen(open)}
                     onValueChange={(value) => {
                       const id = Number(value);
                       if (Array.isArray(field.value) && !field.value.includes(id)) {
@@ -229,7 +240,7 @@ const ProjectFormDialog = ({
                       <SelectValue placeholder="팀원 추가" />
                     </SelectTrigger>
                     <SelectContent>
-                      <div className={cn('bg-popover sticky top-0 z-10 p-2')}>
+                      <div ref={memberSearchRef} className={cn('bg-popover sticky top-0 z-10 p-2')}>
                         <Input
                           placeholder="이름 또는 학번 검색..."
                           value={searchTerm}
