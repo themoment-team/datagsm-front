@@ -33,7 +33,7 @@ const SEX_MAP: Record<string, string> = {
 };
 
 export const ProfileInfo = ({ data }: ProfileInfoProps) => {
-  const { student, email, isStudent, role } = data;
+  const { student, email, role } = data;
 
   const isAdmin = role === 'ROOT' || role === 'ADMIN';
 
@@ -58,33 +58,6 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">등록된 학생 정보가 없습니다.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (!isStudent) {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-4">
-              <div className="bg-primary flex h-16 w-16 items-center justify-center rounded-full">
-                <User className="text-primary-foreground h-8 w-8" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl">선생님</CardTitle>
-                <CardDescription className="mt-1 flex items-center gap-2">
-                  <Badge variant="outline">{email}</Badge>
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">어서오세요! DataGSM입니다.</p>
           </CardContent>
         </Card>
       </div>
