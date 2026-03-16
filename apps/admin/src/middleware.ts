@@ -7,6 +7,14 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
+  if (pathname.startsWith('/oauth')) {
+    const targetUrl = new URL('http://localhost:3004/oauth/authorize');
+    request.nextUrl.searchParams.forEach((value, key) => {
+      targetUrl.searchParams.set(key, value);
+    });
+    return NextResponse.redirect(targetUrl);
+  }
+
   // OAuth 플로우는 미들웨어 적용 안 함
   if (pathname.startsWith('/oauth') || pathname.startsWith('/api/')) {
     return NextResponse.next();

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebounce } from '@repo/shared/hooks';
 import {
   Button,
   Card,
@@ -18,28 +19,29 @@ import {
   Input,
   Label,
 } from '@repo/shared/ui';
+import { Checkbox, Dialog, DialogContent, DialogHeader, DialogTitle } from '@repo/shared/ui';
 import { cn, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
 import { Database, Eye, EyeOff } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ResetPasswordFormSchema, ResetPasswordFormType } from '@/entities/reset-password';
-import { useDebounce } from '@/shared/hooks';
-import {
-  useChangePassword,
-  useSendPasswordResetEmail,
-  useVerifyPasswordResetCode,
-} from '@/widgets/reset-password';
+import { SignUpFormSchema, SignUpFormType } from '@/entities/signup';
+import { useCheckEmailCode, useSendEmailCode, useSignUp } from '@/widgets/signup';
+
+import { PRIVACY_POLICY } from '../../constants/privacyPolicy';
 
 const RESEND_COOLDOWN_MS = minutesToMs(5);
-const STORAGE_KEY = 'password_reset_verification_timestamp';
+const STORAGE_KEY = 'email_verification_timestamp';
 
-const ResetPasswordForm = () => {
+const SignUpForm = () => {
   const [codeSent, setCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [remainingTime, setRemainingTime] = useState(0);
+  const [isPrivacyDialogOpen, setIsPrivacyDialogOpen] = useState(false);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   const {
@@ -50,24 +52,57 @@ const ResetPasswordForm = () => {
     trigger,
     watch,
     setValue,
-  } = useForm<ResetPasswordFormType>({
-    resolver: zodResolver(ResetPasswordFormSchema),
+  } = useForm<SignUpFormType>({
+    resolver: zodResolver(SignUpFormSchema),
   });
 
   const codeValue = watch('code');
   const emailValue = watch('email');
   const passwordValue = watch('password');
   const confirmPasswordValue = watch('confirmPassword');
+  const privacyAgreedValue = watch('privacyAgreed');
   const debouncedCode = useDebounce(codeValue, 1000);
   const lastCheckedCode = useRef('');
   const hasShownExpiredToast = useRef(false);
 
-  const isFormValid = ResetPasswordFormSchema.safeParse({
+  const isFormValid = SignUpFormSchema.safeParse({
     email: emailValue,
     password: passwordValue,
-    code: codeValue,
     confirmPassword: confirmPasswordValue,
+    code: codeValue,
+    privacyAgreed: privacyAgreedValue,
   }).success;
+
+  const handlePrivacyCheckboxClick = () => {
+    const isAgreed = getValues('privacyAgreed');
+    if (!isAgreed) {
+      setHasScrolledToBottom(false);
+      setIsPrivacyDialogOpen(true);
+    } else {
+      setValue('privacyAgreed', false);
+    }
+  };
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+      if (scrollTop + clientHeight >= scrollHeight - 10) {
+        setHasScrolledToBottom(true);
+      }
+    }
+  };
+
+  const handlePrivacyAgree = () => {
+    setValue('privacyAgreed', true);
+    setIsPrivacyDialogOpen(false);
+    setHasScrolledToBottom(false);
+  };
+
+  useEffect(() => {
+    if (isPrivacyDialogOpen && scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [isPrivacyDialogOpen]);
 
   // 페이지 로드 시 localStorage에서 마지막 전송 시간 확인
   useEffect(() => {
@@ -111,7 +146,7 @@ const ResetPasswordForm = () => {
     }
   }, [remainingTime, setValue, isCodeVerified]);
 
-  const { mutate: sendEmailCode, isPending: isSendingCode } = useSendPasswordResetEmail({
+  const { mutate: sendEmailCode, isPending: isSendingCode } = useSendEmailCode({
     onSuccess: () => {
       const timestamp = Date.now();
       localStorage.setItem(STORAGE_KEY, timestamp.toString());
@@ -124,11 +159,11 @@ const ResetPasswordForm = () => {
       const statusCode = getApiErrorCode(error);
 
       switch (statusCode) {
-        case 404:
-          toast.error('존재하지 않는 이메일입니다.');
+        case 400:
+          toast.error('이메일 형식을 확인해주세요.');
           break;
-        case 429:
-          toast.error('요청 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.');
+        case 409:
+          toast.error('이미 해당 이메일을 가진 계정이 존재합니다.');
           break;
         default:
           toast.error('인증 코드 전송에 실패했습니다.');
@@ -136,7 +171,7 @@ const ResetPasswordForm = () => {
     },
   });
 
-  const { mutate: checkEmailCode } = useVerifyPasswordResetCode({
+  const { mutate: checkEmailCode } = useCheckEmailCode({
     onSuccess: () => {
       setIsCodeVerified(true);
       toast.success('인증 코드가 확인되었습니다.');
@@ -152,10 +187,6 @@ const ResetPasswordForm = () => {
         case 404:
           setIsCodeVerified(false);
           toast.error('인증 코드가 만료되었거나 존재하지 않습니다.');
-          break;
-        case 429:
-          setIsCodeVerified(false);
-          toast.error('요청 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.');
           break;
         default:
           setIsCodeVerified(false);
@@ -176,26 +207,25 @@ const ResetPasswordForm = () => {
     }
   }, [codeSent, debouncedCode, emailValue, checkEmailCode]);
 
-  const { mutate: changePassword, isPending: isSigningUp } = useChangePassword({
+  const { mutate: signUp, isPending: isSigningUp } = useSignUp({
     onSuccess: () => {
-      toast.success('비밀번호가 변경되었습니다.');
-      setTimeout(() => router.push('/'), 1500);
+      router.push('/signup/success');
     },
     onError: (error: unknown) => {
       const statusCode = getApiErrorCode(error);
 
       switch (statusCode) {
         case 400:
-          toast.error('이전 비밀번호와 동일합니다.');
+          toast.error('입력 데이터를 확인해주세요.');
           break;
         case 404:
-          toast.error('계정이 존재하지 않습니다.');
+          toast.error('인증 코드가 만료되었거나 존재하지 않습니다.');
           break;
-        case 429:
-          toast.error('요청 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.');
+        case 409:
+          toast.error('이미 존재하는 계정입니다.');
           break;
         default:
-          toast.error('비밀번호 변경에 실패했습니다.');
+          toast.error('회원가입에 실패했습니다.');
       }
     },
   });
@@ -218,13 +248,13 @@ const ResetPasswordForm = () => {
   const isButtonDisabled =
     isSendingCode || !emailValue || (codeSent && !canResend) || isCodeVerified;
 
-  const onSubmit: SubmitHandler<ResetPasswordFormType> = (data) => {
+  const onSubmit: SubmitHandler<SignUpFormType> = (data) => {
     if (!isCodeVerified) {
       toast.error('이메일 인증을 완료해주세요.');
       return;
     }
-    const { email, code, password } = data;
-    changePassword({ email, code, newPassword: password });
+    const { email, password, code } = data;
+    signUp({ email, password, code });
   };
 
   return (
@@ -238,8 +268,10 @@ const ResetPasswordForm = () => {
           <Database className={cn('text-primary h-8 w-8')} />
         </div>
         <div>
-          <CardTitle className={cn('text-3xl')}>비밀번호 재설정</CardTitle>
-          <CardDescription className={cn('mt-2')}>새로운 비밀번호를 설정하세요</CardDescription>
+          <CardTitle className={cn('text-3xl')}>회원가입</CardTitle>
+          <CardDescription className={cn('mt-2')}>
+            @gsm.hs.kr 도메인 계정만 사용 가능합니다
+          </CardDescription>
         </div>
       </CardHeader>
 
@@ -289,34 +321,32 @@ const ResetPasswordForm = () => {
           </div>
 
           <div className={cn('space-y-2')}>
-            <Label htmlFor="password">새 비밀번호</Label>
-            <div className={cn('flex gap-2')}>
-              <div className={cn('relative flex-1')}>
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="새 비밀번호를 입력하세요"
-                  {...register('password')}
-                  disabled={!isCodeVerified || isSigningUp}
-                  className={cn('pr-10')}
-                />
-                <button
-                  type="button"
-                  aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
-                  onClick={() => setShowPassword(!showPassword)}
-                  className={cn(
-                    'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
-                    (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
-                  )}
-                  disabled={!isCodeVerified || isSigningUp}
-                >
-                  {showPassword ? (
-                    <EyeOff className={cn('h-4 w-4')} />
-                  ) : (
-                    <Eye className={cn('h-4 w-4')} />
-                  )}
-                </button>
-              </div>
+            <Label htmlFor="password">비밀번호</Label>
+            <div className={cn('relative')}>
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="비밀번호를 입력하세요"
+                {...register('password')}
+                disabled={!isCodeVerified || isSigningUp}
+                className={cn('pr-10')}
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                onClick={() => setShowPassword(!showPassword)}
+                className={cn(
+                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
+                  (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
+                )}
+                disabled={!isCodeVerified || isSigningUp}
+              >
+                {showPassword ? (
+                  <EyeOff className={cn('h-4 w-4')} />
+                ) : (
+                  <Eye className={cn('h-4 w-4')} />
+                )}
+              </button>
             </div>
             <FormErrorMessage error={errors.password} />
             <div className={cn('relative')}>
@@ -347,6 +377,25 @@ const ResetPasswordForm = () => {
             </div>
             <FormErrorMessage error={errors.confirmPassword} />
           </div>
+
+          <div className={cn('flex items-center space-x-2')}>
+            <Checkbox
+              id="privacy"
+              checked={watch('privacyAgreed')}
+              onCheckedChange={handlePrivacyCheckboxClick}
+            />
+            <label
+              htmlFor="privacy"
+              className={cn('cursor-pointer text-sm leading-none')}
+              onClick={(e) => {
+                e.preventDefault();
+                handlePrivacyCheckboxClick();
+              }}
+            >
+              <span className={cn('text-primary hover:underline')}>개인정보 처리방침</span>에
+              동의합니다
+            </label>
+          </div>
         </CardContent>
 
         <CardFooter className={cn('mt-6 flex flex-col space-y-4')}>
@@ -359,18 +408,108 @@ const ResetPasswordForm = () => {
             size="lg"
             disabled={isSigningUp || !isCodeVerified || !isFormValid}
           >
-            {isSigningUp ? '처리 중...' : '비밀번호 재설정'}
+            {isSigningUp ? '처리 중...' : '회원가입'}
           </Button>
 
-          <p className="text-muted-foreground text-center text-sm">
-            <Link href="/signin" className="text-primary font-medium hover:underline">
-              로그인으로 돌아가기
+          <p className={cn('text-muted-foreground text-center text-sm')}>
+            이미 계정이 있으신가요?{' '}
+            <Link href="/" className={cn('text-primary font-medium hover:underline')}>
+              로그인
             </Link>
           </p>
         </CardFooter>
       </form>
+
+      <Dialog open={isPrivacyDialogOpen} onOpenChange={setIsPrivacyDialogOpen}>
+        <DialogContent className={cn('flex max-h-[80vh] max-w-md flex-col')}>
+          <DialogHeader>
+            <DialogTitle>개인정보 처리방침</DialogTitle>
+          </DialogHeader>
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className={cn('max-w-none flex-1 overflow-y-auto pr-4')}
+          >
+            <div className={cn('whitespace-pre-wrap text-sm leading-relaxed')}>
+              {PRIVACY_POLICY.split('\n').map((line, index) => {
+                if (line.startsWith('# ')) {
+                  return (
+                    <h1
+                      key={index}
+                      className={cn('mb-2 mt-4 text-xl font-bold')}
+                      dangerouslySetInnerHTML={{ __html: line.replace('# ', '') }}
+                    />
+                  );
+                }
+                if (line.startsWith('## ')) {
+                  return (
+                    <h2
+                      key={index}
+                      className={cn('mb-2 mt-4 text-lg font-semibold')}
+                      dangerouslySetInnerHTML={{ __html: line.replace('## ', '') }}
+                    />
+                  );
+                }
+                if (line.startsWith('### ')) {
+                  return (
+                    <h3
+                      key={index}
+                      className={cn('mb-1 mt-3 text-base font-medium')}
+                      dangerouslySetInnerHTML={{ __html: line.replace('### ', '') }}
+                    />
+                  );
+                }
+                const trimmedLine = line.trimStart();
+                const isNested = line.startsWith('  ');
+
+                if (trimmedLine.startsWith('- ')) {
+                  return (
+                    <li
+                      key={index}
+                      className={cn(isNested ? 'ml-14' : 'ml-8')}
+                      dangerouslySetInnerHTML={{ __html: trimmedLine.substring(2) }}
+                    />
+                  );
+                }
+                if (line.startsWith('  > ')) {
+                  return (
+                    <blockquote
+                      key={index}
+                      className={cn(
+                        'text-muted-foreground border-muted-foreground ml-8 border-l-2 pl-3 italic',
+                      )}
+                      dangerouslySetInnerHTML={{ __html: line.replace('  > ', '') }}
+                    />
+                  );
+                }
+                return (
+                  <p
+                    key={index}
+                    className={cn('my-2')}
+                    dangerouslySetInnerHTML={{ __html: line }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          <div className={cn('flex flex-col gap-2 border-t pt-4')}>
+            {!hasScrolledToBottom && (
+              <p className={cn('text-muted-foreground text-center text-xs')}>
+                내용을 끝까지 읽어주세요
+              </p>
+            )}
+            <Button
+              onClick={handlePrivacyAgree}
+              disabled={!hasScrolledToBottom}
+              className={cn('w-full')}
+            >
+              동의합니다
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
 
-export default ResetPasswordForm;
+export default SignUpForm;
