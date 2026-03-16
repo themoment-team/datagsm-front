@@ -1,12 +1,4 @@
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@repo/shared/ui';
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/shared/ui';
 import { GraduationCap, Home, Mail, Shield, User } from 'lucide-react';
 
 import { MyAccount } from '@/entities/mypage';
