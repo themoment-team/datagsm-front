@@ -1,8 +1,13 @@
 import { Activity } from 'lucide-react';
 
+import type { HealthStatusData } from '@/entities/status';
 import { StatusDashboard } from '@/widgets/status';
 
-const StatusPage = () => {
+interface StatusPageProps {
+  initialHealthStatus: HealthStatusData;
+}
+
+const StatusPage = ({ initialHealthStatus }: StatusPageProps) => {
   return (
     <div className="bg-background min-h-screen">
       <main className="container mx-auto px-4 py-16">
@@ -15,7 +20,7 @@ const StatusPage = () => {
             <p className="text-muted-foreground mt-2">DataGSM 서비스의 실시간 상태를 확인합니다</p>
           </div>
 
-          <StatusDashboard />
+          <StatusDashboard initialHealthStatus={initialHealthStatus} />
         </div>
       </main>
     </div>

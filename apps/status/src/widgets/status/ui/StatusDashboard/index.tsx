@@ -1,21 +1,19 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { Button, Card } from '@repo/shared/ui';
 import { CheckCircle2, Clock, RefreshCw, XCircle } from 'lucide-react';
 
 import {
-  HEALTH_CHECK_STATUS_POOL,
-  INITIAL_SERVERS,
+  type HealthStatusData,
   SERVER_STATUS_META,
-  type Server,
-  type ServerStatus,
   type StatusTone,
   getOverallStatus,
   hasDeployingServer,
   hasDownServer,
   isAllOperational,
+  useGetHealthStatus,
 } from '@/entities/status';
 import { formatKoreanTime } from '@/shared/lib/date/formatKoreanTime';
 
@@ -44,38 +42,18 @@ const TONE_STYLES: Record<
   },
 };
 
-const pickRandomStatus = () => {
-  const randomIndex = Math.floor(Math.random() * HEALTH_CHECK_STATUS_POOL.length);
-  return HEALTH_CHECK_STATUS_POOL[randomIndex] as ServerStatus;
-};
+interface StatusDashboardProps {
+  initialHealthStatus: HealthStatusData;
+}
 
-const StatusDashboard = () => {
-  const [servers, setServers] = useState<Server[]>(INITIAL_SERVERS);
-  const [isChecking, setIsChecking] = useState(false);
-  const [lastChecked, setLastChecked] = useState<Date | null>(null);
+const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
+  const { data, refetch, isFetching, isError } = useGetHealthStatus({
+    initialData: initialHealthStatus,
+  });
 
-  const checkHealth = () => {
-    setIsChecking(true);
-
-    setTimeout(() => {
-      const updatedServers = INITIAL_SERVERS.map((server) => {
-        const randomStatus = pickRandomStatus();
-        return {
-          ...server,
-          status: randomStatus,
-          responseTime: randomStatus === 200 ? Math.floor(Math.random() * 100) + 20 : undefined,
-        };
-      });
-
-      setServers(updatedServers);
-      setLastChecked(new Date());
-      setIsChecking(false);
-    }, 1500);
-  };
-
-  useEffect(() => {
-    setLastChecked(new Date());
-  }, []);
+  const servers = data.servers;
+  const isChecking = isFetching;
+  const lastChecked = useMemo(() => new Date(data.checkedAt), [data.checkedAt]);
 
   const allOperational = useMemo(() => isAllOperational(servers), [servers]);
   const hasDown = useMemo(() => hasDownServer(servers), [servers]);
@@ -108,11 +86,16 @@ const StatusDashboard = () => {
               )}
             </div>
           </div>
-          <Button onClick={checkHealth} disabled={isChecking} variant="outline" size="sm">
+          <Button onClick={() => void refetch()} disabled={isChecking} variant="outline" size="sm">
             <RefreshCw className={`mr-2 h-4 w-4 ${isChecking ? 'animate-spin' : ''}`} />
             {isChecking ? '확인 중...' : '새로고침'}
           </Button>
         </div>
+        {isError && (
+          <p className="text-muted-foreground mt-2 text-xs">
+            최신 상태 조회에 실패했습니다. 마지막 정상 데이터를 표시 중입니다.
+          </p>
+        )}
       </Card>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
