@@ -187,6 +187,8 @@ const SignInForm = ({
               <p>
                 <Link
                   href="/signin/reset-password"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-primary hover:underline"
                 >
                   비밀번호를 잊으셨나요?

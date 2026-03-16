@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebounce } from '@repo/shared/hooks';
 import {
   Button,
   Card,
@@ -24,7 +25,6 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ResetPasswordFormSchema, ResetPasswordFormType } from '@/entities/reset-password';
-import { useDebounce } from '@repo/shared/hooks';
 import {
   useChangePassword,
   useSendPasswordResetEmail,
@@ -178,8 +178,7 @@ const ResetPasswordForm = () => {
 
   const { mutate: changePassword, isPending: isSigningUp } = useChangePassword({
     onSuccess: () => {
-      toast.success('비밀번호가 변경되었습니다.');
-      setTimeout(() => router.push('/'), 1500);
+      router.push('/success?page=reset');
     },
     onError: (error: unknown) => {
       const statusCode = getApiErrorCode(error);

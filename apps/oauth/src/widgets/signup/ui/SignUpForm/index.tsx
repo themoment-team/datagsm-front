@@ -209,7 +209,7 @@ const SignUpForm = () => {
 
   const { mutate: signUp, isPending: isSigningUp } = useSignUp({
     onSuccess: () => {
-      router.push('/success');
+      router.push('/success?page=signup');
     },
     onError: (error: unknown) => {
       const statusCode = getApiErrorCode(error);

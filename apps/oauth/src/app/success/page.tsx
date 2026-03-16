@@ -1,7 +1,7 @@
-import { SignUpSuccessPage } from '@/views/success';
+import { SuccessPage } from '@/views/success';
 
 const Success = () => {
-  return <SignUpSuccessPage />;
+  return <SuccessPage />;
 };
 
 export default Success;

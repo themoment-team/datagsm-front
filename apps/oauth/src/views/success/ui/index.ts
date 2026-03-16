@@ -1,1 +1,1 @@
-export { default as SignUpSuccessPage } from './SuccessPage';
+export { default as SuccessPage } from './SuccessPage';
