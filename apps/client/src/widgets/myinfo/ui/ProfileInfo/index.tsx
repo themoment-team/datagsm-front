@@ -1,4 +1,5 @@
 import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 import { GraduationCap, Home, Mail, Shield, User } from 'lucide-react';
 
 import { MyAccount } from '@/entities/mypage';
@@ -109,8 +110,8 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
             <InfoItem
               label="기숙사 호실"
               value={`${student.dormitoryFloor}층 ${student.dormitoryRoom}호`}
+              className="col-span-2"
             />
-            <div />
             <InfoItem label="전공동아리" value={student.majorClub?.name || '없음'} />
             <InfoItem label="자율동아리" value={student.autonomousClub?.name || '없음'} />
           </div>
@@ -144,13 +145,15 @@ const InfoItem = ({
   label,
   value,
   icon,
+  className,
 }: {
   label: string;
   value: string;
   icon?: React.ReactNode;
+  className?: string;
 }) => {
   return (
-    <div className="space-y-1">
+    <div className={cn('space-y-1', className)}>
       <p className="text-muted-foreground text-sm">{label}</p>
       <p className="flex items-center gap-2 font-medium">
         {icon}
