@@ -1,4 +1,3 @@
-import { COOKIE_KEYS } from '@repo/shared/constants';
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import { TooltipProvider } from '@repo/shared/ui';
 import type { Metadata } from 'next';
@@ -20,9 +19,7 @@ const RootLayout = async ({
       <body>
         <TanStackProvider>
           <ToastProvider>
-            <TooltipProvider>
-              {children}
-            </TooltipProvider>
+            <TooltipProvider>{children}</TooltipProvider>
           </ToastProvider>
         </TanStackProvider>
       </body>
