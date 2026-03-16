@@ -176,6 +176,7 @@ const OAuthAuthorizeForm = () => {
         onSubmit={handleSubmit}
         isPending={isPending}
         signupHref="/signup"
+        resetHref="/signin/reset-password"
         serviceName={serviceName || undefined}
         isLoadingServiceName={isLoadingServiceName}
         remainingTime={remainingTime}
