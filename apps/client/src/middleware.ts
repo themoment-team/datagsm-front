@@ -7,20 +7,6 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
-  // 구버전 OAuth 경로 처리 (임시 리다이렉트)
-  if (pathname.startsWith('/oauth')) {
-    const targetUrl = new URL('http://localhost:3004/oauth/authorize');
-    request.nextUrl.searchParams.forEach((value, key) => {
-      targetUrl.searchParams.set(key, value);
-    });
-    return NextResponse.redirect(targetUrl);
-  }
-
-  // OAuth callback 감지 (code 파라미터가 있으면 외부 OAuth callback)
-  if (request.nextUrl.searchParams.has('code')) {
-    return NextResponse.next();
-  }
-
   // API 경로는 미들웨어 적용 안 함
   if (pathname.startsWith('/api/')) {
     return NextResponse.next();
