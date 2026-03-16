@@ -148,7 +148,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
   );
 };
 
-function InfoItem({
+const InfoItem = ({
   label,
   value,
   icon,
@@ -156,7 +156,7 @@ function InfoItem({
   label: string;
   value: string;
   icon?: React.ReactNode;
-}) {
+}) => {
   return (
     <div className="space-y-1">
       <p className="text-muted-foreground text-sm">{label}</p>
@@ -166,4 +166,4 @@ function InfoItem({
       </p>
     </div>
   );
-}
+};
