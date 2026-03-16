@@ -5,7 +5,7 @@ export const NAV_LINKS = {
     { href: '/', label: 'APIKey' },
     { href: '/clients', label: 'Client' },
     { href: DOCS_URL, label: 'Docs' },
-    { href: './myinfo', label: 'My' },
+    { href: '/myinfo', label: 'My' },
   ],
   admin: [
     { href: '/students', label: '학생' },
