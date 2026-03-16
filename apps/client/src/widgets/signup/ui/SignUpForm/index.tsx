@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebounce } from '@repo/shared/hooks';
 import {
   Button,
   Card,
@@ -25,7 +26,6 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { SignUpFormSchema, SignUpFormType } from '@/entities/signup';
-import { useDebounce } from '@/shared/hooks';
 import { useCheckEmailCode, useSendEmailCode, useSignUp } from '@/widgets/signup';
 
 import { PRIVACY_POLICY } from '../../constants/privacyPolicy';
