@@ -233,14 +233,17 @@ const ProjectFormDialog = ({
                     }}
                   >
                     <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
+                      <button
+                        type="button"
                         role="combobox"
-                        className={cn('w-full justify-between font-normal')}
+                        className={cn(
+                          'border-input shadow-xs dark:bg-input/30 dark:hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
+                          'text-muted-foreground',
+                        )}
                       >
                         팀원 추가
-                        <ChevronDown className={cn('ml-2 h-4 w-4 shrink-0 opacity-50')} />
-                      </Button>
+                        <ChevronDown className={cn('h-4 w-4 shrink-0 opacity-50')} />
+                      </button>
                     </PopoverTrigger>
                     <PopoverContent
                       className={cn('w-(--radix-popover-trigger-width) p-0')}
