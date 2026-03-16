@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useURLFilters } from '@repo/shared/hooks';
+import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Student, StudentRole, StudentSex } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
@@ -38,6 +38,7 @@ const StudentsPage = () => {
 
   const initialValues = useMemo(
     (): StudentFilterType & { page: number } => ({
+      name: searchParams.get('name') || 'all',
       grade: searchParams.get('grade') || 'all',
       classNum: searchParams.get('classNum') || 'all',
       sex: searchParams.get('sex') || 'all',
@@ -55,6 +56,7 @@ const StudentsPage = () => {
   const form = useForm<StudentFilterType>({
     resolver: zodResolver(StudentFilterSchema),
     defaultValues: {
+      name: initialValues.name,
       grade: initialValues.grade,
       classNum: initialValues.classNum,
       sex: initialValues.sex,
@@ -73,10 +75,13 @@ const StudentsPage = () => {
     control,
   });
 
+  const debouncedName = useDebounce(filters.name);
+
   const currentPage = initialValues.page;
 
   useEffect(() => {
     const hasChanged =
+      debouncedName !== initialValues.name ||
       filters.grade !== initialValues.grade ||
       filters.classNum !== initialValues.classNum ||
       filters.sex !== initialValues.sex ||
@@ -88,9 +93,16 @@ const StudentsPage = () => {
       filters.sortBy !== initialValues.sortBy;
 
     if (hasChanged) {
-      updateURL(filters, 0);
+      updateURL(
+        {
+          ...filters,
+          name: debouncedName,
+        },
+        0,
+      );
     }
   }, [
+    debouncedName,
     filters.grade,
     filters.classNum,
     filters.sex,
@@ -100,6 +112,7 @@ const StudentsPage = () => {
     filters.includeWithdrawn,
     filters.onlyEnrolled,
     filters.sortBy,
+    initialValues.name,
     initialValues.grade,
     initialValues.classNum,
     initialValues.sex,
@@ -114,12 +127,19 @@ const StudentsPage = () => {
   ]);
 
   const handlePageChange = (page: number) => {
-    updateURL(filters, page);
+    updateURL(
+      {
+        ...filters,
+        name: debouncedName,
+      },
+      page,
+    );
   };
 
   const queryParams = {
     page: currentPage,
     size: PAGE_SIZE,
+    name: debouncedName !== 'all' ? debouncedName : undefined,
     grade: filters.grade !== 'all' ? Number(filters.grade) : undefined,
     classNum: filters.classNum !== 'all' ? Number(filters.classNum) : undefined,
     sex: filters.sex !== 'all' ? (filters.sex as StudentSex) : undefined,

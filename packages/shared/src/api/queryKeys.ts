@@ -13,6 +13,7 @@ export const studentQueryKeys = {
     includeWithdrawn?: boolean,
     onlyEnrolled?: boolean,
     sortBy?: string,
+    name?: string,
   ) =>
     [
       'students',
@@ -28,6 +29,7 @@ export const studentQueryKeys = {
         includeWithdrawn,
         onlyEnrolled,
         sortBy,
+        name,
       },
     ] as const,
   postStudent: () => ['students', 'create'] as const,
