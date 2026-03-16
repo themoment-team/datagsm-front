@@ -1,4 +1,5 @@
 import {
+  Input,
   Label,
   Select,
   SelectContent,
@@ -7,6 +8,7 @@ import {
   SelectValue,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+import { Search } from 'lucide-react';
 import { Control, Controller } from 'react-hook-form';
 
 import { StudentFilterType } from '@/entities/student';
@@ -18,6 +20,27 @@ interface StudentFilterProps {
 const StudentFilter = ({ control }: StudentFilterProps) => {
   return (
     <div className={cn('mt-4 flex flex-wrap items-center gap-4')}>
+      <div className={cn('relative flex-1')}>
+        <Search
+          className={cn('text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2')}
+        />
+        <Controller
+          control={control}
+          name="name"
+          render={({ field }) => (
+            <Input
+              {...field}
+              placeholder="학생 이름으로 검색"
+              className={cn('pl-9')}
+              onChange={(e) => {
+                field.onChange(e.target.value || 'all');
+              }}
+              value={field.value === 'all' ? '' : field.value}
+            />
+          )}
+        />
+      </div>
+
       <div className={cn('flex items-center gap-2')}>
         <Label className={cn('text-sm')}>학년:</Label>
         <Controller

@@ -14,6 +14,7 @@ interface UseGetStudentsParams {
   includeWithdrawn?: boolean;
   onlyEnrolled?: boolean;
   sortBy?: string;
+  name?: string;
 }
 
 export const useGetStudents = (
@@ -28,6 +29,7 @@ export const useGetStudents = (
     includeWithdrawn,
     onlyEnrolled,
     sortBy,
+    name,
   }: UseGetStudentsParams,
   options?: Omit<UseQueryOptions<StudentListResponse>, 'queryKey' | 'queryFn'>,
 ) =>
@@ -43,6 +45,7 @@ export const useGetStudents = (
       includeWithdrawn,
       onlyEnrolled,
       sortBy,
+      name,
     ),
     queryFn: () =>
       get<StudentListResponse>(
@@ -57,6 +60,7 @@ export const useGetStudents = (
           includeWithdrawn,
           onlyEnrolled,
           sortBy,
+          name,
         ),
       ),
     staleTime: minutesToMs(5),

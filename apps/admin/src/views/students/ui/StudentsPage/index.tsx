@@ -38,6 +38,7 @@ const StudentsPage = () => {
 
   const initialValues = useMemo(
     (): StudentFilterType & { page: number } => ({
+      name: searchParams.get('name') || 'all',
       grade: searchParams.get('grade') || 'all',
       classNum: searchParams.get('classNum') || 'all',
       sex: searchParams.get('sex') || 'all',
@@ -55,6 +56,7 @@ const StudentsPage = () => {
   const form = useForm<StudentFilterType>({
     resolver: zodResolver(StudentFilterSchema),
     defaultValues: {
+      name: initialValues.name,
       grade: initialValues.grade,
       classNum: initialValues.classNum,
       sex: initialValues.sex,
@@ -77,6 +79,7 @@ const StudentsPage = () => {
 
   useEffect(() => {
     const hasChanged =
+      filters.name !== initialValues.name ||
       filters.grade !== initialValues.grade ||
       filters.classNum !== initialValues.classNum ||
       filters.sex !== initialValues.sex ||
@@ -91,6 +94,7 @@ const StudentsPage = () => {
       updateURL(filters, 0);
     }
   }, [
+    filters.name,
     filters.grade,
     filters.classNum,
     filters.sex,
@@ -100,6 +104,7 @@ const StudentsPage = () => {
     filters.includeWithdrawn,
     filters.onlyEnrolled,
     filters.sortBy,
+    initialValues.name,
     initialValues.grade,
     initialValues.classNum,
     initialValues.sex,
@@ -120,6 +125,7 @@ const StudentsPage = () => {
   const queryParams = {
     page: currentPage,
     size: PAGE_SIZE,
+    name: filters.name !== 'all' ? filters.name : undefined,
     grade: filters.grade !== 'all' ? Number(filters.grade) : undefined,
     classNum: filters.classNum !== 'all' ? Number(filters.classNum) : undefined,
     sex: filters.sex !== 'all' ? (filters.sex as StudentSex) : undefined,
