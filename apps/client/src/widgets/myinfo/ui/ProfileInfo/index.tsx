@@ -1,8 +1,7 @@
+import { MyAccount } from '@repo/shared/types';
 import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { GraduationCap, Home, Mail, Shield, User } from 'lucide-react';
-
-import { MyAccount } from '@/entities/mypage';
 
 interface ProfileInfoProps {
   data: MyAccount;
