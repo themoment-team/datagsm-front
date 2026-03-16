@@ -4,6 +4,11 @@ import { Club, Project, Student } from '@repo/shared/types';
 import {
   Badge,
   Button,
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -12,6 +17,9 @@ import {
   FormErrorMessage,
   Input,
   Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -21,7 +29,7 @@ import {
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { Pencil, Plus, X } from 'lucide-react';
+import { ChevronDown, Pencil, Plus, X } from 'lucide-react';
 import { Controller, SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -66,17 +74,8 @@ const ProjectFormDialog = ({
   } = form;
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [isMemberSelectOpen, setIsMemberSelectOpen] = useState(false);
-  const memberSearchRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isMemberSelectOpen) {
-      const timer = setTimeout(() => {
-        memberSearchRef.current?.querySelector('input')?.focus();
-      });
-      return () => clearTimeout(timer);
-    }
-  }, [isMemberSelectOpen]);
+  const [memberPopoverOpen, setMemberPopoverOpen] = useState(false);
+  const memberSearchRef = useRef<HTMLInputElement>(null);
 
   const filteredStudents = useMemo(() => {
     if (!searchTerm) return students;
@@ -226,55 +225,65 @@ const ProjectFormDialog = ({
                 control={control}
                 name="participantIds"
                 render={({ field }) => (
-                  <Select
-                    value=""
-                    onOpenChange={(open) => {
-                      setIsMemberSelectOpen(open);
-                      if (!open) setSearchTerm('');
-                    }}
-                    onValueChange={(value) => {
-                      const id = Number(value);
-                      if (Array.isArray(field.value) && !field.value.includes(id)) {
-                        field.onChange([...field.value, id]);
-                        setSearchTerm('');
-                      }
+                  <Popover
+                    open={memberPopoverOpen}
+                    onOpenChange={(v) => {
+                      setMemberPopoverOpen(v);
+                      if (!v) setSearchTerm('');
                     }}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="팀원 추가" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <div ref={memberSearchRef} className={cn('bg-popover sticky top-0 z-10 p-2')}>
-                        <Input
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn('w-full justify-between font-normal')}
+                      >
+                        팀원 추가
+                        <ChevronDown className={cn('ml-2 h-4 w-4 shrink-0 opacity-50')} />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className={cn('w-(--radix-popover-trigger-width) p-0')}
+                      onOpenAutoFocus={(e) => {
+                        e.preventDefault();
+                        memberSearchRef.current?.focus();
+                      }}
+                    >
+                      <Command shouldFilter={false}>
+                        <CommandInput
+                          ref={memberSearchRef}
                           placeholder="이름 또는 학번 검색..."
                           value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === ' ') e.stopPropagation();
-                            e.stopPropagation();
-                          }}
-                          onPointerDown={(e) => e.stopPropagation()}
+                          onValueChange={setSearchTerm}
                         />
-                      </div>
-                      <div className={cn('max-h-[200px] overflow-y-auto')}>
-                        {filteredStudents && filteredStudents.length > 0 ? (
-                          filteredStudents
-                            .filter(
+                        <CommandList>
+                          <CommandEmpty>검색 결과가 없습니다.</CommandEmpty>
+                          {filteredStudents
+                            ?.filter(
                               (s) => Array.isArray(field.value) && !field.value.includes(s.id),
                             )
                             .map((student) => (
-                              <SelectItem key={student.id} value={student.id.toString()}>
+                              <CommandItem
+                                key={student.id}
+                                value={student.id.toString()}
+                                onSelect={() => {
+                                  if (
+                                    Array.isArray(field.value) &&
+                                    !field.value.includes(student.id)
+                                  ) {
+                                    field.onChange([...field.value, student.id]);
+                                  }
+                                  setSearchTerm('');
+                                  setMemberPopoverOpen(false);
+                                }}
+                              >
                                 {student.studentNumber} {student.name}
-                              </SelectItem>
-                            ))
-                        ) : (
-                          <div className={cn('text-muted-foreground p-4 text-center text-sm')}>
-                            검색 결과가 없습니다.
-                          </div>
-                        )}
-                      </div>
-                    </SelectContent>
-                  </Select>
+                              </CommandItem>
+                            ))}
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 )}
               />
               <FormErrorMessage
