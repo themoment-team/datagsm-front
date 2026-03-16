@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { ApiResponse } from './base';
 import { UserRoleType } from './userRole';
+import { Student } from './student';
 
 export interface Account {
   id: number;
@@ -9,7 +10,18 @@ export interface Account {
   role: UserRoleType;
 }
 
+export interface MyAccount extends Account {
+  isStudent: boolean;
+  student?: Student;
+}
+
 export type AccountResponse = ApiResponse<Account>;
+
+export type MyAccountResponse = ApiResponse<MyAccount>;
+
+export interface WithdrawalRequest {
+  password: string;
+}
 
 interface SignInResponseData {
   accessToken: string;
