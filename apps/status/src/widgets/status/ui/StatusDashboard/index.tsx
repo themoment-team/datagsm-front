@@ -10,9 +10,6 @@ import {
   SERVER_STATUS_META,
   type StatusTone,
   getOverallStatus,
-  hasDeployingServer,
-  hasDownServer,
-  isAllOperational,
   useGetHealthStatus,
 } from '@/entities/status';
 import { formatKoreanTime } from '@/shared/lib/date/formatKoreanTime';
@@ -55,9 +52,6 @@ const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
   const isChecking = isFetching;
   const lastChecked = useMemo(() => new Date(data.checkedAt), [data.checkedAt]);
 
-  const allOperational = useMemo(() => isAllOperational(servers), [servers]);
-  const hasDown = useMemo(() => hasDownServer(servers), [servers]);
-  const hasDeploying = useMemo(() => hasDeployingServer(servers), [servers]);
   const overallStatus = useMemo(() => getOverallStatus(servers), [servers]);
   const overallToneStyles = TONE_STYLES[overallStatus.tone];
 
@@ -66,14 +60,12 @@ const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
       <Card className={`mb-6 p-6 ${overallToneStyles.bg}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {allOperational ? (
+            {overallStatus.tone === 'success' ? (
               <CheckCircle2 className="h-8 w-8 text-green-600" />
-            ) : hasDown ? (
+            ) : overallStatus.tone === 'error' ? (
               <XCircle className="h-8 w-8 text-red-600" />
-            ) : hasDeploying ? (
-              <Clock className="h-8 w-8 text-amber-600" />
             ) : (
-              <CheckCircle2 className="h-8 w-8 text-green-600" />
+              <Clock className="h-8 w-8 text-amber-600" />
             )}
             <div>
               <h2 className={`text-xl font-semibold ${overallToneStyles.text}`}>
