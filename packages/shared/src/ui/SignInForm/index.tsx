@@ -20,7 +20,7 @@ import {
   Skeleton,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-import { Database, Eye, EyeOff } from 'lucide-react';
+import { Clock, Database, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -34,10 +34,24 @@ interface SignInFormProps {
   signupHref?: string;
   serviceName?: string;
   isLoadingServiceName?: boolean;
+  remainingTime?: number | null;
 }
 
-const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName, isLoadingServiceName = false }: SignInFormProps) => {
+const SignInForm = ({
+  onSubmit,
+  isPending = false,
+  signupHref,
+  serviceName,
+  isLoadingServiceName = false,
+  remainingTime,
+}: SignInFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const {
     register,
@@ -64,7 +78,7 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName, isLo
         <div>
           <CardTitle className={cn('text-3xl')}>로그인</CardTitle>
           {isLoadingServiceName ? (
-            <Skeleton className={cn('mt-2 mx-auto h-4 w-64')} />
+            <Skeleton className={cn('mx-auto mt-2 h-4 w-64')} />
           ) : (
             <CardDescription className={cn('mt-2')}>
               DataGSM 계정으로{' '}
@@ -79,8 +93,18 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName, isLo
             </CardDescription>
           )}
         </div>
+        {remainingTime !== null && remainingTime !== undefined && remainingTime <= 300 && (
+          <div
+            className={cn(
+              'flex items-center justify-center gap-1.5 text-sm font-medium transition-colors',
+              remainingTime <= 30 ? 'text-destructive animate-pulse' : 'text-amber-600',
+            )}
+          >
+            <Clock className="h-4 w-4" />
+            <span>세션만료까지 남은 시간: {formatTime(remainingTime)}</span>
+          </div>
+        )}
       </CardHeader>
-
       <form onSubmit={handleFormSubmit}>
         <CardContent className={cn('space-y-4')}>
           <div className={cn('space-y-2')}>
