@@ -109,7 +109,7 @@ export const WithdrawalSection = () => {
                 <Button
                   type="submit"
                   variant="destructive"
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  className="bg-destructive -foreground hover:bg-destructive/90 text-white"
                   disabled={isPending}
                 >
                   {isPending ? '처리 중...' : '계정 삭제'}
