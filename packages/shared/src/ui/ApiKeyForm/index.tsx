@@ -195,15 +195,12 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     });
   };
 
-  const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
-
   if (isLoadingApiKey || isLoadingKeyScope) {
     return (
       <div
-        className={cn('border-2 border-foreground p-5')}
-        style={{ boxShadow: '3px 3px 0 0 oklch(0.04 0 0)' }}
+        className={cn('border-2 border-foreground p-5 pixel-shadow-sm')}
       >
-        <span className={cn('text-sm text-muted-foreground')} style={monoStyle}>
+        <span className={cn('text-sm text-muted-foreground font-mono')}>
           {'>'} 권한 범위 불러오는 중...
         </span>
       </div>
@@ -212,16 +209,15 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
 
   return (
     <div
-      className={cn('border-2 border-foreground p-5')}
-      style={{ boxShadow: '3px 3px 0 0 oklch(0.04 0 0)' }}
+      className={cn('border-2 border-foreground p-5 pixel-shadow-sm')}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={cn('mb-6 flex flex-col gap-4')}>
           <div>
-            <p className={cn('mb-1 text-sm font-bold uppercase tracking-wide')} style={monoStyle}>
+            <p className={cn('mb-1 text-sm font-bold uppercase tracking-wide font-mono')}>
               API 권한 범위 선택
             </p>
-            <p className={cn('text-muted-foreground text-xs')} style={monoStyle}>
+            <p className={cn('text-muted-foreground text-xs font-mono')}>
               {'>'} API 키로 접근할 수 있는 권한 범위를 선택하세요.
             </p>
           </div>
@@ -292,9 +288,8 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                 {apiKeyData?.data?.apiKey ? (
                   <button
                     className={cn(
-                      'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
+                      'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
                     )}
-                    style={monoStyle}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
                     type="button"
                     onClick={onRenewClick}
@@ -304,9 +299,8 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                 ) : (
                   <button
                     className={cn(
-                      'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
+                      'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
                     )}
-                    style={monoStyle}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
                     type="submit"
                   >
@@ -337,9 +331,8 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                 <TooltipTrigger asChild>
                   <button
                     className={cn(
-                      'w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest text-foreground transition-all hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-60',
+                      'w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest text-foreground transition-all hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-60 font-mono',
                     )}
-                    style={monoStyle}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
                     type="button"
                     onClick={onExtendClick}

@@ -130,6 +130,10 @@
     font-family: 'Press Start 2P', monospace;
   }
 
+  .font-pixel-ko {
+    font-family: 'Press Start 2P', var(--font-korean-pixel), monospace;
+  }
+
   .font-code {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
   }
@@ -139,7 +143,11 @@
   }
 
   .pixel-shadow-sm {
-    box-shadow: 2px 2px 0 0 oklch(0.04 0 0);
+    box-shadow: 3px 3px 0 0 oklch(0.04 0 0);
+  }
+
+  .pixel-shadow-lg {
+    box-shadow: 6px 6px 0 0 oklch(0.04 0 0);
   }
 
   .pixel-border {

@@ -10,7 +10,6 @@ interface ApiKeyDisplayProps {
   initialApiKeyData?: ApiKeyResponse;
 }
 
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 
 const TerminalDot = () => (
   <div className={cn('h-2.5 w-2.5 border border-background/25 bg-background/15')} />
@@ -26,8 +25,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
   if (isLoadingApiKey) {
     return (
       <div
-        className={cn('w-full border-2 border-foreground')}
-        style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}
+        className={cn('w-full border-2 border-foreground pixel-shadow')}
       >
         <div
           className={cn(
@@ -38,14 +36,13 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
           <TerminalDot />
           <TerminalDot />
           <span
-            className={cn('ml-2 text-xs uppercase tracking-widest text-background/70')}
-            style={monoStyle}
+            className={cn('ml-2 text-xs uppercase tracking-widest text-background/70 font-mono')}
           >
             API KEY TERMINAL
           </span>
         </div>
         <div className={cn('p-4')}>
-          <span className={cn('text-xs text-muted-foreground')} style={monoStyle}>
+          <span className={cn('text-xs text-muted-foreground font-mono')}>
             {'>'} Loading...
           </span>
         </div>
@@ -61,8 +58,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
 
   return (
     <div
-      className={cn('w-full border-2 border-foreground')}
-      style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}
+      className={cn('w-full border-2 border-foreground pixel-shadow')}
     >
       {/* Terminal title bar */}
       <div
@@ -75,8 +71,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
           <TerminalDot />
           <TerminalDot />
           <span
-            className={cn('ml-2 text-xs uppercase tracking-widest text-background/80')}
-            style={monoStyle}
+            className={cn('ml-2 text-xs uppercase tracking-widest text-background/80 font-mono')}
           >
             API KEY TERMINAL
           </span>
@@ -87,12 +82,11 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
             <div
               tabIndex={0}
               className={cn(
-                'cursor-default px-2 py-0.5 text-xs font-bold uppercase tracking-wider',
+                'cursor-default px-2 py-0.5 text-xs font-bold uppercase tracking-wider font-mono',
                 isExpiringSoon
                   ? 'bg-destructive text-white'
                   : 'bg-background/20 text-background',
               )}
-              style={monoStyle}
             >
               D-{apiKeyData.data.expiresInDays}
             </div>
@@ -106,8 +100,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
         {/* Scopes */}
         <div>
           <p
-            className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground')}
-            style={monoStyle}
+            className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}
           >
             {'>'} SCOPE
           </p>
@@ -115,8 +108,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
             {apiKeyData?.data?.scopes.map((scope) => (
               <span
                 key={scope}
-                className={cn('border border-foreground px-2 py-0.5 text-xs uppercase')}
-                style={monoStyle}
+                className={cn('border border-foreground px-2 py-0.5 text-xs uppercase font-mono')}
               >
                 {scope}
               </span>
@@ -127,13 +119,12 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
         {/* API Key */}
         <div>
           <p
-            className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground')}
-            style={monoStyle}
+            className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}
           >
             {'>'} KEY
           </p>
           <div className={cn('flex items-center justify-between gap-3 bg-muted p-3')}>
-            <code className={cn('min-w-0 flex-1 break-all text-sm')} style={monoStyle}>
+            <code className={cn('min-w-0 flex-1 break-all text-sm font-mono')}>
               {apiKeyData?.data?.apiKey}
             </code>
             {!isMasked && (
@@ -153,7 +144,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
             )}
           </div>
           {isMasked && (
-            <p className={cn('mt-2 text-xs text-muted-foreground')} style={monoStyle}>
+            <p className={cn('mt-2 text-xs text-muted-foreground font-mono')}>
               // 보안상 마스킹된 키입니다. 갱신 시 전체 키를 확인할 수 있습니다.
             </p>
           )}

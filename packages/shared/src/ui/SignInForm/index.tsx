@@ -25,8 +25,6 @@ interface SignInFormProps {
   remainingTime?: number | null;
 }
 
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
 
 const SignInForm = ({
   onSubmit,
@@ -58,22 +56,21 @@ const SignInForm = ({
 
   return (
     <div
-      className={cn('w-full max-w-sm border-2 border-foreground bg-background')}
-      style={{ boxShadow: '6px 6px 0 0 oklch(0.04 0 0)' }}
+      className={cn('w-full max-w-sm border-2 border-foreground bg-background pixel-shadow-lg')}
     >
       {/* Title bar */}
       <div className={cn('flex items-center gap-3 border-b-2 border-foreground bg-foreground px-5 py-3')}>
         <div
           className={cn(
-            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground',
+            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground font-pixel',
           )}
-          style={{ ...pixelStyle, fontSize: '8px' }}
+          style={{ fontSize: '8px' }}
         >
           D
         </div>
         <span
-          className={cn('text-background')}
-          style={{ ...pixelStyle, fontSize: '9px' }}
+          className={cn('text-background font-pixel')}
+          style={{ fontSize: '9px' }}
         >
           DataGSM
         </span>
@@ -102,12 +99,11 @@ const SignInForm = ({
       {remainingTime !== null && remainingTime !== undefined && remainingTime <= 300 && (
         <div
           className={cn(
-            'mx-6 mt-4 flex items-center gap-2 border px-3 py-2 text-xs font-medium',
+            'mx-6 mt-4 flex items-center gap-2 border px-3 py-2 text-xs font-medium font-mono',
             remainingTime <= 30
               ? 'border-destructive text-destructive'
               : 'border-amber-600 text-amber-600',
           )}
-          style={monoStyle}
         >
           <Clock className={cn('h-3.5 w-3.5 flex-shrink-0')} />
           <span>세션만료: {formatTime(remainingTime)}</span>
@@ -120,8 +116,7 @@ const SignInForm = ({
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="emailLocal"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-              style={monoStyle}
+              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
             >
               Email
             </Label>
@@ -136,9 +131,8 @@ const SignInForm = ({
               />
               <span
                 className={cn(
-                  'flex items-center whitespace-nowrap border border-l-0 border-foreground bg-muted px-3 text-xs text-muted-foreground',
+                  'flex items-center whitespace-nowrap border border-l-0 border-foreground bg-muted px-3 text-xs text-muted-foreground font-mono',
                 )}
-                style={monoStyle}
               >
                 {EMAIL_DOMAIN}
               </span>
@@ -150,8 +144,7 @@ const SignInForm = ({
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="password"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-              style={monoStyle}
+              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
             >
               Password
             </Label>
@@ -189,9 +182,8 @@ const SignInForm = ({
           <button
             type="submit"
             className={cn(
-              'w-full cursor-pointer border-2 border-foreground bg-foreground px-4 py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
+              'w-full cursor-pointer border-2 border-foreground bg-foreground px-4 py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
             )}
-            style={monoStyle}
             disabled={isPending}
           >
             {isPending ? 'SIGNING IN...' : 'SIGN IN'}

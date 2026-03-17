@@ -18,8 +18,6 @@ interface ApiKeyFormDialogProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 
 const ApiKeyFormDialog = ({
   trigger,
@@ -37,9 +35,8 @@ const ApiKeyFormDialog = ({
   const defaultTrigger = (
     <button
       className={cn(
-        'cursor-pointer border-2 border-foreground bg-foreground px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground',
+        'cursor-pointer border-2 border-foreground bg-foreground px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground font-mono',
       )}
-      style={monoStyle}
     >
       API 키 관리
     </button>
@@ -49,8 +46,7 @@ const ApiKeyFormDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
       <DialogContent
-        className={cn('max-h-[90vh] min-w-[35vw] max-w-none overflow-y-auto border-2 border-foreground p-0')}
-        style={{ boxShadow: '6px 6px 0 0 oklch(0.04 0 0)' }}
+        className={cn('max-h-[90vh] min-w-[35vw] max-w-none overflow-y-auto border-2 border-foreground p-0 pixel-shadow-lg')}
       >
         {/* Terminal title bar */}
         <div className={cn('flex items-center gap-2 border-b-2 border-foreground bg-foreground px-5 py-3')}>
@@ -58,8 +54,7 @@ const ApiKeyFormDialog = ({
           <div className={cn('h-2.5 w-2.5 border border-background/25 bg-background/15')} />
           <div className={cn('h-2.5 w-2.5 border border-background/25 bg-background/15')} />
           <span
-            className={cn('ml-2 text-xs uppercase tracking-widest text-background/80')}
-            style={monoStyle}
+            className={cn('ml-2 text-xs uppercase tracking-widest text-background/80 font-mono')}
           >
             KEY MANAGER
           </span>
@@ -87,7 +82,7 @@ const ApiKeyFormDialog = ({
                 </div>
               ))}
             </div>
-            <DialogTitle style={{ ...pixelStyle, fontSize: '14px', lineHeight: '1.8' }}>
+            <DialogTitle className="font-pixel" style={{ fontSize: '14px', lineHeight: '1.8' }}>
               ADMIN API Key
             </DialogTitle>
           </div>

@@ -2,8 +2,6 @@
 
 import { cn } from '@repo/shared/utils';
 
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 
 const ApiKeyHeader = () => {
   return (
@@ -26,8 +24,8 @@ const ApiKeyHeader = () => {
         ))}
         <div className={cn('mx-3 h-px w-8 bg-foreground')} />
         <div
-          className={cn('text-foreground')}
-          style={{ ...pixelStyle, fontSize: '18px', lineHeight: 1 }}
+          className={cn('text-foreground font-pixel')}
+          style={{ fontSize: '18px', lineHeight: 1 }}
         >
           API
         </div>
@@ -49,15 +47,14 @@ const ApiKeyHeader = () => {
       </div>
 
       <h1
-        className={cn('text-foreground block')}
-        style={{ ...pixelStyle, fontSize: '22px', lineHeight: '1.6' }}
+        className={cn('text-foreground block font-pixel')}
+        style={{ fontSize: '22px', lineHeight: '1.6' }}
       >
         KEY
       </h1>
 
       <p
-        className={cn('mt-3 text-xs text-muted-foreground')}
-        style={monoStyle}
+        className={cn('mt-3 text-xs text-muted-foreground font-mono')}
       >
         {'>'} DataGSM API 접근 인증 키 관리
       </p>
