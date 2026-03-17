@@ -97,6 +97,7 @@ export const accountQueryKeys = {
   postEmailVerificationVerify: () => ['accounts', 'email-verifications', 'verify'] as const,
   postAccount: () => ['accounts', 'create'] as const,
   getMy: () => ['accounts', 'my'] as const,
+  deleteMy: () => ['accounts', 'delete'] as const,
   postPasswordReset: () => ['accounts', 'password-resets'] as const,
   postPasswordResetVerification: () => ['accounts', 'password-resets', 'verification'] as const,
   putPassword: () => ['accounts', 'password', 'update'] as const,
