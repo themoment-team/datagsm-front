@@ -30,8 +30,7 @@ interface ProjectListProps {
 
 const ProjectList = ({ projects, isLoading, onEdit, onDelete }: ProjectListProps) => {
   return (
-    <div className={cn('mb-4 overflow-x-auto rounded-md border')}>
-      <Table>
+    <Table>
         <TableHeader>
           <TableRow>
             <TableHead>이름</TableHead>
@@ -107,7 +106,6 @@ const ProjectList = ({ projects, isLoading, onEdit, onDelete }: ProjectListProps
           )}
         </TableBody>
       </Table>
-    </div>
   );
 };
 

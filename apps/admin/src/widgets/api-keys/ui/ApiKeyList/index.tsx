@@ -71,8 +71,7 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
   }
 
   return (
-    <div className={cn('rounded-md border')}>
-      <Table>
+    <Table>
         <TableHeader>
           <TableRow>
             <TableHead className={cn('w-[80px]')}>ID</TableHead>
@@ -148,7 +147,6 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
           ))}
         </TableBody>
       </Table>
-    </div>
   );
 };
 

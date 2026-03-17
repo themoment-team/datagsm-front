@@ -48,8 +48,7 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
   });
 
   return (
-    <div className={cn('mb-4 overflow-x-auto rounded-md border')}>
-      <Table>
+    <Table>
         <TableHeader>
           <TableRow>
             <TableHead>동아리명</TableHead>
@@ -123,7 +122,6 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
               ))}
         </TableBody>
       </Table>
-    </div>
   );
 };
 

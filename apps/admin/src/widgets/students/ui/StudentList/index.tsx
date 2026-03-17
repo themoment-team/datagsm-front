@@ -23,8 +23,7 @@ interface StudentListProps {
 
 const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
   return (
-    <div className={cn('overflow-x-auto rounded-md border')}>
-      <Table>
+    <Table>
         <TableHeader>
           <TableRow>
             <TableHead>이름</TableHead>
@@ -102,7 +101,6 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
               ))}
         </TableBody>
       </Table>
-    </div>
   );
 };
 
