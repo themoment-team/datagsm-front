@@ -13,36 +13,32 @@ const SuccessPage = () => {
     window.close();
   };
 
-  const getContent = () => {
-    if (page === 'reset') {
-      return {
-        title: '비밀번호 재설정 완료',
-        description: '비밀번호가 성공적으로 변경되었습니다',
-        mainText: '새로운 비밀번호로 로그인을 진행해주세요',
-        buttonText: '이 창 닫기',
-        isError: false,
-      };
-    }
+  const contentMap = {
+    reset: {
+      title: '비밀번호 재설정 완료',
+      description: '비밀번호가 성공적으로 변경되었습니다',
+      mainText: '새로운 비밀번호로 로그인을 진행해주세요',
+      buttonText: '이 창 닫기',
+      isError: false,
+    },
+    signup: {
+      title: '회원가입 완료',
+      description: 'DataGSM 계정이 성공적으로 생성되었습니다',
+      mainText: '로그인을 진행해주세요',
+      buttonText: '이 창 닫기',
+      isError: false,
+    },
+  } as const;
 
-    if (page === 'signup') {
-      return {
-        title: '회원가입 완료',
-        description: 'DataGSM 계정이 성공적으로 생성되었습니다',
-        mainText: '로그인을 진행해주세요',
-        buttonText: '이 창 닫기',
-        isError: false,
-      };
-    }
-
-    return {
-      title: '잘못된 접근',
-      description: '잘못된 경로로 접근했습니다',
-      mainText: '로그인 페이지로 돌아가서 다시 시도해주세요',
-      isError: true,
-    };
+  const defaultContent = {
+    title: '잘못된 접근',
+    description: '잘못된 경로로 접근했습니다',
+    mainText: '로그인 페이지로 돌아가서 다시 시도해주세요',
+    buttonText: undefined,
+    isError: true,
   };
 
-  const content = getContent();
+  const content = (page && contentMap[page as keyof typeof contentMap]) || defaultContent;
 
   return (
     <div className="bg-background flex min-h-screen items-center justify-center px-4">
