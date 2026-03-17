@@ -23,8 +23,6 @@ import {
 const RESEND_COOLDOWN_MS = minutesToMs(5);
 const STORAGE_KEY = 'password_reset_verification_timestamp';
 
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
 
 const ResetPasswordForm = () => {
   const [codeSent, setCodeSent] = useState(false);
@@ -213,8 +211,7 @@ const ResetPasswordForm = () => {
 
   return (
     <div
-      className={cn('w-full max-w-md border-2 border-foreground bg-background')}
-      style={{ boxShadow: '6px 6px 0 0 oklch(0.04 0 0)' }}
+      className={cn('w-full max-w-md border-2 border-foreground bg-background pixel-shadow-lg')}
     >
       {/* Title bar */}
       <div
@@ -224,13 +221,13 @@ const ResetPasswordForm = () => {
       >
         <div
           className={cn(
-            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground',
+            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground font-pixel',
           )}
-          style={{ ...pixelStyle, fontSize: '8px' }}
+          style={{ fontSize: '8px' }}
         >
           D
         </div>
-        <span className={cn('text-background')} style={{ ...pixelStyle, fontSize: '9px' }}>
+        <span className={cn('text-background font-pixel')} style={{ fontSize: '9px' }}>
           DataGSM
         </span>
       </div>
@@ -247,8 +244,7 @@ const ResetPasswordForm = () => {
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="email"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-              style={monoStyle}
+              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
             >
               Email
             </Label>
@@ -271,9 +267,8 @@ const ResetPasswordForm = () => {
                 onClick={handleSendCode}
                 disabled={isButtonDisabled}
                 className={cn(
-                  'h-9 flex-shrink-0 cursor-pointer border-2 border-foreground bg-foreground px-3 text-xs uppercase tracking-wider text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50',
+                  'h-9 flex-shrink-0 cursor-pointer border-2 border-foreground bg-foreground px-3 text-xs uppercase tracking-wider text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 font-mono',
                 )}
-                style={monoStyle}
               >
                 {isSendingCode
                   ? '전송 중'
@@ -290,8 +285,7 @@ const ResetPasswordForm = () => {
           <div className={cn('space-y-1.5', !codeSent && 'cursor-not-allowed')}>
             <Label
               htmlFor="code"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-              style={monoStyle}
+              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
             >
               Verify Code
             </Label>
@@ -306,7 +300,7 @@ const ResetPasswordForm = () => {
               )}
             />
             {isCodeVerified ? (
-              <p className={cn('text-xs text-green-600')} style={monoStyle}>
+              <p className={cn('text-xs text-green-600 font-mono')}>
                 {'>'} 인증 완료
               </p>
             ) : (
@@ -318,8 +312,7 @@ const ResetPasswordForm = () => {
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="password"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-              style={monoStyle}
+              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
             >
               New Password
             </Label>
@@ -354,8 +347,7 @@ const ResetPasswordForm = () => {
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="confirmPassword"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-              style={monoStyle}
+              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
             >
               Confirm Password
             </Label>
@@ -395,9 +387,8 @@ const ResetPasswordForm = () => {
           <button
             type="submit"
             className={cn(
-              'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
+              'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
             )}
-            style={monoStyle}
             disabled={isChangingPassword || !isCodeVerified || !isFormValid}
           >
             {isChangingPassword ? 'PROCESSING...' : 'RESET PASSWORD'}

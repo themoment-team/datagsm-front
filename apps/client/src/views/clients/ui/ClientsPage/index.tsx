@@ -14,8 +14,6 @@ import { ClientFormDialog, ClientList, ClientSuccessDialog } from '@/widgets/cli
 
 const PAGE_SIZE = 10;
 
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 
 const ClientsPage = () => {
   const searchParams = useSearchParams();
@@ -66,14 +64,13 @@ const ClientsPage = () => {
         >
           <div>
             <p
-              className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground')}
-              style={monoStyle}
+              className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}
             >
               DATAGSM / OAuth
             </p>
             <h1
-              className={cn('text-foreground leading-tight')}
-              style={{ ...pixelStyle, fontSize: '15px' }}
+              className={cn('text-foreground leading-tight font-pixel')}
+              style={{ fontSize: '15px' }}
             >
               클라이언트
             </h1>
@@ -83,8 +80,7 @@ const ClientsPage = () => {
 
         {/* Table */}
         <div
-          className={cn('border-2 border-foreground')}
-          style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}
+          className={cn('border-2 border-foreground pixel-shadow')}
         >
           <ClientList clients={clients} isLoading={isLoading} onEdit={handleEdit} />
         </div>

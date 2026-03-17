@@ -33,16 +33,13 @@ interface ClientListItemProps {
   onDelete: (id: string) => void;
 }
 
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
 
 const TH = ({ children, className }: { children?: React.ReactNode; className?: string }) => (
   <th
     className={cn(
-      'px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-background',
+      'px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-background font-mono',
       className,
     )}
-    style={monoStyle}
   >
     {children}
   </th>
@@ -59,7 +56,7 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
       <td className={cn('px-4 py-3 text-sm text-muted-foreground')}>{client.serviceName}</td>
       <td className={cn('px-4 py-3')}>
         <div className={cn('flex items-center gap-2')}>
-          <code className={cn('bg-muted px-2 py-1 text-xs')} style={monoStyle}>
+          <code className={cn('bg-muted px-2 py-1 text-xs font-mono')}>
             {client.id}
           </code>
           <button
@@ -78,9 +75,8 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
             <span
               key={index}
               className={cn(
-                'border border-foreground/25 px-1.5 py-0.5 text-xs text-muted-foreground',
+                'border border-foreground/25 px-1.5 py-0.5 text-xs text-muted-foreground font-mono',
               )}
-              style={monoStyle}
             >
               {url}
             </span>
@@ -92,8 +88,7 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
           {client.scopes.map((scope, index) => (
             <span
               key={index}
-              className={cn('bg-foreground px-1.5 py-0.5 text-xs uppercase text-background')}
-              style={monoStyle}
+              className={cn('bg-foreground px-1.5 py-0.5 text-xs uppercase text-background font-mono')}
             >
               {scope}
             </span>
@@ -122,11 +117,10 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent
-              className={cn('border-2 border-foreground')}
-              style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}
+              className={cn('border-2 border-foreground pixel-shadow')}
             >
               <AlertDialogHeader>
-                <AlertDialogTitle style={{ ...pixelStyle, fontSize: '12px', lineHeight: '1.8' }}>
+                <AlertDialogTitle className="font-pixel" style={{ fontSize: '12px', lineHeight: '1.8' }}>
                   클라이언트 삭제
                 </AlertDialogTitle>
                 <AlertDialogDescription>
@@ -216,8 +210,7 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
             <tr>
               <td
                 colSpan={6}
-                className={cn('h-24 text-center text-sm text-muted-foreground')}
-                style={monoStyle}
+                className={cn('h-24 text-center text-sm text-muted-foreground font-mono')}
               >
                 {'>'} 등록된 클라이언트가 없습니다.
               </td>

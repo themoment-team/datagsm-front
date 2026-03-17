@@ -30,8 +30,6 @@ import { PRIVACY_POLICY } from '../../constants/privacyPolicy';
 const RESEND_COOLDOWN_MS = minutesToMs(5);
 const STORAGE_KEY = 'email_verification_timestamp';
 
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
 
 const SignUpForm = () => {
   const [codeSent, setCodeSent] = useState(false);
@@ -252,8 +250,7 @@ const SignUpForm = () => {
   return (
     <>
       <div
-        className={cn('w-full max-w-md border-2 border-foreground bg-background')}
-        style={{ boxShadow: '6px 6px 0 0 oklch(0.04 0 0)' }}
+        className={cn('w-full max-w-md border-2 border-foreground bg-background pixel-shadow-lg')}
       >
         {/* Title bar */}
         <div
@@ -263,13 +260,13 @@ const SignUpForm = () => {
         >
           <div
             className={cn(
-              'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground',
+              'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground font-pixel',
             )}
-            style={{ ...pixelStyle, fontSize: '8px' }}
+            style={{ fontSize: '8px' }}
           >
             D
           </div>
-          <span className={cn('text-background')} style={{ ...pixelStyle, fontSize: '9px' }}>
+          <span className={cn('text-background font-pixel')} style={{ fontSize: '9px' }}>
             DataGSM
           </span>
         </div>
@@ -288,8 +285,7 @@ const SignUpForm = () => {
             <div className={cn('space-y-1.5')}>
               <Label
                 htmlFor="email"
-                className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-                style={monoStyle}
+                className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
               >
                 Email
               </Label>
@@ -312,9 +308,8 @@ const SignUpForm = () => {
                   onClick={handleSendCode}
                   disabled={isButtonDisabled}
                   className={cn(
-                    'h-9 flex-shrink-0 cursor-pointer border-2 border-foreground bg-foreground px-3 text-xs uppercase tracking-wider text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50',
+                    'h-9 flex-shrink-0 cursor-pointer border-2 border-foreground bg-foreground px-3 text-xs uppercase tracking-wider text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 font-mono',
                   )}
-                  style={monoStyle}
                 >
                   {isSendingCode
                     ? '전송 중'
@@ -331,8 +326,7 @@ const SignUpForm = () => {
             <div className={cn('space-y-1.5', !codeSent && 'cursor-not-allowed')}>
               <Label
                 htmlFor="code"
-                className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-                style={monoStyle}
+                className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
               >
                 Verify Code
               </Label>
@@ -347,7 +341,7 @@ const SignUpForm = () => {
                 )}
               />
               {isCodeVerified ? (
-                <p className={cn('text-xs text-green-600')} style={monoStyle}>
+                <p className={cn('text-xs text-green-600 font-mono')}>
                   {'>'} 인증 완료
                 </p>
               ) : (
@@ -359,8 +353,7 @@ const SignUpForm = () => {
             <div className={cn('space-y-1.5')}>
               <Label
                 htmlFor="password"
-                className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-                style={monoStyle}
+                className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
               >
                 Password
               </Label>
@@ -395,8 +388,7 @@ const SignUpForm = () => {
             <div className={cn('space-y-1.5')}>
               <Label
                 htmlFor="confirmPassword"
-                className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
-                style={monoStyle}
+                className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
               >
                 Confirm Password
               </Label>
@@ -458,9 +450,8 @@ const SignUpForm = () => {
             <button
               type="submit"
               className={cn(
-                'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
+                'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
               )}
-              style={monoStyle}
               disabled={isSigningUp || !isCodeVerified || !isFormValid}
             >
               {isSigningUp ? 'PROCESSING...' : 'SIGN UP'}
@@ -482,8 +473,7 @@ const SignUpForm = () => {
       {/* Privacy dialog */}
       <Dialog open={isPrivacyDialogOpen} onOpenChange={setIsPrivacyDialogOpen}>
         <DialogContent
-          className={cn('flex max-h-[80vh] max-w-md flex-col border-2 border-foreground')}
-          style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}
+          className={cn('flex max-h-[80vh] max-w-md flex-col border-2 border-foreground pixel-shadow')}
         >
           <DialogHeader>
             <DialogTitle className={cn('text-base font-bold')}>개인정보 처리방침</DialogTitle>
@@ -556,7 +546,7 @@ const SignUpForm = () => {
           </div>
           <div className={cn('flex flex-col gap-2 border-t pt-4')}>
             {!hasScrolledToBottom && (
-              <p className={cn('text-center text-xs text-muted-foreground')} style={monoStyle}>
+              <p className={cn('text-center text-xs text-muted-foreground font-mono')}>
                 {'>'} 내용을 끝까지 읽어주세요
               </p>
             )}
@@ -564,9 +554,8 @@ const SignUpForm = () => {
               onClick={handlePrivacyAgree}
               disabled={!hasScrolledToBottom}
               className={cn(
-                'w-full cursor-pointer border-2 border-foreground bg-foreground py-2.5 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50',
+                'w-full cursor-pointer border-2 border-foreground bg-foreground py-2.5 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 font-mono',
               )}
-              style={monoStyle}
             >
               동의합니다
             </button>
