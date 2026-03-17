@@ -47,19 +47,18 @@ const CodeTabs = ({ children, activeTabIndex, onChange }: CodeTabsProps) => {
   };
 
   return (
-    <div className="my-6 overflow-hidden border-2 border-foreground" style={{ boxShadow: '3px 3px 0 0 oklch(0.04 0 0)' }}>
+    <div className="my-6 overflow-hidden border-2 border-foreground pixel-shadow-sm">
       <div className="flex items-center justify-between border-b-2 border-foreground bg-gray-900">
         <div className="flex">
           {tabs.map((tab, index) => (
             <button
               key={tab.props.label}
               onClick={() => handleTabChange(index)}
-              className={`px-4 py-2 text-xs font-medium uppercase tracking-widest transition-colors ${
+              className={`px-4 py-2 text-xs font-medium uppercase tracking-widest transition-colors font-mono ${
                 activeTab === index
                   ? 'border-b-2 border-white bg-gray-800 text-white'
                   : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
               }`}
-              style={{ fontFamily: '"JetBrains Mono", monospace' }}
             >
               {tab.props.label}
             </button>
@@ -67,8 +66,7 @@ const CodeTabs = ({ children, activeTabIndex, onChange }: CodeTabsProps) => {
         </div>
         <button
           onClick={handleCopy}
-          className="mr-2 cursor-pointer border border-gray-600 px-3 py-1 text-xs font-medium text-gray-400 transition-colors hover:border-gray-300 hover:text-gray-200"
-          style={{ fontFamily: '"JetBrains Mono", monospace' }}
+          className="mr-2 cursor-pointer border border-gray-600 px-3 py-1 text-xs font-medium text-gray-400 transition-colors hover:border-gray-300 hover:text-gray-200 font-mono"
           title="코드 복사"
         >
           {copied ? '✓ 복사됨' : '복사'}

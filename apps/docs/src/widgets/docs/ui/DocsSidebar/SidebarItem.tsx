@@ -14,7 +14,6 @@ export interface SidebarItemProps {
   onLinkClick?: () => void;
 }
 
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 
 export const SidebarItem = ({
   item,
@@ -33,13 +32,12 @@ export const SidebarItem = ({
     <div>
       <div
         className={cn(
-          'flex items-center justify-between px-2 text-xs transition-colors',
+          'flex items-center justify-between px-2 text-xs transition-colors font-mono',
           isTopLevel ? 'py-2' : 'py-1.5',
           active
             ? 'bg-foreground text-background'
             : 'text-muted-foreground hover:text-foreground',
         )}
-        style={monoStyle}
       >
         <Link
           href={item.href}

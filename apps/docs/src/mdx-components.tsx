@@ -9,15 +9,13 @@ import { LoginButtonInteractiveDemo } from '@/widgets/docs/ui/LoginButtonInterac
 
 import { CodeBlock, Mermaid } from './shared/ui';
 
-const pixelStyle = { fontFamily: '"Press Start 2P", var(--font-korean-pixel), monospace' };
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 
 export function useMDXComponents(components: MDXComponents = {}): MDXComponents {
   return {
     h1: ({ children }) => (
       <h1
-        className="mb-6 mt-12 border-b-2 border-foreground pb-4 text-foreground"
-        style={{ ...pixelStyle, fontSize: '20px', lineHeight: '1.8' }}
+        className="mb-6 mt-12 border-b-2 border-foreground pb-4 text-foreground font-pixel-ko"
+        style={{ fontSize: '20px', lineHeight: '1.8' }}
       >
         {children}
       </h1>
@@ -55,7 +53,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
 
       if (language) {
         return (
-          <div className="border-2 border-foreground" style={{ boxShadow: '3px 3px 0 0 oklch(0.04 0 0)' }}>
+          <div className="border-2 border-foreground pixel-shadow-sm">
             <CodeBlock language={language}>{String(children).replace(/\n$/, '')}</CodeBlock>
           </div>
         );
@@ -63,8 +61,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
 
       return (
         <code
-          className="border border-foreground/30 bg-muted px-1.5 py-0.5 text-sm text-foreground"
-          style={monoStyle}
+          className="border border-foreground/30 bg-muted px-1.5 py-0.5 text-sm text-foreground font-mono"
         >
           {children}
         </code>
@@ -87,7 +84,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     ),
 
     table: ({ children }) => (
-      <div className="my-4 overflow-x-auto border-2 border-foreground" style={{ boxShadow: '3px 3px 0 0 oklch(0.04 0 0)' }}>
+      <div className="my-4 overflow-x-auto border-2 border-foreground pixel-shadow-sm">
         <table className="w-full table-auto border-collapse">
           {children}
         </table>
@@ -102,8 +99,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
 
     th: ({ children }) => (
       <th
-        className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-background"
-        style={monoStyle}
+        className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-background font-mono"
       >
         {children}
       </th>

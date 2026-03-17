@@ -9,8 +9,6 @@ import { SidebarContent } from './SidebarContent';
 const scrollbarStyles =
   '[&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-foreground/20';
 
-const pixelStyle = { fontFamily: '"Press Start 2P", var(--font-korean-pixel), monospace' };
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 
 const DocsSidebar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -21,8 +19,7 @@ const DocsSidebar = () => {
       <div className="lg:hidden">
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="flex cursor-pointer items-center gap-2 border border-foreground px-3 py-2 text-xs uppercase tracking-widest transition-colors hover:bg-foreground hover:text-background"
-          style={monoStyle}
+          className="flex cursor-pointer items-center gap-2 border border-foreground px-3 py-2 text-xs uppercase tracking-widest transition-colors hover:bg-foreground hover:text-background font-mono"
         >
           <Menu className="h-4 w-4" />
           목차
@@ -34,10 +31,10 @@ const DocsSidebar = () => {
         className={`${scrollbarStyles} sticky top-24 hidden max-h-[calc(100vh-7rem)] w-60 shrink-0 overflow-y-auto lg:block`}
       >
         <div className="mb-5 border-b-2 border-foreground pb-3">
-          <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground" style={monoStyle}>
+          <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground font-mono">
             DataGSM
           </p>
-          <h2 className="text-foreground" style={{ ...pixelStyle, fontSize: '10px' }}>
+          <h2 className="text-foreground font-pixel-ko" style={{ fontSize: '10px' }}>
             Docs
           </h2>
         </div>
@@ -53,7 +50,7 @@ const DocsSidebar = () => {
           />
           <aside className="bg-background fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r-2 border-foreground lg:hidden">
             <div className="flex shrink-0 items-center justify-between border-b-2 border-foreground p-4">
-              <h2 className="text-foreground" style={{ ...pixelStyle, fontSize: '9px' }}>
+              <h2 className="text-foreground font-pixel-ko" style={{ fontSize: '9px' }}>
                 Docs
               </h2>
               <button
