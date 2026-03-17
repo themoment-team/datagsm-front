@@ -10,8 +10,6 @@ import { Club, ClubType } from '@repo/shared/types';
 import { CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
-const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 import { useForm, useWatch } from 'react-hook-form';
 
 import { AddClubSchema, AddClubType, ClubFilterSchema, ClubFilterType } from '@/entities/club';
@@ -137,10 +135,10 @@ const ClubsPage = () => {
         {/* Page header */}
         <div className={cn('mb-6 flex items-end justify-between border-b-2 border-foreground pb-4')}>
           <div>
-            <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground')} style={monoStyle}>
+            <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}>
               DATAGSM / Admin
             </p>
-            <h1 className={cn('text-foreground leading-tight')} style={{ ...pixelStyle, fontSize: '15px' }}>
+            <h1 className={cn('text-foreground leading-tight font-pixel')} style={{ fontSize: '15px' }}>
               동아리 관리
             </h1>
           </div>
@@ -161,7 +159,7 @@ const ClubsPage = () => {
         </div>
 
         {/* Table */}
-        <div className={cn('border-2 border-foreground')} style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}>
+        <div className={cn('border-2 border-foreground pixel-shadow')}>
           <ClubList clubs={clubs} isLoading={isLoadingClubs} onEdit={handleEditClub} />
         </div>
 
