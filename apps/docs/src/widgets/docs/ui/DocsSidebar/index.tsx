@@ -9,7 +9,7 @@ import { SidebarContent } from './SidebarContent';
 const scrollbarStyles =
   '[&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-foreground/20';
 
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
+const pixelStyle = { fontFamily: '"Press Start 2P", var(--font-korean-pixel), monospace' };
 const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 
 const DocsSidebar = () => {

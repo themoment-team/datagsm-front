@@ -1,6 +1,7 @@
 import { cn } from '@repo/shared/utils';
 import type { Metadata } from 'next';
 import { DM_Sans, JetBrains_Mono, Press_Start_2P } from 'next/font/google';
+import localFont from 'next/font/local';
 
 import '@/shared/styles/globals.css';
 import { DocsSidebar } from '@/widgets/docs';
@@ -10,6 +11,12 @@ const pressStart2P = Press_Start_2P({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-pixel',
+});
+
+const galmuri11 = localFont({
+  src: '../../node_modules/galmuri/dist/Galmuri11-Bold.woff2',
+  display: 'swap',
+  variable: '--font-korean-pixel',
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -49,7 +56,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html
       lang="ko"
-      className={`${pressStart2P.variable} ${jetbrainsMono.variable} ${dmSans.variable}`}
+      className={`${pressStart2P.variable} ${jetbrainsMono.variable} ${dmSans.variable} ${galmuri11.variable}`}
     >
       <body>
         <div className={cn('container mx-auto px-4 py-12')}>

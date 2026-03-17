@@ -9,7 +9,7 @@ import { LoginButtonInteractiveDemo } from '@/widgets/docs/ui/LoginButtonInterac
 
 import { CodeBlock, Mermaid } from './shared/ui';
 
-const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
+const pixelStyle = { fontFamily: '"Press Start 2P", var(--font-korean-pixel), monospace' };
 const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 
 export function useMDXComponents(components: MDXComponents = {}): MDXComponents {
