@@ -54,7 +54,11 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
       }
 
       if (language) {
-        return <CodeBlock language={language}>{String(children).replace(/\n$/, '')}</CodeBlock>;
+        return (
+          <div className="border-2 border-foreground" style={{ boxShadow: '3px 3px 0 0 oklch(0.04 0 0)' }}>
+            <CodeBlock language={language}>{String(children).replace(/\n$/, '')}</CodeBlock>
+          </div>
+        );
       }
 
       return (

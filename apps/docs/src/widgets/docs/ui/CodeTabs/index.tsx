@@ -47,18 +47,19 @@ const CodeTabs = ({ children, activeTabIndex, onChange }: CodeTabsProps) => {
   };
 
   return (
-    <div className="my-6 overflow-hidden rounded-lg border border-gray-700">
-      <div className="flex items-center justify-between border-b border-gray-700 bg-gray-800">
+    <div className="my-6 overflow-hidden border-2 border-foreground" style={{ boxShadow: '3px 3px 0 0 oklch(0.04 0 0)' }}>
+      <div className="flex items-center justify-between border-b-2 border-foreground bg-gray-900">
         <div className="flex">
           {tabs.map((tab, index) => (
             <button
               key={tab.props.label}
               onClick={() => handleTabChange(index)}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
+              className={`px-4 py-2 text-xs font-medium uppercase tracking-widest transition-colors ${
                 activeTab === index
-                  ? 'border-b-2 border-blue-500 bg-gray-900 text-blue-400'
-                  : 'text-gray-400 hover:bg-gray-700 hover:text-gray-200'
+                  ? 'border-b-2 border-white bg-gray-800 text-white'
+                  : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
               }`}
+              style={{ fontFamily: '"JetBrains Mono", monospace' }}
             >
               {tab.props.label}
             </button>
@@ -66,7 +67,8 @@ const CodeTabs = ({ children, activeTabIndex, onChange }: CodeTabsProps) => {
         </div>
         <button
           onClick={handleCopy}
-          className="mr-2 rounded px-3 py-1 text-xs font-medium text-gray-400 transition-colors hover:bg-gray-700 hover:text-gray-200"
+          className="mr-2 cursor-pointer border border-gray-600 px-3 py-1 text-xs font-medium text-gray-400 transition-colors hover:border-gray-300 hover:text-gray-200"
+          style={{ fontFamily: '"JetBrains Mono", monospace' }}
           title="코드 복사"
         >
           {copied ? '✓ 복사됨' : '복사'}
@@ -78,7 +80,8 @@ const CodeTabs = ({ children, activeTabIndex, onChange }: CodeTabsProps) => {
             <CodeBlock
               language={tab.props.language}
               customStyle={{
-                borderRadius: '0 0 0.5rem 0.5rem',
+                borderRadius: 0,
+                margin: 0,
               }}
             >
               {String(tab.props.code).trim()}
