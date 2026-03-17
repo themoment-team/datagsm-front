@@ -1,13 +1,18 @@
 'use client';
 
+import { MyAccountResponse } from '@repo/shared/types';
 import { Skeleton } from '@repo/shared/ui';
 
 import { ProfileInfo, WithdrawalSection, useGetMy } from '@/widgets/myinfo';
 
-const MyInfoPage = () => {
-  const { data: myData, isLoading, isError } = useGetMy();
+interface MyInfoPageProps {
+  initialData: MyAccountResponse | undefined;
+}
 
-  if (isLoading) {
+const MyInfoPage = ({ initialData }: MyInfoPageProps) => {
+  const { data: myData, isLoading, isError } = useGetMy({ initialData });
+
+  if (isLoading && !initialData) {
     return (
       <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
         <Skeleton className="h-24 w-full" />
