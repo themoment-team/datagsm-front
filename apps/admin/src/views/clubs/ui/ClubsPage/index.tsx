@@ -138,7 +138,7 @@ const ClubsPage = () => {
             <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}>
               DATAGSM / Admin
             </p>
-            <h1 className={cn('text-foreground leading-tight font-pixel')} style={{ fontSize: '15px' }}>
+            <h1 className={cn('text-[15px] text-foreground leading-tight font-pixel')}>
               동아리 관리
             </h1>
           </div>
