@@ -3,7 +3,8 @@
 import { useState } from 'react';
 
 import { ApiKeyResponse, AvailableScopeListResponse, UserRoleType } from '@repo/shared/types';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@repo/shared/ui';
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@repo/shared/ui';
+import { XIcon } from 'lucide-react';
 import { cn } from '@repo/shared/utils';
 
 import ApiKeyDisplay from '../ApiKeyDisplay';
@@ -46,6 +47,7 @@ const ApiKeyFormDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
       <DialogContent
+        showCloseButton={false}
         className={cn('max-h-[90vh] min-w-[35vw] max-w-none overflow-y-auto border-2 border-foreground p-0 pixel-shadow-lg')}
       >
         {/* Terminal title bar */}
@@ -58,6 +60,10 @@ const ApiKeyFormDialog = ({
           >
             KEY MANAGER
           </span>
+          <DialogClose className={cn('ml-auto flex h-6 w-6 cursor-pointer items-center justify-center border border-background/30 text-background transition-all hover:border-background hover:bg-background hover:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-3')}>
+            <XIcon />
+            <span className="sr-only">Close</span>
+          </DialogClose>
         </div>
 
         <DialogHeader className={cn('px-8 pb-0 pt-8')}>
