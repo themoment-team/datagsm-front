@@ -10,7 +10,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Button,
   Skeleton,
   Table,
   TableBody,
@@ -95,9 +94,9 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
               <TableCell>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <RefreshCw />
-                    </Button>
+                    <button className={cn('flex h-7 w-7 cursor-pointer items-center justify-center border border-foreground/30 transition-all hover:border-foreground hover:bg-foreground hover:text-background')}>
+                      <RefreshCw className={cn('h-3.5 w-3.5')} />
+                    </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
@@ -119,9 +118,9 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                 </AlertDialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className={cn('text-destructive')}>
-                      <Trash2 className={cn('h-4 w-4')} />
-                    </Button>
+                    <button className={cn('flex h-7 w-7 cursor-pointer items-center justify-center border border-destructive/35 text-destructive transition-all hover:bg-destructive hover:text-white')}>
+                      <Trash2 className={cn('h-3.5 w-3.5')} />
+                    </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>

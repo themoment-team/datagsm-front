@@ -9,8 +9,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Badge,
-  Button,
   Skeleton,
   Table,
   TableBody,
@@ -24,7 +22,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { getTypeBadgeVariant, getTypeLabel } from '@/entities/club';
+import { getTypeLabel } from '@/entities/club';
 import { useDeleteClub } from '@/widgets/clubs';
 
 interface ClubListProps {
@@ -79,23 +77,28 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
                 <TableRow key={club.id}>
                   <TableCell className={cn('font-medium')}>{club.name}</TableCell>
                   <TableCell>
-                    <Badge variant={getTypeBadgeVariant(club.type)}>
+                    <span className={cn('border border-foreground/25 px-1.5 py-0.5 text-xs font-mono uppercase')}>
                       {getTypeLabel(club.type)}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
                     {club.leader.studentNumber} {club.leader.name}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => onEdit?.(club)}>
-                        <Pencil className={cn('h-4 w-4')} />
-                      </Button>
+                      <button
+                        className={cn('flex h-7 w-7 cursor-pointer items-center justify-center border border-foreground/30 transition-all hover:border-foreground hover:bg-foreground hover:text-background')}
+                        onClick={() => onEdit?.(club)}
+                      >
+                        <Pencil className={cn('h-3.5 w-3.5')} />
+                      </button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon" title="삭제">
-                            <Trash2 className="text-destructive h-4 w-4" />
-                          </Button>
+                          <button
+                            className={cn('flex h-7 w-7 cursor-pointer items-center justify-center border border-destructive/35 text-destructive transition-all hover:bg-destructive hover:text-white')}
+                          >
+                            <Trash2 className={cn('h-3.5 w-3.5')} />
+                          </button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
