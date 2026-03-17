@@ -19,7 +19,6 @@ interface ApiKeyFormDialogProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-
 const ApiKeyFormDialog = ({
   trigger,
   initialApiKeyData,

@@ -195,6 +195,8 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     });
   };
 
+  const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
+
   if (isLoadingApiKey || isLoadingKeyScope) {
     return (
       <div

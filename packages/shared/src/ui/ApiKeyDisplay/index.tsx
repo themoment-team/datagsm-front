@@ -10,7 +10,6 @@ interface ApiKeyDisplayProps {
   initialApiKeyData?: ApiKeyResponse;
 }
 
-
 const TerminalDot = () => (
   <div className={cn('h-2.5 w-2.5 border border-background/25 bg-background/15')} />
 );

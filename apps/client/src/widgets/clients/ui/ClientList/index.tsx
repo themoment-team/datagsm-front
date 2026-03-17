@@ -12,12 +12,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
   Skeleton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -38,7 +32,6 @@ interface ClientListItemProps {
   onEdit: (client: Client) => void;
   onDelete: (id: string) => void;
 }
-
 
 const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
   const { copied, copy } = useCopyToClipboard({

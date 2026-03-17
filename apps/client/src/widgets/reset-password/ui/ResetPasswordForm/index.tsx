@@ -23,7 +23,6 @@ import {
 const RESEND_COOLDOWN_MS = minutesToMs(5);
 const STORAGE_KEY = 'password_reset_verification_timestamp';
 
-
 const ResetPasswordForm = () => {
   const [codeSent, setCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);

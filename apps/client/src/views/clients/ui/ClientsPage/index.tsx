@@ -14,7 +14,6 @@ import { ClientFormDialog, ClientList, ClientSuccessDialog } from '@/widgets/cli
 
 const PAGE_SIZE = 10;
 
-
 const ClientsPage = () => {
   const searchParams = useSearchParams();
   const { updateURL } = useURLFilters<{ page: number }>();

@@ -30,7 +30,6 @@ import { PRIVACY_POLICY } from '../../constants/privacyPolicy';
 const RESEND_COOLDOWN_MS = minutesToMs(5);
 const STORAGE_KEY = 'email_verification_timestamp';
 
-
 const SignUpForm = () => {
   const [codeSent, setCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);

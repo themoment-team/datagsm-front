@@ -13,7 +13,6 @@ interface HeaderProps {
   role?: 'admin' | 'client';
 }
 
-
 const Header = ({ role = 'client' }: HeaderProps) => {
   const pathname = usePathname();
   const queryClient = useQueryClient();
