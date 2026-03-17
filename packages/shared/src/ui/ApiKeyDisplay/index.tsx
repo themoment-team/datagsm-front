@@ -145,7 +145,7 @@ const ApiKeyDisplay = ({ initialApiKeyData }: ApiKeyDisplayProps) => {
           </div>
           {isMasked && (
             <p className={cn('mt-2 text-xs text-muted-foreground font-mono')}>
-              // 보안상 마스킹된 키입니다. 갱신 시 전체 키를 확인할 수 있습니다.
+              {'// 보안상 마스킹된 키입니다. 갱신 시 전체 키를 확인할 수 있습니다.'}
             </p>
           )}
         </div>
