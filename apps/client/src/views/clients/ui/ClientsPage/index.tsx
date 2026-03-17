@@ -69,8 +69,7 @@ const ClientsPage = () => {
               DATAGSM / OAuth
             </p>
             <h1
-              className={cn('text-foreground leading-tight font-pixel')}
-              style={{ fontSize: '15px' }}
+              className={cn('text-[15px] text-foreground leading-tight font-pixel')}
             >
               클라이언트
             </h1>

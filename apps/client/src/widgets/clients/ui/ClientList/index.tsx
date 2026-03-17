@@ -113,7 +113,7 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
               className={cn('border-2 border-foreground pixel-shadow')}
             >
               <AlertDialogHeader>
-                <AlertDialogTitle className="font-pixel" style={{ fontSize: '12px', lineHeight: '1.8' }}>
+                <AlertDialogTitle className="font-pixel text-[12px] leading-[1.8]">
                   클라이언트 삭제
                 </AlertDialogTitle>
                 <AlertDialogDescription>

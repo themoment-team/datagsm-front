@@ -221,13 +221,12 @@ const ResetPasswordForm = () => {
       >
         <div
           className={cn(
-            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground font-pixel',
+            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground text-[8px] font-pixel',
           )}
-          style={{ fontSize: '8px' }}
         >
           D
         </div>
-        <span className={cn('text-background font-pixel')} style={{ fontSize: '9px' }}>
+        <span className={cn('text-[9px] text-background font-pixel')}>
           DataGSM
         </span>
       </div>
