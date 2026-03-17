@@ -53,13 +53,7 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
         queryClient.clear();
         deleteCookie(COOKIE_KEYS.ACCESS_TOKEN);
         deleteCookie(COOKIE_KEYS.REFRESH_TOKEN);
-
-        const oauthBaseUrl = process.env.NEXT_PUBLIC_OAUTH_BASE_URL;
-        if (oauthBaseUrl) {
-          window.location.href = oauthBaseUrl;
-        } else {
-          window.location.href = '/';
-        }
+        window.location.href = '/';
       }, 3000);
 
       return () => clearTimeout(timer);
