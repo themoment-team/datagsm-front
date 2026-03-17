@@ -4,9 +4,31 @@ import { COOKIE_KEYS } from '@repo/shared/constants';
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import { Header, TooltipProvider } from '@repo/shared/ui';
 import type { Metadata } from 'next';
+import { DM_Sans, JetBrains_Mono, Press_Start_2P } from 'next/font/google';
 
 import { GoogleAnalytics } from '@/shared/lib';
 import '@/shared/styles/globals.css';
+
+const pressStart2P = Press_Start_2P({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-pixel',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  weight: ['400', '500', '600'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-mono',
+});
+
+const dmSans = DM_Sans({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans',
+});
 
 export const metadata: Metadata = {
   title: 'DataGSM',
@@ -30,7 +52,10 @@ const RootLayout = async ({
   const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
   return (
-    <html lang="ko">
+    <html
+      lang="ko"
+      className={`${pressStart2P.variable} ${jetbrainsMono.variable} ${dmSans.variable}`}
+    >
       <body>
         {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />

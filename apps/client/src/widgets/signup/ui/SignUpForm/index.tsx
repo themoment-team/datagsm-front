@@ -8,20 +8,17 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounce } from '@repo/shared/hooks';
 import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+  Checkbox,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   FormErrorMessage,
   Input,
   Label,
 } from '@repo/shared/ui';
-import { Checkbox, Dialog, DialogContent, DialogHeader, DialogTitle } from '@repo/shared/ui';
 import { cn, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
-import { Database, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -32,6 +29,9 @@ import { PRIVACY_POLICY } from '../../constants/privacyPolicy';
 
 const RESEND_COOLDOWN_MS = minutesToMs(5);
 const STORAGE_KEY = 'email_verification_timestamp';
+
+const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
+const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
 
 const SignUpForm = () => {
   const [codeSent, setCodeSent] = useState(false);
@@ -104,7 +104,6 @@ const SignUpForm = () => {
     }
   }, [isPrivacyDialogOpen]);
 
-  // 페이지 로드 시 localStorage에서 마지막 전송 시간 확인
   useEffect(() => {
     const lastSentTime = localStorage.getItem(STORAGE_KEY);
     if (lastSentTime) {
@@ -118,7 +117,6 @@ const SignUpForm = () => {
     }
   }, []);
 
-  // 남은 시간 카운트다운
   useEffect(() => {
     if (remainingTime > 0) {
       const timer = setInterval(() => {
@@ -126,7 +124,6 @@ const SignUpForm = () => {
           if (prev === 1) {
             localStorage.removeItem(STORAGE_KEY);
             setCodeSent(false);
-
             if (!isCodeVerified) {
               setIsCodeVerified(false);
               lastCheckedCode.current = '';
@@ -141,7 +138,6 @@ const SignUpForm = () => {
           return prev - 1;
         });
       }, 1000);
-
       return () => clearInterval(timer);
     }
   }, [remainingTime, setValue, isCodeVerified]);
@@ -157,7 +153,6 @@ const SignUpForm = () => {
     },
     onError: (error: unknown) => {
       const statusCode = getApiErrorCode(error);
-
       switch (statusCode) {
         case 400:
           toast.error('이메일 형식을 확인해주세요.');
@@ -178,7 +173,6 @@ const SignUpForm = () => {
     },
     onError: (error: unknown) => {
       const statusCode = getApiErrorCode(error);
-
       switch (statusCode) {
         case 400:
           setIsCodeVerified(false);
@@ -213,7 +207,6 @@ const SignUpForm = () => {
     },
     onError: (error: unknown) => {
       const statusCode = getApiErrorCode(error);
-
       switch (statusCode) {
         case 400:
           toast.error('입력 데이터를 확인해주세요.');
@@ -233,7 +226,6 @@ const SignUpForm = () => {
   const handleSendCode = async () => {
     const isEmailValid = await trigger('email');
     if (!isEmailValid) return;
-
     const email = getValues('email');
     sendEmailCode({ email });
   };
@@ -258,172 +250,243 @@ const SignUpForm = () => {
   };
 
   return (
-    <Card className={cn('w-full max-w-md')}>
-      <CardHeader className={cn('space-y-4 text-center')}>
+    <>
+      <div
+        className={cn('w-full max-w-md border-2 border-foreground bg-background')}
+        style={{ boxShadow: '6px 6px 0 0 oklch(0.04 0 0)' }}
+      >
+        {/* Title bar */}
         <div
           className={cn(
-            'bg-primary/10 mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full',
+            'flex items-center gap-3 border-b-2 border-foreground bg-foreground px-5 py-3',
           )}
         >
-          <Database className={cn('text-primary h-8 w-8')} />
+          <div
+            className={cn(
+              'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground',
+            )}
+            style={{ ...pixelStyle, fontSize: '8px' }}
+          >
+            D
+          </div>
+          <span className={cn('text-background')} style={{ ...pixelStyle, fontSize: '9px' }}>
+            DataGSM
+          </span>
         </div>
-        <div>
-          <CardTitle className={cn('text-3xl')}>회원가입</CardTitle>
-          <CardDescription className={cn('mt-2')}>
-            @gsm.hs.kr 도메인 계정만 사용 가능합니다
-          </CardDescription>
-        </div>
-      </CardHeader>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className={cn('space-y-4')}>
-          <div className={cn('space-y-2')}>
-            <Label htmlFor="email">이메일</Label>
-            <div className={cn('flex gap-2')}>
-              <div className={cn('flex-1 space-y-2')}>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="example@gsm.hs.kr"
-                  {...register('email')}
-                  disabled={remainingTime > 0 || isCodeVerified}
-                />
-                <FormErrorMessage error={errors.email} />
-              </div>
-              <Button
-                type="button"
-                onClick={handleSendCode}
-                className={cn('whitespace-nowrap', isButtonDisabled && 'cursor-not-allowed')}
-                disabled={isButtonDisabled}
+        {/* Header */}
+        <div className={cn('border-b border-border/50 px-6 py-5')}>
+          <h1 className={cn('text-xl font-bold text-foreground')}>회원가입</h1>
+          <p className={cn('mt-1 text-sm text-muted-foreground')}>
+            @gsm.hs.kr 도메인 계정만 사용 가능합니다
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className={cn('space-y-4 px-6 pt-5')}>
+            {/* Email + code send */}
+            <div className={cn('space-y-1.5')}>
+              <Label
+                htmlFor="email"
+                className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
+                style={monoStyle}
               >
-                {isSendingCode
-                  ? '전송 중...'
-                  : codeSent && !canResend
-                    ? `재전송 (${formatTime(remainingTime)})`
-                    : codeSent && canResend
-                      ? '재전송'
-                      : '인증 코드'}
-              </Button>
+                Email
+              </Label>
+              <div className={cn('flex gap-2')}>
+                <div className={cn('flex-1 space-y-1')}>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="example@gsm.hs.kr"
+                    {...register('email')}
+                    disabled={remainingTime > 0 || isCodeVerified}
+                    className={cn(
+                      'rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground',
+                    )}
+                  />
+                  <FormErrorMessage error={errors.email} />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSendCode}
+                  disabled={isButtonDisabled}
+                  className={cn(
+                    'h-9 flex-shrink-0 cursor-pointer border-2 border-foreground bg-foreground px-3 text-xs uppercase tracking-wider text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50',
+                  )}
+                  style={monoStyle}
+                >
+                  {isSendingCode
+                    ? '전송 중'
+                    : codeSent && !canResend
+                      ? formatTime(remainingTime)
+                      : codeSent && canResend
+                        ? '재전송'
+                        : '인증코드'}
+                </button>
+              </div>
             </div>
-            <div className={cn('space-y-2', !codeSent && 'cursor-not-allowed')}>
+
+            {/* Verification code */}
+            <div className={cn('space-y-1.5', !codeSent && 'cursor-not-allowed')}>
+              <Label
+                htmlFor="code"
+                className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
+                style={monoStyle}
+              >
+                Verify Code
+              </Label>
               <Input
                 id="code"
                 type="text"
                 placeholder="메일로 받은 인증 코드를 입력하세요"
                 {...register('code')}
                 disabled={!codeSent || isCodeVerified}
+                className={cn(
+                  'rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground',
+                )}
               />
-              {isCodeVerified && (
-                <p className={cn('text-sm text-green-600')}>인증 코드가 확인되었습니다.</p>
+              {isCodeVerified ? (
+                <p className={cn('text-xs text-green-600')} style={monoStyle}>
+                  {'>'} 인증 완료
+                </p>
+              ) : (
+                <FormErrorMessage error={errors.code} />
               )}
-              {!isCodeVerified && <FormErrorMessage error={errors.code} />}
+            </div>
+
+            {/* Password */}
+            <div className={cn('space-y-1.5')}>
+              <Label
+                htmlFor="password"
+                className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
+                style={monoStyle}
+              >
+                Password
+              </Label>
+              <div className={cn('relative')}>
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="비밀번호를 입력하세요"
+                  {...register('password')}
+                  disabled={!isCodeVerified || isSigningUp}
+                  className={cn(
+                    'rounded-none border-foreground pr-10 focus-visible:ring-0 focus-visible:border-foreground',
+                  )}
+                />
+                <button
+                  type="button"
+                  aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                  onClick={() => setShowPassword(!showPassword)}
+                  className={cn(
+                    'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground',
+                    (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
+                  )}
+                  disabled={!isCodeVerified || isSigningUp}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              <FormErrorMessage error={errors.password} />
+            </div>
+
+            {/* Confirm password */}
+            <div className={cn('space-y-1.5')}>
+              <Label
+                htmlFor="confirmPassword"
+                className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
+                style={monoStyle}
+              >
+                Confirm Password
+              </Label>
+              <div className={cn('relative')}>
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="비밀번호를 다시 입력하세요"
+                  {...register('confirmPassword')}
+                  disabled={!isCodeVerified || isSigningUp}
+                  className={cn(
+                    'rounded-none border-foreground pr-10 focus-visible:ring-0 focus-visible:border-foreground',
+                  )}
+                />
+                <button
+                  type="button"
+                  aria-label={showConfirmPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className={cn(
+                    'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground',
+                    (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
+                  )}
+                  disabled={!isCodeVerified || isSigningUp}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              <FormErrorMessage error={errors.confirmPassword} />
+            </div>
+
+            {/* Privacy */}
+            <div className={cn('flex items-center gap-2')}>
+              <Checkbox
+                id="privacy"
+                checked={watch('privacyAgreed')}
+                onCheckedChange={handlePrivacyCheckboxClick}
+              />
+              <label
+                htmlFor="privacy"
+                className={cn('cursor-pointer text-sm leading-none')}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePrivacyCheckboxClick();
+                }}
+              >
+                <span className={cn('font-medium underline underline-offset-2 hover:opacity-70')}>
+                  개인정보 처리방침
+                </span>
+                에 동의합니다
+              </label>
             </div>
           </div>
 
-          <div className={cn('space-y-2')}>
-            <Label htmlFor="password">비밀번호</Label>
-            <div className={cn('relative')}>
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="비밀번호를 입력하세요"
-                {...register('password')}
-                disabled={!isCodeVerified || isSigningUp}
-                className={cn('pr-10')}
-              />
-              <button
-                type="button"
-                aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
-                onClick={() => setShowPassword(!showPassword)}
-                className={cn(
-                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
-                  (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
-                )}
-                disabled={!isCodeVerified || isSigningUp}
-              >
-                {showPassword ? (
-                  <EyeOff className={cn('h-4 w-4')} />
-                ) : (
-                  <Eye className={cn('h-4 w-4')} />
-                )}
-              </button>
-            </div>
-            <FormErrorMessage error={errors.password} />
-            <div className={cn('relative')}>
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                placeholder="비밀번호를 다시 입력하세요"
-                {...register('confirmPassword')}
-                disabled={!isCodeVerified || isSigningUp}
-                className={cn('pr-10')}
-              />
-              <button
-                type="button"
-                aria-label={showConfirmPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className={cn(
-                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
-                  (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
-                )}
-                disabled={!isCodeVerified || isSigningUp}
-              >
-                {showConfirmPassword ? (
-                  <EyeOff className={cn('h-4 w-4')} />
-                ) : (
-                  <Eye className={cn('h-4 w-4')} />
-                )}
-              </button>
-            </div>
-            <FormErrorMessage error={errors.confirmPassword} />
-          </div>
-
-          <div className={cn('flex items-center space-x-2')}>
-            <Checkbox
-              id="privacy"
-              checked={watch('privacyAgreed')}
-              onCheckedChange={handlePrivacyCheckboxClick}
-            />
-            <label
-              htmlFor="privacy"
-              className={cn('cursor-pointer text-sm leading-none')}
-              onClick={(e) => {
-                e.preventDefault();
-                handlePrivacyCheckboxClick();
-              }}
+          <div className={cn('space-y-3 px-6 pb-6 pt-5')}>
+            <button
+              type="submit"
+              className={cn(
+                'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
+              )}
+              style={monoStyle}
+              disabled={isSigningUp || !isCodeVerified || !isFormValid}
             >
-              <span className={cn('text-primary hover:underline')}>개인정보 처리방침</span>에
-              동의합니다
-            </label>
+              {isSigningUp ? 'PROCESSING...' : 'SIGN UP'}
+            </button>
+
+            <p className={cn('text-center text-xs text-muted-foreground')}>
+              이미 계정이 있으신가요?{' '}
+              <Link
+                href="/"
+                className={cn('font-semibold text-foreground underline underline-offset-2')}
+              >
+                로그인
+              </Link>
+            </p>
           </div>
-        </CardContent>
+        </form>
+      </div>
 
-        <CardFooter className={cn('mt-6 flex flex-col space-y-4')}>
-          <Button
-            type="submit"
-            className={cn(
-              'w-full',
-              (isSigningUp || !isCodeVerified || !isFormValid) && 'cursor-not-allowed',
-            )}
-            size="lg"
-            disabled={isSigningUp || !isCodeVerified || !isFormValid}
-          >
-            {isSigningUp ? '처리 중...' : '회원가입'}
-          </Button>
-
-          <p className={cn('text-muted-foreground text-center text-sm')}>
-            이미 계정이 있으신가요?{' '}
-            <Link href="/" className={cn('text-primary font-medium hover:underline')}>
-              로그인
-            </Link>
-          </p>
-        </CardFooter>
-      </form>
-
+      {/* Privacy dialog */}
       <Dialog open={isPrivacyDialogOpen} onOpenChange={setIsPrivacyDialogOpen}>
-        <DialogContent className={cn('flex max-h-[80vh] max-w-md flex-col')}>
+        <DialogContent
+          className={cn('flex max-h-[80vh] max-w-md flex-col border-2 border-foreground')}
+          style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}
+        >
           <DialogHeader>
-            <DialogTitle>개인정보 처리방침</DialogTitle>
+            <DialogTitle className={cn('text-base font-bold')}>개인정보 처리방침</DialogTitle>
           </DialogHeader>
           <div
             ref={scrollRef}
@@ -461,7 +524,6 @@ const SignUpForm = () => {
                 }
                 const trimmedLine = line.trimStart();
                 const isNested = line.startsWith('  ');
-
                 if (trimmedLine.startsWith('- ')) {
                   return (
                     <li
@@ -494,21 +556,24 @@ const SignUpForm = () => {
           </div>
           <div className={cn('flex flex-col gap-2 border-t pt-4')}>
             {!hasScrolledToBottom && (
-              <p className={cn('text-muted-foreground text-center text-xs')}>
-                내용을 끝까지 읽어주세요
+              <p className={cn('text-center text-xs text-muted-foreground')} style={monoStyle}>
+                {'>'} 내용을 끝까지 읽어주세요
               </p>
             )}
-            <Button
+            <button
               onClick={handlePrivacyAgree}
               disabled={!hasScrolledToBottom}
-              className={cn('w-full')}
+              className={cn(
+                'w-full cursor-pointer border-2 border-foreground bg-foreground py-2.5 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50',
+              )}
+              style={monoStyle}
             >
               동의합니다
-            </Button>
+            </button>
           </div>
         </DialogContent>
       </Dialog>
-    </Card>
+    </>
   );
 };
 

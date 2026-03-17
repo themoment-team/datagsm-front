@@ -4,15 +4,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { COOKIE_KEYS, NAV_LINKS } from '@repo/shared/constants';
-import { Button } from '@repo/shared/ui';
 import { cn, deleteCookie } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { Database, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface HeaderProps {
   role?: 'admin' | 'client';
 }
+
+const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
+const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
 
 const Header = ({ role = 'client' }: HeaderProps) => {
   const pathname = usePathname();
@@ -26,7 +28,6 @@ const Header = ({ role = 'client' }: HeaderProps) => {
 
     toast.success('로그아웃 되었습니다.');
 
-    // 상태 초기화를 위해 새로고침하며 이동
     window.location.href = '/';
   };
 
@@ -36,29 +37,53 @@ const Header = ({ role = 'client' }: HeaderProps) => {
   const links = NAV_LINKS[role];
 
   return (
-    <header className={cn('bg-background sticky top-0 z-50 border-b')}>
-      <div className={cn('container mx-auto flex h-16 items-center justify-between px-4')}>
-        <Link href="/" className={cn('flex items-center gap-2 text-lg font-semibold')}>
-          <div className={cn('bg-primary flex h-8 w-8 items-center justify-center rounded-lg')}>
-            <Database className={cn('text-primary-foreground h-5 w-5')} />
+    <header
+      className={cn('bg-background sticky top-0 z-50')}
+      style={{ borderBottom: '2px solid oklch(0.04 0 0)' }}
+    >
+      <div className={cn('container mx-auto flex h-14 items-center justify-between px-4')}>
+        {/* Logo */}
+        <Link href="/" className={cn('flex items-center gap-3')}>
+          <div
+            className={cn(
+              'flex h-7 w-7 flex-shrink-0 items-center justify-center bg-foreground text-background',
+            )}
+            style={{ ...pixelStyle, fontSize: '9px' }}
+          >
+            D
           </div>
-          <span>DataGSM</span>
+          <span
+            className={cn('text-foreground hidden sm:block')}
+            style={{ ...pixelStyle, fontSize: '10px' }}
+          >
+            DataGSM
+          </span>
         </Link>
 
-        <nav className={cn('flex items-center gap-6')}>
+        {/* Nav */}
+        <nav className={cn('flex items-center gap-5')}>
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={cn('hover:text-primary text-sm font-medium transition-colors')}
+              className={cn(
+                'text-muted-foreground hover:text-foreground hidden text-xs uppercase tracking-widest transition-colors sm:block',
+              )}
+              style={monoStyle}
             >
               {link.label}
             </Link>
           ))}
-          <Button variant="outline" size="sm" onClick={handleLogout} className={cn('gap-2')}>
-            <LogOut className={cn('h-4 w-4')} />
-            로그아웃
-          </Button>
+          <button
+            onClick={handleLogout}
+            className={cn(
+              'flex cursor-pointer items-center gap-1.5 border border-foreground px-3 py-1.5 text-xs uppercase tracking-widest transition-all hover:bg-foreground hover:text-background',
+            )}
+            style={monoStyle}
+          >
+            <LogOut className={cn('h-3 w-3')} />
+            <span className={cn('hidden sm:block')}>Logout</span>
+          </button>
         </nav>
       </div>
     </header>

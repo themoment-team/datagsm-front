@@ -11,15 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Badge,
-  Button,
   Skeleton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -41,64 +33,102 @@ interface ClientListItemProps {
   onDelete: (id: string) => void;
 }
 
+const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
+const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
+
+const TH = ({ children, className }: { children?: React.ReactNode; className?: string }) => (
+  <th
+    className={cn(
+      'px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-background',
+      className,
+    )}
+    style={monoStyle}
+  >
+    {children}
+  </th>
+);
+
 const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
   const { copied, copy } = useCopyToClipboard({
     successMessage: '클라이언트 ID가 복사되었습니다.',
   });
 
   return (
-    <TableRow>
-      <TableCell className={cn('font-medium')}>{client.clientName}</TableCell>
-      <TableCell>{client.serviceName}</TableCell>
-      <TableCell>
+    <tr className={cn('border-b border-foreground/15 transition-colors hover:bg-muted/40')}>
+      <td className={cn('px-4 py-3 text-sm font-medium')}>{client.clientName}</td>
+      <td className={cn('px-4 py-3 text-sm text-muted-foreground')}>{client.serviceName}</td>
+      <td className={cn('px-4 py-3')}>
         <div className={cn('flex items-center gap-2')}>
-          <code className={cn('bg-muted rounded px-2 py-1 font-mono text-xs')}>{client.id}</code>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn('h-6 w-6')}
+          <code className={cn('bg-muted px-2 py-1 text-xs')} style={monoStyle}>
+            {client.id}
+          </code>
+          <button
+            className={cn(
+              'flex h-6 w-6 cursor-pointer items-center justify-center border border-foreground/35 transition-all hover:border-foreground hover:bg-foreground hover:text-background',
+            )}
             onClick={() => copy(client.id)}
           >
-            {copied ? (
-              <Check className={cn('h-3 w-3 text-green-500')} />
-            ) : (
-              <Copy className={cn('h-3 w-3')} />
-            )}
-          </Button>
+            {copied ? <Check className={cn('h-3 w-3')} /> : <Copy className={cn('h-3 w-3')} />}
+          </button>
         </div>
-      </TableCell>
-      <TableCell>
+      </td>
+      <td className={cn('px-4 py-3')}>
         <div className={cn('flex flex-wrap gap-1')}>
           {client.redirectUrl.map((url, index) => (
-            <Badge key={index} variant="secondary" className={cn('font-mono text-xs')}>
+            <span
+              key={index}
+              className={cn(
+                'border border-foreground/25 px-1.5 py-0.5 text-xs text-muted-foreground',
+              )}
+              style={monoStyle}
+            >
               {url}
-            </Badge>
+            </span>
           ))}
         </div>
-      </TableCell>
-      <TableCell>
+      </td>
+      <td className={cn('px-4 py-3')}>
         <div className={cn('flex flex-wrap gap-1')}>
           {client.scopes.map((scope, index) => (
-            <Badge key={index} variant="outline" className={cn('text-xs')}>
+            <span
+              key={index}
+              className={cn('bg-foreground px-1.5 py-0.5 text-xs uppercase text-background')}
+              style={monoStyle}
+            >
               {scope}
-            </Badge>
+            </span>
           ))}
         </div>
-      </TableCell>
-      <TableCell>
+      </td>
+      <td className={cn('px-4 py-3')}>
         <div className={cn('flex items-center gap-1')}>
-          <Button variant="ghost" size="icon" onClick={() => onEdit(client)}>
-            <Pencil className={cn('h-4 w-4')} />
-          </Button>
+          <button
+            className={cn(
+              'flex h-7 w-7 cursor-pointer items-center justify-center border border-foreground/30 transition-all hover:border-foreground hover:bg-foreground hover:text-background',
+            )}
+            onClick={() => onEdit(client)}
+          >
+            <Pencil className={cn('h-3.5 w-3.5')} />
+          </button>
+
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" title="삭제">
-                <Trash2 className={cn('text-destructive h-4 w-4')} />
-              </Button>
+              <button
+                className={cn(
+                  'flex h-7 w-7 cursor-pointer items-center justify-center border border-destructive/35 text-destructive transition-all hover:bg-destructive hover:text-white',
+                )}
+              >
+                <Trash2 className={cn('h-3.5 w-3.5')} />
+              </button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent
+              className={cn('border-2 border-foreground')}
+              style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}
+            >
               <AlertDialogHeader>
-                <AlertDialogTitle>클라이언트 삭제</AlertDialogTitle>
+                <AlertDialogTitle style={{ ...pixelStyle, fontSize: '12px', lineHeight: '1.8' }}>
+                  클라이언트 삭제
+                </AlertDialogTitle>
                 <AlertDialogDescription>
                   정말로 &apos;{client.clientName}&apos; 클라이언트를 삭제하시겠습니까? 이 작업은
                   되돌릴 수 없습니다.
@@ -118,8 +148,8 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </TableCell>
-    </TableRow>
+      </td>
+    </tr>
   );
 };
 
@@ -137,41 +167,41 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
   });
 
   return (
-    <div className={cn('rounded-md border')}>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>클라이언트 이름</TableHead>
-            <TableHead>서비스 명칭</TableHead>
-            <TableHead>클라이언트 ID</TableHead>
-            <TableHead>리다이렉트 URL</TableHead>
-            <TableHead>권한 범위</TableHead>
-            <TableHead className={cn('w-25')}>작업</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+    <div className={cn('w-full overflow-x-auto')}>
+      <table className={cn('w-full border-collapse')}>
+        <thead>
+          <tr className={cn('bg-foreground')}>
+            <TH>클라이언트 이름</TH>
+            <TH>서비스 명칭</TH>
+            <TH>클라이언트 ID</TH>
+            <TH>리다이렉트 URL</TH>
+            <TH>권한 범위</TH>
+            <TH className={cn('w-24')}>작업</TH>
+          </tr>
+        </thead>
+        <tbody>
           {isLoading ? (
             Array.from({ length: 5 }).map((_, index) => (
-              <TableRow key={index}>
-                <TableCell>
+              <tr key={index} className={cn('border-b border-foreground/15')}>
+                <td className={cn('px-4 py-3')}>
                   <Skeleton className={cn('h-4 w-32')} />
-                </TableCell>
-                <TableCell>
+                </td>
+                <td className={cn('px-4 py-3')}>
                   <Skeleton className={cn('h-4 w-24')} />
-                </TableCell>
-                <TableCell>
+                </td>
+                <td className={cn('px-4 py-3')}>
                   <Skeleton className={cn('h-6 w-48')} />
-                </TableCell>
-                <TableCell>
+                </td>
+                <td className={cn('px-4 py-3')}>
                   <Skeleton className={cn('h-4 w-60')} />
-                </TableCell>
-                <TableCell>
+                </td>
+                <td className={cn('px-4 py-3')}>
                   <Skeleton className={cn('h-4 w-24')} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className={cn('h-8 w-16')} />
-                </TableCell>
-              </TableRow>
+                </td>
+                <td className={cn('px-4 py-3')}>
+                  <Skeleton className={cn('h-7 w-16')} />
+                </td>
+              </tr>
             ))
           ) : clients && clients.length > 0 ? (
             clients.map((client) => (
@@ -183,14 +213,18 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
               />
             ))
           ) : (
-            <TableRow>
-              <TableCell colSpan={6} className={cn('h-24 text-center')}>
-                등록된 클라이언트가 없습니다.
-              </TableCell>
-            </TableRow>
+            <tr>
+              <td
+                colSpan={6}
+                className={cn('h-24 text-center text-sm text-muted-foreground')}
+                style={monoStyle}
+              >
+                {'>'} 등록된 클라이언트가 없습니다.
+              </td>
+            </tr>
           )}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     </div>
   );
 };

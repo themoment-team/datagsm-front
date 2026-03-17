@@ -6,21 +6,9 @@ import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignInFormSchema, SignInFormType } from '@repo/shared/types';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  FormErrorMessage,
-  Input,
-  Label,
-  Skeleton,
-} from '@repo/shared/ui';
+import { FormErrorMessage, Input, Label, Skeleton } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-import { Clock, Database, Eye, EyeOff } from 'lucide-react';
+import { Clock, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -36,6 +24,9 @@ interface SignInFormProps {
   isLoadingServiceName?: boolean;
   remainingTime?: number | null;
 }
+
+const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
+const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
 
 const SignInForm = ({
   onSubmit,
@@ -66,62 +57,88 @@ const SignInForm = ({
   );
 
   return (
-    <Card className={cn('w-full max-w-md')}>
-      <CardHeader className={cn('space-y-4 text-center')}>
+    <div
+      className={cn('w-full max-w-sm border-2 border-foreground bg-background')}
+      style={{ boxShadow: '6px 6px 0 0 oklch(0.04 0 0)' }}
+    >
+      {/* Title bar */}
+      <div className={cn('flex items-center gap-3 border-b-2 border-foreground bg-foreground px-5 py-3')}>
         <div
           className={cn(
-            'bg-primary/10 mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full',
+            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground',
           )}
+          style={{ ...pixelStyle, fontSize: '8px' }}
         >
-          <Database className={cn('text-primary h-8 w-8')} />
+          D
         </div>
-        <div>
-          <CardTitle className={cn('text-3xl')}>로그인</CardTitle>
-          {isLoadingServiceName ? (
-            <Skeleton className={cn('mx-auto mt-2 h-4 w-64')} />
-          ) : (
-            <CardDescription className={cn('mt-2')}>
-              DataGSM 계정으로{' '}
-              {serviceName ? (
-                <>
-                  <strong className={cn('text-primary')}>{serviceName}</strong>에{' '}
-                </>
-              ) : (
-                ''
-              )}
-              로그인하세요
-            </CardDescription>
-          )}
-        </div>
-        {remainingTime !== null && remainingTime !== undefined && remainingTime <= 300 && (
-          <div
-            className={cn(
-              'flex items-center justify-center gap-1.5 text-sm font-medium transition-colors',
-              remainingTime <= 30 ? 'text-destructive animate-pulse' : 'text-amber-600',
+        <span
+          className={cn('text-background')}
+          style={{ ...pixelStyle, fontSize: '9px' }}
+        >
+          DataGSM
+        </span>
+      </div>
+
+      {/* Header */}
+      <div className={cn('border-b border-border/50 px-6 py-5')}>
+        <h1 className={cn('text-xl font-bold text-foreground')}>로그인</h1>
+        {isLoadingServiceName ? (
+          <Skeleton className={cn('mt-2 h-4 w-48')} />
+        ) : (
+          <p className={cn('mt-1 text-sm text-muted-foreground')}>
+            DataGSM 계정으로{' '}
+            {serviceName ? (
+              <>
+                <strong className={cn('font-semibold text-foreground')}>{serviceName}</strong>에{' '}
+              </>
+            ) : (
+              ''
             )}
-          >
-            <Clock className="h-4 w-4" />
-            <span>세션만료까지 남은 시간: {formatTime(remainingTime)}</span>
-          </div>
+            로그인하세요
+          </p>
         )}
-      </CardHeader>
+      </div>
+
+      {remainingTime !== null && remainingTime !== undefined && remainingTime <= 300 && (
+        <div
+          className={cn(
+            'mx-6 mt-4 flex items-center gap-2 border px-3 py-2 text-xs font-medium',
+            remainingTime <= 30
+              ? 'border-destructive text-destructive'
+              : 'border-amber-600 text-amber-600',
+          )}
+          style={monoStyle}
+        >
+          <Clock className={cn('h-3.5 w-3.5 flex-shrink-0')} />
+          <span>세션만료: {formatTime(remainingTime)}</span>
+        </div>
+      )}
+
       <form onSubmit={handleFormSubmit}>
-        <CardContent className={cn('space-y-4')}>
-          <div className={cn('space-y-2')}>
-            <Label htmlFor="emailLocal">이메일</Label>
-            <div className={cn('flex items-center')}>
+        <div className={cn('space-y-4 px-6 pt-5')}>
+          {/* Email */}
+          <div className={cn('space-y-1.5')}>
+            <Label
+              htmlFor="emailLocal"
+              className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
+              style={monoStyle}
+            >
+              Email
+            </Label>
+            <div className={cn('flex')}>
               <Input
                 id="emailLocal"
                 type="text"
                 placeholder="이메일을 입력하세요"
                 {...register('email')}
                 disabled={isPending}
-                className={cn('rounded-r-none')}
+                className={cn('flex-1 rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground')}
               />
               <span
                 className={cn(
-                  'border-input bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap rounded-r-md border border-l-0 px-3 text-sm',
+                  'flex items-center whitespace-nowrap border border-l-0 border-foreground bg-muted px-3 text-xs text-muted-foreground',
                 )}
+                style={monoStyle}
               >
                 {EMAIL_DOMAIN}
               </span>
@@ -129,8 +146,15 @@ const SignInForm = ({
             <FormErrorMessage error={errors.email} />
           </div>
 
-          <div className={cn('space-y-2')}>
-            <Label htmlFor="password">비밀번호</Label>
+          {/* Password */}
+          <div className={cn('space-y-1.5')}>
+            <Label
+              htmlFor="password"
+              className={cn('text-xs uppercase tracking-widest text-muted-foreground')}
+              style={monoStyle}
+            >
+              Password
+            </Label>
             <div className={cn('relative')}>
               <Input
                 id="password"
@@ -138,14 +162,14 @@ const SignInForm = ({
                 placeholder="비밀번호를 입력하세요"
                 {...register('password')}
                 disabled={isPending}
-                className={cn('pr-10')}
+                className={cn('rounded-none border-foreground pr-10 focus-visible:ring-0 focus-visible:border-foreground')}
               />
               <button
                 type="button"
                 aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                 onClick={() => setShowPassword(!showPassword)}
                 className={cn(
-                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
+                  'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground',
                   isPending && 'cursor-not-allowed opacity-50',
                 )}
                 disabled={isPending}
@@ -159,27 +183,29 @@ const SignInForm = ({
             </div>
             <FormErrorMessage error={errors.password} />
           </div>
-        </CardContent>
+        </div>
 
-        <CardFooter className={cn('mt-6 flex flex-col space-y-4')}>
-          <Button
+        <div className={cn('space-y-3 px-6 pb-6 pt-5')}>
+          <button
             type="submit"
-            className={cn('w-full', isPending && 'cursor-not-allowed')}
-            size="lg"
+            className={cn(
+              'w-full cursor-pointer border-2 border-foreground bg-foreground px-4 py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
+            )}
+            style={monoStyle}
             disabled={isPending}
           >
-            {isPending ? '로그인 중...' : '로그인'}
-          </Button>
+            {isPending ? 'SIGNING IN...' : 'SIGN IN'}
+          </button>
 
           {signupHref && (
-            <div className="space-y-2 text-center text-sm">
-              <p className={cn('text-muted-foreground text-center text-sm')}>
-                계정이 없으신가요?
+            <div className={cn('space-y-1 pt-1 text-center text-xs')}>
+              <p className={cn('text-muted-foreground')}>
+                계정이 없으신가요?{' '}
                 <Link
                   href={signupHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn('text-primary font-medium hover:underline')}
+                  className={cn('font-semibold text-foreground underline underline-offset-2')}
                 >
                   회원가입
                 </Link>
@@ -187,16 +213,18 @@ const SignInForm = ({
               <p>
                 <Link
                   href="/signin/reset-password"
-                  className="text-muted-foreground hover:text-primary hover:underline"
+                  className={cn(
+                    'text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground',
+                  )}
                 >
                   비밀번호를 잊으셨나요?
                 </Link>
               </p>
             </div>
           )}
-        </CardFooter>
+        </div>
       </form>
-    </Card>
+    </div>
   );
 };
 
