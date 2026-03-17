@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebounce } from '@repo/shared/hooks';
 import {
   Button,
   Card,
@@ -24,7 +25,6 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ResetPasswordFormSchema, ResetPasswordFormType } from '@/entities/reset-password';
-import { useDebounce } from '@/shared/hooks';
 import {
   useChangePassword,
   useSendPasswordResetEmail,

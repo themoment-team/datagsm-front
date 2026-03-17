@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useURLFilters } from '@repo/shared/hooks';
+import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Club, ClubType } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
@@ -50,6 +50,7 @@ const ClubsPage = () => {
 
   const initialValues = useMemo(
     (): ClubFilterType & { page: number } => ({
+      clubName: searchParams.get('clubName') || 'all',
       clubType: searchParams.get('clubType') || 'all',
       page: Number(searchParams.get('page')) || 0,
     }),
@@ -59,6 +60,7 @@ const ClubsPage = () => {
   const filterForm = useForm<ClubFilterType>({
     resolver: zodResolver(ClubFilterSchema),
     defaultValues: {
+      clubName: initialValues.clubName,
       clubType: initialValues.clubType,
     },
   });
@@ -69,22 +71,46 @@ const ClubsPage = () => {
     control,
   });
 
+  const debouncedClubName = useDebounce(filters.clubName);
+
   const currentPage = initialValues.page;
 
   useEffect(() => {
-    const hasChanged = filters.clubType !== initialValues.clubType;
+    const hasChanged =
+      debouncedClubName !== initialValues.clubName || filters.clubType !== initialValues.clubType;
+
     if (hasChanged) {
-      updateURL(filters, 0);
+      updateURL(
+        {
+          ...filters,
+          clubName: debouncedClubName,
+        },
+        0,
+      );
     }
-  }, [filters.clubType, initialValues.clubType, updateURL, filters]);
+  }, [
+    debouncedClubName,
+    filters.clubType,
+    initialValues.clubName,
+    initialValues.clubType,
+    updateURL,
+    filters,
+  ]);
 
   const handlePageChange = (page: number) => {
-    updateURL(filters, page);
+    updateURL(
+      {
+        ...filters,
+        clubName: debouncedClubName,
+      },
+      page,
+    );
   };
 
   const queryParams = {
     page: currentPage,
     size: PAGE_SIZE,
+    clubName: debouncedClubName !== 'all' ? debouncedClubName : undefined,
     clubType: filters.clubType !== 'all' ? (filters.clubType as ClubType) : undefined,
   };
 

@@ -7,15 +7,16 @@ interface UseGetClubsParams {
   page?: number;
   size?: number;
   clubType?: ClubType;
+  clubName?: string;
 }
 
 export const useGetClubs = (
-  { page, size, clubType }: UseGetClubsParams,
+  { page, size, clubType, clubName }: UseGetClubsParams,
   options?: Omit<UseQueryOptions<ClubListResponse>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery({
-    queryKey: clubQueryKeys.getClubs(page, size, clubType),
-    queryFn: () => get<ClubListResponse>(clubUrl.getClubs(page, size, clubType)),
+    queryKey: clubQueryKeys.getClubs(page, size, clubType, clubName),
+    queryFn: () => get<ClubListResponse>(clubUrl.getClubs(page, size, clubType, clubName)),
     staleTime: minutesToMs(5),
     gcTime: minutesToMs(10),
     refetchOnMount: false,
