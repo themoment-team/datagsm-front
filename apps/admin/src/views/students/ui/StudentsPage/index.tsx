@@ -7,8 +7,11 @@ import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Student, StudentRole, StudentSex } from '@repo/shared/types';
-import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
+import { CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+
+const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
+const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 import { useForm, useWatch } from 'react-hook-form';
 
 import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
@@ -166,41 +169,43 @@ const StudentsPage = () => {
   const totalPages = studentsData?.data.totalPages ?? 0;
 
   return (
-    <div className={cn('bg-background h-[calc(100vh-4.0625rem)]')}>
+    <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
-        <Card>
-          <CardHeader>
-            <div className={cn('flex items-center justify-between')}>
-              <CardTitle className={cn('text-2xl')}>학생 관리</CardTitle>
-              <div className={cn('flex items-center gap-2')}>
-                <GraduateThirdGradeButton />
-                <StudentExcelActions />
-                <StudentFormDialog
-                  mode="create"
-                  clubs={clubsData?.data}
-                  isLoadingClubs={isLoadingClubs}
-                />
-              </div>
-            </div>
+        {/* Page header */}
+        <div className={cn('mb-6 flex items-end justify-between border-b-2 border-foreground pb-4')}>
+          <div>
+            <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground')} style={monoStyle}>
+              DATAGSM / Admin
+            </p>
+            <h1 className={cn('text-foreground leading-tight')} style={{ ...pixelStyle, fontSize: '15px' }}>
+              학생 관리
+            </h1>
+          </div>
+          <div className={cn('flex items-center gap-2')}>
+            <GraduateThirdGradeButton />
+            <StudentExcelActions />
+            <StudentFormDialog mode="create" clubs={clubsData?.data} isLoadingClubs={isLoadingClubs} />
+          </div>
+        </div>
 
-            <StudentFilter control={control} />
-          </CardHeader>
-          <CardContent>
-            <div className={cn('space-y-4')}>
-              <StudentList
-                students={students}
-                isLoading={isLoadingStudents}
-                onEdit={handleEditStudent}
-              />
-              <CommonPagination
-                isLoading={isLoadingStudents}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </div>
-          </CardContent>
-        </Card>
+        {/* Filters */}
+        <div className={cn('mb-4')}>
+          <StudentFilter control={control} />
+        </div>
+
+        {/* Table */}
+        <div className={cn('border-2 border-foreground')} style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}>
+          <StudentList students={students} isLoading={isLoadingStudents} onEdit={handleEditStudent} />
+        </div>
+
+        <div className={cn('mt-5')}>
+          <CommonPagination
+            isLoading={isLoadingStudents}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
 
         {editingStudent && (
           <StudentFormDialog

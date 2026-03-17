@@ -7,8 +7,11 @@ import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Club, ClubType } from '@repo/shared/types';
-import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
+import { CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+
+const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
+const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 import { useForm, useWatch } from 'react-hook-form';
 
 import { AddClubSchema, AddClubType, ClubFilterSchema, ClubFilterType } from '@/entities/club';
@@ -129,35 +132,47 @@ const ClubsPage = () => {
   const totalPages = clubsData?.data.totalPages ?? 0;
 
   return (
-    <div className={cn('bg-background h-[calc(100vh-4.0625rem)]')}>
+    <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
-        <Card>
-          <CardHeader>
-            <div className={cn('flex items-center justify-between')}>
-              <CardTitle className={cn('text-2xl')}>동아리 관리</CardTitle>
-              <div className={cn('flex items-center gap-2')}>
-                <ClubExcelActions />
-                <ClubFormDialog
-                  mode="create"
-                  students={studentsData?.data.students}
-                  isLoadingStudents={isLoadingStudents}
-                  form={clubForm}
-                />
-              </div>
-            </div>
-
-            <ClubFilter control={control} />
-          </CardHeader>
-          <CardContent>
-            <ClubList clubs={clubs} isLoading={isLoadingClubs} onEdit={handleEditClub} />
-            <CommonPagination
-              isLoading={isLoadingClubs}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
+        {/* Page header */}
+        <div className={cn('mb-6 flex items-end justify-between border-b-2 border-foreground pb-4')}>
+          <div>
+            <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground')} style={monoStyle}>
+              DATAGSM / Admin
+            </p>
+            <h1 className={cn('text-foreground leading-tight')} style={{ ...pixelStyle, fontSize: '15px' }}>
+              동아리 관리
+            </h1>
+          </div>
+          <div className={cn('flex items-center gap-2')}>
+            <ClubExcelActions />
+            <ClubFormDialog
+              mode="create"
+              students={studentsData?.data.students}
+              isLoadingStudents={isLoadingStudents}
+              form={clubForm}
             />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className={cn('mb-4')}>
+          <ClubFilter control={control} />
+        </div>
+
+        {/* Table */}
+        <div className={cn('border-2 border-foreground')} style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}>
+          <ClubList clubs={clubs} isLoading={isLoadingClubs} onEdit={handleEditClub} />
+        </div>
+
+        <div className={cn('mt-5')}>
+          <CommonPagination
+            isLoading={isLoadingClubs}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
 
         {editingClub && (
           <ClubFormDialog

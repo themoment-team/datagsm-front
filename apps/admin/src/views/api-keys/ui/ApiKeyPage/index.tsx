@@ -6,8 +6,11 @@ import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useURLFilters } from '@repo/shared/hooks';
-import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
+import { CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+
+const pixelStyle = { fontFamily: '"Press Start 2P", monospace' };
+const monoStyle = { fontFamily: '"JetBrains Mono", monospace' };
 import { useForm, useWatch } from 'react-hook-form';
 
 import { ApiKeyFilterSchema, ApiKeyFilterType } from '@/entities/api-key';
@@ -88,28 +91,39 @@ const ApiKeyPage = () => {
   const totalPages = apiKeysData?.data.totalPages ?? 0;
 
   return (
-    <div className={cn('bg-background min-h-[calc(100vh-4.0625rem)]')}>
+    <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
-        <Card>
-          <CardHeader>
-            <div className={cn('flex items-center justify-between')}>
-              <CardTitle className={cn('text-2xl')}>API Key 관리</CardTitle>
-              <ApiKeyFormDialog userRole="ADMIN" />
-            </div>
-            <ApiKeyFilter control={control} />
-          </CardHeader>
-          <CardContent>
-            <div className={cn('space-y-4')}>
-              <ApiKeyList apiKeys={apiKeys} isLoading={isLoadingApiKeys} />
-              <CommonPagination
-                isLoading={isLoadingApiKeys}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </div>
-          </CardContent>
-        </Card>
+        {/* Page header */}
+        <div className={cn('mb-6 flex items-end justify-between border-b-2 border-foreground pb-4')}>
+          <div>
+            <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground')} style={monoStyle}>
+              DATAGSM / Admin
+            </p>
+            <h1 className={cn('text-foreground leading-tight')} style={{ ...pixelStyle, fontSize: '15px' }}>
+              API Key 관리
+            </h1>
+          </div>
+          <ApiKeyFormDialog userRole="ADMIN" />
+        </div>
+
+        {/* Filters */}
+        <div className={cn('mb-4')}>
+          <ApiKeyFilter control={control} />
+        </div>
+
+        {/* Table */}
+        <div className={cn('border-2 border-foreground')} style={{ boxShadow: '4px 4px 0 0 oklch(0.04 0 0)' }}>
+          <ApiKeyList apiKeys={apiKeys} isLoading={isLoadingApiKeys} />
+        </div>
+
+        <div className={cn('mt-5')}>
+          <CommonPagination
+            isLoading={isLoadingApiKeys}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </main>
     </div>
   );
