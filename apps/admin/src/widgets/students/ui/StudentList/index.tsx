@@ -1,5 +1,6 @@
 import { Student } from '@repo/shared/types';
 import {
+  PixelIconButton,
   Skeleton,
   Table,
   TableBody,
@@ -91,12 +92,9 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                   <TableCell>{student.autonomousClub?.name ?? '없음'}</TableCell>
 
                   <TableCell>
-                    <button
-                      className={cn('flex h-7 w-7 cursor-pointer items-center justify-center border border-foreground/30 transition-all hover:border-foreground hover:bg-foreground hover:text-background')}
-                      onClick={() => onEdit?.(student)}
-                    >
+                    <PixelIconButton onClick={() => onEdit?.(student)}>
                       <Pencil className={cn('h-3.5 w-3.5')} />
-                    </button>
+                    </PixelIconButton>
                   </TableCell>
                 </TableRow>
               ))}

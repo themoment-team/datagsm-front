@@ -9,6 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  PixelIconButton,
   Skeleton,
   Table,
   TableBody,
@@ -86,19 +87,14 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
-                      <button
-                        className={cn('flex h-7 w-7 cursor-pointer items-center justify-center border border-foreground/30 transition-all hover:border-foreground hover:bg-foreground hover:text-background')}
-                        onClick={() => onEdit?.(club)}
-                      >
+                      <PixelIconButton onClick={() => onEdit?.(club)}>
                         <Pencil className={cn('h-3.5 w-3.5')} />
-                      </button>
+                      </PixelIconButton>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <button
-                            className={cn('flex h-7 w-7 cursor-pointer items-center justify-center border border-destructive/35 text-destructive transition-all hover:bg-destructive hover:text-white')}
-                          >
+                          <PixelIconButton variant="destructive">
                             <Trash2 className={cn('h-3.5 w-3.5')} />
-                          </button>
+                          </PixelIconButton>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>

@@ -9,6 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  PixelIconButton,
   Skeleton,
   Table,
   TableBody,
@@ -64,19 +65,14 @@ const ProjectList = ({ projects, isLoading, onEdit, onDelete }: ProjectListProps
                 <TableCell>{project.club?.name || '무소속'}</TableCell>
                 <TableCell>
                   <div className={cn('flex items-center gap-2')}>
-                    <button
-                      className={cn('flex h-7 w-7 cursor-pointer items-center justify-center border border-foreground/30 transition-all hover:border-foreground hover:bg-foreground hover:text-background')}
-                      onClick={() => onEdit?.(project)}
-                    >
+                    <PixelIconButton onClick={() => onEdit?.(project)}>
                       <Pencil className={cn('h-3.5 w-3.5')} />
-                    </button>
+                    </PixelIconButton>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <button
-                          className={cn('flex h-7 w-7 cursor-pointer items-center justify-center border border-destructive/35 text-destructive transition-all hover:bg-destructive hover:text-white')}
-                        >
+                        <PixelIconButton variant="destructive">
                           <Trash2 className={cn('h-3.5 w-3.5')} />
-                        </button>
+                        </PixelIconButton>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
