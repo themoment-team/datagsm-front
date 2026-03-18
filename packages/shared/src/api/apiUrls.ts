@@ -15,6 +15,7 @@ export const studentUrl = {
     includeWithdrawn?: boolean,
     onlyEnrolled?: boolean,
     sortBy?: string,
+    name?: string,
   ) => {
     const params = new URLSearchParams();
 
@@ -30,6 +31,7 @@ export const studentUrl = {
       params.append('includeWithdrawn', includeWithdrawn.toString());
     if (onlyEnrolled !== undefined) params.append('onlyEnrolled', onlyEnrolled.toString());
     if (sortBy !== undefined) params.append('sortBy', sortBy);
+    if (name !== undefined) params.append('name', name);
 
     return `/v1/students?${params.toString()}`;
   },
@@ -102,12 +104,13 @@ export const projectUrl = {
 export const clubUrl = {
   putClubById: (clubId: number) => `/v1/clubs/${clubId}`,
   deleteClubById: (clubId: number) => `/v1/clubs/${clubId}`,
-  getClubs: (page?: number, size?: number, type?: ClubType) => {
+  getClubs: (page?: number, size?: number, type?: ClubType, clubName?: string) => {
     const params = new URLSearchParams();
 
     if (page !== undefined) params.append('page', page.toString());
     if (size !== undefined) params.append('size', size.toString());
     if (type != null) params.append('clubType', type);
+    if (clubName !== undefined) params.append('clubName', clubName);
 
     const queryString = params.toString();
     return queryString ? `/v1/clubs?${queryString}` : '/v1/clubs';
@@ -152,6 +155,7 @@ export const accountUrl = {
   postEmailVerificationVerify: () => '/v1/accounts/email-verifications/verify',
   postAccount: () => '/v1/accounts',
   getMy: () => '/v1/accounts/my',
+  deleteMy: () => '/v1/accounts/my',
   postPasswordReset: () => '/v1/accounts/password-resets', // 비밀번호 재설정 요청 (이메일 발송)
   postPasswordResetVerification: () => '/v1/accounts/password-resets/verification', // 비밀번호 재설정 코드 검증
   putPassword: () => '/v1/accounts/password', // 비밀번호 변경 (인증된 사용자)

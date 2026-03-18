@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const ClubFilterSchema = z.object({
+  clubName: z.string().optional(),
   clubType: z.string().optional(),
 });
 

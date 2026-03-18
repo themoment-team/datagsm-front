@@ -1,4 +1,5 @@
 export * from './useCopyToClipboard';
+export * from './useDebounce';
 export * from './useURLFilters';
 export * from './useScopeSelection';
 export * from './useExchangeToken';
