@@ -411,11 +411,15 @@ const SignUpForm = () => {
             {isSigningUp ? '처리 중...' : '회원가입'}
           </Button>
 
-          <p className={cn('text-muted-foreground text-center text-sm')}>
-            이미 계정이 있으신가요?{' '}
-            <Link href="/" className={cn('text-primary font-medium hover:underline')}>
-              로그인
-            </Link>
+          <p className={cn('text-muted-foreground flex flex-col text-center text-sm')}>
+            이미 계정이 있으신가요?
+            <Button
+              variant="link"
+              onClick={() => window.close()}
+              className={cn('text-primary font-medium hover:underline')}
+            >
+              창을 닫고 로그인 화면으로 돌아가 주세요.
+            </Button>
           </p>
         </CardFooter>
       </form>
