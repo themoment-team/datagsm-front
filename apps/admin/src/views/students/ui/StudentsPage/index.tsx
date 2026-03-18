@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useURLFilters } from '@repo/shared/hooks';
+import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Student, StudentRole, StudentSex } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
@@ -15,6 +15,7 @@ import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
 import { useGetClubs } from '@/views/clubs';
 import { useGetStudents } from '@/views/students';
 import {
+  GraduateThirdGradeButton,
   StudentExcelActions,
   StudentFilter,
   StudentFormDialog,
@@ -37,6 +38,7 @@ const StudentsPage = () => {
 
   const initialValues = useMemo(
     (): StudentFilterType & { page: number } => ({
+      name: searchParams.get('name') || 'all',
       grade: searchParams.get('grade') || 'all',
       classNum: searchParams.get('classNum') || 'all',
       sex: searchParams.get('sex') || 'all',
@@ -45,6 +47,7 @@ const StudentsPage = () => {
       includeGraduates: searchParams.get('includeGraduates') === 'true',
       includeWithdrawn: searchParams.get('includeWithdrawn') === 'true',
       onlyEnrolled: searchParams.get('onlyEnrolled') === 'true' || !searchParams.has('status'),
+      sortBy: searchParams.get('sortBy') || 'all',
       page: Number(searchParams.get('page')) || 0,
     }),
     [searchParams],
@@ -53,6 +56,7 @@ const StudentsPage = () => {
   const form = useForm<StudentFilterType>({
     resolver: zodResolver(StudentFilterSchema),
     defaultValues: {
+      name: initialValues.name,
       grade: initialValues.grade,
       classNum: initialValues.classNum,
       sex: initialValues.sex,
@@ -61,6 +65,7 @@ const StudentsPage = () => {
       includeGraduates: initialValues.includeGraduates,
       includeWithdrawn: initialValues.includeWithdrawn,
       onlyEnrolled: initialValues.onlyEnrolled,
+      sortBy: initialValues.sortBy,
     },
   });
 
@@ -70,10 +75,13 @@ const StudentsPage = () => {
     control,
   });
 
+  const debouncedName = useDebounce(filters.name);
+
   const currentPage = initialValues.page;
 
   useEffect(() => {
     const hasChanged =
+      debouncedName !== initialValues.name ||
       filters.grade !== initialValues.grade ||
       filters.classNum !== initialValues.classNum ||
       filters.sex !== initialValues.sex ||
@@ -81,12 +89,20 @@ const StudentsPage = () => {
       filters.status !== initialValues.status ||
       filters.includeGraduates !== initialValues.includeGraduates ||
       filters.includeWithdrawn !== initialValues.includeWithdrawn ||
-      filters.onlyEnrolled !== initialValues.onlyEnrolled;
+      filters.onlyEnrolled !== initialValues.onlyEnrolled ||
+      filters.sortBy !== initialValues.sortBy;
 
     if (hasChanged) {
-      updateURL(filters, 0);
+      updateURL(
+        {
+          ...filters,
+          name: debouncedName,
+        },
+        0,
+      );
     }
   }, [
+    debouncedName,
     filters.grade,
     filters.classNum,
     filters.sex,
@@ -95,6 +111,8 @@ const StudentsPage = () => {
     filters.includeGraduates,
     filters.includeWithdrawn,
     filters.onlyEnrolled,
+    filters.sortBy,
+    initialValues.name,
     initialValues.grade,
     initialValues.classNum,
     initialValues.sex,
@@ -103,17 +121,25 @@ const StudentsPage = () => {
     initialValues.includeGraduates,
     initialValues.includeWithdrawn,
     initialValues.onlyEnrolled,
+    initialValues.sortBy,
     updateURL,
     filters,
   ]);
 
   const handlePageChange = (page: number) => {
-    updateURL(filters, page);
+    updateURL(
+      {
+        ...filters,
+        name: debouncedName,
+      },
+      page,
+    );
   };
 
   const queryParams = {
     page: currentPage,
     size: PAGE_SIZE,
+    name: debouncedName !== 'all' ? debouncedName : undefined,
     grade: filters.grade !== 'all' ? Number(filters.grade) : undefined,
     classNum: filters.classNum !== 'all' ? Number(filters.classNum) : undefined,
     sex: filters.sex !== 'all' ? (filters.sex as StudentSex) : undefined,
@@ -128,6 +154,7 @@ const StudentsPage = () => {
     includeGraduates: filters.status === 'GRADUATE',
     includeWithdrawn: filters.status === 'WITHDRAWN',
     onlyEnrolled: filters.status === 'ENROLLED',
+    sortBy: filters.sortBy !== 'all' ? filters.sortBy : undefined,
   };
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(queryParams);
@@ -146,6 +173,7 @@ const StudentsPage = () => {
             <div className={cn('flex items-center justify-between')}>
               <CardTitle className={cn('text-2xl')}>학생 관리</CardTitle>
               <div className={cn('flex items-center gap-2')}>
+                <GraduateThirdGradeButton />
                 <StudentExcelActions />
                 <StudentFormDialog
                   mode="create"

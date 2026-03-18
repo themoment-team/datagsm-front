@@ -12,17 +12,32 @@ export const studentQueryKeys = {
     includeGraduates?: boolean,
     includeWithdrawn?: boolean,
     onlyEnrolled?: boolean,
+    sortBy?: string,
+    name?: string,
   ) =>
     [
       'students',
       'list',
-      { page, size, grade, classNum, sex, role, includeGraduates, includeWithdrawn, onlyEnrolled },
+      {
+        page,
+        size,
+        grade,
+        classNum,
+        sex,
+        role,
+        includeGraduates,
+        includeWithdrawn,
+        onlyEnrolled,
+        sortBy,
+        name,
+      },
     ] as const,
   postStudent: () => ['students', 'create'] as const,
   patchStudentStatus: () => ['students', 'status', 'update'] as const,
   postStudentBatchOperation: () => ['students', 'batch-operations'] as const,
   postStudentImport: () => ['students', 'imports'] as const,
   getStudentExport: () => ['students', 'exports', 'excel'] as const,
+  postGraduateThirdGrade: () => ['students', 'graduate', 'third-grade'] as const,
 } as const;
 
 export const authQueryKeys = {
@@ -58,8 +73,8 @@ export const projectQueryKeys = {
 export const clubQueryKeys = {
   putClubById: () => ['clubs', 'update'] as const,
   deleteClubById: () => ['clubs', 'delete'] as const,
-  getClubs: (page?: number, size?: number, type?: string) =>
-    ['clubs', 'list', { page, size, type }] as const,
+  getClubs: (page?: number, size?: number, type?: string, clubName?: string) =>
+    ['clubs', 'list', { page, size, type, clubName }] as const,
   postClub: () => ['clubs', 'create'] as const,
   postClubImport: () => ['clubs', 'imports'] as const,
   getClubExport: () => ['clubs', 'exports', 'excel'] as const,
@@ -84,12 +99,14 @@ export const accountQueryKeys = {
   postEmailVerificationVerify: () => ['accounts', 'email-verifications', 'verify'] as const,
   postAccount: () => ['accounts', 'create'] as const,
   getMy: () => ['accounts', 'my'] as const,
+  deleteMy: () => ['accounts', 'delete'] as const,
   postPasswordReset: () => ['accounts', 'password-resets'] as const,
   postPasswordResetVerification: () => ['accounts', 'password-resets', 'verification'] as const,
   putPassword: () => ['accounts', 'password', 'update'] as const,
 } as const;
 
 export const oauthQueryKeys = {
+  getOAuthSession: (token: string) => ['oauth', 'session', token] as const,
   postOAuthTokenRefresh: () => ['oauth', 'token', 'refresh'] as const,
   postOAuthToken: () => ['oauth', 'token'] as const,
   postOAuthCode: () => ['oauth', 'code'] as const,

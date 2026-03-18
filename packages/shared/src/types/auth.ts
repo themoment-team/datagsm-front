@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { ApiResponse } from './base';
 import { UserRoleType } from './userRole';
+import { Student } from './student';
 
 export interface Account {
   id: number;
@@ -9,7 +10,18 @@ export interface Account {
   role: UserRoleType;
 }
 
+export interface MyAccount extends Account {
+  isStudent: boolean;
+  student?: Student;
+}
+
 export type AccountResponse = ApiResponse<Account>;
+
+export type MyAccountResponse = ApiResponse<MyAccount>;
+
+export interface WithdrawalRequest {
+  password: string;
+}
 
 interface SignInResponseData {
   accessToken: string;
@@ -19,13 +31,7 @@ interface SignInResponseData {
 export type SignInResponse = ApiResponse<SignInResponseData>;
 
 export const SignInFormSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: '이메일을 입력해주세요.' })
-    .pipe(z.email({ message: '올바른 이메일 형식이 아닙니다.' }))
-    .refine((email) => email.endsWith('@gsm.hs.kr'), {
-      message: '@gsm.hs.kr 도메인 계정만 사용 가능합니다.',
-    }),
+  email: z.string().min(1, { message: '이메일을 입력해주세요.' }),
   password: z
     .string()
     .min(1, { message: '비밀번호를 입력해주세요.' })
@@ -67,6 +73,13 @@ export const ApiKeyFormSchema = z.object({
 });
 
 export type ApiKeyFormType = z.infer<typeof ApiKeyFormSchema>;
+
+export interface OAuthSessionData {
+  serviceName: string;
+  expiresAt: number;
+}
+
+export type OAuthSessionResponse = ApiResponse<OAuthSessionData>;
 
 export interface OAuthCodeRequest {
   email: string;

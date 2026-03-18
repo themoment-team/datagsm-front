@@ -16,6 +16,7 @@
 - [SDK Java/Kotlin](https://datagsm-front-client.vercel.app/api/sdk/java): datagsm-openapi-sdk-java:1.1.1 (JitPack, OkHttp 기반). JDK 13+
 - [SDK JavaScript/TypeScript](https://datagsm-front-client.vercel.app/api/sdk/javascript): datagsm-openapi-sdk-javascript (npm, fetch 기반). Node.js 20+
 - [SDK Python](https://datagsm-front-client.vercel.app/api/sdk/python): datagsm-openapi-sdk (pip, httpx + Pydantic v2 기반). Python 3.9+
+- [SDK .NET](https://datagsm-front-client.vercel.app/api/sdk/dotnet): datagsm-openapi-sdk-dotnet (NuGet, HttpClient 기반, 비공식 패키지). .NET 8.0+
 - [OAuth 개요](https://datagsm-front-client.vercel.app/oauth): OAuth 2.0 Authorization Code Grant 개요, PKCE 도입 배경, 토큰 유효기간, 인증 플로우 다이어그램
 - [인증 흐름 시작](https://datagsm-front-client.vercel.app/oauth/http/authorize): GET /v1/oauth/authorize — client_id, redirect_uri, state, code_challenge(PKCE) 파라미터
 - [토큰 교환](https://datagsm-front-client.vercel.app/oauth/http/token-exchange): POST /v1/oauth/token (grant_type=authorization_code) — PKCE(code_verifier) 및 client_secret 방식 모두 지원

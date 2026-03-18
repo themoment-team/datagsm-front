@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const StudentFilterSchema = z.object({
+  name: z.string().optional(),
   grade: z.string().optional(),
   classNum: z.string().optional(),
   sex: z.string().optional(),
@@ -9,6 +10,7 @@ export const StudentFilterSchema = z.object({
   includeGraduates: z.boolean().optional(),
   includeWithdrawn: z.boolean().optional(),
   onlyEnrolled: z.boolean().optional(),
+  sortBy: z.string().optional(),
 });
 
 export type StudentFilterType = z.infer<typeof StudentFilterSchema>;

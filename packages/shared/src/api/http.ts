@@ -20,3 +20,9 @@ export const oauthPost = async <T>(...args: Parameters<typeof oauthAxiosInstance
 
 export const oauthPut = async <T>(...args: Parameters<typeof oauthAxiosInstance.put>) =>
   await oauthAxiosInstance.put<T, T>(...args);
+
+export const oauthGet = async <T>(...args: Parameters<typeof oauthAxiosInstance.get>) =>
+  await oauthAxiosInstance.get<T, T>(...args);
+
+export const oauthDel = async <T>(...args: Parameters<typeof oauthAxiosInstance.delete>) =>
+  await oauthAxiosInstance.delete<T, T>(...args);

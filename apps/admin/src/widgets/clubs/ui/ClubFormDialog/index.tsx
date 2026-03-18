@@ -1,9 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Club, Student } from '@repo/shared/types';
 import {
   Badge,
   Button,
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -12,6 +17,9 @@ import {
   FormErrorMessage,
   Input,
   Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -20,7 +28,7 @@ import {
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { Pencil, Plus, X } from 'lucide-react';
+import { ChevronDown, Pencil, Plus, X } from 'lucide-react';
 import { Controller, SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -66,6 +74,10 @@ const ClubFormDialog = ({
 
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
+  const [leaderPopoverOpen, setLeaderPopoverOpen] = useState(false);
+  const [memberPopoverOpen, setMemberPopoverOpen] = useState(false);
+  const leaderSearchRef = useRef<HTMLInputElement>(null);
+  const memberSearchRef = useRef<HTMLInputElement>(null);
 
   const currentLeaderId = watch('leaderId');
 
@@ -200,72 +212,74 @@ const ClubFormDialog = ({
               <Controller
                 control={control}
                 name="leaderId"
-                render={({ field }) => (
-                  <Select
-                    value={field.value?.toString()}
-                    onOpenChange={(v) => {
-                      if (!v) setSearchTerm('');
-                    }}
-                    onValueChange={(value) => {
-                      const id = Number(value);
-                      field.onChange(id);
-
-                      const participantIds = getValues('participantIds') || [];
-                      if (participantIds.includes(id)) {
-                        setValue(
-                          'participantIds',
-                          participantIds.filter((pId) => pId !== id),
-                        );
-                      }
-                      setSearchTerm('');
-                    }}
-                  >
-                    <SelectTrigger>
-                      {field.value ? (
-                        <div className={cn('flex gap-2')}>
-                          {(() => {
-                            const selectedStudent = students?.find(
-                              (s) => s.id === Number(field.value),
-                            );
-                            return selectedStudent
-                              ? `${selectedStudent.studentNumber} ${selectedStudent.name}`
-                              : '부장 선택';
-                          })()}
-                        </div>
-                      ) : (
-                        <SelectValue placeholder="부장 선택" />
-                      )}
-                    </SelectTrigger>
-                    <SelectContent>
-                      <div className={cn('bg-popover sticky top-0 z-10 p-2')}>
-                        <Input
-                          placeholder="이름 또는 학번 검색..."
-                          value={searchTerm}
-                          autoFocus
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === ' ') e.stopPropagation();
-                            e.stopPropagation();
-                          }}
-                          onPointerDown={(e) => e.stopPropagation()}
-                        />
-                      </div>
-                      <div className={cn('max-h-[200px] overflow-y-auto')}>
-                        {filteredStudents && filteredStudents.length > 0 ? (
-                          filteredStudents.map((student) => (
-                            <SelectItem key={student.id} value={student.id.toString()}>
-                              {student.studentNumber} {student.name}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <div className={cn('text-muted-foreground p-4 text-center text-sm')}>
-                            검색 결과가 없습니다.
-                          </div>
-                        )}
-                      </div>
-                    </SelectContent>
-                  </Select>
-                )}
+                render={({ field }) => {
+                  const selectedLeader = students?.find((s) => s.id === Number(field.value));
+                  return (
+                    <Popover
+                      open={leaderPopoverOpen}
+                      onOpenChange={(v) => {
+                        setLeaderPopoverOpen(v);
+                        if (!v) setSearchTerm('');
+                      }}
+                    >
+                      <PopoverTrigger asChild>
+                        <button
+                          type="button"
+                          role="combobox"
+                          className={cn(
+                            'border-input shadow-xs dark:bg-input/30 dark:hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
+                            selectedLeader ? 'text-foreground' : 'text-muted-foreground',
+                          )}
+                        >
+                          {selectedLeader
+                            ? `${selectedLeader.studentNumber} ${selectedLeader.name}`
+                            : '부장 선택'}
+                          <ChevronDown className={cn('h-4 w-4 shrink-0 opacity-50')} />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className={cn('w-(--radix-popover-trigger-width) p-0')}
+                        onOpenAutoFocus={(e) => {
+                          e.preventDefault();
+                          leaderSearchRef.current?.focus();
+                        }}
+                      >
+                        <Command shouldFilter={false}>
+                          <CommandInput
+                            ref={leaderSearchRef}
+                            placeholder="이름 또는 학번 검색..."
+                            value={searchTerm}
+                            onValueChange={setSearchTerm}
+                          />
+                          <CommandList>
+                            <CommandEmpty>검색 결과가 없습니다.</CommandEmpty>
+                            {filteredStudents?.map((student) => (
+                              <CommandItem
+                                key={student.id}
+                                value={student.id.toString()}
+                                onSelect={() => {
+                                  const id = student.id;
+                                  field.onChange(id);
+                                  const participantIds = getValues('participantIds') || [];
+                                  if (participantIds.includes(id)) {
+                                    setValue(
+                                      'participantIds',
+                                      participantIds.filter((pId) => pId !== id),
+                                    );
+                                  }
+                                  setSearchTerm('');
+                                  setLeaderPopoverOpen(false);
+                                }}
+                              >
+                                {student.studentNumber} {student.name}
+                              </CommandItem>
+                            ))}
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  );
+                }}
               />
               <FormErrorMessage error={errors.leaderId} />
             </div>
@@ -276,57 +290,71 @@ const ClubFormDialog = ({
                 control={control}
                 name="participantIds"
                 render={({ field }) => (
-                  <Select
-                    value=""
+                  <Popover
+                    open={memberPopoverOpen}
                     onOpenChange={(v) => {
+                      setMemberPopoverOpen(v);
                       if (!v) setSearchTerm('');
                     }}
-                    onValueChange={(value) => {
-                      const id = Number(value);
-                      if (Array.isArray(field.value) && !field.value.includes(id)) {
-                        field.onChange([...field.value, id]);
-                      }
-                      setSearchTerm('');
-                    }}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="팀원 추가" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <div className={cn('bg-popover sticky top-0 z-10 p-2')}>
-                        <Input
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        role="combobox"
+                        className={cn(
+                          'border-input shadow-xs dark:bg-input/30 dark:hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
+                          'text-muted-foreground',
+                        )}
+                      >
+                        팀원 추가
+                        <ChevronDown className={cn('h-4 w-4 shrink-0 opacity-50')} />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className={cn('w-(--radix-popover-trigger-width) p-0')}
+                      onOpenAutoFocus={(e) => {
+                        e.preventDefault();
+                        memberSearchRef.current?.focus();
+                      }}
+                    >
+                      <Command shouldFilter={false}>
+                        <CommandInput
+                          ref={memberSearchRef}
                           placeholder="이름 또는 학번 검색..."
                           value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === ' ') e.stopPropagation();
-                            e.stopPropagation();
-                          }}
-                          onPointerDown={(e) => e.stopPropagation()}
+                          onValueChange={setSearchTerm}
                         />
-                      </div>
-                      <div className={cn('max-h-[200px] overflow-y-auto')}>
-                        {filteredStudents && filteredStudents.length > 0 ? (
-                          filteredStudents
-                            .filter(
+                        <CommandList>
+                          <CommandEmpty>검색 결과가 없습니다.</CommandEmpty>
+                          {filteredStudents
+                            ?.filter(
                               (s) =>
                                 Array.isArray(field.value) &&
                                 !field.value.includes(s.id) &&
                                 s.id !== Number(currentLeaderId),
                             )
                             .map((student) => (
-                              <SelectItem key={student.id} value={student.id.toString()}>
+                              <CommandItem
+                                key={student.id}
+                                value={student.id.toString()}
+                                onSelect={() => {
+                                  if (
+                                    Array.isArray(field.value) &&
+                                    !field.value.includes(student.id)
+                                  ) {
+                                    field.onChange([...field.value, student.id]);
+                                  }
+                                  setSearchTerm('');
+                                  setMemberPopoverOpen(false);
+                                }}
+                              >
                                 {student.studentNumber} {student.name}
-                              </SelectItem>
-                            ))
-                        ) : (
-                          <div className={cn('text-muted-foreground p-4 text-center text-sm')}>
-                            검색 결과가 없습니다.
-                          </div>
-                        )}
-                      </div>
-                    </SelectContent>
-                  </Select>
+                              </CommandItem>
+                            ))}
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 )}
               />
               <FormErrorMessage

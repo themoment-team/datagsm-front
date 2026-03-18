@@ -1,4 +1,6 @@
 export * from './Button';
+export * from './Command';
+export * from './Popover';
 export * from './Card';
 export * from './AlertDialog';
 export * from './Badge';

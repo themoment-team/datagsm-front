@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authQueryKeys } from '@repo/shared/api';
@@ -20,6 +20,14 @@ import {
   UserRoleType,
 } from '@repo/shared/types';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
   Button,
   Card,
   Checkbox,
@@ -42,6 +50,10 @@ interface ApiKeyFormProps {
 
 const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiKeyFormProps) => {
   const queryClient = useQueryClient();
+
+  const [isRenewConfirmOpen, setIsRenewConfirmOpen] = useState(false);
+  const [isExtendConfirmOpen, setIsExtendConfirmOpen] = useState(false);
+  const [pendingFormData, setPendingFormData] = useState<ApiKeyFormType | null>(null);
 
   const { data: availableKeyScope, isLoading: isLoadingKeyScope } = useGetAvailableScope(userRole, {
     initialData: initialAvailableScope,
@@ -145,24 +157,43 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
   const onSubmit = (data: ApiKeyFormType) => {
     if (!apiKeyData?.data?.apiKey) {
       createApiKey(data);
-      return;
     }
+  };
 
-    if (isApiKeyDataEqual) {
-      rotateApiKey(data, {
-        onSuccess: (res) => {
-          queryClient.setQueryData(authQueryKeys.getApiKey(), res);
-          toast.success('갱신에 성공하였습니다.');
-        },
-      });
-      return;
-    }
+  const onRenewClick = handleSubmit((data) => {
+    setPendingFormData(data);
+    setIsRenewConfirmOpen(true);
+  });
 
-    updateApiKey(data, {
-      onSuccess: (res) => {
+  const onExtendClick = handleSubmit((data) => {
+    setPendingFormData(data);
+    setIsExtendConfirmOpen(true);
+  });
+
+  const onRenewConfirm = () => {
+    if (!pendingFormData) return;
+    const sharedOptions = {
+      onSuccess: (res: ApiKeyResponse) => {
         queryClient.setQueryData(authQueryKeys.getApiKey(), res);
         toast.success('갱신에 성공하였습니다.');
       },
+      onSettled: () => setIsRenewConfirmOpen(false),
+    };
+    if (isApiKeyDataEqual) {
+      rotateApiKey(pendingFormData, sharedOptions);
+    } else {
+      updateApiKey(pendingFormData, sharedOptions);
+    }
+  };
+
+  const onExtendConfirm = () => {
+    if (!pendingFormData) return;
+    updateApiKey(pendingFormData, {
+      onSuccess: (res: ApiKeyResponse) => {
+        queryClient.setQueryData(authQueryKeys.getApiKey(), res);
+        toast.success('연장에 성공하였습니다.');
+      },
+      onSettled: () => setIsExtendConfirmOpen(false),
     });
   };
 
@@ -227,23 +258,67 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
           />
           <Input placeholder="설명을 작성해주세요." {...register('description')} />
           <FormErrorMessage error={errors.description} />
+          {apiKeyData?.data?.apiKey && (
+            <AlertDialog open={isRenewConfirmOpen} onOpenChange={setIsRenewConfirmOpen}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>API 키 갱신</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {isApiKeyDataEqual
+                      ? '기존 API 키를 폐기하고 새로운 키를 발급합니다. 이 작업은 되돌릴 수 없습니다.'
+                      : 'API 키의 권한 범위와 설명을 수정하여 새로운 키를 발급합니다.'}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogAction onClick={onRenewConfirm}>확인</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
           <div className={cn('flex flex-col gap-2')}>
             <Tooltip className="w-full">
               <TooltipTrigger asChild>
-                <Button
-                  className="w-full"
-                  disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
-                  size="lg"
-                  type="submit"
-                >
-                  {buttonText}
-                </Button>
+                {apiKeyData?.data?.apiKey ? (
+                  <Button
+                    className="w-full"
+                    disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
+                    size="lg"
+                    type="button"
+                    onClick={onRenewClick}
+                  >
+                    {buttonText}
+                  </Button>
+                ) : (
+                  <Button
+                    className="w-full"
+                    disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
+                    size="lg"
+                    type="submit"
+                  >
+                    {buttonText}
+                  </Button>
+                )}
               </TooltipTrigger>
               <TooltipContent>{buttonTooptipText}</TooltipContent>
             </Tooltip>
           </div>
           {isApiKeyDataEqual && (
             <div className={cn('flex flex-col gap-2')}>
+              <AlertDialog open={isExtendConfirmOpen} onOpenChange={setIsExtendConfirmOpen}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>기한 연장</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      API 키의 만료 기한을 연장합니다.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>취소</AlertDialogCancel>
+                    <AlertDialogAction onClick={onExtendConfirm}>확인</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <Tooltip className="w-full">
                 <TooltipTrigger asChild>
                   <Button
@@ -252,14 +327,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                     size="lg"
                     type="button"
                     variant="outline"
-                    onClick={handleSubmit((data) =>
-                      updateApiKey(data, {
-                        onSuccess: (res) => {
-                          queryClient.setQueryData(authQueryKeys.getApiKey(), res);
-                          toast.success('연장에 성공하였습니다.');
-                        },
-                      }),
-                    )}
+                    onClick={onExtendClick}
                   >
                     기한 연장하기
                   </Button>

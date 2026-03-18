@@ -17,30 +17,55 @@ import {
   FormErrorMessage,
   Input,
   Label,
+  Skeleton,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-import { Database, Eye, EyeOff } from 'lucide-react';
+import { Clock, Database, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const EMAIL_DOMAIN = '@gsm.hs.kr';
+
+type SignInLocalFormType = z.infer<typeof SignInFormSchema>;
 
 interface SignInFormProps {
   onSubmit: (data: SignInFormType) => void;
   isPending?: boolean;
-  signupHref?: string;
+  signupHref: string;
+  resetHref: string;
   serviceName?: string;
+  isLoadingServiceName?: boolean;
+  remainingTime?: number | null;
 }
 
-const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: SignInFormProps) => {
+const SignInForm = ({
+  onSubmit,
+  isPending = false,
+  signupHref,
+  resetHref,
+  serviceName,
+  isLoadingServiceName = false,
+  remainingTime,
+}: SignInFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignInFormType>({
+  } = useForm<SignInLocalFormType>({
     resolver: zodResolver(SignInFormSchema),
   });
 
-  const handleFormSubmit = handleSubmit(onSubmit);
+  const handleFormSubmit = handleSubmit((data) =>
+    onSubmit({ email: `${data.email}${EMAIL_DOMAIN}`, password: data.password }),
+  );
 
   return (
     <Card className={cn('w-full max-w-md')}>
@@ -54,31 +79,55 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
         </div>
         <div>
           <CardTitle className={cn('text-3xl')}>로그인</CardTitle>
-          <CardDescription className={cn('mt-2')}>
-            DataGSM 계정으로{' '}
-            {serviceName ? (
-              <>
-                <strong className={cn('text-primary')}>{serviceName}</strong>에{' '}
-              </>
-            ) : (
-              ''
-            )}
-            로그인하세요
-          </CardDescription>
+          {isLoadingServiceName ? (
+            <Skeleton className={cn('mx-auto mt-2 h-4 w-64')} />
+          ) : (
+            <CardDescription className={cn('mt-2')}>
+              DataGSM 계정으로{' '}
+              {serviceName ? (
+                <>
+                  <strong className={cn('text-primary')}>{serviceName}</strong>에{' '}
+                </>
+              ) : (
+                ''
+              )}
+              로그인하세요
+            </CardDescription>
+          )}
         </div>
+        {remainingTime !== null && remainingTime !== undefined && remainingTime <= 300 && (
+          <div
+            className={cn(
+              'flex items-center justify-center gap-1.5 text-sm font-medium transition-colors',
+              remainingTime <= 30 ? 'text-destructive animate-pulse' : 'text-amber-600',
+            )}
+          >
+            <Clock className="h-4 w-4" />
+            <span>세션만료까지 남은 시간: {formatTime(remainingTime)}</span>
+          </div>
+        )}
       </CardHeader>
-
       <form onSubmit={handleFormSubmit}>
         <CardContent className={cn('space-y-4')}>
           <div className={cn('space-y-2')}>
-            <Label htmlFor="email">이메일</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="example@gsm.hs.kr"
-              {...register('email')}
-              disabled={isPending}
-            />
+            <Label htmlFor="emailLocal">이메일</Label>
+            <div className={cn('flex items-center')}>
+              <Input
+                id="emailLocal"
+                type="text"
+                placeholder="이메일을 입력하세요"
+                {...register('email')}
+                disabled={isPending}
+                className={cn('rounded-r-none')}
+              />
+              <span
+                className={cn(
+                  'border-input bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap rounded-r-md border border-l-0 px-3 text-sm',
+                )}
+              >
+                {EMAIL_DOMAIN}
+              </span>
+            </div>
             <FormErrorMessage error={errors.email} />
           </div>
 
@@ -124,24 +173,29 @@ const SignInForm = ({ onSubmit, isPending = false, signupHref, serviceName }: Si
             {isPending ? '로그인 중...' : '로그인'}
           </Button>
 
-          {signupHref && (
-            <div className="space-y-2 text-center text-sm">
-              <p className={cn('text-muted-foreground text-center text-sm')}>
-                계정이 없으신가요?{' '}
-                <Link href={signupHref} className={cn('text-primary font-medium hover:underline')}>
-                  회원가입
-                </Link>
-              </p>
-              <p>
-                <Link
-                  href="/signin/reset-password"
-                  className="text-muted-foreground hover:text-primary hover:underline"
-                >
-                  비밀번호를 잊으셨나요?
-                </Link>
-              </p>
-            </div>
-          )}
+          <div className="space-y-2 text-center text-sm">
+            <p className={cn('text-muted-foreground text-center text-sm')}>
+              계정이 없으신가요?
+              <Link
+                href={signupHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn('text-primary font-medium hover:underline')}
+              >
+                회원가입
+              </Link>
+            </p>
+            <p>
+              <Link
+                href={resetHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary hover:underline"
+              >
+                비밀번호를 잊으셨나요?
+              </Link>
+            </p>
+          </div>
         </CardFooter>
       </form>
     </Card>

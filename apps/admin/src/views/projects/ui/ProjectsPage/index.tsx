@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useURLFilters } from '@repo/shared/hooks';
+import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Project } from '@repo/shared/types';
 import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
@@ -74,32 +74,29 @@ const ProjectsPage = () => {
     control,
   });
 
+  const debouncedProjectName = useDebounce(filters.projectName);
+
   const currentPage = initialValues.page;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const hasChanged =
-        filters.projectName !== initialValues.projectName ||
-        filters.clubId !== initialValues.clubId;
+    const hasChanged =
+      debouncedProjectName !== initialValues.projectName || filters.clubId !== initialValues.clubId;
 
-      if (hasChanged) {
-        updateURL(
-          {
-            projectName: filters.projectName,
-            clubId: filters.clubId,
-          },
-          0,
-        );
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [filters, initialValues, updateURL]);
+    if (hasChanged) {
+      updateURL(
+        {
+          projectName: debouncedProjectName,
+          clubId: filters.clubId,
+        },
+        0,
+      );
+    }
+  }, [debouncedProjectName, filters.clubId, initialValues, updateURL]);
 
   const handlePageChange = (page: number) => {
     updateURL(
       {
-        projectName: filters.projectName,
+        projectName: debouncedProjectName,
         clubId: filters.clubId,
       },
       page,
@@ -109,12 +106,12 @@ const ProjectsPage = () => {
   const queryParams = {
     page: currentPage,
     size: PAGE_SIZE,
-    projectName: filters.projectName || undefined,
+    projectName: debouncedProjectName || undefined,
     clubId: filters.clubId,
   };
 
   const { data: projectsData, isLoading: isLoadingProjects } = useGetProjects(queryParams);
-  const { data: clubsData } = useGetClubs({ size: 100 });
+  const { data: clubsData } = useGetClubs({ size: 100, clubType: 'MAJOR_CLUB' });
   const { data: studentsData, isLoading: isLoadingStudents } = useGetStudents(
     {},
     {
