@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import { DM_Sans, JetBrains_Mono, Press_Start_2P } from 'next/font/google';
 
 import { GoogleAnalytics } from '@/shared/lib';
+import { SoundModeProvider } from '@/shared/sound-mode';
 import '@/shared/styles/globals.css';
 
 const pressStart2P = Press_Start_2P({
@@ -63,8 +64,10 @@ const RootLayout = async ({
         <TanStackProvider>
           <ToastProvider>
             <TooltipProvider>
-              {accessToken && <Header role="client" />}
-              {children}
+              <SoundModeProvider>
+                {accessToken && <Header role="client" />}
+                {children}
+              </SoundModeProvider>
             </TooltipProvider>
           </ToastProvider>
         </TanStackProvider>
