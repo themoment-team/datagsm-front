@@ -31,7 +31,8 @@ type SignInLocalFormType = z.infer<typeof SignInFormSchema>;
 interface SignInFormProps {
   onSubmit: (data: SignInFormType) => void;
   isPending?: boolean;
-  signupHref?: string;
+  signupHref: string;
+  resetHref: string;
   serviceName?: string;
   isLoadingServiceName?: boolean;
   remainingTime?: number | null;
@@ -41,6 +42,7 @@ const SignInForm = ({
   onSubmit,
   isPending = false,
   signupHref,
+  resetHref,
   serviceName,
   isLoadingServiceName = false,
   remainingTime,
@@ -171,29 +173,29 @@ const SignInForm = ({
             {isPending ? '로그인 중...' : '로그인'}
           </Button>
 
-          {signupHref && (
-            <div className="space-y-2 text-center text-sm">
-              <p className={cn('text-muted-foreground text-center text-sm')}>
-                계정이 없으신가요?
-                <Link
-                  href={signupHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn('text-primary font-medium hover:underline')}
-                >
-                  회원가입
-                </Link>
-              </p>
-              <p>
-                <Link
-                  href="/signin/reset-password"
-                  className="text-muted-foreground hover:text-primary hover:underline"
-                >
-                  비밀번호를 잊으셨나요?
-                </Link>
-              </p>
-            </div>
-          )}
+          <div className="space-y-2 text-center text-sm">
+            <p className={cn('text-muted-foreground text-center text-sm')}>
+              계정이 없으신가요?
+              <Link
+                href={signupHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn('text-primary font-medium hover:underline')}
+              >
+                회원가입
+              </Link>
+            </p>
+            <p>
+              <Link
+                href={resetHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary hover:underline"
+              >
+                비밀번호를 잊으셨나요?
+              </Link>
+            </p>
+          </div>
         </CardFooter>
       </form>
     </Card>
