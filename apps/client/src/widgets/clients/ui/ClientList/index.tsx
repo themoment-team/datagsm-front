@@ -25,14 +25,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Check, Copy, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-
-
 import { Client } from '@/entities/clients';
 import { useDeleteClient } from '@/widgets/clients';
-
-
-
-
 
 interface ClientListProps {
   clients?: Client[];
