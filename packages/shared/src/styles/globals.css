@@ -41,6 +41,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-pixel: 'Press Start 2P', monospace;
 }
 
 :root {
@@ -124,12 +125,11 @@
   }
 }
 
-/* unlayered: always output, overrides any @layer rule */
-.font-pixel {
-  font-family: var(--font-pixel, 'Press Start 2P'), var(--font-korean-pixel), monospace;
-}
-
 @layer utilities {
+  .font-pixel {
+    font-family: 'Press Start 2P', var(--font-korean-pixel), monospace;
+  }
+
   .font-code {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
   }
