@@ -130,10 +130,6 @@
     font-family: 'Press Start 2P', var(--font-korean-pixel), monospace;
   }
 
-  .font-pixel-ko {
-    font-family: 'Press Start 2P', var(--font-korean-pixel), monospace;
-  }
-
   .font-code {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
   }
