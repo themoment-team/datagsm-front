@@ -127,7 +127,7 @@
 
 @layer utilities {
   .font-pixel {
-    font-family: 'Press Start 2P', var(--font-korean-pixel), monospace;
+    font-family: 'Press Start 2P', monospace;
   }
 
   .font-code {
