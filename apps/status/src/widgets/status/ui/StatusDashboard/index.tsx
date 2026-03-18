@@ -23,19 +23,19 @@ const TONE_STYLES: Record<
   }
 > = {
   success: {
-    text: 'text-foreground',
-    bg: 'bg-foreground/5',
-    border: 'border-foreground/25',
+    text: 'text-emerald-600 dark:text-emerald-400',
+    bg: 'bg-emerald-50 dark:bg-emerald-950/30',
+    border: 'border-emerald-300 dark:border-emerald-700',
   },
   error: {
     text: 'text-destructive',
     bg: 'bg-destructive/5',
-    border: 'border-destructive/30',
+    border: 'border-destructive/40',
   },
   warning: {
-    text: 'text-muted-foreground',
-    bg: 'bg-muted',
-    border: 'border-foreground/20',
+    text: 'text-amber-600 dark:text-amber-400',
+    bg: 'bg-amber-50 dark:bg-amber-950/30',
+    border: 'border-amber-300 dark:border-amber-700',
   },
 };
 
@@ -78,7 +78,7 @@ const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
                 {overallStatus.label}
               </h2>
               {lastChecked && (
-                <p className="text-muted-foreground font-mono text-xs">
+                <p className="text-muted-foreground font-mono text-xs" suppressHydrationWarning>
                   마지막 확인: {formatKoreanTime(lastChecked)}
                 </p>
               )}
@@ -154,11 +154,11 @@ const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
         <h3 className="mb-3 font-pixel text-[9px] leading-[1.8]">상태 안내</h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-foreground" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
             <span className="font-mono text-xs">정상</span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+            <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
             <span className="font-mono text-xs">배포 중</span>
           </div>
           <div className="flex items-center gap-2">
