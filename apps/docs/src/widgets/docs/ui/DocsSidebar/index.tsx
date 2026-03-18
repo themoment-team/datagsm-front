@@ -34,7 +34,7 @@ const DocsSidebar = () => {
           <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground font-mono">
             DataGSM
           </p>
-          <h2 className="text-foreground font-pixel-ko text-[10px]">
+          <h2 className="text-foreground font-pixel text-[10px]">
             Docs
           </h2>
         </div>
@@ -50,7 +50,7 @@ const DocsSidebar = () => {
           />
           <aside className="bg-background fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r-2 border-foreground lg:hidden">
             <div className="flex shrink-0 items-center justify-between border-b-2 border-foreground p-4">
-              <h2 className="text-foreground font-pixel-ko text-[9px]">
+              <h2 className="text-foreground font-pixel text-[9px]">
                 Docs
               </h2>
               <button
