@@ -32,12 +32,12 @@ const TONE_FRAME: Record<
   }
 > = {
   success: {
-    border: 'border-foreground',
-    titleBg: 'bg-foreground',
-    titleText: 'text-background/80',
-    contentBg: '',
-    divider: 'border-foreground/20',
-    cardBorder: 'border-foreground/30',
+    border: 'border-emerald-500 dark:border-emerald-400',
+    titleBg: 'bg-emerald-500 dark:bg-emerald-600',
+    titleText: 'text-white/90',
+    contentBg: 'bg-emerald-50/50 dark:bg-emerald-950/20',
+    divider: 'border-emerald-400/30 dark:border-emerald-500/30',
+    cardBorder: 'border-emerald-400/50 dark:border-emerald-500/50',
   },
   error: {
     border: 'border-destructive',
