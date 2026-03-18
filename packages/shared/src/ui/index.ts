@@ -22,3 +22,4 @@ export { default as SignInForm } from './SignInForm';
 export { default as Header } from './Header';
 export { default as FormErrorMessage } from './FormErrorMessage';
 export { default as CommonPagination } from './CommonPagination';
+export { PixelIconButton } from './PixelIconButton';
