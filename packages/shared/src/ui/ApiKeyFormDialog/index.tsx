@@ -87,7 +87,7 @@ const ApiKeyFormDialog = ({
                 </div>
               ))}
             </div>
-            <DialogTitle className="font-pixel" style={{ fontSize: '14px', lineHeight: '1.8' }}>
+            <DialogTitle className="font-pixel text-[14px] leading-[1.8]">
               ADMIN API Key
             </DialogTitle>
           </div>

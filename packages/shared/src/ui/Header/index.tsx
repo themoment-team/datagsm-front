@@ -42,15 +42,13 @@ const Header = ({ role = 'client' }: HeaderProps) => {
         <Link href="/" className={cn('flex items-center gap-3')}>
           <div
             className={cn(
-              'flex h-7 w-7 flex-shrink-0 items-center justify-center bg-foreground text-background font-pixel',
+              'flex h-7 w-7 flex-shrink-0 items-center justify-center bg-foreground text-background font-pixel text-[9px]',
             )}
-            style={{ fontSize: '9px' }}
           >
             D
           </div>
           <span
-            className={cn('text-foreground hidden sm:block font-pixel')}
-            style={{ fontSize: '10px' }}
+            className={cn('text-foreground hidden sm:block font-pixel text-[10px]')}
           >
             DataGSM
           </span>

@@ -61,15 +61,13 @@ const SignInForm = ({
       <div className={cn('flex items-center gap-3 border-b-2 border-foreground bg-foreground px-5 py-3')}>
         <div
           className={cn(
-            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground font-pixel',
+            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground font-pixel text-[8px]',
           )}
-          style={{ fontSize: '8px' }}
         >
           D
         </div>
         <span
-          className={cn('text-background font-pixel')}
-          style={{ fontSize: '9px' }}
+          className={cn('text-background font-pixel text-[9px]')}
         >
           DataGSM
         </span>

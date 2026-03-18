@@ -14,8 +14,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
   return {
     h1: ({ children }) => (
       <h1
-        className="mb-6 mt-12 border-b-2 border-foreground pb-4 text-foreground font-pixel-ko"
-        style={{ fontSize: '20px', lineHeight: '1.8' }}
+        className="mb-6 mt-12 border-b-2 border-foreground pb-4 text-foreground font-pixel-ko text-[20px] leading-[1.8]"
       >
         {children}
       </h1>

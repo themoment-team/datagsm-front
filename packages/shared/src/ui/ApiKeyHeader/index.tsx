@@ -23,8 +23,7 @@ const ApiKeyHeader = () => {
         ))}
         <div className={cn('mx-3 h-px w-8 bg-foreground')} />
         <div
-          className={cn('text-foreground font-pixel')}
-          style={{ fontSize: '18px', lineHeight: 1 }}
+          className={cn('text-foreground font-pixel text-[18px] leading-none')}
         >
           API
         </div>
@@ -46,8 +45,7 @@ const ApiKeyHeader = () => {
       </div>
 
       <h1
-        className={cn('text-foreground block font-pixel')}
-        style={{ fontSize: '22px', lineHeight: '1.6' }}
+        className={cn('text-foreground block font-pixel text-[22px] leading-[1.6]')}
       >
         KEY
       </h1>
