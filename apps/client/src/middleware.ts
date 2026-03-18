@@ -7,19 +7,8 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
-  const publicPaths = ['/signup', '/signin/reset-password', '/signup/success'];
-
-  // OAuth callback 감지 (code 파라미터가 있으면 외부 OAuth callback)
-  if (request.nextUrl.searchParams.has('code')) {
-    return NextResponse.next();
-  }
-
-  // OAuth 플로우는 미들웨어 적용 안 함
-  if (pathname.startsWith('/oauth') || pathname.startsWith('/api/')) {
-    return NextResponse.next();
-  }
-
-  if (publicPaths.includes(pathname)) {
+  // API 경로는 미들웨어 적용 안 함
+  if (pathname.startsWith('/api/')) {
     return NextResponse.next();
   }
 
@@ -66,7 +55,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'],
 };

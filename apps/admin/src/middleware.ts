@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
   // OAuth 플로우는 미들웨어 적용 안 함
-  if (pathname.startsWith('/oauth') || pathname.startsWith('/api/')) {
+  if (pathname.startsWith('/api/')) {
     return NextResponse.next();
   }
 

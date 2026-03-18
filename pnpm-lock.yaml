@@ -262,6 +262,73 @@ importers:
         specifier: ^5
         version: 5.9.2
 
+  apps/oauth:
+    dependencies:
+      '@hookform/resolvers':
+        specifier: ^5.2.2
+        version: 5.2.2(react-hook-form@7.71.2(react@19.2.1))
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.2.1)
+      next:
+        specifier: 15.5.9
+        version: 15.5.9(@babel/core@7.29.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      react:
+        specifier: 19.2.1
+        version: 19.2.1
+      react-dom:
+        specifier: 19.2.1
+        version: 19.2.1(react@19.2.1)
+      react-hook-form:
+        specifier: ^7.67.0
+        version: 7.71.2(react@19.2.1)
+      zod:
+        specifier: ^4.1.13
+        version: 4.3.6
+    devDependencies:
+      '@next/eslint-plugin-next':
+        specifier: 15.5.9
+        version: 15.5.9
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@repo/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@tailwindcss/postcss':
+        specifier: ^4.1.5
+        version: 4.2.1
+      '@types/node':
+        specifier: ^22.15.30
+        version: 22.19.13
+      '@types/react':
+        specifier: 19.2.7
+        version: 19.2.7
+      '@types/react-dom':
+        specifier: 19.2.3
+        version: 19.2.3(@types/react@19.2.7)
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.4.27(postcss@8.5.6)
+      eslint:
+        specifier: ^9.33.0
+        version: 9.39.3(jiti@2.6.1)
+      postcss:
+        specifier: ^8.5.3
+        version: 8.5.6
+      tailwindcss:
+        specifier: ^4.1.5
+        version: 4.2.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
   apps/status:
     dependencies:
       '@repo/shared':

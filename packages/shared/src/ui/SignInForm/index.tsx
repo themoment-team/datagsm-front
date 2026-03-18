@@ -19,7 +19,8 @@ type SignInLocalFormType = z.infer<typeof SignInFormSchema>;
 interface SignInFormProps {
   onSubmit: (data: SignInFormType) => void;
   isPending?: boolean;
-  signupHref?: string;
+  signupHref: string;
+  resetHref: string;
   serviceName?: string;
   isLoadingServiceName?: boolean;
   remainingTime?: number | null;
@@ -29,6 +30,7 @@ const SignInForm = ({
   onSubmit,
   isPending = false,
   signupHref,
+  resetHref,
   serviceName,
   isLoadingServiceName = false,
   remainingTime,
@@ -201,7 +203,9 @@ const SignInForm = ({
               </p>
               <p>
                 <Link
-                  href="/signin/reset-password"
+                  href={resetHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={cn(
                     'text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground',
                   )}
