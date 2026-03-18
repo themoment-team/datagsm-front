@@ -13,11 +13,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Button,
   Input,
   Label,
 } from '@repo/shared/ui';
-import { deleteCookie } from '@repo/shared/utils';
+import { cn, deleteCookie } from '@repo/shared/utils';
 import { AlertTriangle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -65,21 +64,23 @@ export const WithdrawalSection = () => {
   };
 
   return (
-    <div className="mt-12 border-t pt-8">
-      <div className="border-destructive/20 bg-destructive/3 flex flex-col items-start justify-between gap-4 rounded-lg border p-6">
+    <div className={cn('mt-12 border-t-2 border-foreground/20 pt-8')}>
+      <div className={cn('flex flex-col items-start justify-between gap-4 border-2 border-destructive/30 p-6')}>
         <div>
-          <h3 className="text-destructive flex items-center gap-2 text-lg font-semibold">
-            <AlertTriangle className="h-5 w-5" />
+          <h3 className={cn('flex items-center gap-2 text-destructive font-pixel text-[11px]')}>
+            <AlertTriangle className={cn('h-4 w-4')} />
             위험 구역
           </h3>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className={cn('mt-2 text-sm text-muted-foreground font-mono')}>
             계정을 삭제하면 모든 데이터가 영구적으로 제거되며 복구할 수 없습니다.
           </p>
         </div>
 
         <AlertDialog open={open} onOpenChange={handleOpenChange}>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive">회원 탈퇴</Button>
+            <button className={cn('cursor-pointer border-2 border-destructive bg-destructive px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-background hover:text-destructive font-mono')}>
+              회원 탈퇴
+            </button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -90,30 +91,29 @@ export const WithdrawalSection = () => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
 
-              <div className="my-6 space-y-2">
-                <Label htmlFor="password">비밀번호</Label>
+              <div className={cn('my-6 space-y-2')}>
+                <Label htmlFor="password" className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>비밀번호</Label>
                 <Input
                   id="password"
                   type="password"
                   placeholder="비밀번호를 입력하세요"
                   {...register('password')}
-                  className={errors.password ? 'border-destructive' : ''}
+                  className={cn('rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground', errors.password && 'border-destructive')}
                 />
                 {errors.password && (
-                  <p className="text-destructive text-xs">{errors.password.message}</p>
+                  <p className={cn('text-xs text-destructive font-mono')}>{errors.password.message}</p>
                 )}
               </div>
 
               <AlertDialogFooter>
                 <AlertDialogCancel type="button">취소</AlertDialogCancel>
-                <Button
+                <button
                   type="submit"
-                  variant="destructive"
-                  className="text-white"
+                  className={cn('cursor-pointer border-2 border-destructive bg-destructive px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-background hover:text-destructive font-mono disabled:cursor-not-allowed disabled:opacity-50')}
                   disabled={isPending}
                 >
                   {isPending ? '처리 중...' : '계정 삭제'}
-                </Button>
+                </button>
               </AlertDialogFooter>
             </form>
           </AlertDialogContent>

@@ -19,13 +19,13 @@ const ApiKeyFilter = ({ control }: ApiKeyFilterProps) => {
   return (
     <div className={cn('mt-4 flex flex-wrap items-center gap-4')}>
       <div className={cn('flex items-center gap-2')}>
-        <Label className={cn('text-sm')}>만료 여부:</Label>
+        <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>만료 여부:</Label>
         <Controller
           control={control}
           name="isExpired"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-28')}>
+              <SelectTrigger className={cn('w-28 rounded-none border-foreground')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -39,13 +39,13 @@ const ApiKeyFilter = ({ control }: ApiKeyFilterProps) => {
       </div>
 
       <div className={cn('flex items-center gap-2')}>
-        <Label className={cn('text-sm')}>갱신 여부:</Label>
+        <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>갱신 여부:</Label>
         <Controller
           control={control}
           name="isRenewable"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-28')}>
+              <SelectTrigger className={cn('w-28 rounded-none border-foreground')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

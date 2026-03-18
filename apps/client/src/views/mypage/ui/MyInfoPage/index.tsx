@@ -2,6 +2,7 @@
 
 import { MyAccountResponse } from '@repo/shared/types';
 import { Skeleton } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 
 import { ProfileInfo, WithdrawalSection, useGetMy } from '@/widgets/myinfo';
 
@@ -14,31 +15,54 @@ const MyInfoPage = ({ initialData }: MyInfoPageProps) => {
 
   if (isLoading && !initialData) {
     return (
-      <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
-        <Skeleton className="h-24 w-full" />
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-48 w-full" />
+      <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
+        <main className={cn('container mx-auto px-4 py-8')}>
+          <div className={cn('mb-6 border-b-2 border-foreground pb-4')}>
+            <Skeleton className={cn('mb-2 h-3 w-32')} />
+            <Skeleton className={cn('h-5 w-24')} />
+          </div>
+          <div className={cn('mx-auto max-w-2xl space-y-4')}>
+            <Skeleton className={cn('h-28 w-full')} />
+            <Skeleton className={cn('h-64 w-full')} />
+            <Skeleton className={cn('h-48 w-full')} />
+          </div>
+        </main>
       </div>
     );
   }
 
   if (isError || !myData?.data) {
     return (
-      <div className="bg-muted/20 mx-auto max-w-2xl rounded-lg border px-4 py-12 text-center">
-        <h2 className="text-xl font-bold">정보를 불러올 수 없습니다.</h2>
-        <p className="text-muted-foreground mt-2">
-          로그인 상태를 확인하거나 잠시 후 다시 시도해주세요.
-        </p>
+      <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
+        <main className={cn('container mx-auto px-4 py-8')}>
+          <div className={cn('border-2 border-foreground px-6 py-12 text-center')}>
+            <p className={cn('font-pixel text-[12px]')}>오류</p>
+            <p className={cn('mt-3 text-sm text-muted-foreground font-mono')}>
+              로그인 상태를 확인하거나 잠시 후 다시 시도해주세요.
+            </p>
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12 pb-24">
-      <div className="space-y-10">
-        <ProfileInfo data={myData.data} />
-        <WithdrawalSection />
-      </div>
+    <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
+      <main className={cn('container mx-auto px-4 py-8')}>
+        {/* Page header */}
+        <div className={cn('mb-6 border-b-2 border-foreground pb-4')}>
+          <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}>
+            DATAGSM / My Account
+          </p>
+          <h1 className={cn('text-[15px] text-foreground leading-tight font-pixel')}>
+            내 정보
+          </h1>
+        </div>
+        <div className={cn('mx-auto max-w-2xl space-y-4 pb-16')}>
+          <ProfileInfo data={myData.data} />
+          <WithdrawalSection />
+        </div>
+      </main>
     </div>
   );
 };

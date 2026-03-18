@@ -12,14 +12,26 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
   Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Copy, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+
+
 import { Client } from '@/entities/clients';
 import { useDeleteClient } from '@/widgets/clients';
+
+
+
+
 
 interface ClientListProps {
   clients?: Client[];
