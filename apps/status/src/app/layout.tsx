@@ -1,0 +1,72 @@
+import { cookies } from 'next/headers';
+
+import { COOKIE_KEYS } from '@repo/shared/constants';
+import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
+import { Header, TooltipProvider } from '@repo/shared/ui';
+import type { Metadata } from 'next';
+import { DM_Sans, JetBrains_Mono, Press_Start_2P } from 'next/font/google';
+
+import '@/shared/styles/globals.css';
+
+const pressStart2P = Press_Start_2P({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-pixel',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  weight: ['400', '500', '600'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-mono',
+});
+
+const dmSans = DM_Sans({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans',
+});
+
+export const metadata: Metadata = {
+  title: 'DataGSM Status',
+  description: '광주소프트웨어마이스터고등학교 OpenAPI & OAuth 플랫폼 상태 페이지',
+  openGraph: {
+    title: 'DataGSM Status',
+    description: '광주소프트웨어마이스터고등학교 OpenAPI & OAuth 플랫폼 상태 페이지',
+    url: 'https://datagsm-front-status.vercel.app/',
+    siteName: 'DataGSM Status',
+    images: 'https://datagsm-front-status.vercel.app/og-image.png',
+    type: 'website',
+  },
+};
+
+const RootLayout = async ({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
+
+  return (
+    <html
+      lang="ko"
+      className={`${pressStart2P.variable} ${jetbrainsMono.variable} ${dmSans.variable}`}
+    >
+      <body>
+        <TanStackProvider>
+          <ToastProvider>
+            <TooltipProvider>
+              {accessToken && <Header role="client" />}
+              {children}
+            </TooltipProvider>
+          </ToastProvider>
+        </TanStackProvider>
+      </body>
+    </html>
+  );
+};
+
+export default RootLayout;
