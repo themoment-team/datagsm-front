@@ -20,6 +20,43 @@ const TONE_TEXT: Record<StatusTone, string> = {
   warning: 'text-amber-600 dark:text-amber-400',
 };
 
+const TONE_FRAME: Record<
+  StatusTone,
+  {
+    border: string;
+    titleBg: string;
+    titleText: string;
+    contentBg: string;
+    divider: string;
+    cardBorder: string;
+  }
+> = {
+  success: {
+    border: 'border-foreground',
+    titleBg: 'bg-foreground',
+    titleText: 'text-background/80',
+    contentBg: '',
+    divider: 'border-foreground/20',
+    cardBorder: 'border-foreground/30',
+  },
+  error: {
+    border: 'border-destructive',
+    titleBg: 'bg-destructive',
+    titleText: 'text-white/90',
+    contentBg: 'bg-destructive/5',
+    divider: 'border-destructive/20',
+    cardBorder: 'border-destructive/40',
+  },
+  warning: {
+    border: 'border-amber-500 dark:border-amber-400',
+    titleBg: 'bg-amber-500 dark:bg-amber-600',
+    titleText: 'text-white/90',
+    contentBg: 'bg-amber-50/50 dark:bg-amber-950/20',
+    divider: 'border-amber-400/30 dark:border-amber-500/30',
+    cardBorder: 'border-amber-400/50 dark:border-amber-500/50',
+  },
+};
+
 interface StatusDashboardProps {
   initialHealthStatus: HealthStatusData;
 }
@@ -34,18 +71,21 @@ const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
   const lastChecked = useMemo(() => new Date(data.checkedAt), [data.checkedAt]);
 
   const overallStatus = useMemo(() => getOverallStatus(servers), [servers]);
+  const frame = TONE_FRAME[overallStatus.tone];
 
   return (
     <>
       {/* Main terminal frame */}
-      <div className={cn('w-full border-2 border-foreground pixel-shadow')}>
+      <div className={cn('w-full border-2 pixel-shadow', frame.border)}>
         {/* Terminal title bar */}
         <div
           className={cn(
-            'flex items-center justify-between border-b-2 border-foreground bg-foreground px-4 py-2',
+            'flex items-center justify-between border-b-2 px-4 py-2',
+            frame.border,
+            frame.titleBg,
           )}
         >
-          <span className={cn('font-mono text-xs uppercase tracking-widest text-background/80')}>
+          <span className={cn('font-mono text-xs uppercase tracking-widest', frame.titleText)}>
             STATUS TERMINAL
           </span>
           <button
@@ -63,7 +103,7 @@ const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
         </div>
 
         {/* Overall status */}
-        <div className={cn('p-4')}>
+        <div className={cn('p-4', frame.contentBg)}>
           <p className={cn('mb-3 text-xs uppercase tracking-widest text-muted-foreground font-mono')}>
             {'>'} OVERALL STATUS
           </p>
@@ -99,7 +139,7 @@ const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
         </div>
 
         {/* Server grid */}
-        <div className={cn('border-t border-foreground/20 p-4')}>
+        <div className={cn('border-t p-4', frame.contentBg, frame.divider)}>
           <p
             className={cn('mb-3 text-xs uppercase tracking-widest text-muted-foreground font-mono')}
           >
@@ -108,6 +148,7 @@ const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
           <div className={cn('grid grid-cols-1 gap-3 sm:grid-cols-2')}>
             {servers.map((server) => {
               const statusMeta = SERVER_STATUS_META[server.status];
+              const serverFrame = TONE_FRAME[statusMeta.tone];
               const StatusIcon =
                 statusMeta.tone === 'success'
                   ? CheckCircle2
@@ -119,7 +160,8 @@ const StatusDashboard = ({ initialHealthStatus }: StatusDashboardProps) => {
                 <div
                   key={server.name}
                   className={cn(
-                    'border border-foreground/30 p-3 transition-opacity',
+                    'border p-3 transition-opacity',
+                    serverFrame.cardBorder,
                     isChecking && 'opacity-50',
                   )}
                 >
