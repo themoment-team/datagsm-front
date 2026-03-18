@@ -11,6 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  PixelIconButton,
   Skeleton,
   Table,
   TableBody,
@@ -59,14 +60,9 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
           <code className={cn('bg-muted px-2 py-1 text-xs font-mono')}>
             {client.id}
           </code>
-          <button
-            className={cn(
-              'flex h-6 w-6 cursor-pointer items-center justify-center border border-foreground/35 transition-all hover:border-foreground hover:bg-foreground hover:text-background',
-            )}
-            onClick={() => copy(client.id)}
-          >
+          <PixelIconButton size="sm" onClick={() => copy(client.id)}>
             {copied ? <Check className={cn('h-3 w-3')} /> : <Copy className={cn('h-3 w-3')} />}
-          </button>
+          </PixelIconButton>
         </div>
       </TableCell>
       <TableCell>
@@ -95,24 +91,15 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
       </TableCell>
       <TableCell>
         <div className={cn('flex items-center gap-1')}>
-          <button
-            className={cn(
-              'flex h-7 w-7 cursor-pointer items-center justify-center border border-foreground/30 transition-all hover:border-foreground hover:bg-foreground hover:text-background',
-            )}
-            onClick={() => onEdit(client)}
-          >
+          <PixelIconButton onClick={() => onEdit(client)}>
             <Pencil className={cn('h-3.5 w-3.5')} />
-          </button>
+          </PixelIconButton>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button
-                className={cn(
-                  'flex h-7 w-7 cursor-pointer items-center justify-center border border-destructive/35 text-destructive transition-all hover:bg-destructive hover:text-white',
-                )}
-              >
+              <PixelIconButton variant="destructive">
                 <Trash2 className={cn('h-3.5 w-3.5')} />
-              </button>
+              </PixelIconButton>
             </AlertDialogTrigger>
             <AlertDialogContent
               className={cn('border-2 border-foreground pixel-shadow')}
