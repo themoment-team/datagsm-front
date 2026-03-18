@@ -12,7 +12,7 @@ const NotFound = () => {
       )}
     >
       <div className={cn('flex max-w-md flex-col items-center text-center')}>
-        <h1 className={cn('text-foreground text-8xl font-bold tracking-tighter')}>404</h1>
+        <h1 className={cn('font-pixel text-[96px] leading-none text-foreground')}>404</h1>
 
         <p className={cn('text-foreground mt-4 text-xl font-semibold')}>
           페이지를 찾을 수 없습니다

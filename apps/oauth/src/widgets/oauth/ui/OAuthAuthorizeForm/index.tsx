@@ -188,12 +188,12 @@ const OAuthAuthorizeForm = () => {
             'bg-background/80 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm',
           )}
         >
-          <div className="bg-card flex max-w-md flex-col items-center gap-4 rounded-lg border p-8 text-center shadow-lg">
-            <div className="bg-destructive/10 rounded-full p-3">
+          <div className="flex max-w-md flex-col items-center gap-4 border-2 border-destructive bg-background p-8 text-center pixel-shadow">
+            <div className="border-2 border-destructive p-3">
               <AlertCircle className="text-destructive h-8 w-8" />
             </div>
-            <h2 className="text-2xl font-bold">인증 세션 만료</h2>
-            <p className="text-muted-foreground">
+            <h2 className="text-xl font-bold text-foreground">인증 세션 만료</h2>
+            <p className="text-muted-foreground text-sm">
               보안을 위해 인증 세션이 만료되었습니다.
               <br />이 창을 닫고 서비스에서 다시 로그인을 시도해주세요.
             </p>
