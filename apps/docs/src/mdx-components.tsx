@@ -90,7 +90,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
       </div>
     ),
 
-    thead: ({ children }) => <thead className="bg-foreground text-background">{children}</thead>,
+    thead: ({ children }) => <thead className="bg-foreground text-background [&_tr]:hover:bg-transparent">{children}</thead>,
 
     tbody: ({ children }) => <tbody>{children}</tbody>,
 
