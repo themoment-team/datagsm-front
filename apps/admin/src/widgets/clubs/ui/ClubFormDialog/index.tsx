@@ -160,7 +160,10 @@ const ClubFormDialog = ({
   const onSubmit: SubmitHandler<AddClubType> = (data) => {
     if (mode === 'create') {
       createClub(data);
-    } else if (mode === 'edit' && club) {
+      return;
+    }
+
+    if (club) {
       updateClub({ clubId: club.id, data });
     }
   };
@@ -185,9 +188,9 @@ const ClubFormDialog = ({
   return (
     <Dialog
       open={open}
-      onOpenChange={(v) => {
-        setOpen(v);
-        if (!v) reset();
+      onOpenChange={(value) => {
+        setOpen(value);
+        if (!value) reset();
       }}
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
@@ -246,7 +249,9 @@ const ClubFormDialog = ({
                 id="foundedYear"
                 type="number"
                 placeholder="설립연도 입력"
-                {...register('foundedYear', { setValueAs: (v) => (v === '' ? undefined : Number(v)) })}
+                {...register('foundedYear', {
+                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                })}
               />
               <FormErrorMessage error={errors.foundedYear} />
             </div>
@@ -257,7 +262,9 @@ const ClubFormDialog = ({
                   id="abolishedYear"
                   type="number"
                   placeholder="폐지연도 입력"
-                  {...register('abolishedYear', { setValueAs: (v) => (v === '' ? undefined : Number(v)) })}
+                  {...register('abolishedYear', {
+                    setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                  })}
                 />
                 <FormErrorMessage error={errors.abolishedYear} />
               </div>
@@ -269,13 +276,16 @@ const ClubFormDialog = ({
                   control={control}
                   name="leaderId"
                   render={({ field }) => {
-                    const selectedLeader = students?.find((s) => s.id === Number(field.value));
+                    const selectedLeader = students?.find(
+                      (student) => student.id === Number(field.value),
+                    );
+
                     return (
                       <Popover
                         open={leaderPopoverOpen}
-                        onOpenChange={(v) => {
-                          setLeaderPopoverOpen(v);
-                          if (!v) setSearchTerm('');
+                        onOpenChange={(value) => {
+                          setLeaderPopoverOpen(value);
+                          if (!value) setSearchTerm('');
                         }}
                       >
                         <PopoverTrigger asChild>
@@ -314,15 +324,19 @@ const ClubFormDialog = ({
                                   key={student.id}
                                   value={student.id.toString()}
                                   onSelect={() => {
-                                    const id = student.id;
-                                    field.onChange(id);
+                                    const selectedId = student.id;
+                                    field.onChange(selectedId);
+
                                     const participantIds = getValues('participantIds') || [];
-                                    if (participantIds.includes(id)) {
+                                    if (participantIds.includes(selectedId)) {
                                       setValue(
                                         'participantIds',
-                                        participantIds.filter((pId) => pId !== id),
+                                        participantIds.filter(
+                                          (participantId) => participantId !== selectedId,
+                                        ),
                                       );
                                     }
+
                                     setSearchTerm('');
                                     setLeaderPopoverOpen(false);
                                   }}
@@ -350,9 +364,9 @@ const ClubFormDialog = ({
                   render={({ field }) => (
                     <Popover
                       open={memberPopoverOpen}
-                      onOpenChange={(v) => {
-                        setMemberPopoverOpen(v);
-                        if (!v) setSearchTerm('');
+                      onOpenChange={(value) => {
+                        setMemberPopoverOpen(value);
+                        if (!value) setSearchTerm('');
                       }}
                     >
                       <PopoverTrigger asChild>
@@ -386,10 +400,10 @@ const ClubFormDialog = ({
                             <CommandEmpty>검색 결과가 없습니다.</CommandEmpty>
                             {filteredStudents
                               ?.filter(
-                                (s) =>
+                                (student) =>
                                   Array.isArray(field.value) &&
-                                  !field.value.includes(s.id) &&
-                                  s.id !== Number(currentLeaderId),
+                                  !field.value.includes(student.id) &&
+                                  student.id !== Number(currentLeaderId),
                               )
                               .map((student) => (
                                 <CommandItem
@@ -402,6 +416,7 @@ const ClubFormDialog = ({
                                     ) {
                                       field.onChange([...field.value, student.id]);
                                     }
+
                                     setSearchTerm('');
                                     setMemberPopoverOpen(false);
                                   }}
@@ -430,8 +445,8 @@ const ClubFormDialog = ({
                 name="participantIds"
                 render={({ field }) => {
                   const selectedIds = Array.isArray(field.value) ? field.value : [];
-                  const selectedStudents = students?.filter((s) => selectedIds.includes(s.id)) || [];
-
+                  const selectedStudents =
+                    students?.filter((student) => selectedIds.includes(student.id)) || [];
                   const grades = [1, 2, 3];
 
                   return (
@@ -458,7 +473,7 @@ const ClubFormDialog = ({
                             )}
                           >
                             {selectedStudents
-                              .filter((s) => s.grade === grade)
+                              .filter((student) => student.grade === grade)
                               .map((student) => (
                                 <Badge
                                   key={student.id}
@@ -482,7 +497,8 @@ const ClubFormDialog = ({
                                   />
                                 </Badge>
                               ))}
-                            {selectedStudents.filter((s) => s.grade === grade).length === 0 && (
+                            {selectedStudents.filter((student) => student.grade === grade)
+                              .length === 0 && (
                               <div
                                 className={cn(
                                   'text-muted-foreground/40 py-4 text-center text-xs italic',

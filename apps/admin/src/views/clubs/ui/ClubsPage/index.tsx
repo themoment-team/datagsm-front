@@ -9,7 +9,6 @@ import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Club, ClubType } from '@repo/shared/types';
 import { CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-
 import { useForm, useWatch } from 'react-hook-form';
 
 import { AddClubSchema, AddClubType, ClubFilterSchema, ClubFilterType } from '@/entities/club';
@@ -145,12 +144,18 @@ const ClubsPage = () => {
     <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
         {/* Page header */}
-        <div className={cn('mb-6 flex items-end justify-between border-b-2 border-foreground pb-4')}>
+        <div
+          className={cn('border-foreground mb-6 flex items-end justify-between border-b-2 pb-4')}
+        >
           <div>
-            <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}>
+            <p
+              className={cn(
+                'text-muted-foreground mb-2 font-mono text-xs uppercase tracking-widest',
+              )}
+            >
               DATAGSM / Admin
             </p>
-            <h1 className={cn('text-[15px] text-foreground leading-tight font-pixel')}>
+            <h1 className={cn('text-foreground font-pixel text-[15px] leading-tight')}>
               동아리 관리
             </h1>
           </div>
@@ -171,7 +176,7 @@ const ClubsPage = () => {
         </div>
 
         {/* Table */}
-        <div className={cn('border-2 border-foreground pixel-shadow')}>
+        <div className={cn('border-foreground pixel-shadow border-2')}>
           <ClubList clubs={clubs} isLoading={isLoadingClubs} onEdit={handleEditClub} />
         </div>
 
