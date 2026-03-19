@@ -73,8 +73,8 @@ export const projectQueryKeys = {
 export const clubQueryKeys = {
   putClubById: () => ['clubs', 'update'] as const,
   deleteClubById: () => ['clubs', 'delete'] as const,
-  getClubs: (page?: number, size?: number, type?: string, clubName?: string) =>
-    ['clubs', 'list', { page, size, type, clubName }] as const,
+  getClubs: (page?: number, size?: number, type?: string, clubName?: string, status?: string) =>
+    ['clubs', 'list', { page, size, type, clubName, status }] as const,
   postClub: () => ['clubs', 'create'] as const,
   postClubImport: () => ['clubs', 'imports'] as const,
   getClubExport: () => ['clubs', 'exports', 'excel'] as const,

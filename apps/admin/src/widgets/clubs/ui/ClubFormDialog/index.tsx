@@ -72,6 +72,8 @@ const ClubFormDialog = ({
     formState: { errors },
   } = form;
 
+  const currentStatus = watch('status');
+
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [leaderPopoverOpen, setLeaderPopoverOpen] = useState(false);
@@ -80,6 +82,13 @@ const ClubFormDialog = ({
   const memberSearchRef = useRef<HTMLInputElement>(null);
 
   const currentLeaderId = watch('leaderId');
+
+  useEffect(() => {
+    if (currentStatus === 'ABOLISHED') {
+      setValue('leaderId', undefined);
+      setValue('participantIds', []);
+    }
+  }, [currentStatus, setValue]);
 
   const filteredStudents = useMemo(() => {
     if (!searchTerm) return students;
@@ -123,13 +132,19 @@ const ClubFormDialog = ({
         reset({
           name: club.name,
           type: club.type,
-          leaderId: club.leader.id,
+          status: club.status,
+          foundedYear: club.foundedYear,
+          abolishedYear: club.abolishedYear,
+          leaderId: club.leader?.id,
           participantIds: club.participants.map((p) => p.id),
         });
       } else if (mode === 'create') {
         reset({
           name: '',
           type: undefined,
+          status: 'ACTIVE',
+          foundedYear: undefined,
+          abolishedYear: undefined,
           leaderId: undefined,
           participantIds: [],
         });
@@ -208,6 +223,47 @@ const ClubFormDialog = ({
               <FormErrorMessage error={errors.type} />
             </div>
             <div className={cn('space-y-2')}>
+              <Label htmlFor="status">운영 상태</Label>
+              <Controller
+                control={control}
+                name="status"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="상태 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ACTIVE">운영중</SelectItem>
+                      <SelectItem value="ABOLISHED">폐지</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FormErrorMessage error={errors.status} />
+            </div>
+            <div className={cn('space-y-2')}>
+              <Label htmlFor="foundedYear">설립연도</Label>
+              <Input
+                id="foundedYear"
+                type="number"
+                placeholder="설립연도 입력"
+                {...register('foundedYear', { setValueAs: (v) => (v === '' ? undefined : Number(v)) })}
+              />
+              <FormErrorMessage error={errors.foundedYear} />
+            </div>
+            {currentStatus === 'ABOLISHED' && (
+              <div className={cn('space-y-2')}>
+                <Label htmlFor="abolishedYear">폐지연도</Label>
+                <Input
+                  id="abolishedYear"
+                  type="number"
+                  placeholder="폐지연도 입력"
+                  {...register('abolishedYear', { setValueAs: (v) => (v === '' ? undefined : Number(v)) })}
+                />
+                <FormErrorMessage error={errors.abolishedYear} />
+              </div>
+            )}
+            {currentStatus !== 'ABOLISHED' && <div className={cn('space-y-2')}>
               <Label htmlFor="leaderId">부장</Label>
               <Controller
                 control={control}
@@ -282,9 +338,9 @@ const ClubFormDialog = ({
                 }}
               />
               <FormErrorMessage error={errors.leaderId} />
-            </div>
+            </div>}
 
-            <div className={cn('space-y-2')}>
+            {currentStatus !== 'ABOLISHED' && <div className={cn('space-y-2')}>
               <Label>팀원 추가</Label>
               <Controller
                 control={control}
@@ -360,10 +416,10 @@ const ClubFormDialog = ({
               <FormErrorMessage
                 error={!Array.isArray(errors.participantIds) ? errors.participantIds : undefined}
               />
-            </div>
+            </div>}
           </div>
 
-          <div className={cn('bg-muted/30 flex flex-col gap-6 rounded-xl')}>
+          {currentStatus !== 'ABOLISHED' && <div className={cn('bg-muted/30 flex flex-col gap-6 rounded-xl')}>
             <Label className={cn('text-foreground text-base font-bold')}>팀원</Label>
             <Controller
               control={control}
@@ -438,7 +494,7 @@ const ClubFormDialog = ({
                 );
               }}
             />
-          </div>
+          </div>}
 
           <div className={cn('flex justify-end pt-2')}>
             <Button type="submit" disabled={isPending}>
