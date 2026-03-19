@@ -25,7 +25,7 @@ const ApiKeyFilter = ({ control }: ApiKeyFilterProps) => {
           name="isExpired"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-28 rounded-none border-foreground')}>
+              <SelectTrigger className={cn('w-28 rounded-none border-foreground focus-visible:ring-0')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -45,7 +45,7 @@ const ApiKeyFilter = ({ control }: ApiKeyFilterProps) => {
           name="isRenewable"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-28 rounded-none border-foreground')}>
+              <SelectTrigger className={cn('w-28 rounded-none border-foreground focus-visible:ring-0')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

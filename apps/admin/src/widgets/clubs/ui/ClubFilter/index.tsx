@@ -48,7 +48,7 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
           name="clubType"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground focus-visible:ring-0')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

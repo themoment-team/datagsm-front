@@ -48,7 +48,7 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
           name="grade"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground focus-visible:ring-0')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -69,7 +69,7 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
           name="classNum"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground focus-visible:ring-0')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -90,7 +90,7 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
           name="sex"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground focus-visible:ring-0')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -109,7 +109,7 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
           name="role"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground focus-visible:ring-0')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -130,7 +130,7 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
           name="status"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground focus-visible:ring-0')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -150,7 +150,7 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
           name="sortBy"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-32 rounded-none border-foreground')}>
+              <SelectTrigger className={cn('w-32 rounded-none border-foreground focus-visible:ring-0')}>
                 <SelectValue placeholder="기본" />
               </SelectTrigger>
               <SelectContent>
