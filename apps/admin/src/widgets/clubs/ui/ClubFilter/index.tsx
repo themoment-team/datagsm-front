@@ -41,24 +41,48 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
         />
       </div>
 
-      <div className={cn('flex items-center gap-2')}>
-        <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>타입:</Label>
-        <Controller
-          control={control}
-          name="clubType"
-          render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24 rounded-none border-foreground focus-visible:ring-0')}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
-                <SelectItem value="MAJOR_CLUB">전공</SelectItem>
-                <SelectItem value="AUTONOMOUS_CLUB">자율</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
+      <div className={cn('flex items-center gap-4')}>
+        <div className={cn('flex items-center gap-2')}>
+          <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>타입:</Label>
+          <Controller
+            control={control}
+            name="clubType"
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className={cn('w-24 rounded-none border-foreground focus-visible:ring-0')}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">전체</SelectItem>
+                  <SelectItem value="MAJOR_CLUB">전공</SelectItem>
+                  <SelectItem value="AUTONOMOUS_CLUB">자율</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
+        <div className={cn('flex items-center gap-2')}>
+          <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>상태:</Label>
+          <Controller
+            control={control}
+            name="status"
+            render={({ field }) => (
+              <Select
+                value={field.value ?? 'all'}
+                onValueChange={(v) => field.onChange(v === 'all' ? undefined : v)}
+              >
+                <SelectTrigger className={cn('w-24 rounded-none border-foreground focus-visible:ring-0')}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">전체</SelectItem>
+                  <SelectItem value="ACTIVE">운영중</SelectItem>
+                  <SelectItem value="ABOLISHED">폐지</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
       </div>
     </div>
   );

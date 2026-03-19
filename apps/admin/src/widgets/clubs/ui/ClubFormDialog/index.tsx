@@ -72,6 +72,9 @@ const ClubFormDialog = ({
     formState: { errors },
   } = form;
 
+  const currentStatus = watch('status');
+  const currentLeaderId = watch('leaderId');
+
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [leaderPopoverOpen, setLeaderPopoverOpen] = useState(false);
@@ -79,7 +82,12 @@ const ClubFormDialog = ({
   const leaderSearchRef = useRef<HTMLInputElement>(null);
   const memberSearchRef = useRef<HTMLInputElement>(null);
 
-  const currentLeaderId = watch('leaderId');
+  useEffect(() => {
+    if (currentStatus === 'ABOLISHED') {
+      setValue('leaderId', undefined);
+      setValue('participantIds', []);
+    }
+  }, [currentStatus, setValue]);
 
   const filteredStudents = useMemo(() => {
     if (!searchTerm) return students;
@@ -123,13 +131,19 @@ const ClubFormDialog = ({
         reset({
           name: club.name,
           type: club.type,
-          leaderId: club.leader.id,
+          status: club.status,
+          foundedYear: club.foundedYear,
+          abolishedYear: club.abolishedYear,
+          leaderId: club.leader?.id,
           participantIds: club.participants.map((p) => p.id),
         });
       } else if (mode === 'create') {
         reset({
           name: '',
           type: undefined,
+          status: 'ACTIVE',
+          foundedYear: undefined,
+          abolishedYear: undefined,
           leaderId: undefined,
           participantIds: [],
         });
@@ -208,17 +222,136 @@ const ClubFormDialog = ({
               <FormErrorMessage error={errors.type} />
             </div>
             <div className={cn('space-y-2')}>
-              <Label htmlFor="leaderId">부장</Label>
+              <Label htmlFor="status">운영 상태</Label>
               <Controller
                 control={control}
-                name="leaderId"
-                render={({ field }) => {
-                  const selectedLeader = students?.find((s) => s.id === Number(field.value));
-                  return (
+                name="status"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="상태 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ACTIVE">운영중</SelectItem>
+                      <SelectItem value="ABOLISHED">폐지</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FormErrorMessage error={errors.status} />
+            </div>
+            <div className={cn('space-y-2')}>
+              <Label htmlFor="foundedYear">설립연도</Label>
+              <Input
+                id="foundedYear"
+                type="number"
+                placeholder="설립연도 입력"
+                {...register('foundedYear', { setValueAs: (v) => (v === '' ? undefined : Number(v)) })}
+              />
+              <FormErrorMessage error={errors.foundedYear} />
+            </div>
+            {currentStatus === 'ABOLISHED' && (
+              <div className={cn('space-y-2')}>
+                <Label htmlFor="abolishedYear">폐지연도</Label>
+                <Input
+                  id="abolishedYear"
+                  type="number"
+                  placeholder="폐지연도 입력"
+                  {...register('abolishedYear', { setValueAs: (v) => (v === '' ? undefined : Number(v)) })}
+                />
+                <FormErrorMessage error={errors.abolishedYear} />
+              </div>
+            )}
+            {currentStatus !== 'ABOLISHED' && (
+              <div className={cn('space-y-2')}>
+                <Label htmlFor="leaderId">부장</Label>
+                <Controller
+                  control={control}
+                  name="leaderId"
+                  render={({ field }) => {
+                    const selectedLeader = students?.find((s) => s.id === Number(field.value));
+                    return (
+                      <Popover
+                        open={leaderPopoverOpen}
+                        onOpenChange={(v) => {
+                          setLeaderPopoverOpen(v);
+                          if (!v) setSearchTerm('');
+                        }}
+                      >
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            role="combobox"
+                            className={cn(
+                              'border-input shadow-xs dark:bg-input/30 dark:hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
+                              selectedLeader ? 'text-foreground' : 'text-muted-foreground',
+                            )}
+                          >
+                            {selectedLeader
+                              ? `${selectedLeader.studentNumber} ${selectedLeader.name}`
+                              : '부장 선택'}
+                            <ChevronDown className={cn('h-4 w-4 shrink-0 opacity-50')} />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className={cn('w-(--radix-popover-trigger-width) p-0')}
+                          onOpenAutoFocus={(e) => {
+                            e.preventDefault();
+                            leaderSearchRef.current?.focus();
+                          }}
+                        >
+                          <Command shouldFilter={false}>
+                            <CommandInput
+                              ref={leaderSearchRef}
+                              placeholder="이름 또는 학번 검색..."
+                              value={searchTerm}
+                              onValueChange={setSearchTerm}
+                            />
+                            <CommandList>
+                              <CommandEmpty>검색 결과가 없습니다.</CommandEmpty>
+                              {filteredStudents?.map((student) => (
+                                <CommandItem
+                                  key={student.id}
+                                  value={student.id.toString()}
+                                  onSelect={() => {
+                                    const id = student.id;
+                                    field.onChange(id);
+                                    const participantIds = getValues('participantIds') || [];
+                                    if (participantIds.includes(id)) {
+                                      setValue(
+                                        'participantIds',
+                                        participantIds.filter((pId) => pId !== id),
+                                      );
+                                    }
+                                    setSearchTerm('');
+                                    setLeaderPopoverOpen(false);
+                                  }}
+                                >
+                                  {student.studentNumber} {student.name}
+                                </CommandItem>
+                              ))}
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    );
+                  }}
+                />
+                <FormErrorMessage error={errors.leaderId} />
+              </div>
+            )}
+
+            {currentStatus !== 'ABOLISHED' && (
+              <div className={cn('space-y-2')}>
+                <Label>팀원 추가</Label>
+                <Controller
+                  control={control}
+                  name="participantIds"
+                  render={({ field }) => (
                     <Popover
-                      open={leaderPopoverOpen}
+                      open={memberPopoverOpen}
                       onOpenChange={(v) => {
-                        setLeaderPopoverOpen(v);
+                        setMemberPopoverOpen(v);
                         if (!v) setSearchTerm('');
                       }}
                     >
@@ -228,12 +361,10 @@ const ClubFormDialog = ({
                           role="combobox"
                           className={cn(
                             'border-input shadow-xs dark:bg-input/30 dark:hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
-                            selectedLeader ? 'text-foreground' : 'text-muted-foreground',
+                            'text-muted-foreground',
                           )}
                         >
-                          {selectedLeader
-                            ? `${selectedLeader.studentNumber} ${selectedLeader.name}`
-                            : '부장 선택'}
+                          팀원 추가
                           <ChevronDown className={cn('h-4 w-4 shrink-0 opacity-50')} />
                         </button>
                       </PopoverTrigger>
@@ -241,204 +372,134 @@ const ClubFormDialog = ({
                         className={cn('w-(--radix-popover-trigger-width) p-0')}
                         onOpenAutoFocus={(e) => {
                           e.preventDefault();
-                          leaderSearchRef.current?.focus();
+                          memberSearchRef.current?.focus();
                         }}
                       >
                         <Command shouldFilter={false}>
                           <CommandInput
-                            ref={leaderSearchRef}
+                            ref={memberSearchRef}
                             placeholder="이름 또는 학번 검색..."
                             value={searchTerm}
                             onValueChange={setSearchTerm}
                           />
                           <CommandList>
                             <CommandEmpty>검색 결과가 없습니다.</CommandEmpty>
-                            {filteredStudents?.map((student) => (
-                              <CommandItem
-                                key={student.id}
-                                value={student.id.toString()}
-                                onSelect={() => {
-                                  const id = student.id;
-                                  field.onChange(id);
-                                  const participantIds = getValues('participantIds') || [];
-                                  if (participantIds.includes(id)) {
-                                    setValue(
-                                      'participantIds',
-                                      participantIds.filter((pId) => pId !== id),
-                                    );
-                                  }
-                                  setSearchTerm('');
-                                  setLeaderPopoverOpen(false);
-                                }}
-                              >
-                                {student.studentNumber} {student.name}
-                              </CommandItem>
-                            ))}
+                            {filteredStudents
+                              ?.filter(
+                                (s) =>
+                                  Array.isArray(field.value) &&
+                                  !field.value.includes(s.id) &&
+                                  s.id !== Number(currentLeaderId),
+                              )
+                              .map((student) => (
+                                <CommandItem
+                                  key={student.id}
+                                  value={student.id.toString()}
+                                  onSelect={() => {
+                                    if (
+                                      Array.isArray(field.value) &&
+                                      !field.value.includes(student.id)
+                                    ) {
+                                      field.onChange([...field.value, student.id]);
+                                    }
+                                    setSearchTerm('');
+                                    setMemberPopoverOpen(false);
+                                  }}
+                                >
+                                  {student.studentNumber} {student.name}
+                                </CommandItem>
+                              ))}
                           </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
-                  );
-                }}
-              />
-              <FormErrorMessage error={errors.leaderId} />
-            </div>
+                  )}
+                />
+                <FormErrorMessage
+                  error={!Array.isArray(errors.participantIds) ? errors.participantIds : undefined}
+                />
+              </div>
+            )}
+          </div>
 
-            <div className={cn('space-y-2')}>
-              <Label>팀원 추가</Label>
+          {currentStatus !== 'ABOLISHED' && (
+            <div className={cn('bg-muted/30 flex flex-col gap-6 rounded-xl')}>
+              <Label className={cn('text-foreground text-base font-bold')}>팀원</Label>
               <Controller
                 control={control}
                 name="participantIds"
-                render={({ field }) => (
-                  <Popover
-                    open={memberPopoverOpen}
-                    onOpenChange={(v) => {
-                      setMemberPopoverOpen(v);
-                      if (!v) setSearchTerm('');
-                    }}
-                  >
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        role="combobox"
-                        className={cn(
-                          'border-input shadow-xs dark:bg-input/30 dark:hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
-                          'text-muted-foreground',
-                        )}
-                      >
-                        팀원 추가
-                        <ChevronDown className={cn('h-4 w-4 shrink-0 opacity-50')} />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className={cn('w-(--radix-popover-trigger-width) p-0')}
-                      onOpenAutoFocus={(e) => {
-                        e.preventDefault();
-                        memberSearchRef.current?.focus();
-                      }}
-                    >
-                      <Command shouldFilter={false}>
-                        <CommandInput
-                          ref={memberSearchRef}
-                          placeholder="이름 또는 학번 검색..."
-                          value={searchTerm}
-                          onValueChange={setSearchTerm}
-                        />
-                        <CommandList>
-                          <CommandEmpty>검색 결과가 없습니다.</CommandEmpty>
-                          {filteredStudents
-                            ?.filter(
-                              (s) =>
-                                Array.isArray(field.value) &&
-                                !field.value.includes(s.id) &&
-                                s.id !== Number(currentLeaderId),
-                            )
-                            .map((student) => (
-                              <CommandItem
-                                key={student.id}
-                                value={student.id.toString()}
-                                onSelect={() => {
-                                  if (
-                                    Array.isArray(field.value) &&
-                                    !field.value.includes(student.id)
-                                  ) {
-                                    field.onChange([...field.value, student.id]);
-                                  }
-                                  setSearchTerm('');
-                                  setMemberPopoverOpen(false);
-                                }}
-                              >
-                                {student.studentNumber} {student.name}
-                              </CommandItem>
-                            ))}
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                )}
-              />
-              <FormErrorMessage
-                error={!Array.isArray(errors.participantIds) ? errors.participantIds : undefined}
-              />
-            </div>
-          </div>
+                render={({ field }) => {
+                  const selectedIds = Array.isArray(field.value) ? field.value : [];
+                  const selectedStudents = students?.filter((s) => selectedIds.includes(s.id)) || [];
 
-          <div className={cn('bg-muted/30 flex flex-col gap-6 rounded-xl')}>
-            <Label className={cn('text-foreground text-base font-bold')}>팀원</Label>
-            <Controller
-              control={control}
-              name="participantIds"
-              render={({ field }) => {
-                const selectedIds = Array.isArray(field.value) ? field.value : [];
-                const selectedStudents = students?.filter((s) => selectedIds.includes(s.id)) || [];
+                  const grades = [1, 2, 3];
 
-                const grades = [1, 2, 3];
-
-                return (
-                  <div className={cn('grid grid-cols-3 gap-8')}>
-                    {grades.map((grade) => (
-                      <div key={grade} className={cn('flex flex-col gap-4')}>
-                        <div
-                          className={cn(
-                            'text-foreground border-primary/20 flex items-center gap-2 border-b-2 pb-2 text-sm font-bold',
-                          )}
-                        >
-                          <span
+                  return (
+                    <div className={cn('grid grid-cols-3 gap-8')}>
+                      {grades.map((grade) => (
+                        <div key={grade} className={cn('flex flex-col gap-4')}>
+                          <div
                             className={cn(
-                              'bg-primary flex h-6 w-6 items-center justify-center rounded-full text-[12px] text-white',
+                              'text-foreground border-primary/20 flex items-center gap-2 border-b-2 pb-2 text-sm font-bold',
                             )}
                           >
-                            {grade}
-                          </span>
-                          {grade}학년
-                        </div>
-                        <div
-                          className={cn(
-                            '[&::-webkit-scrollbar-thumb]:bg-border flex max-h-[300px] flex-col gap-2.5 overflow-y-auto overflow-x-hidden pr-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-1',
-                          )}
-                        >
-                          {selectedStudents
-                            .filter((s) => s.grade === grade)
-                            .map((student) => (
-                              <Badge
-                                key={student.id}
-                                variant="secondary"
-                                className={cn(
-                                  'hover:bg-secondary/80 flex w-full cursor-pointer items-center justify-between gap-2 px-3 py-2 transition-colors',
-                                )}
-                                onClick={() =>
-                                  field.onChange(
-                                    field.value.filter((id: number) => id !== student.id),
-                                  )
-                                }
-                              >
-                                <span className={cn('text-xs font-medium')}>
-                                  {student.studentNumber} {student.name}
-                                </span>
-                                <X
-                                  className={cn(
-                                    'text-muted-foreground hover:text-destructive h-4 w-4 shrink-0 transition-colors',
-                                  )}
-                                />
-                              </Badge>
-                            ))}
-                          {selectedStudents.filter((s) => s.grade === grade).length === 0 && (
-                            <div
+                            <span
                               className={cn(
-                                'text-muted-foreground/40 py-4 text-center text-xs italic',
+                                'bg-primary flex h-6 w-6 items-center justify-center rounded-full text-[12px] text-white',
                               )}
                             >
-                              등록된 팀원 없음
-                            </div>
-                          )}
+                              {grade}
+                            </span>
+                            {grade}학년
+                          </div>
+                          <div
+                            className={cn(
+                              '[&::-webkit-scrollbar-thumb]:bg-border flex max-h-[300px] flex-col gap-2.5 overflow-y-auto overflow-x-hidden pr-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-1',
+                            )}
+                          >
+                            {selectedStudents
+                              .filter((s) => s.grade === grade)
+                              .map((student) => (
+                                <Badge
+                                  key={student.id}
+                                  variant="secondary"
+                                  className={cn(
+                                    'hover:bg-secondary/80 flex w-full cursor-pointer items-center justify-between gap-2 px-3 py-2 transition-colors',
+                                  )}
+                                  onClick={() =>
+                                    field.onChange(
+                                      field.value.filter((id: number) => id !== student.id),
+                                    )
+                                  }
+                                >
+                                  <span className={cn('text-xs font-medium')}>
+                                    {student.studentNumber} {student.name}
+                                  </span>
+                                  <X
+                                    className={cn(
+                                      'text-muted-foreground hover:text-destructive h-4 w-4 shrink-0 transition-colors',
+                                    )}
+                                  />
+                                </Badge>
+                              ))}
+                            {selectedStudents.filter((s) => s.grade === grade).length === 0 && (
+                              <div
+                                className={cn(
+                                  'text-muted-foreground/40 py-4 text-center text-xs italic',
+                                )}
+                              >
+                                등록된 팀원 없음
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                );
-              }}
-            />
-          </div>
+                      ))}
+                    </div>
+                  );
+                }}
+              />
+            </div>
+          )}
 
           <div className={cn('flex justify-end pt-2')}>
             <Button type="submit" disabled={isPending}>

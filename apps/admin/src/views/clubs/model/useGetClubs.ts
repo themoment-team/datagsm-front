@@ -8,15 +8,16 @@ interface UseGetClubsParams {
   size?: number;
   clubType?: ClubType;
   clubName?: string;
+  status?: string;
 }
 
 export const useGetClubs = (
-  { page, size, clubType, clubName }: UseGetClubsParams,
+  { page, size, clubType, clubName, status }: UseGetClubsParams,
   options?: Omit<UseQueryOptions<ClubListResponse>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery({
-    queryKey: clubQueryKeys.getClubs(page, size, clubType, clubName),
-    queryFn: () => get<ClubListResponse>(clubUrl.getClubs(page, size, clubType, clubName)),
+    queryKey: clubQueryKeys.getClubs(page, size, clubType, clubName, status),
+    queryFn: () => get<ClubListResponse>(clubUrl.getClubs(page, size, clubType, clubName, status)),
     staleTime: minutesToMs(5),
     gcTime: minutesToMs(10),
     refetchOnMount: false,

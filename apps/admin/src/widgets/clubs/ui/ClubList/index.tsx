@@ -23,7 +23,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { getTypeLabel } from '@/entities/club';
+import { getStatusLabel, getTypeLabel } from '@/entities/club';
 import { useDeleteClub } from '@/widgets/clubs';
 
 interface ClubListProps {
@@ -52,6 +52,8 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
           <TableRow>
             <TableHead>동아리명</TableHead>
             <TableHead>타입</TableHead>
+            <TableHead>상태</TableHead>
+            <TableHead>설립연도</TableHead>
             <TableHead>부장</TableHead>
             <TableHead className={cn('w-30')}>작업</TableHead>
           </TableRow>
@@ -65,6 +67,12 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
                   </TableCell>
                   <TableCell>
                     <Skeleton className={cn('h-5 w-16')} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className={cn('h-5 w-16')} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className={cn('h-4 w-12')} />
                   </TableCell>
                   <TableCell>
                     <Skeleton className={cn('h-4 w-24')} />
@@ -83,7 +91,20 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
                     </span>
                   </TableCell>
                   <TableCell>
-                    {club.leader.studentNumber} {club.leader.name}
+                    <span
+                      className={cn(
+                        'px-1.5 py-0.5 text-xs font-mono uppercase',
+                        club.status === 'ACTIVE'
+                          ? 'bg-foreground text-background'
+                          : 'border border-foreground/25 text-muted-foreground',
+                      )}
+                    >
+                      {getStatusLabel(club.status)}
+                    </span>
+                  </TableCell>
+                  <TableCell className={cn('font-mono text-xs')}>{club.foundedYear}</TableCell>
+                  <TableCell>
+                    {club.leader ? `${club.leader.studentNumber} ${club.leader.name}` : '-'}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
