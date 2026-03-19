@@ -19,7 +19,7 @@ export interface Club {
   status: ClubStatus;
   foundedYear: number;
   abolishedYear?: number;
-  leader: ClubMember;
+  leader: ClubMember | null;
   participants: ClubMember[];
 }
 
