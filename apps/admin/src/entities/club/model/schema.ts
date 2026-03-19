@@ -17,28 +17,22 @@ export const AddClubSchema = z
     status: z.enum(['ACTIVE', 'ABOLISHED'], {
       message: '운영 상태를 선택해주세요.',
     }),
-    foundedYear: z.preprocess(
-      (val) => (typeof val === 'number' && isNaN(val) ? undefined : val),
-      z
-        .number({ message: '설립연도를 입력해주세요.' })
-        .int()
-        .min(1900, { message: '1900년 이후의 연도를 입력해주세요.' }),
-    ),
-    abolishedYear: z.preprocess(
-      (val) => (typeof val === 'number' && isNaN(val) ? undefined : val),
-      z
-        .number({ message: '폐지연도를 입력해주세요.' })
-        .int()
-        .min(1900, { message: '1900년 이후의 연도를 입력해주세요.' })
-        .optional(),
-    ),
+    foundedYear: z
+      .number({ message: '설립연도를 입력해주세요.' })
+      .int()
+      .min(1900, { message: '1900년 이후의 연도를 입력해주세요.' }),
+    abolishedYear: z
+      .number({ message: '폐지연도를 입력해주세요.' })
+      .int()
+      .min(1900, { message: '1900년 이후의 연도를 입력해주세요.' })
+      .optional(),
     leaderId: z.number({ message: '동아리 부장을 선택해주세요.' }).min(1).optional(),
     participantIds: z.array(z.number()),
   })
   .refine(
     (data) => {
       if (data.status === 'ACTIVE') {
-        return data.leaderId !== undefined && data.leaderId >= 1;
+        return data.leaderId !== undefined;
       }
       return true;
     },

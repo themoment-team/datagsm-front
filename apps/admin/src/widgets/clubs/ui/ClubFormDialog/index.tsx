@@ -247,7 +247,7 @@ const ClubFormDialog = ({
                 id="foundedYear"
                 type="number"
                 placeholder="설립연도 입력"
-                {...register('foundedYear', { valueAsNumber: true })}
+                {...register('foundedYear', { setValueAs: (v) => (v === '' ? undefined : Number(v)) })}
               />
               <FormErrorMessage error={errors.foundedYear} />
             </div>
@@ -258,7 +258,7 @@ const ClubFormDialog = ({
                   id="abolishedYear"
                   type="number"
                   placeholder="폐지연도 입력"
-                  {...register('abolishedYear', { valueAsNumber: true })}
+                  {...register('abolishedYear', { setValueAs: (v) => (v === '' ? undefined : Number(v)) })}
                 />
                 <FormErrorMessage error={errors.abolishedYear} />
               </div>
