@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Club, Project, Student } from '@repo/shared/types';
 import {
-  Badge,
   Button,
   Command,
   CommandEmpty,
@@ -171,19 +170,40 @@ const ProjectFormDialog = ({
       }}
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
-      <DialogContent className={cn('max-h-[90vh] max-w-2xl overflow-y-auto')}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+      <DialogContent
+        className={cn(
+          'border-foreground pixel-shadow max-h-[90vh] max-w-2xl overflow-y-auto rounded-none border-2 p-0',
+        )}
+      >
+        <DialogHeader className={cn('border-foreground border-b-2 px-6 py-5')}>
+          <DialogTitle className={cn('font-pixel text-foreground text-[14px] leading-none')}>
+            {title}
+          </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-6')}>
+        <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-6 px-6 py-6')}>
           <div className={cn('grid grid-cols-2 gap-4 pt-4')}>
             <div className={cn('space-y-2')}>
-              <Label htmlFor="name">프로젝트명</Label>
-              <Input id="name" placeholder="프로젝트명 입력" {...register('name')} />
+              <Label
+                htmlFor="name"
+                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
+              >
+                프로젝트명
+              </Label>
+              <Input
+                id="name"
+                placeholder="프로젝트명 입력"
+                className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                {...register('name')}
+              />
               <FormErrorMessage error={errors.name} />
             </div>
             <div className={cn('space-y-2')}>
-              <Label htmlFor="clubId">동아리</Label>
+              <Label
+                htmlFor="clubId"
+                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
+              >
+                동아리
+              </Label>
               <Controller
                 control={control}
                 name="clubId"
@@ -192,7 +212,11 @@ const ProjectFormDialog = ({
                     value={field.value ? String(field.value) : 'none'}
                     onValueChange={(val) => field.onChange(val === 'none' ? 0 : Number(val))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger
+                      className={cn(
+                        'border-foreground rounded-none font-mono focus-visible:ring-0',
+                      )}
+                    >
                       <SelectValue placeholder="동아리 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -209,18 +233,29 @@ const ProjectFormDialog = ({
               <FormErrorMessage error={errors.clubId} />
             </div>
             <div className={cn('col-span-2 space-y-2')}>
-              <Label htmlFor="description">설명</Label>
+              <Label
+                htmlFor="description"
+                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
+              >
+                설명
+              </Label>
               <Textarea
                 id="description"
                 placeholder="프로젝트 설명 입력"
-                className={cn('min-h-[100px] resize-none')}
+                className={cn(
+                  'border-foreground min-h-[100px] resize-none rounded-none font-mono focus-visible:ring-0',
+                )}
                 {...register('description')}
               />
               <FormErrorMessage error={errors.description} />
             </div>
 
             <div className={cn('col-span-2 space-y-2')}>
-              <Label>팀원 추가</Label>
+              <Label
+                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
+              >
+                팀원 추가
+              </Label>
               <Controller
                 control={control}
                 name="participantIds"
@@ -237,7 +272,7 @@ const ProjectFormDialog = ({
                         type="button"
                         role="combobox"
                         className={cn(
-                          'border-input shadow-xs dark:bg-input/30 dark:hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
+                          'border-foreground bg-background flex h-10 w-full cursor-pointer items-center justify-between gap-2 rounded-none border px-3 py-2 text-left font-mono text-xs outline-none transition-colors focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
                           'text-muted-foreground',
                         )}
                       >
@@ -246,7 +281,9 @@ const ProjectFormDialog = ({
                       </button>
                     </PopoverTrigger>
                     <PopoverContent
-                      className={cn('w-(--radix-popover-trigger-width) p-0')}
+                      className={cn(
+                        'border-foreground w-(--radix-popover-trigger-width) rounded-none border-2 p-0',
+                      )}
                       onOpenAutoFocus={(e) => {
                         e.preventDefault();
                         memberSearchRef.current?.focus();
@@ -256,6 +293,7 @@ const ProjectFormDialog = ({
                         <CommandInput
                           ref={memberSearchRef}
                           placeholder="이름 또는 학번 검색..."
+                          className={cn('font-mono')}
                           value={searchTerm}
                           onValueChange={setSearchTerm}
                         />
@@ -295,8 +333,25 @@ const ProjectFormDialog = ({
             </div>
           </div>
 
-          <div className={cn('bg-muted/30 flex flex-col gap-6 rounded-xl')}>
-            <Label className={cn('text-foreground text-base font-bold')}>팀원</Label>
+          <div
+            className={cn(
+              'border-foreground pixel-shadow bg-background flex flex-col gap-5 border-2 p-4',
+            )}
+          >
+            <div
+              className={cn('border-foreground flex items-center justify-between border-b-2 pb-3')}
+            >
+              <Label
+                className={cn('font-pixel text-foreground text-[12px] uppercase tracking-[0.18em]')}
+              >
+                Team Members
+              </Label>
+              <span
+                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
+              >
+                remove with click
+              </span>
+            </div>
             <Controller
               control={control}
               name="participantIds"
@@ -307,36 +362,39 @@ const ProjectFormDialog = ({
                 const grades = [1, 2, 3];
 
                 return (
-                  <div className={cn('grid grid-cols-3 gap-8')}>
+                  <div className={cn('grid grid-cols-1 gap-4 md:grid-cols-3')}>
                     {grades.map((grade) => (
-                      <div key={grade} className={cn('flex flex-col gap-4')}>
+                      <div
+                        key={grade}
+                        className={cn(
+                          'border-foreground bg-background flex min-h-[240px] flex-col border',
+                        )}
+                      >
                         <div
                           className={cn(
-                            'text-foreground border-primary/20 flex items-center gap-2 border-b-2 pb-2 text-sm font-bold',
+                            'border-foreground flex items-center justify-between border-b px-3 py-2',
                           )}
                         >
-                          <span
-                            className={cn(
-                              'bg-primary flex h-6 w-6 items-center justify-center rounded-full text-[12px] text-white',
-                            )}
-                          >
-                            {grade}
+                          <span className={cn('font-pixel text-foreground text-[11px]')}>
+                            GRADE {grade}
                           </span>
-                          {grade}학년
+                          <span className={cn('text-muted-foreground font-mono text-[11px]')}>
+                            {selectedStudents.filter((s) => s.grade === grade).length}
+                          </span>
                         </div>
                         <div
                           className={cn(
-                            '[&::-webkit-scrollbar-thumb]:bg-border flex max-h-[300px] flex-col gap-2.5 overflow-y-auto overflow-x-hidden pr-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-1',
+                            '[&::-webkit-scrollbar-thumb]:bg-foreground/30 max-h-75 flex flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden p-3 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar]:w-1',
                           )}
                         >
                           {selectedStudents
                             .filter((s) => s.grade === grade)
                             .map((student) => (
-                              <Badge
+                              <button
                                 key={student.id}
-                                variant="secondary"
+                                type="button"
                                 className={cn(
-                                  'hover:bg-secondary/80 flex w-full cursor-pointer items-center justify-between gap-2 px-3 py-2 transition-colors',
+                                  'border-foreground hover:bg-foreground hover:text-background group flex w-full items-center justify-between gap-3 border px-3 py-2 text-left transition-colors',
                                 )}
                                 onClick={() =>
                                   field.onChange(
@@ -344,20 +402,33 @@ const ProjectFormDialog = ({
                                   )
                                 }
                               >
-                                <span className={cn('text-xs font-medium')}>
-                                  {student.studentNumber} {student.name}
+                                <span className={cn('min-w-0 flex-1')}>
+                                  <span
+                                    className={cn(
+                                      'text-muted-foreground group-hover:text-background/80 block font-mono text-[11px] uppercase transition-colors',
+                                    )}
+                                  >
+                                    {student.studentNumber}
+                                  </span>
+                                  <span
+                                    className={cn(
+                                      'text-foreground group-hover:text-background block truncate font-mono text-xs transition-colors',
+                                    )}
+                                  >
+                                    {student.name}
+                                  </span>
                                 </span>
                                 <X
                                   className={cn(
-                                    'text-muted-foreground hover:text-destructive h-4 w-4 shrink-0 transition-colors',
+                                    'group-hover:text-background h-4 w-4 shrink-0 transition-colors',
                                   )}
                                 />
-                              </Badge>
+                              </button>
                             ))}
                           {selectedStudents.filter((s) => s.grade === grade).length === 0 && (
                             <div
                               className={cn(
-                                'text-muted-foreground/40 py-4 text-center text-xs italic',
+                                'border-foreground/30 bg-muted/10 text-muted-foreground border border-dashed px-3 py-6 text-center font-mono text-[11px] uppercase tracking-[0.18em]',
                               )}
                             >
                               등록된 팀원 없음
