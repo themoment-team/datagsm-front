@@ -7,8 +7,7 @@ import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTr
 import { XIcon } from 'lucide-react';
 import { cn } from '@repo/shared/utils';
 
-import ApiKeyDisplay from '../ApiKeyDisplay';
-import ApiKeyForm from '../ApiKeyForm';
+import ApiKeyManager from '../ApiKeyManager';
 
 interface ApiKeyFormDialogProps {
   trigger?: React.ReactNode;
@@ -88,19 +87,17 @@ const ApiKeyFormDialog = ({
               ))}
             </div>
             <DialogTitle className="font-pixel text-[14px] leading-[1.8]">
-              ADMIN API Key
+              {userRole === 'ADMIN' ? 'ADMIN API Key' : 'API Key Management'}
             </DialogTitle>
           </div>
         </DialogHeader>
 
-        <div className={cn('flex flex-col gap-5 p-6')}>
-          <ApiKeyForm
-            initialApiKeyData={initialApiKeyData}
-            initialAvailableScope={initialAvailableScope}
-            userRole={userRole}
-          />
-          <ApiKeyDisplay initialApiKeyData={initialApiKeyData} />
-        </div>
+        <ApiKeyManager
+          className="p-6"
+          initialApiKeyData={initialApiKeyData}
+          initialAvailableScope={initialAvailableScope}
+          userRole={userRole}
+        />
       </DialogContent>
     </Dialog>
   );
