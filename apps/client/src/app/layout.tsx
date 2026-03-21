@@ -26,9 +26,6 @@ const RootLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
-
   return (
     <html lang="ko">
       <body>
