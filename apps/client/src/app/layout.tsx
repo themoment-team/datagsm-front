@@ -1,6 +1,3 @@
-import { cookies } from 'next/headers';
-
-import { COOKIE_KEYS } from '@repo/shared/constants';
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import { Header, TooltipProvider } from '@repo/shared/ui';
 import type { Metadata } from 'next';
