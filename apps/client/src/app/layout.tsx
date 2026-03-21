@@ -38,7 +38,7 @@ const RootLayout = async ({
         <TanStackProvider>
           <ToastProvider>
             <TooltipProvider>
-              {accessToken && <Header role="client" />}
+              <Header role="client" />
               {children}
             </TooltipProvider>
           </ToastProvider>

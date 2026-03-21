@@ -175,7 +175,7 @@ const SignInForm = ({
 
           <div className="space-y-2 text-center text-sm">
             <p className={cn('text-muted-foreground text-center text-sm')}>
-              계정이 없으신가요?
+              계정이 없으신가요?{' '}
               <Link
                 href={signupHref}
                 target="_blank"
