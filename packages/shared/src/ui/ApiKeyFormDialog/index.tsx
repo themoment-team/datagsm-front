@@ -46,7 +46,7 @@ const ApiKeyFormDialog = ({
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
       <DialogContent
         showCloseButton={false}
-        className={cn('max-h-[90vh] min-w-[55vw] max-w-none overflow-y-auto border-2 border-foreground p-0 pixel-shadow-lg [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]')}
+        className={cn('max-h-[90vh] min-w-[55vw] max-w-none overflow-y-auto p-0 pixel-shadow-lg [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]')}
       >
         {/* Terminal title bar */}
         <div className={cn('flex items-center gap-2 border-b-2 border-foreground bg-foreground px-5 py-3')}>

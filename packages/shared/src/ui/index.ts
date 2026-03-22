@@ -24,3 +24,5 @@ export { default as Header } from './Header';
 export { default as FormErrorMessage } from './FormErrorMessage';
 export { default as CommonPagination } from './CommonPagination';
 export { PixelIconButton } from './PixelIconButton';
+export { SectionCard } from './SectionCard';
+export { PageHeader } from './PageHeader';
