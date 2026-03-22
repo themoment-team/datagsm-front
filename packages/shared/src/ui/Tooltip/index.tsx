@@ -30,7 +30,7 @@ const TooltipContent = ({
   <div
     role="tooltip"
     className={cn(
-      'bg-popover text-popover-foreground pointer-events-none invisible absolute right-0 top-full z-50 whitespace-nowrap rounded-md border px-3 py-1.5 text-xs shadow-md group-focus-within:visible group-hover:visible',
+      'bg-popover text-popover-foreground pointer-events-none invisible absolute right-0 top-full z-50 whitespace-nowrap rounded-none border-2 border-foreground px-3 py-1.5 text-xs pixel-shadow group-focus-within:visible group-hover:visible',
       className,
     )}
     style={{ marginTop: sideOffset }}
