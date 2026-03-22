@@ -12,7 +12,7 @@ import {
 import { cn } from '@repo/shared/utils';
 import { Pencil } from 'lucide-react';
 
-import { getMajorLabel, getRoleLabel, getSexLabel } from '@/entities/student';
+import { getMajorLabel, getRoleBadgeStyle, getRoleLabel, getSexLabel } from '@/entities/student';
 
 interface StudentListProps {
   students?: Student[];
@@ -81,7 +81,7 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                   <TableCell>{student.studentNumber}</TableCell>
                   <TableCell>{getMajorLabel(student.major)}</TableCell>
                   <TableCell>
-                    <span className={cn('border border-foreground/25 px-1.5 py-0.5 text-xs font-mono uppercase')}>
+                    <span className={cn('border px-1.5 py-0.5 text-xs font-mono uppercase', getRoleBadgeStyle(student.role))}>
                       {getRoleLabel(student.role)}
                     </span>
                   </TableCell>
