@@ -19,6 +19,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  SectionCard,
   Select,
   SelectContent,
   SelectItem,
@@ -194,7 +195,7 @@ const ClubFormDialog = ({
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
       <DialogContent
-        className={cn('border-foreground pixel-shadow max-w-2xl rounded-none border-2 p-0')}
+        className={cn('max-w-2xl p-0')}
       >
         <DialogHeader className={cn('border-foreground border-b-2 px-6 py-5')}>
           <DialogTitle className={cn('font-pixel text-foreground text-[14px] leading-none')}>
@@ -213,7 +214,7 @@ const ClubFormDialog = ({
               <Input
                 id="name"
                 placeholder="동아리명 입력"
-                className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                className={cn('border-foreground rounded-none font-mono')}
                 {...register('name')}
               />
               <FormErrorMessage error={errors.name} />
@@ -232,7 +233,7 @@ const ClubFormDialog = ({
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
                       className={cn(
-                        'border-foreground rounded-none font-mono focus-visible:ring-0',
+                        'border-foreground rounded-none font-mono',
                       )}
                     >
                       <SelectValue placeholder="타입 선택" />
@@ -260,7 +261,7 @@ const ClubFormDialog = ({
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
                       className={cn(
-                        'border-foreground rounded-none font-mono focus-visible:ring-0',
+                        'border-foreground rounded-none font-mono',
                       )}
                     >
                       <SelectValue placeholder="상태 선택" />
@@ -285,7 +286,7 @@ const ClubFormDialog = ({
                 id="foundedYear"
                 type="number"
                 placeholder="설립연도 입력"
-                className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                className={cn('border-foreground rounded-none font-mono')}
                 {...register('foundedYear', {
                   setValueAs: (value) => (value === '' ? undefined : Number(value)),
                 })}
@@ -306,7 +307,7 @@ const ClubFormDialog = ({
                   id="abolishedYear"
                   type="number"
                   placeholder="폐지연도 입력"
-                  className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                  className={cn('border-foreground rounded-none font-mono')}
                   {...register('abolishedYear', {
                     setValueAs: (value) => (value === '' ? undefined : Number(value)),
                   })}
@@ -502,31 +503,13 @@ const ClubFormDialog = ({
           </div>
 
           {currentStatus !== 'ABOLISHED' && (
-            <div
-              className={cn(
-                'border-foreground pixel-shadow bg-background flex flex-col gap-5 border-2 p-4',
-              )}
+            <SectionCard
+              shadow
+              title="Team Members"
+              headerAction="remove with click"
+              className={cn('bg-background')}
             >
-              <div
-                className={cn(
-                  'border-foreground flex items-center justify-between border-b-2 pb-3',
-                )}
-              >
-                <Label
-                  className={cn(
-                    'font-pixel text-foreground text-[12px] uppercase tracking-[0.18em]',
-                  )}
-                >
-                  Team Members
-                </Label>
-                <span
-                  className={cn(
-                    'text-muted-foreground font-mono text-xs uppercase tracking-widest',
-                  )}
-                >
-                  remove with click
-                </span>
-              </div>
+              <div className={cn('flex flex-col gap-5 p-4')}>
               <Controller
                 control={control}
                 name="participantIds"
@@ -617,7 +600,8 @@ const ClubFormDialog = ({
                   );
                 }}
               />
-            </div>
+              </div>
+            </SectionCard>
           )}
 
           <div className={cn('flex justify-end pt-2')}>

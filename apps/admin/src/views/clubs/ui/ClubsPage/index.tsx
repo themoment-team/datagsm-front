@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Club, ClubType } from '@repo/shared/types';
-import { CommonPagination } from '@repo/shared/ui';
+import { CommonPagination, PageHeader } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useForm, useWatch } from 'react-hook-form';
 
@@ -144,31 +144,21 @@ const ClubsPage = () => {
     <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
         {/* Page header */}
-        <div
-          className={cn('border-foreground mb-6 flex items-end justify-between border-b-2 pb-4')}
-        >
-          <div>
-            <p
-              className={cn(
-                'text-muted-foreground mb-2 font-mono text-xs uppercase tracking-widest',
-              )}
-            >
-              DATAGSM / Admin
-            </p>
-            <h1 className={cn('text-foreground font-pixel text-[15px] leading-tight')}>
-              동아리 관리
-            </h1>
-          </div>
-          <div className={cn('flex items-center gap-2')}>
-            <ClubExcelActions />
-            <ClubFormDialog
-              mode="create"
-              students={studentsData?.data.students}
-              isLoadingStudents={isLoadingStudents}
-              form={clubForm}
-            />
-          </div>
-        </div>
+        <PageHeader
+          breadcrumb="DATAGSM / Admin"
+          title="동아리 관리"
+          action={
+            <div className={cn('flex items-center gap-2')}>
+              <ClubExcelActions />
+              <ClubFormDialog
+                mode="create"
+                students={studentsData?.data.students}
+                isLoadingStudents={isLoadingStudents}
+                form={clubForm}
+              />
+            </div>
+          }
+        />
 
         {/* Filters */}
         <div className={cn('mb-4')}>

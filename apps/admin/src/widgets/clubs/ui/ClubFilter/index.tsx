@@ -32,7 +32,7 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
               {...field}
               placeholder="동아리 이름으로 검색"
               className={cn(
-                'border-foreground focus-visible:border-foreground rounded-none pl-9 font-mono focus-visible:ring-0',
+                'border-foreground rounded-none pl-9 font-mono',
               )}
               onChange={(e) => {
                 field.onChange(e.target.value || 'all');
@@ -56,7 +56,7 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger
-                  className={cn('border-foreground w-24 rounded-none focus-visible:ring-0')}
+                  className={cn('border-foreground w-24 rounded-none')}
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -84,7 +84,7 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
                 onValueChange={(value) => field.onChange(value === 'all' ? undefined : value)}
               >
                 <SelectTrigger
-                  className={cn('border-foreground w-24 rounded-none focus-visible:ring-0')}
+                  className={cn('border-foreground w-24 rounded-none')}
                 >
                   <SelectValue />
                 </SelectTrigger>

@@ -204,7 +204,7 @@ const StudentFormDialog = ({
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
       <DialogContent
-        className={cn('max-h-[90vh] max-w-2xl overflow-y-auto rounded-none border-2 border-foreground pixel-shadow p-0')}
+        className={cn('max-h-[90vh] max-w-2xl overflow-y-auto p-0')}
       >
         <DialogHeader className={cn('border-b-2 border-foreground px-6 py-5')}>
           <DialogTitle className={cn('font-pixel text-[14px] leading-none')}>{title}</DialogTitle>
@@ -216,7 +216,7 @@ const StudentFormDialog = ({
               <Input
                 id="name"
                 placeholder="이름 입력"
-                className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                className={cn('border-foreground rounded-none font-mono')}
                 {...register('name')}
               />
               <FormErrorMessage error={errors.name} />
@@ -228,7 +228,7 @@ const StudentFormDialog = ({
                 name="sex"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className={cn('border-foreground rounded-none focus-visible:ring-0')}>
+                    <SelectTrigger className={cn('border-foreground rounded-none')}>
                       <SelectValue placeholder="성별 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -245,7 +245,7 @@ const StudentFormDialog = ({
               <Input
                 id="email"
                 placeholder="example@gsm.hs.kr"
-                className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                className={cn('border-foreground rounded-none font-mono')}
                 {...register('email')}
               />
               <FormErrorMessage error={errors.email} />
@@ -268,7 +268,7 @@ const StudentFormDialog = ({
                         value={field.value ? String(field.value) : undefined}
                         onValueChange={(val) => field.onChange(Number(val))}
                       >
-                        <SelectTrigger className={cn('border-foreground rounded-none focus-visible:ring-0')}>
+                        <SelectTrigger className={cn('border-foreground rounded-none')}>
                           <SelectValue placeholder="학년 선택" />
                         </SelectTrigger>
                         <SelectContent>
@@ -301,7 +301,7 @@ const StudentFormDialog = ({
                         value={field.value ? String(field.value) : undefined}
                         onValueChange={(val) => field.onChange(Number(val))}
                       >
-                        <SelectTrigger className={cn('border-foreground rounded-none focus-visible:ring-0')}>
+                        <SelectTrigger className={cn('border-foreground rounded-none')}>
                           <SelectValue placeholder="반 선택" />
                         </SelectTrigger>
                         <SelectContent>
@@ -331,7 +331,7 @@ const StudentFormDialog = ({
                     id="number"
                     type="number"
                     placeholder="번호 입력"
-                    className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                    className={cn('border-foreground rounded-none font-mono')}
                     {...register('number', { valueAsNumber: true })}
                   />
                   <FormErrorMessage error={errors.number} />
@@ -345,7 +345,7 @@ const StudentFormDialog = ({
                 name="role"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className={cn('border-foreground rounded-none focus-visible:ring-0')}>
+                    <SelectTrigger className={cn('border-foreground rounded-none')}>
                       <SelectValue placeholder="구분 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -374,7 +374,7 @@ const StudentFormDialog = ({
                     id="dormitoryRoomNumber"
                     type="number"
                     placeholder="호실 입력"
-                    className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                    className={cn('border-foreground rounded-none font-mono')}
                     {...register('dormitoryRoomNumber', { valueAsNumber: true })}
                   />
                   <FormErrorMessage error={errors.dormitoryRoomNumber} />
@@ -405,7 +405,7 @@ const StudentFormDialog = ({
                         }
                         onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                       >
-                        <SelectTrigger className={cn('border-foreground rounded-none focus-visible:ring-0')}>
+                        <SelectTrigger className={cn('border-foreground rounded-none')}>
                           <SelectValue placeholder="전공 동아리 선택" />
                         </SelectTrigger>
                         <SelectContent>
@@ -451,7 +451,7 @@ const StudentFormDialog = ({
                         }
                         onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                       >
-                        <SelectTrigger className={cn('border-foreground rounded-none focus-visible:ring-0')}>
+                        <SelectTrigger className={cn('border-foreground rounded-none')}>
                           <SelectValue placeholder="자율 동아리 선택" />
                         </SelectTrigger>
                         <SelectContent>

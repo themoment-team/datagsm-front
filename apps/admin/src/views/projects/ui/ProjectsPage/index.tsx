@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Project } from '@repo/shared/types';
-import { CommonPagination } from '@repo/shared/ui';
+import { CommonPagination, PageHeader } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
 import { useQueryClient } from '@tanstack/react-query';
@@ -133,23 +133,19 @@ const ProjectsPage = () => {
     <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
         {/* Page header */}
-        <div className={cn('mb-6 flex items-end justify-between border-b-2 border-foreground pb-4')}>
-          <div>
-            <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}>
-              DATAGSM / Admin
-            </p>
-            <h1 className={cn('text-[15px] text-foreground leading-tight font-pixel')}>
-              프로젝트 관리
-            </h1>
-          </div>
-          <ProjectFormDialog
-            mode="create"
-            form={projectForm}
-            clubs={clubs}
-            students={studentsData?.data.students}
-            isLoadingStudents={isLoadingStudents}
-          />
-        </div>
+        <PageHeader
+          breadcrumb="DATAGSM / Admin"
+          title="프로젝트 관리"
+          action={
+            <ProjectFormDialog
+              mode="create"
+              form={projectForm}
+              clubs={clubs}
+              students={studentsData?.data.students}
+              isLoadingStudents={isLoadingStudents}
+            />
+          }
+        />
 
         {/* Filters */}
         <div className={cn('mb-4')}>

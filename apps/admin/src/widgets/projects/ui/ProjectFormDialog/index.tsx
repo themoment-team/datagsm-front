@@ -19,6 +19,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  SectionCard,
   Select,
   SelectContent,
   SelectItem,
@@ -171,9 +172,7 @@ const ProjectFormDialog = ({
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
       <DialogContent
-        className={cn(
-          'border-foreground pixel-shadow max-h-[90vh] max-w-2xl overflow-y-auto rounded-none border-2 p-0',
-        )}
+        className={cn('max-h-[90vh] max-w-2xl overflow-y-auto p-0')}
       >
         <DialogHeader className={cn('border-foreground border-b-2 px-6 py-5')}>
           <DialogTitle className={cn('font-pixel text-foreground text-[14px] leading-none')}>
@@ -192,7 +191,7 @@ const ProjectFormDialog = ({
               <Input
                 id="name"
                 placeholder="프로젝트명 입력"
-                className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                className={cn('border-foreground rounded-none font-mono')}
                 {...register('name')}
               />
               <FormErrorMessage error={errors.name} />
@@ -214,7 +213,7 @@ const ProjectFormDialog = ({
                   >
                     <SelectTrigger
                       className={cn(
-                        'border-foreground rounded-none font-mono focus-visible:ring-0',
+                        'border-foreground rounded-none font-mono',
                       )}
                     >
                       <SelectValue placeholder="동아리 선택" />
@@ -243,7 +242,7 @@ const ProjectFormDialog = ({
                 id="description"
                 placeholder="프로젝트 설명 입력"
                 className={cn(
-                  'border-foreground min-h-[100px] resize-none rounded-none font-mono focus-visible:ring-0',
+                  'border-foreground min-h-[100px] resize-none rounded-none font-mono',
                 )}
                 {...register('description')}
               />
@@ -333,25 +332,13 @@ const ProjectFormDialog = ({
             </div>
           </div>
 
-          <div
-            className={cn(
-              'border-foreground pixel-shadow bg-background flex flex-col gap-5 border-2 p-4',
-            )}
+          <SectionCard
+            shadow
+            title="Team Members"
+            headerAction="remove with click"
+            className={cn('bg-background')}
           >
-            <div
-              className={cn('border-foreground flex items-center justify-between border-b-2 pb-3')}
-            >
-              <Label
-                className={cn('font-pixel text-foreground text-[12px] uppercase tracking-[0.18em]')}
-              >
-                Team Members
-              </Label>
-              <span
-                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
-              >
-                remove with click
-              </span>
-            </div>
+            <div className={cn('flex flex-col gap-5 p-4')}>
             <Controller
               control={control}
               name="participantIds"
@@ -441,7 +428,8 @@ const ProjectFormDialog = ({
                 );
               }}
             />
-          </div>
+            </div>
+          </SectionCard>
 
           <div className={cn('flex justify-end pt-2')}>
             <Button type="submit">{submitText}</Button>
