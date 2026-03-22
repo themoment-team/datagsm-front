@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { useDeleteApiKeyById, useUpdateApiKeyExpirationById } from '@repo/shared/hooks';
 import { ApiKey } from '@repo/shared/types';
 import {
@@ -10,6 +12,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  Input,
+  Label,
   PixelIconButton,
   Skeleton,
   Table,
@@ -31,6 +35,7 @@ interface ApiKeyListProps {
 
 const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
   const queryClient = useQueryClient();
+  const [extendDays, setExtendDays] = useState<number>(30);
 
   const { mutate: deleteApiKey } = useDeleteApiKeyById({
     onSuccess: () => {
@@ -93,7 +98,7 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
               </TableCell>
               <TableCell>{formatDate(apiKey.expiresAt)}</TableCell>
               <TableCell>
-                <AlertDialog>
+                <AlertDialog onOpenChange={() => setExtendDays(30)}>
                   <AlertDialogTrigger asChild>
                     <PixelIconButton>
                       <RefreshCw className={cn('h-3.5 w-3.5')} />
@@ -106,10 +111,23 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                         &apos;{apiKey.description}&apos;의 기한을 연장하시겠습니까?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
+                    <div className={cn('my-4 space-y-2')}>
+                      <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>
+                        연장 일수 (1~365)
+                      </Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={365}
+                        value={extendDays}
+                        onChange={(e) => setExtendDays(Math.min(365, Math.max(1, Number(e.target.value))))}
+                        className={cn('w-32')}
+                      />
+                    </div>
                     <AlertDialogFooter>
                       <AlertDialogCancel>취소</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => updateApiKeyExpiration(apiKey.id)}
+                        onClick={() => updateApiKeyExpiration({ apiKeyId: apiKey.id, days: extendDays })}
                         className={cn('bg-black text-white hover:bg-black/50')}
                       >
                         연장
