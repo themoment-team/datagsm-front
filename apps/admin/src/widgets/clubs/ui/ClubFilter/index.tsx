@@ -90,7 +90,7 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">전체</SelectItem>
-                  <SelectItem value="ACTIVE">운영중</SelectItem>
+                  <SelectItem value="ACTIVE">운영 중</SelectItem>
                   <SelectItem value="ABOLISHED">폐지</SelectItem>
                 </SelectContent>
               </Select>
