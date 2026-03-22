@@ -1,7 +1,7 @@
 'use client';
 
 import { MyAccountResponse } from '@repo/shared/types';
-import { Skeleton } from '@repo/shared/ui';
+import { PageHeader, Skeleton } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
 import { ProfileInfo, WithdrawalSection, useGetMy } from '@/widgets/myinfo';
@@ -50,14 +50,7 @@ const MyInfoPage = ({ initialData }: MyInfoPageProps) => {
     <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
         {/* Page header */}
-        <div className={cn('mb-6 border-b-2 border-foreground pb-4')}>
-          <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}>
-            DATAGSM / My Account
-          </p>
-          <h1 className={cn('text-[15px] text-foreground leading-tight font-pixel')}>
-            내 정보
-          </h1>
-        </div>
+        <PageHeader breadcrumb="DATAGSM / My Account" title="내 정보" />
         <div className={cn('mx-auto max-w-2xl space-y-4 pb-16')}>
           <ProfileInfo data={myData.data} />
           <WithdrawalSection />

@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { useURLFilters } from '@repo/shared/hooks';
-import { CommonPagination } from '@repo/shared/ui';
+import { CommonPagination, PageHeader } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
 import { Client, CreateClientData } from '@/entities/clients';
@@ -58,23 +58,11 @@ const ClientsPage = () => {
     <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
         {/* Page header */}
-        <div
-          className={cn('mb-6 flex items-end justify-between border-b-2 border-foreground pb-4')}
-        >
-          <div>
-            <p
-              className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}
-            >
-              DATAGSM / OAuth
-            </p>
-            <h1
-              className={cn('text-[15px] text-foreground leading-tight font-pixel')}
-            >
-              클라이언트
-            </h1>
-          </div>
-          <ClientFormDialog mode="create" onCreateSuccess={handleCreateSuccess} />
-        </div>
+        <PageHeader
+          breadcrumb="DATAGSM / OAuth"
+          title="클라이언트"
+          action={<ClientFormDialog mode="create" onCreateSuccess={handleCreateSuccess} />}
+        />
 
         {/* Table */}
         <div

@@ -25,7 +25,7 @@ const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialog
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn('max-w-md rounded-none border-2 border-foreground pixel-shadow p-0')}>
+      <DialogContent className={cn('max-w-md p-0')}>
         <DialogHeader className={cn('border-b-2 border-foreground px-6 py-5')}>
           <DialogTitle className={cn('font-pixel text-[14px] leading-none flex items-center gap-2')}>
             <Check className={cn('h-4 w-4')} />

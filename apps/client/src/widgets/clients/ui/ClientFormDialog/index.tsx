@@ -201,7 +201,7 @@ const ClientFormDialog = ({
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
       <DialogContent
-        className={cn('max-h-[90vh] max-w-lg overflow-y-auto rounded-none border-2 border-foreground pixel-shadow p-0')}
+        className={cn('max-h-[90vh] max-w-lg overflow-y-auto p-0')}
       >
         <DialogHeader className={cn('border-b-2 border-foreground px-6 py-5')}>
           <DialogTitle className={cn('font-pixel text-[14px] leading-none')}>{title}</DialogTitle>
@@ -212,7 +212,7 @@ const ClientFormDialog = ({
             <Input
               id="clientName"
               placeholder="클라이언트 이름 입력"
-              className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+              className={cn('border-foreground rounded-none font-mono')}
               {...register('clientName')}
             />
             <FormErrorMessage error={errors.clientName} />
@@ -223,7 +223,7 @@ const ClientFormDialog = ({
             <Input
               id="serviceName"
               placeholder="로그인 페이지에 노출될 서비스 명칭 입력"
-              className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+              className={cn('border-foreground rounded-none font-mono')}
               {...register('serviceName')}
             />
             <FormErrorMessage error={errors.serviceName} />
@@ -262,7 +262,7 @@ const ClientFormDialog = ({
                   <div className={cn('flex items-center gap-2')}>
                     <Input
                       placeholder="https://example.com/callback"
-                      className={cn('border-foreground rounded-none font-mono focus-visible:ring-0')}
+                      className={cn('border-foreground rounded-none font-mono')}
                       {...register(`redirectUrls.${index}.url` as const)}
                     />
                     {fields.length > 1 && (
@@ -339,7 +339,7 @@ const ClientFormDialog = ({
             {mode === 'edit' ? (
               <>
                 <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-                  <AlertDialogContent className={cn('border-foreground')}>
+                  <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>클라이언트 수정</AlertDialogTitle>
                       <AlertDialogDescription>

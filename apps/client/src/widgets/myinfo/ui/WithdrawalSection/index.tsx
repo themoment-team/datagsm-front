@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  Button,
   Input,
   Label,
 } from '@repo/shared/ui';
@@ -78,9 +79,9 @@ export const WithdrawalSection = () => {
 
         <AlertDialog open={open} onOpenChange={handleOpenChange}>
           <AlertDialogTrigger asChild>
-            <button className={cn('cursor-pointer border-2 border-destructive bg-destructive px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-background hover:text-destructive font-mono')}>
+            <Button className={cn('border-2 border-destructive bg-destructive hover:bg-background hover:text-destructive font-mono text-xs uppercase tracking-widest')}>
               회원 탈퇴
-            </button>
+            </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -98,7 +99,7 @@ export const WithdrawalSection = () => {
                   type="password"
                   placeholder="비밀번호를 입력하세요"
                   {...register('password')}
-                  className={cn('rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground', errors.password && 'border-destructive')}
+                  className={cn('rounded-none border-foreground', errors.password && 'border-destructive')}
                 />
                 {errors.password && (
                   <p className={cn('text-xs text-destructive font-mono')}>{errors.password.message}</p>
@@ -107,13 +108,13 @@ export const WithdrawalSection = () => {
 
               <AlertDialogFooter>
                 <AlertDialogCancel type="button">취소</AlertDialogCancel>
-                <button
+                <Button
                   type="submit"
-                  className={cn('cursor-pointer border-2 border-destructive bg-destructive px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-background hover:text-destructive font-mono disabled:cursor-not-allowed disabled:opacity-50')}
+                  className={cn('border-2 border-destructive bg-destructive hover:bg-background hover:text-destructive font-mono text-xs uppercase tracking-widest')}
                   disabled={isPending}
                 >
                   {isPending ? '처리 중...' : '계정 삭제'}
-                </button>
+                </Button>
               </AlertDialogFooter>
             </form>
           </AlertDialogContent>
