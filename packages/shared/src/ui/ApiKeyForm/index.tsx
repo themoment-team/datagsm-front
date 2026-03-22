@@ -178,7 +178,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
       onSettled: () => setIsRenewConfirmOpen(false),
     };
     if (isApiKeyDataEqual) {
-      rotateApiKey(pendingFormData, sharedOptions);
+      rotateApiKey(undefined, sharedOptions);
     } else {
       updateApiKey(pendingFormData, sharedOptions);
     }
