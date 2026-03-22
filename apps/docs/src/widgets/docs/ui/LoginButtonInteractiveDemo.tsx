@@ -8,6 +8,7 @@ import { LoginButton } from './LoginButton';
 
 interface LoginButtonInteractiveDemoProps {
   type: 'default' | 'icon';
+  logo?: 'dg' | 'd';
   children: ReactNode;
 }
 
@@ -32,7 +33,7 @@ const VARIANTS = [
   },
 ] as const;
 
-export const LoginButtonInteractiveDemo = ({ type, children }: LoginButtonInteractiveDemoProps) => {
+export const LoginButtonInteractiveDemo = ({ type, logo = 'd', children }: LoginButtonInteractiveDemoProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
@@ -53,7 +54,7 @@ export const LoginButtonInteractiveDemo = ({ type, children }: LoginButtonIntera
                   : cn(item.borderColor, 'opacity-70 hover:opacity-100'),
               )}
             >
-              <LoginButton type={type} variant={item.variant} />
+              <LoginButton type={type} variant={item.variant} logo={logo} />
             </div>
             <span
               className={cn(
