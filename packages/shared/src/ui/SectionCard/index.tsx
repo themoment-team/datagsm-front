@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { cn } from '@repo/shared/utils';
 
-interface SectionCardProps extends React.ComponentProps<'div'> {
+interface SectionCardProps extends Omit<React.ComponentProps<'div'>, 'title'> {
   title: React.ReactNode;
   icon?: React.ReactNode;
   shadow?: boolean;
