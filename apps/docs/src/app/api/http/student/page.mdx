@@ -39,6 +39,7 @@ GET /v1/students
 | `number`           | `Int`           | 선택    | 번호 (1-18)                                                                                           | `1`                 |
 | `sex`              | `Sex`           | 선택    | 성별 (`MAN`, `WOMAN`)                                                                                 | `MAN`               |
 | `role`             | `StudentRole`   | 선택    | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`, `WITHDRAWN`)          | `GENERAL_STUDENT`   |
+| `specialty`        | `String`        | 선택    | 전공                                                                                                  | `백엔드`               |
 | `dormitoryRoom`    | `Int`           | 선택    | 기숙사 호실                                                                                              | `301`               |
 | `includeGraduates` | `Boolean`       | 선택    | 졸업생 포함 여부 (기본값: false)                                                                              | `false`             |
 | `includeWithdrawn` | `Boolean`       | 선택    | 자퇴생 포함 여부 (기본값: false)                                                                              | `false`             |
@@ -77,10 +78,10 @@ GET /v1/students
 
 `data` 필드는 다음 필드를 포함합니다.
 
-| 필드              | 타입                 | 설명       | 예시    |
-|-----------------|--------------------|----------|-------|
-| `totalPages`    | `Int`              | 전체 페이지 수 | `1`   |
-| `totalElements` | `Long`             | 전체 학생 수  | `300` |
+| 필드              | 타입                    | 설명       | 예시    |
+|-----------------|-----------------------|----------|-------|
+| `totalPages`    | `Int`                 | 전체 페이지 수 | `1`   |
+| `totalElements` | `Long`                | 전체 학생 수  | `300` |
 | `students`      | `List<StudentResDto>` | 학생 목록    | -     |
 
 ### 학생 객체 (StudentResDto)
@@ -98,6 +99,7 @@ GET /v1/students
 | `number`         | `Int?`            | 번호 (졸업/자퇴 시 `null`)                                                                        | `1`                 |
 | `studentNumber`  | `Int?`            | 학번 (졸업/자퇴 시 `null`)                                                                        | `1101`              |
 | `major`          | `Major?`          | 학과 (졸업/자퇴 시 `null`, 값: `SW_DEVELOPMENT`, `SMART_IOT`, `AI`)                                | `SW_DEVELOPMENT`    |
+| `specialty`      | `String?`         | 전공 (미설정 시 `null`)                                                                          | `백엔드`               |
 | `role`           | `StudentRole`     | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`, `WITHDRAWN`) | `GENERAL_STUDENT`   |
 | `dormitoryFloor` | `Int?`            | 기숙사 층 (비기숙사생인 경우 `null`)                                                                   | `3`                 |
 | `dormitoryRoom`  | `Int?`            | 기숙사 호실 (비기숙사생인 경우 `null`)                                                                  | `301`               |
@@ -154,6 +156,7 @@ curl -X GET "https://api.datagsm.com/v1/students?sortBy=NAME&sortDirection=DESC&
         "number": 1,
         "studentNumber": 1101,
         "major": "SW_DEVELOPMENT",
+        "specialty": "백엔드",
         "role": "GENERAL_STUDENT",
         "dormitoryFloor": 3,
         "dormitoryRoom": 301,
