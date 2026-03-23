@@ -206,7 +206,7 @@ if (userInfo.isStudent()) {
     System.out.println("학번: " + student.getStudentNumber());
     System.out.println("학년: " + student.getGrade());
     System.out.println("반: " + student.getClassNum());
-    System.out.println("전공: " + student.getMajor());
+    System.out.println("학과: " + student.getMajor());
 }`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.oauth.model.UserInfo
@@ -227,7 +227,7 @@ if (userInfo.isStudent) {
     println("학번: \${student.studentNumber}")
     println("학년: \${student.grade}")
     println("반: \${student.classNum}")
-    println("전공: \${student.major}")
+    println("학과: \${student.major}")
 }`} />
 
 </CodeTabs>
@@ -465,7 +465,7 @@ Authorization URL 빌더 모델
 | `classNum`       | `Integer`     | 반         |
 | `number`         | `Integer`     | 번호        |
 | `studentNumber`  | `Integer`     | 학번        |
-| `major`          | `Major`       | 전공        |
+| `major`          | `Major`       | 학과        |
 | `role`           | `StudentRole` | 학생 역할     |
 | `dormitoryFloor` | `Integer`     | 기숙사 층     |
 | `dormitoryRoom`  | `Integer`     | 기숙사 호실    |
@@ -838,7 +838,7 @@ public class Main {
                 System.out.printf("학번: %d%n", student.getStudentNumber());
                 System.out.printf("학년/반/번호: %d학년 %d반 %d번%n",
                     student.getGrade(), student.getClassNum(), student.getNumber());
-                System.out.printf("전공: %s%n", student.getMajor());
+                System.out.printf("학과: %s%n", student.getMajor());
 
                 // 동아리 데이터
                 if (student.getMajorClub() != null) {
@@ -905,7 +905,7 @@ fun main() {
                 println("이름: \${student.name}")
                 println("학번: \${student.studentNumber}")
                 println("학년/반/번호: \${student.grade}학년 \${student.classNum}반 \${student.number}번")
-                println("전공: \${student.major}")
+                println("학과: \${student.major}")
 
                 // 동아리 데이터
                 student.majorClub?.let { club ->
