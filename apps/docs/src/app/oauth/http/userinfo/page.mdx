@@ -56,40 +56,40 @@ Authorization: Bearer {accessToken}
 
 #### 사용자 기본 데이터
 
-| 필드 | 타입 | 설명 | 예시 |
-| --- | --- | --- | --- |
-| `id` | `Long` | 사용자 고유 ID | `1` |
-| `email` | `String` | 사용자 이메일 주소 | `student@gsm.hs.kr` |
-| `role` | `String` | 사용자 역할 (`USER`, `ADMIN`) | `USER` |
-| `isStudent` | `Boolean` | 학생 여부 | `true` |
-| `student` | `Object?` | 학생 상세 데이터 (학생인 경우만 제공, nullable) | - |
+| 필드          | 타입        | 설명                               | 예시                  |
+|-------------|-----------|----------------------------------|---------------------|
+| `id`        | `Long`    | 사용자 고유 ID                        | `1`                 |
+| `email`     | `String`  | 사용자 이메일 주소                       | `student@gsm.hs.kr` |
+| `role`      | `String`  | 사용자 역할 (`USER`, `ADMIN`)         | `USER`              |
+| `isStudent` | `Boolean` | 학생 여부                            | `true`              |
+| `student`   | `Object?` | 학생 상세 데이터 (학생인 경우만 제공, nullable) | -                   |
 
 #### 학생 상세 데이터 (student 객체)
 
 학생인 경우(`isStudent: true`) 다음 필드를 포함합니다.
 
-| 필드 | 타입 | 설명 | 예시 |
-| --- | --- | --- | --- |
-| `id` | `Long` | 학생 고유 ID | `1` |
-| `name` | `String` | 학생 이름 | `홍길동` |
-| `sex` | `String` | 성별 (`MAN`, `WOMAN`) | `MAN` |
-| `grade` | `Int` | 학년 (1-3) | `1` |
-| `classNum` | `Int` | 반 (1-4) | `1` |
-| `number` | `Int` | 번호 (1-18) | `1` |
-| `studentNumber` | `Int` | 학번 (4자리) | `1101` |
-| `major` | `String` | 전공 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`) | `SW_DEVELOPMENT` |
-| `dormitoryFloor` | `Int?` | 기숙사 층 (nullable) | `3` |
-| `dormitoryRoom` | `Int?` | 기숙사 호실 (nullable) | `301` |
-| `role` | `String` | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`) | `GENERAL_STUDENT` |
-| `isLeaveSchool` | `Boolean` | 자퇴 여부 | `false` |
+| 필드               | 타입        | 설명                                                                            | 예시                |
+|------------------|-----------|-------------------------------------------------------------------------------|-------------------|
+| `id`             | `Long`    | 학생 고유 ID                                                                      | `1`               |
+| `name`           | `String`  | 학생 이름                                                                         | `홍길동`             |
+| `sex`            | `String`  | 성별 (`MAN`, `WOMAN`)                                                           | `MAN`             |
+| `grade`          | `Int`     | 학년 (1-3)                                                                      | `1`               |
+| `classNum`       | `Int`     | 반 (1-4)                                                                       | `1`               |
+| `number`         | `Int`     | 번호 (1-18)                                                                     | `1`               |
+| `studentNumber`  | `Int`     | 학번 (4자리)                                                                      | `1101`            |
+| `major`          | `String`  | 학과 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`)                                      | `SW_DEVELOPMENT`  |
+| `dormitoryFloor` | `Int?`    | 기숙사 층 (nullable)                                                              | `3`               |
+| `dormitoryRoom`  | `Int?`    | 기숙사 호실 (nullable)                                                             | `301`             |
+| `role`           | `String`  | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`) | `GENERAL_STUDENT` |
+| `isLeaveSchool`  | `Boolean` | 자퇴 여부                                                                         | `false`           |
 
 ### 오류 응답
 
-| 상태 코드 | 설명 | 원인 |
-| --- | --- | --- |
-| `401 Unauthorized` | 인증 실패 | Access Token이 유효하지 않거나 만료됨 |
-| `403 Forbidden` | 권한 범위 부족 | 요청한 리소스에 대한 권한 범위 부족 |
-| `404 Not Found` | 리소스를 찾을 수 없음 | 사용자 데이터를 찾을 수 없음 |
+| 상태 코드              | 설명           | 원인                         |
+|--------------------|--------------|----------------------------|
+| `401 Unauthorized` | 인증 실패        | Access Token이 유효하지 않거나 만료됨 |
+| `403 Forbidden`    | 권한 범위 부족     | 요청한 리소스에 대한 권한 범위 부족       |
+| `404 Not Found`    | 리소스를 찾을 수 없음 | 사용자 데이터를 찾을 수 없음           |
 
 ### 요청 예시
 
@@ -360,7 +360,7 @@ fun main() {
 }`} />
 </CodeTabs>
 
-### 전공 코드 (Major)
+### 학과 코드 (Major)
 
 `student.major` 필드는 다음 값 중 하나입니다.
 
