@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { SPECIALTY_OPTIONS } from '@repo/shared/constants';
 import { MyAccount } from '@repo/shared/types';
@@ -169,25 +169,9 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
 const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }) => {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
-
-  const isCustomInitial =
-    currentSpecialty !== null &&
-    !SPECIALTY_OPTIONS.includes(currentSpecialty as (typeof SPECIALTY_OPTIONS)[number]);
-
-  const [isCustom, setIsCustom] = useState(isCustomInitial);
-  const [selected, setSelected] = useState(isCustomInitial ? 'custom' : (currentSpecialty ?? 'none'));
-  const [customValue, setCustomValue] = useState(isCustomInitial ? currentSpecialty! : '');
-
-  useEffect(() => {
-    if (!isEditing) {
-      const isCustom =
-        currentSpecialty !== null &&
-        !SPECIALTY_OPTIONS.includes(currentSpecialty as (typeof SPECIALTY_OPTIONS)[number]);
-      setIsCustom(isCustom);
-      setSelected(isCustom ? 'custom' : (currentSpecialty ?? 'none'));
-      setCustomValue(isCustom ? currentSpecialty! : '');
-    }
-  }, [currentSpecialty, isEditing]);
+  const [isCustom, setIsCustom] = useState(false);
+  const [selected, setSelected] = useState('none');
+  const [customValue, setCustomValue] = useState('');
 
   const { mutate: patchSpecialty, isPending } = usePatchMySpecialty({
     onSuccess: () => {
@@ -200,15 +184,22 @@ const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }
     },
   });
 
+  const startEdit = () => {
+    const isCustom =
+      currentSpecialty !== null &&
+      !SPECIALTY_OPTIONS.includes(currentSpecialty as (typeof SPECIALTY_OPTIONS)[number]);
+    setIsCustom(isCustom);
+    setSelected(isCustom ? 'custom' : (currentSpecialty ?? 'none'));
+    setCustomValue(isCustom ? currentSpecialty! : '');
+    setIsEditing(true);
+  };
+
   const handleSave = () => {
     const value = isCustom ? customValue.trim() || null : selected === 'none' ? null : selected;
     patchSpecialty({ specialty: value });
   };
 
   const handleCancel = () => {
-    setIsCustom(isCustomInitial);
-    setSelected(isCustomInitial ? 'custom' : (currentSpecialty ?? 'none'));
-    setCustomValue(isCustomInitial ? currentSpecialty! : '');
     setIsEditing(false);
   };
 
@@ -221,7 +212,7 @@ const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }
             진로 정보
           </CardTitle>
           {!isEditing && (
-            <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
+            <Button variant="ghost" size="icon" onClick={startEdit}>
               <Pencil className="h-4 w-4" />
             </Button>
           )}
