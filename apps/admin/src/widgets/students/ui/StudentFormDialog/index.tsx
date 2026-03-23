@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { SPECIALTY_OPTIONS } from '@repo/shared/constants';
 import { ClubListData, Student } from '@repo/shared/types';
 import {
   Button,
@@ -20,7 +21,7 @@ import {
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { Pencil, Plus } from 'lucide-react';
+import { Pencil, Plus, X } from 'lucide-react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -47,6 +48,7 @@ const StudentFormDialog = ({
   isLoadingClubs = false,
 }: StudentFormDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
+  const [isCustomSpecialty, setIsCustomSpecialty] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
@@ -105,6 +107,7 @@ const StudentFormDialog = ({
             number: student.number,
             role: student.role,
             dormitoryRoomNumber: student.dormitoryRoom,
+            specialty: student.specialty ?? null,
             majorClubId: student.majorClub?.id || null,
             autonomousClubId: student.autonomousClub?.id || null,
           }
@@ -113,6 +116,8 @@ const StudentFormDialog = ({
 
   useEffect(() => {
     if (mode === 'edit' && student && open) {
+      const isCustom = !!student.specialty && !SPECIALTY_OPTIONS.includes(student.specialty as (typeof SPECIALTY_OPTIONS)[number]);
+      setIsCustomSpecialty(isCustom);
       reset({
         name: student.name,
         sex: student.sex,
@@ -122,9 +127,13 @@ const StudentFormDialog = ({
         number: student.number,
         role: student.role,
         dormitoryRoomNumber: student.dormitoryRoom,
+        specialty: student.specialty ?? null,
         majorClubId: student.majorClub?.id || null,
         autonomousClubId: student.autonomousClub?.id || null,
       });
+    }
+    if (!open) {
+      setIsCustomSpecialty(false);
     }
   }, [mode, student, open, reset]);
 
@@ -456,6 +465,77 @@ const StudentFormDialog = ({
                     )}
                   />
                   <FormErrorMessage error={errors.autonomousClubId} />
+                </>
+              )}
+            </div>
+            <div className={cn('col-span-2 space-y-2')}>
+              <Label>전공</Label>
+              {isInactive ? (
+                <div
+                  className={cn(
+                    'border-input h-10 w-full cursor-not-allowed rounded-md border bg-gray-100 dark:bg-gray-800',
+                  )}
+                />
+              ) : (
+                <>
+                  <Controller
+                    control={control}
+                    name="specialty"
+                    render={({ field }) => (
+                      isCustomSpecialty ? (
+                        <div className={cn('flex gap-2')}>
+                          <Input
+                            placeholder="전공 직접 입력"
+                            value={field.value ?? ''}
+                            onChange={(e) => field.onChange(e.target.value || null)}
+                            className={cn('flex-1')}
+                            autoFocus
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              setIsCustomSpecialty(false);
+                              field.onChange(null);
+                            }}
+                          >
+                            <X className={cn('h-4 w-4')} />
+                          </Button>
+                        </div>
+                      ) : (
+                        <Select
+                          value={field.value ?? 'none'}
+                          onValueChange={(val) => {
+                            if (val === 'custom') {
+                              setIsCustomSpecialty(true);
+                              field.onChange('');
+                            } else if (val === 'none') {
+                              field.onChange(null);
+                            } else {
+                              field.onChange(val);
+                            }
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="전공 선택" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none" className={cn('text-gray-500')}>
+                              선택 안 함
+                            </SelectItem>
+                            {SPECIALTY_OPTIONS.map((opt) => (
+                              <SelectItem key={opt} value={opt}>
+                                {opt}
+                              </SelectItem>
+                            ))}
+                            <SelectItem value="custom">직접 입력...</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )
+                    )}
+                  />
+                  <FormErrorMessage error={errors.specialty} />
                 </>
               )}
             </div>
