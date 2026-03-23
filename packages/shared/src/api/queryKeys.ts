@@ -38,6 +38,7 @@ export const studentQueryKeys = {
   postStudentImport: () => ['students', 'imports'] as const,
   getStudentExport: () => ['students', 'exports', 'excel'] as const,
   postGraduateThirdGrade: () => ['students', 'graduate', 'third-grade'] as const,
+  patchMySpecialty: () => ['students', 'me', 'specialty', 'update'] as const,
 } as const;
 
 export const authQueryKeys = {

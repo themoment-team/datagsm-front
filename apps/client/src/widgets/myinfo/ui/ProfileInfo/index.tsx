@@ -1,7 +1,26 @@
+'use client';
+
+import { useState } from 'react';
+
+import { SPECIALTY_OPTIONS } from '@repo/shared/constants';
 import { MyAccount } from '@repo/shared/types';
-import { SectionCard } from '@repo/shared/ui';
+import {
+  Button,
+  Input,
+  PixelIconButton,
+  SectionCard,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-import { GraduationCap, Home, Mail, Shield, User } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Briefcase, GraduationCap, Home, Mail, Pencil, Shield, User, X } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { usePatchMySpecialty } from '../../model/usePatchMySpecialty';
 
 interface ProfileInfoProps {
   data: MyAccount;
@@ -79,6 +98,9 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
         </div>
       </SectionCard>
 
+      {/* 진로 정보 */}
+      <SpecialtyCard currentSpecialty={student.specialty} />
+
       {/* 기숙사 및 동아리 정보 */}
       <SectionCard title="기숙사 및 동아리" icon={<Home />}>
         <div className={cn('grid grid-cols-2')}>
@@ -96,6 +118,138 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
         </div>
       </SectionCard>
     </div>
+  );
+};
+
+const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }) => {
+  const queryClient = useQueryClient();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isCustom, setIsCustom] = useState(false);
+  const [selected, setSelected] = useState('none');
+  const [customValue, setCustomValue] = useState('');
+
+  const { mutate: patchSpecialty, isPending } = usePatchMySpecialty({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts', 'my'] });
+      setIsEditing(false);
+      toast.success('전공이 수정되었습니다.');
+    },
+    onError: () => {
+      toast.error('전공 수정에 실패했습니다.');
+    },
+  });
+
+  const startEdit = () => {
+    const isCustom =
+      currentSpecialty !== null &&
+      !SPECIALTY_OPTIONS.includes(currentSpecialty as (typeof SPECIALTY_OPTIONS)[number]);
+    setIsCustom(isCustom);
+    setSelected(isCustom ? 'custom' : (currentSpecialty ?? 'none'));
+    setCustomValue(isCustom ? currentSpecialty! : '');
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    const value = isCustom ? customValue.trim() || null : selected === 'none' ? null : selected;
+    patchSpecialty({ specialty: value });
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
+  return (
+    <SectionCard
+      title="진로 정보"
+      icon={<Briefcase />}
+      headerAction={
+        !isEditing && (
+          <PixelIconButton size="sm" onClick={startEdit} aria-label="진로 정보 수정">
+            <Pencil className={cn('h-3 w-3')} />
+          </PixelIconButton>
+        )
+      }
+    >
+      <div className={cn('px-5 py-4')}>
+        {!isEditing ? (
+          <p className={cn('text-sm font-mono', !currentSpecialty && 'text-muted-foreground')}>
+            {currentSpecialty ?? '// 미설정'}
+          </p>
+        ) : (
+          <div className={cn('space-y-3')}>
+            {isCustom ? (
+              <div className={cn('flex gap-2')}>
+                <Input
+                  placeholder="진로 직접 입력"
+                  value={customValue}
+                  onChange={(e) => setCustomValue(e.target.value)}
+                  className={cn('flex-1 rounded-none border-foreground font-mono')}
+                  autoFocus
+                />
+                <PixelIconButton
+                  onClick={() => {
+                    setIsCustom(false);
+                    setCustomValue('');
+                    setSelected('none');
+                  }}
+                  aria-label="직접 입력 취소"
+                >
+                  <X className={cn('h-3.5 w-3.5')} />
+                </PixelIconButton>
+              </div>
+            ) : (
+              <Select
+                value={selected ?? 'none'}
+                onValueChange={(val) => {
+                  if (val === 'custom') {
+                    setIsCustom(true);
+                    setSelected('custom');
+                  } else {
+                    setSelected(val);
+                  }
+                }}
+              >
+                <SelectTrigger className={cn('rounded-none border-foreground')}>
+                  <SelectValue placeholder="진로 선택" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none" className={cn('font-mono text-muted-foreground')}>
+                    선택 안 함
+                  </SelectItem>
+                  {SPECIALTY_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt} className={cn('font-mono')}>
+                      {opt}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="custom" className={cn('font-mono')}>
+                    직접 입력...
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+            <div className={cn('flex justify-end gap-2')}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancel}
+                disabled={isPending}
+                className={cn('font-mono text-xs')}
+              >
+                취소
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleSave}
+                disabled={isPending}
+                className={cn('font-mono text-xs')}
+              >
+                {isPending ? '저장 중...' : '저장'}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </SectionCard>
   );
 };
 

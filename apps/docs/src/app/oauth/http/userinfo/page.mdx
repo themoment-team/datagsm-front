@@ -44,6 +44,7 @@ Authorization: Bearer {accessToken}
     "number": 1,
     "studentNumber": 1101,
     "major": "SW_DEVELOPMENT",
+    "specialty": "백엔드",
     "dormitoryFloor": 3,
     "dormitoryRoom": 301,
     "role": "GENERAL_STUDENT",
@@ -78,6 +79,7 @@ Authorization: Bearer {accessToken}
 | `number`         | `Int`     | 번호 (1-18)                                                                                  | `1`               |
 | `studentNumber`  | `Int`     | 학번 (4자리)                                                                                   | `1101`            |
 | `major`          | `String`  | 학과 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`)                                                   | `SW_DEVELOPMENT`  |
+| `specialty`      | `String?` | 전공 (미설정 시 `null`)                                                                          | `백엔드`             |
 | `dormitoryFloor` | `Int?`    | 기숙사 층 (nullable)                                                                           | `3`               |
 | `dormitoryRoom`  | `Int?`    | 기숙사 호실 (nullable)                                                                          | `301`             |
 | `role`           | `String`  | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`, `WITHDRAWN`) | `GENERAL_STUDENT` |
@@ -119,6 +121,7 @@ curl -X GET "https://oauth-userinfo.data.hellogsm.kr/userinfo" \
     "number": 1,
     "studentNumber": 1101,
     "major": "SW_DEVELOPMENT",
+    "specialty": "백엔드",
     "dormitoryFloor": 3,
     "dormitoryRoom": 301,
     "role": "GENERAL_STUDENT",
@@ -272,6 +275,7 @@ public class UserInfoService {
         public Integer number;
         public Integer studentNumber;
         public String major;
+        public String specialty;
         public Integer dormitoryFloor;
         public Integer dormitoryRoom;
         public String role;
@@ -316,6 +320,7 @@ data class Student(
     val number: Int,
     val studentNumber: Int,
     val major: String,
+    val specialty: String?,
     val dormitoryFloor: Int?,
     val dormitoryRoom: Int?,
     val role: String,
