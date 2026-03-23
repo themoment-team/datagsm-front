@@ -41,6 +41,7 @@ export const studentUrl = {
   postStudentImport: () => '/v1/students/imports',
   getStudentExport: () => '/v1/students/exports/excel',
   postGraduateThirdGrade: () => '/v1/students/graduate/third-grade',
+  patchMySpecialty: () => '/v1/students/me/specialty',
 } as const;
 
 export const authUrl = {
