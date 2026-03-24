@@ -8,14 +8,14 @@
       scrollbar-width: thin;
       scrollbar-color: var(--border) transparent;
     }
-  }
 
-  .sidebar-scrollbar::-webkit-scrollbar {
-    width: 4px;
-  }
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
 
-  .sidebar-scrollbar::-webkit-scrollbar-thumb {
-    border-radius: 9999px;
-    background-color: var(--border);
+    &::-webkit-scrollbar-thumb {
+      border-radius: 9999px;
+      background-color: var(--border);
+    }
   }
 }
