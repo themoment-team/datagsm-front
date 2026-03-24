@@ -108,7 +108,9 @@ const ClubList = ({ clubs, isLoading, onEdit }: ClubListProps) => {
                 </TableCell>
                 <TableCell className={cn('font-mono text-xs')}>{club.foundedYear}</TableCell>
                 <TableCell>
-                  {club.leader ? `${club.leader.studentNumber} ${club.leader.name}` : '-'}
+                  {club.leader
+                    ? [club.leader.studentNumber, club.leader.name].filter(Boolean).join(' ')
+                    : '-'}
                 </TableCell>
                 <TableCell>
                   <div className={cn('flex items-center gap-1')}>
