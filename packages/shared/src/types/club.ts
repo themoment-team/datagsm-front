@@ -1,6 +1,7 @@
 import { ApiResponse, StudentMajor, StudentSex } from '@repo/shared/types';
 
 export type ClubType = 'MAJOR_CLUB' | 'AUTONOMOUS_CLUB';
+export type ClubStatus = 'ACTIVE' | 'ABOLISHED';
 
 export interface ClubMember {
   id: number;
@@ -15,7 +16,10 @@ export interface Club {
   id: number;
   name: string;
   type: ClubType;
-  leader: ClubMember;
+  status: ClubStatus;
+  foundedYear: number;
+  abolishedYear?: number;
+  leader: ClubMember | null;
   participants: ClubMember[];
 }
 

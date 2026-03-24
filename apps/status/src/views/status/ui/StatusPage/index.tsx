@@ -9,7 +9,7 @@ interface StatusPageProps {
 
 const StatusPage = ({ initialHealthStatus }: StatusPageProps) => {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-[calc(100vh-4.0625rem)]">
       <main className="container mx-auto px-4 py-16">
         <div className="mx-auto max-w-2xl">
           <div className="mb-8 text-center">

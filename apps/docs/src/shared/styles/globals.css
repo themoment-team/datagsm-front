@@ -1,3 +1,21 @@
 @import 'tailwindcss';
 @source "../../../../../packages/shared/src";
 @import '../../../../../packages/shared/src/styles/globals.css';
+
+@layer utilities {
+  .sidebar-scrollbar {
+    @supports not selector(::-webkit-scrollbar) {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 9999px;
+      background-color: var(--border);
+    }
+  }
+}

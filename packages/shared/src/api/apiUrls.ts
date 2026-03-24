@@ -41,6 +41,7 @@ export const studentUrl = {
   postStudentImport: () => '/v1/students/imports',
   getStudentExport: () => '/v1/students/exports/excel',
   postGraduateThirdGrade: () => '/v1/students/graduate/third-grade',
+  patchMySpecialty: () => '/v1/students/me/specialty',
 } as const;
 
 export const authUrl = {
@@ -104,13 +105,14 @@ export const projectUrl = {
 export const clubUrl = {
   putClubById: (clubId: number) => `/v1/clubs/${clubId}`,
   deleteClubById: (clubId: number) => `/v1/clubs/${clubId}`,
-  getClubs: (page?: number, size?: number, type?: ClubType, clubName?: string) => {
+  getClubs: (page?: number, size?: number, type?: ClubType, clubName?: string, status?: string) => {
     const params = new URLSearchParams();
 
     if (page !== undefined) params.append('page', page.toString());
     if (size !== undefined) params.append('size', size.toString());
     if (type != null) params.append('clubType', type);
     if (clubName !== undefined) params.append('clubName', clubName);
+    if (status !== undefined) params.append('status', status);
 
     const queryString = params.toString();
     return queryString ? `/v1/clubs?${queryString}` : '/v1/clubs';

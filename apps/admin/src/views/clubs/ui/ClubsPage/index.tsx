@@ -31,6 +31,9 @@ const ClubsPage = () => {
     defaultValues: {
       name: '',
       type: undefined,
+      status: 'ACTIVE',
+      foundedYear: undefined,
+      abolishedYear: undefined,
       leaderId: undefined,
       participantIds: [],
     },
@@ -39,11 +42,13 @@ const ClubsPage = () => {
   const handleEditClub = (club: Club) => {
     setEditingClub(club);
     setIsEditDialogOpen(true);
-    // 수정 시 폼 데이터 초기화 (participants)
     clubForm.reset({
       name: club.name,
       type: club.type,
-      leaderId: club.leader.id,
+      status: club.status,
+      foundedYear: club.foundedYear,
+      abolishedYear: club.abolishedYear,
+      leaderId: club.leader?.id,
       participantIds: club.participants.map((p) => p.id),
     });
   };
@@ -52,6 +57,7 @@ const ClubsPage = () => {
     (): ClubFilterType & { page: number } => ({
       clubName: searchParams.get('clubName') || 'all',
       clubType: searchParams.get('clubType') || 'all',
+      status: (searchParams.get('status') as ClubFilterType['status']) || undefined,
       page: Number(searchParams.get('page')) || 0,
     }),
     [searchParams],
@@ -62,6 +68,7 @@ const ClubsPage = () => {
     defaultValues: {
       clubName: initialValues.clubName,
       clubType: initialValues.clubType,
+      status: initialValues.status,
     },
   });
 
@@ -77,7 +84,9 @@ const ClubsPage = () => {
 
   useEffect(() => {
     const hasChanged =
-      debouncedClubName !== initialValues.clubName || filters.clubType !== initialValues.clubType;
+      debouncedClubName !== initialValues.clubName ||
+      filters.clubType !== initialValues.clubType ||
+      filters.status !== initialValues.status;
 
     if (hasChanged) {
       updateURL(
@@ -91,8 +100,10 @@ const ClubsPage = () => {
   }, [
     debouncedClubName,
     filters.clubType,
+    filters.status,
     initialValues.clubName,
     initialValues.clubType,
+    initialValues.status,
     updateURL,
     filters,
   ]);
@@ -112,6 +123,7 @@ const ClubsPage = () => {
     size: PAGE_SIZE,
     clubName: debouncedClubName !== 'all' ? debouncedClubName : undefined,
     clubType: filters.clubType !== 'all' ? (filters.clubType as ClubType) : undefined,
+    status: filters.status,
   };
 
   const { data: clubsData, isLoading: isLoadingClubs } = useGetClubs(queryParams);

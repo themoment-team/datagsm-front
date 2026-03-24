@@ -21,6 +21,7 @@ export interface Student {
   number: number;
   studentNumber: number;
   major: StudentMajor;
+  specialty: string | null;
   role: StudentRole;
   dormitoryFloor: number;
   dormitoryRoom: number;

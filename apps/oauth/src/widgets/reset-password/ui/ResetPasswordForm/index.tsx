@@ -32,6 +32,7 @@ import {
 } from '@/widgets/reset-password';
 
 const RESEND_COOLDOWN_MS = minutesToMs(5);
+const EMAIL_DOMAIN = '@gsm.hs.kr';
 const STORAGE_KEY = 'password_reset_verification_timestamp';
 
 const ResetPasswordForm = () => {
@@ -172,7 +173,7 @@ const ResetPasswordForm = () => {
       lastCheckedCode.current !== debouncedCode
     ) {
       lastCheckedCode.current = debouncedCode;
-      checkEmailCode({ email: emailValue, code: debouncedCode });
+      checkEmailCode({ email: `${emailValue}${EMAIL_DOMAIN}`, code: debouncedCode });
     }
   }, [codeSent, debouncedCode, emailValue, checkEmailCode]);
 
@@ -204,7 +205,7 @@ const ResetPasswordForm = () => {
     if (!isEmailValid) return;
 
     const email = getValues('email');
-    sendEmailCode({ email });
+    sendEmailCode({ email: `${email}${EMAIL_DOMAIN}` });
   };
 
   const formatTime = (seconds: number) => {
@@ -223,7 +224,7 @@ const ResetPasswordForm = () => {
       return;
     }
     const { email, code, password } = data;
-    changePassword({ email, code, newPassword: password });
+    changePassword({ email: `${email}${EMAIL_DOMAIN}`, code, newPassword: password });
   };
 
   return (
@@ -248,13 +249,23 @@ const ResetPasswordForm = () => {
             <Label htmlFor="email">이메일</Label>
             <div className={cn('flex gap-2')}>
               <div className={cn('flex-1 space-y-2')}>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="example@gsm.hs.kr"
-                  {...register('email')}
-                  disabled={remainingTime > 0 || isCodeVerified}
-                />
+                <div className={cn('flex items-center')}>
+                  <Input
+                    id="email"
+                    type="text"
+                    placeholder="이메일을 입력하세요"
+                    {...register('email')}
+                    disabled={remainingTime > 0 || isCodeVerified}
+                    className={cn('rounded-r-none')}
+                  />
+                  <span
+                    className={cn(
+                      'border-input bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap rounded-r-md border border-l-0 px-3 text-sm',
+                    )}
+                  >
+                    {EMAIL_DOMAIN}
+                  </span>
+                </div>
                 <FormErrorMessage error={errors.email} />
               </div>
               <Button
