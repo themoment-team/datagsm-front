@@ -27,6 +27,7 @@ import { useCheckEmailCode, useSendEmailCode, useSignUp } from '@/widgets/signup
 import { PRIVACY_POLICY } from '../../constants/privacyPolicy';
 
 const RESEND_COOLDOWN_MS = minutesToMs(5);
+const EMAIL_DOMAIN = '@gsm.hs.kr';
 const STORAGE_KEY = 'email_verification_timestamp';
 
 const SignUpForm = () => {
@@ -193,7 +194,7 @@ const SignUpForm = () => {
       lastCheckedCode.current !== debouncedCode
     ) {
       lastCheckedCode.current = debouncedCode;
-      checkEmailCode({ email: emailValue, code: debouncedCode });
+      checkEmailCode({ email: `${emailValue}${EMAIL_DOMAIN}`, code: debouncedCode });
     }
   }, [codeSent, debouncedCode, emailValue, checkEmailCode]);
 
@@ -223,7 +224,7 @@ const SignUpForm = () => {
     const isEmailValid = await trigger('email');
     if (!isEmailValid) return;
     const email = getValues('email');
-    sendEmailCode({ email });
+    sendEmailCode({ email: `${email}${EMAIL_DOMAIN}` });
   };
 
   const formatTime = (seconds: number) => {
@@ -242,7 +243,7 @@ const SignUpForm = () => {
       return;
     }
     const { email, password, code } = data;
-    signUp({ email, password, code });
+    signUp({ email: `${email}${EMAIL_DOMAIN}`, password, code });
   };
 
   return (
@@ -288,16 +289,25 @@ const SignUpForm = () => {
               </Label>
               <div className={cn('flex gap-2')}>
                 <div className={cn('flex-1 space-y-1')}>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="example@gsm.hs.kr"
-                    {...register('email')}
-                    disabled={remainingTime > 0 || isCodeVerified}
-                    className={cn(
-                      'rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground',
-                    )}
-                  />
+                  <div className={cn('flex items-center')}>
+                    <Input
+                      id="email"
+                      type="text"
+                      placeholder="이메일을 입력하세요"
+                      {...register('email')}
+                      disabled={remainingTime > 0 || isCodeVerified}
+                      className={cn(
+                        'rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground',
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        'border-foreground bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap border border-l-0 px-3 text-xs font-mono',
+                      )}
+                    >
+                      {EMAIL_DOMAIN}
+                    </span>
+                  </div>
                   <FormErrorMessage error={errors.email} />
                 </div>
                 <button

@@ -6,10 +6,6 @@ import { Menu, X } from 'lucide-react';
 
 import { SidebarContent } from './SidebarContent';
 
-const scrollbarStyles =
-  '[&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-foreground/20';
-
-
 const DocsSidebar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -28,7 +24,7 @@ const DocsSidebar = () => {
 
       {/* Desktop sidebar */}
       <aside
-        className={`${scrollbarStyles} sticky top-24 hidden max-h-[calc(100vh-7rem)] w-60 shrink-0 overflow-y-auto lg:block`}
+        className="sidebar-scrollbar sticky top-24 hidden max-h-[calc(100vh-7rem)] w-60 shrink-0 overflow-y-auto lg:block"
       >
         <div className="mb-5 border-b-2 border-foreground pb-3">
           <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground font-mono">
@@ -61,7 +57,7 @@ const DocsSidebar = () => {
               </button>
             </div>
 
-            <div className={`${scrollbarStyles} flex-1 overflow-y-auto p-4`}>
+            <div className="sidebar-scrollbar flex-1 overflow-y-auto p-4">
               <SidebarContent onLinkClick={() => setMobileMenuOpen(false)} />
             </div>
           </aside>

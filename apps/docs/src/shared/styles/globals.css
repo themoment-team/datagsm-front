@@ -2,3 +2,21 @@
 @import '../../../../../packages/shared/src/styles/globals.css';
 
 @source "../../../../../packages/shared/src";
+
+@layer utilities {
+  .sidebar-scrollbar {
+    @supports not selector(::-webkit-scrollbar) {
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(in srgb, var(--foreground) 20%, transparent) transparent;
+    }
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 9999px;
+      background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+    }
+  }
+}
