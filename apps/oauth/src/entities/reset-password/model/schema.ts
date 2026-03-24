@@ -5,9 +5,8 @@ export const ResetPasswordFormSchema = z
     email: z
       .string()
       .min(1, { message: '이메일을 입력해주세요.' })
-      .pipe(z.email({ message: '올바른 이메일 형식이 아닙니다.' }))
-      .refine((email) => email.endsWith('@gsm.hs.kr'), {
-        message: '@gsm.hs.kr 도메인 계정만 사용 가능합니다.',
+      .regex(/^[a-zA-Z0-9._-]+$/, {
+        message: '이메일 아이디는 영문, 숫자, ., _, - 만 사용할 수 있습니다.',
       }),
     code: z
       .string()
