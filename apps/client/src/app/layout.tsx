@@ -1,6 +1,3 @@
-import { cookies } from 'next/headers';
-
-import { COOKIE_KEYS } from '@repo/shared/constants';
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import { Header, TooltipProvider } from '@repo/shared/ui';
 import type { Metadata } from 'next';
@@ -49,9 +46,6 @@ const RootLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
-
   return (
     <html
       lang="ko"
@@ -65,7 +59,7 @@ const RootLayout = async ({
           <ToastProvider>
             <TooltipProvider>
               <SoundModeProvider>
-                {accessToken && <Header role="client" />}
+                <Header role="client" />
                 {children}
               </SoundModeProvider>
             </TooltipProvider>

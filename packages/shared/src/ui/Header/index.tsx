@@ -1,20 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
-import { COOKIE_KEYS, NAV_LINKS } from '@repo/shared/constants';
+import { CLIENT_URL, COOKIE_KEYS, NAV_LINKS } from '@repo/shared/constants';
 import { cn, deleteCookie } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface HeaderProps {
-  role?: 'admin' | 'client';
+  role?: 'admin' | 'client' | 'docs' | 'status';
 }
 
 const Header = ({ role = 'client' }: HeaderProps) => {
-  const pathname = usePathname();
   const queryClient = useQueryClient();
 
   const handleLogout = () => {
@@ -28,9 +26,6 @@ const Header = ({ role = 'client' }: HeaderProps) => {
     window.location.href = '/';
   };
 
-  const PUBLIC_ROUTES = ['/signup'];
-  if (PUBLIC_ROUTES.includes(pathname)) return null;
-
   const links = NAV_LINKS[role];
 
   return (
@@ -39,7 +34,7 @@ const Header = ({ role = 'client' }: HeaderProps) => {
     >
       <div className={cn('container mx-auto flex h-14 items-center justify-between px-4')}>
         {/* Logo */}
-        <Link href="/" className={cn('flex items-center gap-3')}>
+        <Link href={CLIENT_URL} className={cn('flex items-center gap-3')}>
           <div
             className={cn(
               'flex h-7 w-7 flex-shrink-0 items-center justify-center bg-foreground text-background font-pixel text-[9px]',
@@ -67,15 +62,17 @@ const Header = ({ role = 'client' }: HeaderProps) => {
               {link.label}
             </Link>
           ))}
-          <button
-            onClick={handleLogout}
-            className={cn(
-              'flex cursor-pointer items-center gap-1.5 border border-foreground px-3 py-1.5 text-xs uppercase tracking-widest transition-all hover:bg-foreground hover:text-background font-mono',
-            )}
-          >
-            <LogOut className={cn('h-3 w-3')} />
-            <span className={cn('hidden sm:block')}>Logout</span>
-          </button>
+          {(role === 'client' || role === 'admin') && (
+            <button
+              onClick={handleLogout}
+              className={cn(
+                'flex cursor-pointer items-center gap-1.5 border border-foreground px-3 py-1.5 text-xs uppercase tracking-widest transition-all hover:bg-foreground hover:text-background font-mono',
+              )}
+            >
+              <LogOut className={cn('h-3 w-3')} />
+              <span className={cn('hidden sm:block')}>Logout</span>
+            </button>
+          )}
         </nav>
       </div>
     </header>
