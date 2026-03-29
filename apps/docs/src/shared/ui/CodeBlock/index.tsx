@@ -45,7 +45,7 @@ const CodeBlock = ({ language, children, customStyle }: CodeBlockProps) => {
       style={vscDarkPlus}
       customStyle={{
         margin: 0,
-        borderRadius: '0.5rem',
+        borderRadius: 0,
         fontSize: '0.875rem',
         ...customStyle,
       }}

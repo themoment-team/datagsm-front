@@ -36,7 +36,7 @@ export const getStatusBadgeVariant = (status: ClubStatus) => {
 export const getStatusLabel = (status: ClubStatus) => {
   switch (status) {
     case 'ACTIVE':
-      return '운영중';
+      return '운영 중';
     case 'ABOLISHED':
       return '폐지';
     default:

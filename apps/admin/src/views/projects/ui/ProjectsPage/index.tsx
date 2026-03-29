@@ -7,8 +7,9 @@ import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Project } from '@repo/shared/types';
-import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
+import { CommonPagination, PageHeader } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -129,38 +130,46 @@ const ProjectsPage = () => {
   });
 
   return (
-    <div className={cn('bg-background min-h-[calc(100vh-4.0625rem)]')}>
+    <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
-        <Card>
-          <CardHeader>
-            <div className={cn('flex items-center justify-between')}>
-              <CardTitle className={cn('text-2xl')}>프로젝트 관리</CardTitle>
-              <ProjectFormDialog
-                mode="create"
-                form={projectForm}
-                clubs={clubs}
-                students={studentsData?.data.students}
-                isLoadingStudents={isLoadingStudents}
-              />
-            </div>
+        {/* Page header */}
+        <PageHeader
+          breadcrumb="DATAGSM / Admin"
+          title="프로젝트 관리"
+          action={
+            <ProjectFormDialog
+              mode="create"
+              form={projectForm}
+              clubs={clubs}
+              students={studentsData?.data.students}
+              isLoadingStudents={isLoadingStudents}
+            />
+          }
+        />
 
-            <ProjectFilter register={register} control={control} clubs={clubs} />
-          </CardHeader>
-          <CardContent>
-            <ProjectList
-              projects={projectList}
-              isLoading={isLoadingProjects}
-              onEdit={handleEditProject}
-              onDelete={(projectId) => deleteProject(projectId)}
-            />
-            <CommonPagination
-              isLoading={isLoadingProjects}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </CardContent>
-        </Card>
+        {/* Filters */}
+        <div className={cn('mb-4')}>
+          <ProjectFilter register={register} control={control} clubs={clubs} />
+        </div>
+
+        {/* Table */}
+        <div className={cn('border-2 border-foreground pixel-shadow')}>
+          <ProjectList
+            projects={projectList}
+            isLoading={isLoadingProjects}
+            onEdit={handleEditProject}
+            onDelete={(projectId) => deleteProject(projectId)}
+          />
+        </div>
+
+        <div className={cn('mt-5')}>
+          <CommonPagination
+            isLoading={isLoadingProjects}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
 
         {editingProject && (
           <ProjectFormDialog

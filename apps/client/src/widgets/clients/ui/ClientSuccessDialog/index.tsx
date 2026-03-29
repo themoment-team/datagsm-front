@@ -25,26 +25,26 @@ const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialog
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn('max-w-md')}>
-        <DialogHeader>
-          <DialogTitle className={cn('flex items-center gap-2')}>
-            <Check className={cn('h-5 w-5 text-green-500')} />
-            클라이언트 생성 완료
+      <DialogContent className={cn('max-w-md p-0')}>
+        <DialogHeader className={cn('border-b-2 border-foreground px-6 py-5')}>
+          <DialogTitle className={cn('font-pixel text-[14px] leading-none flex items-center gap-2')}>
+            <Check className={cn('h-4 w-4')} />
+            CLIENT CREATED
           </DialogTitle>
         </DialogHeader>
-        <div className={cn('space-y-4 py-4')}>
+        <div className={cn('space-y-4 px-6 py-6')}>
           <div
             className={cn(
-              'rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950',
+              'rounded-none border-2 border-foreground/50 bg-muted p-4',
             )}
           >
             <div className={cn('flex gap-3')}>
               <AlertTriangle
-                className={cn('mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400')}
+                className={cn('mt-0.5 h-5 w-5 shrink-0 text-foreground')}
               />
-              <div className={cn('text-sm text-amber-800 dark:text-amber-200')}>
-                <p className={cn('font-semibold')}>중요: 클라이언트 시크릿을 안전하게 저장하세요</p>
-                <p className={cn('mt-1 text-amber-700 dark:text-amber-300')}>
+              <div className={cn('text-sm')}>
+                <p className={cn('font-mono text-xs font-medium uppercase tracking-widest')}>중요: 클라이언트 시크릿을 안전하게 저장하세요</p>
+                <p className={cn('mt-1 text-muted-foreground text-xs')}>
                   클라이언트 시크릿은 이 창을 닫으면 다시 확인할 수 없습니다. 반드시 복사하여 안전한
                   곳에 보관하세요.
                 </p>
@@ -54,26 +54,26 @@ const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialog
 
           <div className={cn('space-y-3')}>
             <div className={cn('space-y-1.5')}>
-              <Label className={cn('text-muted-foreground text-xs')}>클라이언트 이름</Label>
-              <p className={cn('font-medium')}>{client.clientName}</p>
+              <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>클라이언트 이름</Label>
+              <p className={cn('font-mono text-sm')}>{client.clientName}</p>
             </div>
 
             <div className={cn('space-y-1.5')}>
-              <Label className={cn('text-muted-foreground text-xs')}>서비스 명칭</Label>
-              <p className={cn('font-medium')}>{client.serviceName}</p>
+              <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>서비스 명칭</Label>
+              <p className={cn('font-mono text-sm')}>{client.serviceName}</p>
             </div>
 
             <div className={cn('space-y-1.5')}>
-              <Label className={cn('text-muted-foreground text-xs')}>클라이언트 ID</Label>
+              <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>클라이언트 ID</Label>
               <div className={cn('flex items-center gap-2')}>
                 <code
-                  className={cn('bg-muted flex-1 break-all rounded px-3 py-2 font-mono text-sm')}
+                  className={cn('bg-muted flex-1 break-all rounded-none border border-foreground/30 px-3 py-2 font-mono text-sm')}
                 >
                   {client.clientId}
                 </code>
                 <Button variant="outline" size="icon" onClick={() => copyClientId(client.clientId)}>
                   {copiedId ? (
-                    <Check className={cn('h-4 w-4 text-green-500')} />
+                    <Check className={cn('h-4 w-4')} />
                   ) : (
                     <Copy className={cn('h-4 w-4')} />
                   )}
@@ -82,10 +82,10 @@ const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialog
             </div>
 
             <div className={cn('space-y-1.5')}>
-              <Label className={cn('text-muted-foreground text-xs')}>클라이언트 시크릿</Label>
+              <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>클라이언트 시크릿</Label>
               <div className={cn('flex items-center gap-2')}>
                 <code
-                  className={cn('bg-muted flex-1 break-all rounded px-3 py-2 font-mono text-sm')}
+                  className={cn('bg-muted flex-1 break-all rounded-none border border-foreground/30 px-3 py-2 font-mono text-sm')}
                 >
                   {client.clientSecret}
                 </code>
@@ -95,7 +95,7 @@ const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialog
                   onClick={() => copySecret(client.clientSecret)}
                 >
                   {copiedSecret ? (
-                    <Check className={cn('h-4 w-4 text-green-500')} />
+                    <Check className={cn('h-4 w-4')} />
                   ) : (
                     <Copy className={cn('h-4 w-4')} />
                   )}
@@ -104,7 +104,7 @@ const ClientSuccessDialog = ({ open, onOpenChange, client }: ClientSuccessDialog
             </div>
           </div>
         </div>
-        <div className={cn('flex justify-end')}>
+        <div className={cn('flex justify-end px-6 pb-6')}>
           <Button onClick={() => onOpenChange(false)}>확인</Button>
         </div>
       </DialogContent>

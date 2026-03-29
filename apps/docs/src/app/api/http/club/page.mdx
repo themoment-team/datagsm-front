@@ -66,16 +66,16 @@ GET /v1/clubs
 
 각 동아리 객체는 다음 필드를 포함합니다.
 
-| 필드               | 타입                         | 설명                                       | 예시           |
-|------------------|----------------------------|------------------------------------------|--------------|
-| `id`             | `Long`                     | 동아리 ID                                   | `1`          |
-| `name`           | `String`                   | 동아리 이름                                   | `SW개발동아리`    |
-| `type`           | `ClubType`                 | 동아리 종류 (`MAJOR_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
-| `status`         | `ClubStatus`               | 동아리 운영 상태 (`ACTIVE`, `ABOLISHED`)        | `ACTIVE`     |
-| `foundedYear`    | `Int`                      | 설립연도                                     | `2020`       |
-| `abolishedYear`  | `Int?`                     | 폐지연도 (운영중인 경우 `null`)                    | `2024`       |
-| `leader`         | `ParticipantInfoDto?`      | 동아리 부장 데이터 (부장이 없는 경우 `null`)            | -            |
-| `participants`   | `List<ParticipantInfoDto>` | 동아리 부원 목록                                | -            |
+| 필드              | 타입                         | 설명                                       | 예시           |
+|-----------------|----------------------------|------------------------------------------|--------------|
+| `id`            | `Long`                     | 동아리 ID                                   | `1`          |
+| `name`          | `String`                   | 동아리 이름                                   | `SW개발동아리`    |
+| `type`          | `ClubType`                 | 동아리 종류 (`MAJOR_CLUB`, `AUTONOMOUS_CLUB`) | `MAJOR_CLUB` |
+| `status`        | `ClubStatus`               | 동아리 운영 상태 (`ACTIVE`, `ABOLISHED`)        | `ACTIVE`     |
+| `foundedYear`   | `Int`                      | 설립연도                                     | `2020`       |
+| `abolishedYear` | `Int?`                     | 폐지연도 (운영 중인 경우 `null`)                   | `2024`       |
+| `leader`        | `ParticipantInfoDto?`      | 동아리 부장 데이터 (부장이 없는 경우 `null`)            | -            |
+| `participants`  | `List<ParticipantInfoDto>` | 동아리 부원 목록                                | -            |
 
 ### 부원 데이터 객체 (ParticipantInfoDto)
 

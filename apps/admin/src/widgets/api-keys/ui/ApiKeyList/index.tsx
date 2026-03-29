@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { useDeleteApiKeyById, useUpdateApiKeyExpirationById } from '@repo/shared/hooks';
 import { ApiKey } from '@repo/shared/types';
 import {
@@ -10,7 +12,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Button,
+  Input,
+  Label,
+  PixelIconButton,
   Skeleton,
   Table,
   TableBody,
@@ -31,6 +35,7 @@ interface ApiKeyListProps {
 
 const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
   const queryClient = useQueryClient();
+  const [extendDays, setExtendDays] = useState<number>(30);
 
   const { mutate: deleteApiKey } = useDeleteApiKeyById({
     onSuccess: () => {
@@ -71,8 +76,7 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
   }
 
   return (
-    <div className={cn('rounded-md border')}>
-      <Table>
+    <Table>
         <TableHeader>
           <TableRow>
             <TableHead className={cn('w-[80px]')}>ID</TableHead>
@@ -94,11 +98,11 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
               </TableCell>
               <TableCell>{formatDate(apiKey.expiresAt)}</TableCell>
               <TableCell>
-                <AlertDialog>
+                <AlertDialog onOpenChange={() => setExtendDays(30)}>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <RefreshCw />
-                    </Button>
+                    <PixelIconButton>
+                      <RefreshCw className={cn('h-3.5 w-3.5')} />
+                    </PixelIconButton>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
@@ -107,10 +111,23 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                         &apos;{apiKey.description}&apos;의 기한을 연장하시겠습니까?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
+                    <div className={cn('my-4 space-y-2')}>
+                      <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>
+                        연장 일수 (1~365)
+                      </Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={365}
+                        value={extendDays}
+                        onChange={(e) => setExtendDays(Math.min(365, Math.max(1, Number(e.target.value))))}
+                        className={cn('w-32')}
+                      />
+                    </div>
                     <AlertDialogFooter>
                       <AlertDialogCancel>취소</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => updateApiKeyExpiration(apiKey.id)}
+                        onClick={() => updateApiKeyExpiration({ apiKeyId: apiKey.id, days: extendDays })}
                         className={cn('bg-black text-white hover:bg-black/50')}
                       >
                         연장
@@ -120,9 +137,9 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                 </AlertDialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className={cn('text-destructive')}>
-                      <Trash2 className={cn('h-4 w-4')} />
-                    </Button>
+                    <PixelIconButton variant="destructive">
+                      <Trash2 className={cn('h-3.5 w-3.5')} />
+                    </PixelIconButton>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
@@ -148,7 +165,6 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
           ))}
         </TableBody>
       </Table>
-    </div>
   );
 };
 

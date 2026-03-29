@@ -31,7 +31,7 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
             <Input
               {...field}
               placeholder="학생 이름으로 검색"
-              className={cn('pl-9')}
+              className={cn('pl-9 rounded-none border-foreground font-mono')}
               onChange={(e) => {
                 field.onChange(e.target.value || 'all');
               }}
@@ -42,13 +42,13 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
       </div>
 
       <div className={cn('flex items-center gap-2')}>
-        <Label className={cn('text-sm')}>학년:</Label>
+        <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>학년:</Label>
         <Controller
           control={control}
           name="grade"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -63,13 +63,13 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
       </div>
 
       <div className={cn('flex items-center gap-2')}>
-        <Label className={cn('text-sm')}>반:</Label>
+        <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>반:</Label>
         <Controller
           control={control}
           name="classNum"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -84,13 +84,13 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
         />
       </div>
       <div className={cn('flex items-center gap-2')}>
-        <Label className={cn('text-sm')}>성별:</Label>
+        <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>성별:</Label>
         <Controller
           control={control}
           name="sex"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -103,13 +103,13 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
         />
       </div>
       <div className={cn('flex items-center gap-2')}>
-        <Label className={cn('text-sm')}>구분:</Label>
+        <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>구분:</Label>
         <Controller
           control={control}
           name="role"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -124,13 +124,13 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
       </div>
 
       <div className={cn('flex items-center gap-2')}>
-        <Label className={cn('text-sm')}>재학 여부:</Label>
+        <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>재학 여부:</Label>
         <Controller
           control={control}
           name="status"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-24')}>
+              <SelectTrigger className={cn('w-24 rounded-none border-foreground')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -144,13 +144,13 @@ const StudentFilter = ({ control }: StudentFilterProps) => {
       </div>
 
       <div className={cn('flex items-center gap-2')}>
-        <Label className={cn('text-sm')}>정렬 기준:</Label>
+        <Label className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}>정렬 기준:</Label>
         <Controller
           control={control}
           name="sortBy"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className={cn('w-32')}>
+              <SelectTrigger className={cn('w-32 rounded-none border-foreground')}>
                 <SelectValue placeholder="기본" />
               </SelectTrigger>
               <SelectContent>

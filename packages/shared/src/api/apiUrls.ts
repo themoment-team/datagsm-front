@@ -112,7 +112,7 @@ export const clubUrl = {
     if (size !== undefined) params.append('size', size.toString());
     if (type != null) params.append('clubType', type);
     if (clubName !== undefined) params.append('clubName', clubName);
-    if (status !== undefined) params.append('status', status);
+    if (status !== undefined) params.append('clubStatus', status);
 
     const queryString = params.toString();
     return queryString ? `/v1/clubs?${queryString}` : '/v1/clubs';

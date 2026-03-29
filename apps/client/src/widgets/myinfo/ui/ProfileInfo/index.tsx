@@ -5,14 +5,10 @@ import { useState } from 'react';
 import { SPECIALTY_OPTIONS } from '@repo/shared/constants';
 import { MyAccount } from '@repo/shared/types';
 import {
-  Badge,
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Input,
+  PixelIconButton,
+  SectionCard,
   Select,
   SelectContent,
   SelectItem,
@@ -49,119 +45,78 @@ const SEX_MAP: Record<string, string> = {
 
 export const ProfileInfo = ({ data }: ProfileInfoProps) => {
   const { student, email, role } = data;
-
   const isAdmin = role === 'ROOT' || role === 'ADMIN';
 
   if (!student) {
     return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-4">
-              <div className="bg-primary flex h-16 w-16 items-center justify-center rounded-full">
-                <User className="text-primary-foreground h-8 w-8" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl">정보 없음</CardTitle>
-                <CardDescription className="mt-1 flex items-center gap-2">
-                  <Badge variant="outline">{email}</Badge>
-                </CardDescription>
-              </div>
+      <div className={cn('space-y-4')}>
+        <SectionCard title="PROFILE" shadow>
+          <div className={cn('flex items-center gap-4 px-5 py-5')}>
+            <div className={cn('flex h-14 w-14 shrink-0 items-center justify-center border-2 border-foreground')}>
+              <User className={cn('h-7 w-7')} />
             </div>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">등록된 학생 정보가 없습니다.</p>
-          </CardContent>
-        </Card>
+            <div>
+              <p className={cn('font-pixel text-[13px]')}>정보 없음</p>
+              <span className={cn('mt-2 inline-block border border-foreground/25 px-1.5 py-0.5 text-xs font-mono')}>{email}</span>
+            </div>
+          </div>
+        </SectionCard>
+        <div className={cn('border-2 border-foreground px-5 py-6 text-center')}>
+          <p className={cn('text-sm font-mono text-muted-foreground')}>{'// 등록된 학생 정보가 없습니다'}</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className={cn('space-y-4')}>
       {/* 프로필 헤더 */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="bg-primary flex h-16 w-16 items-center justify-center rounded-full">
-              <User className="text-primary-foreground h-8 w-8" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl">{student.name}</CardTitle>
-              <CardDescription className="mt-1 flex items-center gap-2">
-                <Badge variant="secondary">{MAJOR_MAP[student.major] || student.major}</Badge>
-                {isAdmin && <Badge variant="destructive">Role: {role}</Badge>}
-              </CardDescription>
+      <SectionCard title="PROFILE" shadow>
+        <div className={cn('flex items-center gap-4 px-5 py-5')}>
+          <div className={cn('flex h-14 w-14 shrink-0 items-center justify-center border-2 border-foreground')}>
+            <User className={cn('h-7 w-7')} />
+          </div>
+          <div>
+            <p className={cn('font-pixel text-[14px]')}>{student.name}</p>
+            <div className={cn('mt-2 flex flex-wrap items-center gap-2')}>
+              <span className={cn('border border-foreground/25 px-1.5 py-0.5 text-xs font-mono uppercase')}>{MAJOR_MAP[student.major] || student.major}</span>
+              {isAdmin && <span className={cn('border border-destructive/40 px-1.5 py-0.5 text-xs font-mono uppercase text-destructive')}>{role}</span>}
             </div>
           </div>
-        </CardHeader>
-      </Card>
+        </div>
+      </SectionCard>
 
-      {/* 기본 정보 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <GraduationCap className="h-5 w-5" />
-            학적 정보
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-flow-col grid-rows-3 gap-4">
-            <InfoItem label="이름" value={student.name} />
-            <InfoItem label="학과" value={MAJOR_MAP[student.major] || student.major} />
-            <InfoItem label="성별" value={SEX_MAP[student.sex] || student.sex} />
-            <InfoItem label="학년" value={`${student.grade}학년`} />
-            <InfoItem label="반" value={`${student.classNum}반`} />
-            <InfoItem label="번호" value={`${student.number}번`} />
-          </div>
-        </CardContent>
-      </Card>
+      {/* 학적 정보 */}
+      <SectionCard title="학적 정보" icon={<GraduationCap />}>
+        <div className={cn('grid grid-flow-col grid-rows-3')}>
+          <InfoItem label="이름" value={student.name} />
+          <InfoItem label="학과" value={MAJOR_MAP[student.major] || student.major} />
+          <InfoItem label="성별" value={SEX_MAP[student.sex] || student.sex} />
+          <InfoItem label="학년" value={`${student.grade}학년`} />
+          <InfoItem label="반" value={`${student.classNum}반`} />
+          <InfoItem label="번호" value={`${student.number}번`} />
+        </div>
+      </SectionCard>
 
-      {/* 전공 */}
+      {/* 진로 정보 */}
       <SpecialtyCard currentSpecialty={student.specialty} />
 
       {/* 기숙사 및 동아리 정보 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Home className="h-5 w-5" />
-            기숙사 및 동아리
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <InfoItem
-              label="기숙사 호실"
-              value={`${student.dormitoryFloor}층 ${student.dormitoryRoom}호`}
-              className="col-span-2"
-            />
-            <InfoItem label="전공동아리" value={student.majorClub?.name || '없음'} />
-            <InfoItem label="자율동아리" value={student.autonomousClub?.name || '없음'} />
-          </div>
-        </CardContent>
-      </Card>
+      <SectionCard title="기숙사 및 동아리" icon={<Home />}>
+        <div className={cn('grid grid-cols-2')}>
+          <InfoItem label="기숙사 호실" value={`${student.dormitoryFloor}층 ${student.dormitoryRoom}호`} className={cn('col-span-2')} />
+          <InfoItem label="전공동아리" value={student.majorClub?.name || '없음'} />
+          <InfoItem label="자율동아리" value={student.autonomousClub?.name || '없음'} />
+        </div>
+      </SectionCard>
 
       {/* 계정 정보 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Shield className="h-5 w-5" />
-            계정 정보
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <InfoItem
-              label="이메일"
-              value={email}
-              icon={<Mail className="text-muted-foreground h-4 w-4" />}
-            />
-            <InfoItem label="학생 역할" value={ROLE_MAP[student.role] || student.role} />
-          </div>
-        </CardContent>
-      </Card>
+      <SectionCard title="계정 정보" icon={<Shield />}>
+        <div className={cn('grid grid-cols-2')}>
+          <InfoItem label="이메일" value={email} icon={<Mail className={cn('h-4 w-4 text-muted-foreground')} />} />
+          <InfoItem label="학생 역할" value={ROLE_MAP[student.role] || student.role} />
+        </div>
+      </SectionCard>
     </div>
   );
 };
@@ -204,47 +159,43 @@ const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Briefcase className="h-5 w-5" />
-            진로 정보
-          </CardTitle>
-          {!isEditing && (
-            <Button variant="ghost" size="icon" onClick={startEdit}>
-              <Pencil className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent>
+    <SectionCard
+      title="진로 정보"
+      icon={<Briefcase />}
+      headerAction={
+        !isEditing && (
+          <PixelIconButton size="sm" onClick={startEdit} aria-label="진로 정보 수정">
+            <Pencil className={cn('h-3 w-3')} />
+          </PixelIconButton>
+        )
+      }
+    >
+      <div className={cn('px-5 py-4')}>
         {!isEditing ? (
-          <p className={cn('font-medium', !currentSpecialty && 'text-muted-foreground')}>
-            {currentSpecialty ?? '미설정'}
+          <p className={cn('text-sm font-mono', !currentSpecialty && 'text-muted-foreground')}>
+            {currentSpecialty ?? '// 미설정'}
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className={cn('space-y-3')}>
             {isCustom ? (
-              <div className="flex gap-2">
+              <div className={cn('flex gap-2')}>
                 <Input
-                  placeholder="전공 직접 입력"
+                  placeholder="진로 직접 입력"
                   value={customValue}
                   onChange={(e) => setCustomValue(e.target.value)}
-                  className="flex-1"
+                  className={cn('flex-1 rounded-none border-foreground font-mono')}
                   autoFocus
                 />
-                <Button
-                  variant="outline"
-                  size="icon"
+                <PixelIconButton
                   onClick={() => {
                     setIsCustom(false);
                     setCustomValue('');
                     setSelected('none');
                   }}
+                  aria-label="직접 입력 취소"
                 >
-                  <X className="h-4 w-4" />
-                </Button>
+                  <X className={cn('h-3.5 w-3.5')} />
+                </PixelIconButton>
               </div>
             ) : (
               <Select
@@ -258,55 +209,56 @@ const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }
                   }
                 }}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="전공 선택" />
+                <SelectTrigger className={cn('rounded-none border-foreground')}>
+                  <SelectValue placeholder="진로 선택" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none" className="text-gray-500">
+                  <SelectItem value="none" className={cn('font-mono text-muted-foreground')}>
                     선택 안 함
                   </SelectItem>
                   {SPECIALTY_OPTIONS.map((opt) => (
-                    <SelectItem key={opt} value={opt}>
+                    <SelectItem key={opt} value={opt} className={cn('font-mono')}>
                       {opt}
                     </SelectItem>
                   ))}
-                  <SelectItem value="custom">직접 입력...</SelectItem>
+                  <SelectItem value="custom" className={cn('font-mono')}>
+                    직접 입력...
+                  </SelectItem>
                 </SelectContent>
               </Select>
             )}
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" size="sm" onClick={handleCancel} disabled={isPending}>
+            <div className={cn('flex justify-end gap-2')}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancel}
+                disabled={isPending}
+                className={cn('font-mono text-xs')}
+              >
                 취소
               </Button>
-              <Button size="sm" onClick={handleSave} disabled={isPending}>
+              <Button
+                size="sm"
+                onClick={handleSave}
+                disabled={isPending}
+                className={cn('font-mono text-xs')}
+              >
                 {isPending ? '저장 중...' : '저장'}
               </Button>
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </SectionCard>
   );
 };
 
-const InfoItem = ({
-  label,
-  value,
-  icon,
-  className,
-}: {
-  label: string;
-  value: string;
-  icon?: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div className={cn('space-y-1', className)}>
-      <p className="text-muted-foreground text-sm">{label}</p>
-      <p className="flex items-center gap-2 font-medium">
-        {icon}
-        {value}
-      </p>
-    </div>
-  );
-};
+const InfoItem = ({ label, value, icon, className }: { label: string; value: string; icon?: React.ReactNode; className?: string }) => (
+  <div className={cn('border-b border-r border-foreground/10 px-5 py-4 last:border-b-0', className)}>
+    <p className={cn('mb-1 text-xs font-mono uppercase tracking-widest text-muted-foreground')}>{label}</p>
+    <p className={cn('flex items-center gap-2 text-sm font-medium')}>
+      {icon}
+      {value}
+    </p>
+  </div>
+);

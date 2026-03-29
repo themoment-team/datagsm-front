@@ -168,7 +168,7 @@ const ClientFormDialog = ({
   };
 
   const isPending = isCreating || isUpdating;
-  const title = mode === 'create' ? '클라이언트 추가' : '클라이언트 수정';
+  const title = mode === 'create' ? 'ADD CLIENT' : 'EDIT CLIENT';
   const submitText = mode === 'create' ? '추가' : '저장';
 
   const defaultTrigger =
@@ -200,22 +200,30 @@ const ClientFormDialog = ({
       }}
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
-      <DialogContent className={cn('max-h-[90vh] max-w-lg overflow-y-auto')}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+      <DialogContent
+        className={cn('max-h-[90vh] max-w-lg overflow-y-auto p-0')}
+      >
+        <DialogHeader className={cn('border-b-2 border-foreground px-6 py-5')}>
+          <DialogTitle className={cn('font-pixel text-[14px] leading-none')}>{title}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-4 py-4')}>
+        <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-6 px-6 py-6')}>
           <div className={cn('space-y-2')}>
-            <Label htmlFor="clientName">클라이언트 이름</Label>
-            <Input id="clientName" placeholder="클라이언트 이름 입력" {...register('clientName')} />
+            <Label htmlFor="clientName" className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>클라이언트 이름</Label>
+            <Input
+              id="clientName"
+              placeholder="클라이언트 이름 입력"
+              className={cn('border-foreground rounded-none font-mono')}
+              {...register('clientName')}
+            />
             <FormErrorMessage error={errors.clientName} />
           </div>
 
           <div className={cn('space-y-2')}>
-            <Label htmlFor="serviceName">서비스 명칭</Label>
+            <Label htmlFor="serviceName" className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>서비스 명칭</Label>
             <Input
               id="serviceName"
               placeholder="로그인 페이지에 노출될 서비스 명칭 입력"
+              className={cn('border-foreground rounded-none font-mono')}
               {...register('serviceName')}
             />
             <FormErrorMessage error={errors.serviceName} />
@@ -223,10 +231,10 @@ const ClientFormDialog = ({
 
           {mode === 'edit' && client && (
             <div className={cn('space-y-2')}>
-              <Label>클라이언트 ID</Label>
+              <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>클라이언트 ID</Label>
               <code
                 className={cn(
-                  'bg-muted text-muted-foreground block rounded px-3 py-2 font-mono text-sm',
+                  'bg-muted text-muted-foreground block rounded-none border border-foreground/30 px-3 py-2 font-mono text-sm',
                 )}
               >
                 {client.id}
@@ -236,7 +244,7 @@ const ClientFormDialog = ({
 
           <div className={cn('space-y-2')}>
             <div className={cn('flex items-center justify-between')}>
-              <Label>리다이렉트 URL</Label>
+              <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>리다이렉트 URL</Label>
               <Button
                 type="button"
                 variant="outline"
@@ -254,6 +262,7 @@ const ClientFormDialog = ({
                   <div className={cn('flex items-center gap-2')}>
                     <Input
                       placeholder="https://example.com/callback"
+                      className={cn('border-foreground rounded-none font-mono')}
                       {...register(`redirectUrls.${index}.url` as const)}
                     />
                     {fields.length > 1 && (
@@ -276,16 +285,16 @@ const ClientFormDialog = ({
 
           {mode === 'create' && (
             <div className={cn('space-y-2')}>
-              <Label>권한 범위</Label>
+              <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>권한 범위</Label>
               <p className={cn('text-muted-foreground text-xs')}>
                 클라이언트가 접근할 수 있는 권한 범위를 선택하세요.
               </p>
-              <div className={cn('mt-2 space-y-4 rounded-md border p-4')}>
+              <div className={cn('mt-2 space-y-4 rounded-none border-2 border-foreground p-4')}>
                 {availableScopes?.data?.list.map((category) => {
                   const hasMultipleScopes = category.scopes.length > 1;
                   return (
                     <div key={category.title}>
-                      <h4 className={cn('text-muted-foreground mb-2 text-xs font-semibold')}>
+                      <h4 className={cn('text-muted-foreground mb-2 font-mono text-xs font-semibold uppercase tracking-widest')}>
                         {category.title}
                       </h4>
                       <div className={cn('space-y-2')}>
@@ -305,7 +314,7 @@ const ClientFormDialog = ({
                             <div className={cn('flex-1')}>
                               <label
                                 htmlFor={`${mode}-${scope.scope}`}
-                                className={cn('cursor-pointer text-sm font-medium leading-none')}
+                                className={cn('cursor-pointer font-mono text-xs leading-none')}
                               >
                                 {scope.scope}
                               </label>
@@ -326,7 +335,7 @@ const ClientFormDialog = ({
             </div>
           )}
 
-          <div className={cn('flex justify-end pt-4')}>
+          <div className={cn('flex justify-end pt-2')}>
             {mode === 'edit' ? (
               <>
                 <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
