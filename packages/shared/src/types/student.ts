@@ -27,6 +27,8 @@ export interface Student {
   dormitoryRoom: number;
   majorClub: Club | null;
   autonomousClub: Club | null;
+  githubId: string | null;
+  githubUrl: string | null;
 }
 
 export interface StudentListData {
