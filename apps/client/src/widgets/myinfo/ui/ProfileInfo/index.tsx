@@ -17,10 +17,10 @@ import {
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { Briefcase, GraduationCap, Home, Mail, Pencil, Shield, User, X } from 'lucide-react';
+import { Briefcase, GraduationCap, Home, Link, Mail, Pencil, Shield, User, X } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { usePatchMySpecialty } from '../../model/usePatchMySpecialty';
+import { usePatchMyGithubId, usePatchMySpecialty } from '@/widgets/myinfo';
 
 interface ProfileInfoProps {
   data: MyAccount;
@@ -100,6 +100,9 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
 
       {/* 진로 정보 */}
       <SpecialtyCard currentSpecialty={student.specialty} />
+
+      {/* GitHub 정보 */}
+      <GithubIdCard currentGithubId={student.githubId} />
 
       {/* 기숙사 및 동아리 정보 */}
       <SectionCard title="기숙사 및 동아리" icon={<Home />}>
@@ -227,6 +230,96 @@ const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }
                 </SelectContent>
               </Select>
             )}
+            <div className={cn('flex justify-end gap-2')}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancel}
+                disabled={isPending}
+                className={cn('font-mono text-xs')}
+              >
+                취소
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleSave}
+                disabled={isPending}
+                className={cn('font-mono text-xs')}
+              >
+                {isPending ? '저장 중...' : '저장'}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </SectionCard>
+  );
+};
+
+const GithubIdCard = ({ currentGithubId }: { currentGithubId: string | null }) => {
+  const queryClient = useQueryClient();
+  const [isEditing, setIsEditing] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+
+  const { mutate: patchGithubId, isPending } = usePatchMyGithubId({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts', 'my'] });
+      setIsEditing(false);
+      toast.success('GitHub ID가 수정되었습니다.');
+    },
+    onError: () => {
+      toast.error('GitHub ID 수정에 실패했습니다.');
+    },
+  });
+
+  const startEdit = () => {
+    setInputValue(currentGithubId ?? '');
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    patchGithubId({ githubId: inputValue.trim() || null });
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
+  return (
+    <SectionCard
+      title="GitHub"
+      icon={<Link />}
+      headerAction={
+        !isEditing && (
+          <PixelIconButton size="sm" onClick={startEdit} aria-label="GitHub ID 수정">
+            <Pencil className={cn('h-3 w-3')} />
+          </PixelIconButton>
+        )
+      }
+    >
+      <div className={cn('px-5 py-4')}>
+        {!isEditing ? (
+          currentGithubId ? (
+            <a
+              href={`https://github.com/${currentGithubId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn('text-sm font-mono underline underline-offset-4')}
+            >
+              {currentGithubId}
+            </a>
+          ) : (
+            <p className={cn('text-sm font-mono text-muted-foreground')}>{'// 미설정'}</p>
+          )
+        ) : (
+          <div className={cn('space-y-3')}>
+            <Input
+              placeholder="GitHub 아이디 입력"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              className={cn('rounded-none border-foreground font-mono')}
+              autoFocus
+            />
             <div className={cn('flex justify-end gap-2')}>
               <Button
                 variant="outline"
