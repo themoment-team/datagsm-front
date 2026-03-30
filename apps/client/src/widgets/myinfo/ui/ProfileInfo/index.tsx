@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { accountQueryKeys } from '@repo/shared/api';
 import { SPECIALTY_OPTIONS } from '@repo/shared/constants';
 import { MyAccount } from '@repo/shared/types';
 import {
@@ -133,7 +134,7 @@ const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }
 
   const { mutate: patchSpecialty, isPending } = usePatchMySpecialty({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accounts', 'my'] });
+      queryClient.invalidateQueries({ queryKey: accountQueryKeys.getMy() });
       setIsEditing(false);
       toast.success('전공이 수정되었습니다.');
     },
@@ -263,7 +264,7 @@ const GithubIdCard = ({ currentGithubId }: { currentGithubId: string | null }) =
 
   const { mutate: patchGithubId, isPending } = usePatchMyGithubId({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accounts', 'my'] });
+      queryClient.invalidateQueries({ queryKey: accountQueryKeys.getMy() });
       setIsEditing(false);
       toast.success('GitHub ID가 수정되었습니다.');
     },
