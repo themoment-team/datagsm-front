@@ -33,7 +33,7 @@ export const AddStudentSchema = z.object({
     .min(201, { message: '201호 이상으로 입력해주세요.' })
     .max(518, { message: '518호 이하로 입력해주세요.' }),
   specialty: z.string().min(1, { message: '전공을 입력해주세요.' }).nullable().optional(),
-  githubId: z.string().nullable().optional(),
+  githubId: z.preprocess((val) => (val === '' ? null : val), z.string().nullable().optional()),
   majorClubId: z.number({ message: '전공 동아리를 선택해주세요.' }).min(1).nullable(),
   autonomousClubId: z.number({ message: '자율 동아리를 선택해주세요.' }).min(1).nullable(),
 });
