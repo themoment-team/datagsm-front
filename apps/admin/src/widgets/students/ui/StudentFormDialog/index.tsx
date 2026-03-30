@@ -568,7 +568,7 @@ const StudentFormDialog = ({
                   <Input
                     placeholder="GitHub 아이디 입력"
                     className={cn('rounded-none border-foreground font-mono')}
-                    {...register('githubId')}
+                    {...register('githubId', { setValueAs: (v) => (v === '' ? null : v) })}
                   />
                   <FormErrorMessage error={errors.githubId} />
                 </>
