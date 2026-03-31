@@ -438,7 +438,7 @@ sequenceDiagram
 const CONFIG = {
     CLIENT_ID: 'your-client-id-here',
     REDIRECT_URI: 'http://localhost:3000/callback.html',
-    AUTH_URL: 'https://oauth.data.hellogsm.kr/v1/oauth/authorize',
+    AUTH_URL: 'https://oauth.authorization.datagsm.kr/v1/oauth/authorize',
 };
 
 // DOM 요소
@@ -993,7 +993,7 @@ export class AuthService {
   private async exchangeCodeForToken(code: string, redirectUri: string): Promise<TokenResponse> {
     const tokenUrl = this.configService.get<string>(
       'DATAGSM_TOKEN_URL',
-      'https://oauth.data.hellogsm.kr/v1/oauth/token',
+      'https://oauth.authorization.datagsm.kr/v1/oauth/token',
     );
     const clientId = this.configService.get<string>('DATAGSM_CLIENT_ID');
     const clientSecret = this.configService.get<string>('DATAGSM_CLIENT_SECRET');
@@ -1032,7 +1032,7 @@ export class AuthService {
   private async fetchUserInfo(accessToken: string): Promise<DataGsmUserInfo> {
     const userInfoUrl = this.configService.get<string>(
       'DATAGSM_USERINFO_URL',
-      'https://oauth-userinfo.data.hellogsm.kr/userinfo',
+      'https://oauth.resource.datagsm.kr/userinfo',
     );
 
     try {
@@ -1436,8 +1436,8 @@ app.use(csurf({
 DATAGSM_CLIENT_ID=your-client-id
 DATAGSM_CLIENT_SECRET=your-client-secret
 DATAGSM_REDIRECT_URI=http://localhost:3000/callback.html
-DATAGSM_TOKEN_URL=https://oauth.data.hellogsm.kr/v1/oauth/token
-DATAGSM_USERINFO_URL=https://oauth-userinfo.data.hellogsm.kr/userinfo
+DATAGSM_TOKEN_URL=https://oauth.authorization.datagsm.kr/v1/oauth/token
+DATAGSM_USERINFO_URL=https://oauth.resource.datagsm.kr/userinfo
 
 # Session
 SESSION_SECRET=your-session-secret-minimum-32-chars
