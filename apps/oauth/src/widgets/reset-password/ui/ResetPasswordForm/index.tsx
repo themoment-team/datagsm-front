@@ -6,9 +6,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { EMAIL_DOMAIN } from '@repo/shared/constants';
 import { useDebounce } from '@repo/shared/hooks';
 import { FormErrorMessage, Input, Label } from '@repo/shared/ui';
-import { cn, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
+import { cn, formatEmailWithDomain, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
 import { Eye, EyeOff } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -21,7 +22,6 @@ import {
 } from '@/widgets/reset-password';
 
 const RESEND_COOLDOWN_MS = minutesToMs(5);
-const EMAIL_DOMAIN = '@gsm.hs.kr';
 const STORAGE_KEY = 'password_reset_verification_timestamp';
 
 const ResetPasswordForm = () => {
@@ -156,7 +156,7 @@ const ResetPasswordForm = () => {
       lastCheckedCode.current !== debouncedCode
     ) {
       lastCheckedCode.current = debouncedCode;
-      checkEmailCode({ email: `${emailValue}${EMAIL_DOMAIN}`, code: debouncedCode });
+      checkEmailCode({ email: formatEmailWithDomain(emailValue), code: debouncedCode });
     }
   }, [codeSent, debouncedCode, emailValue, checkEmailCode]);
 
@@ -186,7 +186,7 @@ const ResetPasswordForm = () => {
     const isEmailValid = await trigger('email');
     if (!isEmailValid) return;
     const email = getValues('email');
-    sendEmailCode({ email: `${email}${EMAIL_DOMAIN}` });
+    sendEmailCode({ email: formatEmailWithDomain(email) });
   };
 
   const formatTime = (seconds: number) => {
@@ -204,9 +204,8 @@ const ResetPasswordForm = () => {
       toast.error('이메일 인증을 완료해주세요.');
       return;
     }
-    const { code, password } = data;
-    const email = data.email.endsWith(EMAIL_DOMAIN) ? data.email : `${data.email}${EMAIL_DOMAIN}`;
-    changePassword({ email, code, newPassword: password });
+    const { email, code, password } = data;
+    changePassword({ email: formatEmailWithDomain(email), code, newPassword: password });
   };
 
   return (

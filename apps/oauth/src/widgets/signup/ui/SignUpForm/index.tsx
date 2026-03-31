@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { EMAIL_DOMAIN } from '@repo/shared/constants';
 import { useDebounce } from '@repo/shared/hooks';
 import {
   Checkbox,
@@ -16,7 +17,7 @@ import {
   Input,
   Label,
 } from '@repo/shared/ui';
-import { cn, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
+import { cn, formatEmailWithDomain, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
 import { Eye, EyeOff } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -27,7 +28,6 @@ import { useCheckEmailCode, useSendEmailCode, useSignUp } from '@/widgets/signup
 import { PRIVACY_POLICY } from '../../constants/privacyPolicy';
 
 const RESEND_COOLDOWN_MS = minutesToMs(5);
-const EMAIL_DOMAIN = '@gsm.hs.kr';
 const STORAGE_KEY = 'email_verification_timestamp';
 
 const SignUpForm = () => {
@@ -195,7 +195,7 @@ const SignUpForm = () => {
     ) {
       lastCheckedCode.current = debouncedCode;
       checkEmailCode({
-        email: emailValue.endsWith(EMAIL_DOMAIN) ? emailValue : `${emailValue}${EMAIL_DOMAIN}`,
+        email: formatEmailWithDomain(emailValue),
         code: debouncedCode,
       });
     }
@@ -226,9 +226,8 @@ const SignUpForm = () => {
   const handleSendCode = async () => {
     const isEmailValid = await trigger('email');
     if (!isEmailValid) return;
-    const inputEmail = getValues('email');
-    const email = inputEmail.endsWith(EMAIL_DOMAIN) ? inputEmail : `${inputEmail}${EMAIL_DOMAIN}`;
-    sendEmailCode({ email });
+    const email = getValues('email');
+    sendEmailCode({ email: formatEmailWithDomain(email) });
   };
 
   const formatTime = (seconds: number) => {
@@ -246,9 +245,8 @@ const SignUpForm = () => {
       toast.error('이메일 인증을 완료해주세요.');
       return;
     }
-    const { code, password } = data;
-    const email = data.email.endsWith(EMAIL_DOMAIN) ? data.email : `${data.email}${EMAIL_DOMAIN}`;
-    signUp({ email, password, code });
+    const { email, password, code } = data;
+    signUp({ email: formatEmailWithDomain(email), password, code });
   };
 
   return (
