@@ -204,36 +204,33 @@ const ResetPasswordForm = () => {
       toast.error('이메일 인증을 완료해주세요.');
       return;
     }
-    const { email, code, password } = data;
-    changePassword({ email: `${email}${EMAIL_DOMAIN}`, code, newPassword: password });
+    const { code, password } = data;
+    const email = data.email.endsWith(EMAIL_DOMAIN) ? data.email : `${data.email}${EMAIL_DOMAIN}`;
+    changePassword({ email, code, newPassword: password });
   };
 
   return (
-    <div
-      className={cn('w-full max-w-md border-2 border-foreground bg-background pixel-shadow-lg')}
-    >
+    <div className={cn('border-foreground bg-background pixel-shadow-lg w-full max-w-md border-2')}>
       {/* Title bar */}
       <div
         className={cn(
-          'flex items-center gap-3 border-b-2 border-foreground bg-foreground px-5 py-3',
+          'border-foreground bg-foreground flex items-center gap-3 border-b-2 px-5 py-3',
         )}
       >
         <div
           className={cn(
-            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground text-[8px] font-pixel',
+            'bg-background text-foreground font-pixel flex h-6 w-6 flex-shrink-0 items-center justify-center text-[8px]',
           )}
         >
           D
         </div>
-        <span className={cn('text-[9px] text-background font-pixel')}>
-          DataGSM
-        </span>
+        <span className={cn('text-background font-pixel text-[9px]')}>DataGSM</span>
       </div>
 
       {/* Header */}
-      <div className={cn('border-b border-border/50 px-6 py-5')}>
-        <h1 className={cn('text-xl font-bold text-foreground')}>비밀번호 재설정</h1>
-        <p className={cn('mt-1 text-sm text-muted-foreground')}>새로운 비밀번호를 설정하세요</p>
+      <div className={cn('border-border/50 border-b px-6 py-5')}>
+        <h1 className={cn('text-foreground text-xl font-bold')}>비밀번호 재설정</h1>
+        <p className={cn('text-muted-foreground mt-1 text-sm')}>새로운 비밀번호를 설정하세요</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -242,7 +239,7 @@ const ResetPasswordForm = () => {
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="email"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+              className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
             >
               Email
             </Label>
@@ -256,12 +253,12 @@ const ResetPasswordForm = () => {
                     {...register('email')}
                     disabled={remainingTime > 0 || isCodeVerified}
                     className={cn(
-                      'rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground',
+                      'border-foreground focus-visible:border-foreground rounded-none focus-visible:ring-0',
                     )}
                   />
                   <span
                     className={cn(
-                      'border-foreground bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap border border-l-0 px-3 text-xs font-mono',
+                      'border-foreground bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap border border-l-0 px-3 font-mono text-xs',
                     )}
                   >
                     {EMAIL_DOMAIN}
@@ -274,7 +271,7 @@ const ResetPasswordForm = () => {
                 onClick={handleSendCode}
                 disabled={isButtonDisabled}
                 className={cn(
-                  'h-9 flex-shrink-0 cursor-pointer border-2 border-foreground bg-foreground px-3 text-xs uppercase tracking-wider text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 font-mono',
+                  'border-foreground bg-foreground text-background hover:bg-background hover:text-foreground h-9 flex-shrink-0 cursor-pointer border-2 px-3 font-mono text-xs uppercase tracking-wider transition-all disabled:cursor-not-allowed disabled:opacity-50',
                 )}
               >
                 {isSendingCode
@@ -292,7 +289,7 @@ const ResetPasswordForm = () => {
           <div className={cn('space-y-1.5', !codeSent && 'cursor-not-allowed')}>
             <Label
               htmlFor="code"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+              className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
             >
               Verify Code
             </Label>
@@ -303,13 +300,11 @@ const ResetPasswordForm = () => {
               {...register('code')}
               disabled={!codeSent || isCodeVerified}
               className={cn(
-                'rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground',
+                'border-foreground focus-visible:border-foreground rounded-none focus-visible:ring-0',
               )}
             />
             {isCodeVerified ? (
-              <p className={cn('text-xs text-green-600 font-mono')}>
-                {'>'} 인증 완료
-              </p>
+              <p className={cn('font-mono text-xs text-green-600')}>{'>'} 인증 완료</p>
             ) : (
               <FormErrorMessage error={errors.code} />
             )}
@@ -319,7 +314,7 @@ const ResetPasswordForm = () => {
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="password"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+              className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
             >
               New Password
             </Label>
@@ -331,7 +326,7 @@ const ResetPasswordForm = () => {
                 {...register('password')}
                 disabled={!isCodeVerified || isChangingPassword}
                 className={cn(
-                  'rounded-none border-foreground pr-10 focus-visible:ring-0 focus-visible:border-foreground',
+                  'border-foreground focus-visible:border-foreground rounded-none pr-10 focus-visible:ring-0',
                 )}
               />
               <button
@@ -339,7 +334,7 @@ const ResetPasswordForm = () => {
                 aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                 onClick={() => setShowPassword(!showPassword)}
                 className={cn(
-                  'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground',
+                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
                   (!isCodeVerified || isChangingPassword) && 'cursor-not-allowed opacity-50',
                 )}
                 disabled={!isCodeVerified || isChangingPassword}
@@ -354,7 +349,7 @@ const ResetPasswordForm = () => {
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="confirmPassword"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+              className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
             >
               Confirm Password
             </Label>
@@ -366,7 +361,7 @@ const ResetPasswordForm = () => {
                 {...register('confirmPassword')}
                 disabled={!isCodeVerified || isChangingPassword}
                 className={cn(
-                  'rounded-none border-foreground pr-10 focus-visible:ring-0 focus-visible:border-foreground',
+                  'border-foreground focus-visible:border-foreground rounded-none pr-10 focus-visible:ring-0',
                 )}
               />
               <button
@@ -374,16 +369,12 @@ const ResetPasswordForm = () => {
                 aria-label={showConfirmPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className={cn(
-                  'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground',
+                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
                   (!isCodeVerified || isChangingPassword) && 'cursor-not-allowed opacity-50',
                 )}
                 disabled={!isCodeVerified || isChangingPassword}
               >
-                {showConfirmPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
             <FormErrorMessage error={errors.confirmPassword} />
@@ -394,17 +385,17 @@ const ResetPasswordForm = () => {
           <button
             type="submit"
             className={cn(
-              'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
+              'border-foreground bg-foreground text-background hover:bg-background hover:text-foreground w-full cursor-pointer border-2 py-3 font-mono text-xs font-bold uppercase tracking-widest transition-all disabled:cursor-not-allowed disabled:opacity-60',
             )}
             disabled={isChangingPassword || !isCodeVerified || !isFormValid}
           >
             {isChangingPassword ? 'PROCESSING...' : 'RESET PASSWORD'}
           </button>
 
-          <p className={cn('text-center text-xs text-muted-foreground')}>
+          <p className={cn('text-muted-foreground text-center text-xs')}>
             <Link
               href="/signin"
-              className={cn('font-semibold text-foreground underline underline-offset-2')}
+              className={cn('text-foreground font-semibold underline underline-offset-2')}
             >
               로그인으로 돌아가기
             </Link>

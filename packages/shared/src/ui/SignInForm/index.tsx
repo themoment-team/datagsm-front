@@ -51,41 +51,41 @@ const SignInForm = ({
     resolver: zodResolver(SignInFormSchema),
   });
 
-  const handleFormSubmit = handleSubmit((data) =>
-    onSubmit({ email: `${data.email}${EMAIL_DOMAIN}`, password: data.password }),
-  );
+  const handleFormSubmit = handleSubmit((data) => {
+    const email = data.email.endsWith(EMAIL_DOMAIN) ? data.email : `${data.email}${EMAIL_DOMAIN}`;
+    onSubmit({ email, password: data.password });
+  });
 
   return (
-    <div
-      className={cn('w-full max-w-sm border-2 border-foreground bg-background pixel-shadow-lg')}
-    >
+    <div className={cn('border-foreground bg-background pixel-shadow-lg w-full max-w-sm border-2')}>
       {/* Title bar */}
-      <div className={cn('flex items-center gap-3 border-b-2 border-foreground bg-foreground px-5 py-3')}>
+      <div
+        className={cn(
+          'border-foreground bg-foreground flex items-center gap-3 border-b-2 px-5 py-3',
+        )}
+      >
         <div
           className={cn(
-            'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground font-pixel text-[8px]',
+            'bg-background text-foreground font-pixel flex h-6 w-6 flex-shrink-0 items-center justify-center text-[8px]',
           )}
         >
           D
         </div>
-        <span
-          className={cn('text-background font-pixel text-[9px]')}
-        >
-          DataGSM
-        </span>
+        <span className={cn('text-background font-pixel text-[9px]')}>DataGSM</span>
       </div>
 
       {/* Header */}
-      <div className={cn('border-b border-border/50 px-6 py-5')}>
-        <h1 className={cn('text-xl font-bold text-foreground')}>로그인</h1>
+      <div className={cn('border-border/50 border-b px-6 py-5')}>
+        <h1 className={cn('text-foreground text-xl font-bold')}>로그인</h1>
         {isLoadingServiceName ? (
           <Skeleton className={cn('mt-2 h-4 w-48')} />
         ) : (
-          <p className={cn('mt-1 text-sm text-muted-foreground')}>
+          <p className={cn('text-muted-foreground mt-1 text-sm')}>
             DataGSM 계정으로{' '}
             {serviceName ? (
               <>
-                <strong className={cn('font-semibold text-foreground')}>{serviceName}</strong>에{' '}
+                <strong className={cn('text-foreground font-semibold')}>{serviceName}</strong>
+                에{' '}
               </>
             ) : (
               ''
@@ -98,7 +98,7 @@ const SignInForm = ({
       {remainingTime !== null && remainingTime !== undefined && remainingTime <= 300 && (
         <div
           className={cn(
-            'mx-6 mt-4 flex items-center gap-2 border px-3 py-2 text-xs font-medium font-mono',
+            'mx-6 mt-4 flex items-center gap-2 border px-3 py-2 font-mono text-xs font-medium',
             remainingTime <= 30
               ? 'border-destructive text-destructive'
               : 'border-amber-600 text-amber-600',
@@ -115,7 +115,7 @@ const SignInForm = ({
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="emailLocal"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+              className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
             >
               Email
             </Label>
@@ -126,11 +126,13 @@ const SignInForm = ({
                 placeholder="이메일을 입력하세요"
                 {...register('email')}
                 disabled={isPending}
-                className={cn('flex-1 rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground')}
+                className={cn(
+                  'border-foreground focus-visible:border-foreground flex-1 rounded-none focus-visible:ring-0',
+                )}
               />
               <span
                 className={cn(
-                  'flex items-center whitespace-nowrap border border-l-0 border-foreground bg-muted px-3 text-xs text-muted-foreground font-mono',
+                  'border-foreground bg-muted text-muted-foreground flex items-center whitespace-nowrap border border-l-0 px-3 font-mono text-xs',
                 )}
               >
                 {EMAIL_DOMAIN}
@@ -143,7 +145,7 @@ const SignInForm = ({
           <div className={cn('space-y-1.5')}>
             <Label
               htmlFor="password"
-              className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+              className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
             >
               Password
             </Label>
@@ -154,14 +156,16 @@ const SignInForm = ({
                 placeholder="비밀번호를 입력하세요"
                 {...register('password')}
                 disabled={isPending}
-                className={cn('rounded-none border-foreground pr-10 focus-visible:ring-0 focus-visible:border-foreground')}
+                className={cn(
+                  'border-foreground focus-visible:border-foreground rounded-none pr-10 focus-visible:ring-0',
+                )}
               />
               <button
                 type="button"
                 aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                 onClick={() => setShowPassword(!showPassword)}
                 className={cn(
-                  'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground',
+                  'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
                   isPending && 'cursor-not-allowed opacity-50',
                 )}
                 disabled={isPending}
@@ -181,7 +185,7 @@ const SignInForm = ({
           <button
             type="submit"
             className={cn(
-              'w-full cursor-pointer border-2 border-foreground bg-foreground px-4 py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
+              'border-foreground bg-foreground text-background hover:bg-background hover:text-foreground w-full cursor-pointer border-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-widest transition-all disabled:cursor-not-allowed disabled:opacity-60',
             )}
             disabled={isPending}
           >
@@ -196,7 +200,7 @@ const SignInForm = ({
                   href={signupHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn('font-semibold text-foreground underline underline-offset-2')}
+                  className={cn('text-foreground font-semibold underline underline-offset-2')}
                 >
                   회원가입
                 </Link>
@@ -207,7 +211,7 @@ const SignInForm = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    'text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground',
+                    'text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors',
                   )}
                 >
                   비밀번호를 잊으셨나요?
