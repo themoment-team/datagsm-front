@@ -108,6 +108,7 @@ const StudentFormDialog = ({
             role: student.role,
             dormitoryRoomNumber: student.dormitoryRoom,
             specialty: student.specialty ?? null,
+            githubId: student.githubId ?? null,
             majorClubId: student.majorClub?.id || null,
             autonomousClubId: student.autonomousClub?.id || null,
           }
@@ -128,6 +129,7 @@ const StudentFormDialog = ({
         role: student.role,
         dormitoryRoomNumber: student.dormitoryRoom,
         specialty: student.specialty ?? null,
+        githubId: student.githubId ?? null,
         majorClubId: student.majorClub?.id || null,
         autonomousClubId: student.autonomousClub?.id || null,
       });
@@ -550,6 +552,25 @@ const StudentFormDialog = ({
                     )}
                   />
                   <FormErrorMessage error={errors.specialty} />
+                </>
+              )}
+            </div>
+            <div className={cn('col-span-2 space-y-2')}>
+              <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>GitHub ID</Label>
+              {isInactive ? (
+                <div
+                  className={cn(
+                    'h-10 w-full cursor-not-allowed rounded-none border border-foreground/30 bg-muted',
+                  )}
+                />
+              ) : (
+                <>
+                  <Input
+                    placeholder="GitHub 아이디 입력"
+                    className={cn('rounded-none border-foreground font-mono')}
+                    {...register('githubId', { setValueAs: (v) => (v === '' ? null : v) })}
+                  />
+                  <FormErrorMessage error={errors.githubId} />
                 </>
               )}
             </div>

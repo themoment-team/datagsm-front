@@ -42,6 +42,7 @@ export const studentUrl = {
   getStudentExport: () => '/v1/students/exports/excel',
   postGraduateThirdGrade: () => '/v1/students/graduate/third-grade',
   patchMySpecialty: () => '/v1/students/me/specialty',
+  patchMyGithubId: () => '/v1/students/me/github-id',
 } as const;
 
 export const authUrl = {
