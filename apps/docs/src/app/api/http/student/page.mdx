@@ -40,6 +40,8 @@ GET /v1/students
 | `sex`              | `Sex`           | 선택    | 성별 (`MAN`, `WOMAN`)                                                                                 | `MAN`               |
 | `role`             | `StudentRole`   | 선택    | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`, `WITHDRAWN`)          | `GENERAL_STUDENT`   |
 | `specialty`        | `String`        | 선택    | 전공                                                                                                  | `백엔드`               |
+| `major`            | `Major`         | 선택    | 학과 (`SW_DEVELOPMENT`, `SMART_IOT`, `AI`)                                                            | `SW_DEVELOPMENT`    |
+| `githubId`         | `String`        | 선택    | GitHub 아이디                                                                                          | `octocat`           |
 | `dormitoryRoom`    | `Int`           | 선택    | 기숙사 호실                                                                                              | `301`               |
 | `includeGraduates` | `Boolean`       | 선택    | 졸업생 포함 여부 (기본값: false)                                                                              | `false`             |
 | `includeWithdrawn` | `Boolean`       | 선택    | 자퇴생 포함 여부 (기본값: false)                                                                              | `false`             |
@@ -88,23 +90,25 @@ GET /v1/students
 
 각 학생 객체는 다음 필드를 포함합니다.
 
-| 필드               | 타입                | 설명                                                                                         | 예시                  |
-|------------------|-------------------|--------------------------------------------------------------------------------------------|---------------------|
-| `id`             | `Long`            | 학생 ID                                                                                      | `1`                 |
-| `name`           | `String`          | 이름                                                                                         | `홍길동`               |
-| `sex`            | `Sex`             | 성별 (`MAN`, `WOMAN`)                                                                        | `WOMAN`             |
-| `email`          | `String`          | 이메일                                                                                        | `student@gsm.hs.kr` |
-| `grade`          | `Int?`            | 학년 (졸업/자퇴 시 `null`)                                                                        | `1`                 |
-| `classNum`       | `Int?`            | 반 (졸업/자퇴 시 `null`)                                                                         | `1`                 |
-| `number`         | `Int?`            | 번호 (졸업/자퇴 시 `null`)                                                                        | `1`                 |
-| `studentNumber`  | `Int?`            | 학번 (졸업/자퇴 시 `null`)                                                                        | `1101`              |
-| `major`          | `Major?`          | 학과 (졸업/자퇴 시 `null`, 값: `SW_DEVELOPMENT`, `SMART_IOT`, `AI`)                                | `SW_DEVELOPMENT`    |
-| `specialty`      | `String?`         | 전공 (미설정 시 `null`)                                                                          | `백엔드`               |
-| `role`           | `StudentRole`     | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`, `WITHDRAWN`) | `GENERAL_STUDENT`   |
-| `dormitoryFloor` | `Int?`            | 기숙사 층 (비기숙사생인 경우 `null`)                                                                   | `3`                 |
-| `dormitoryRoom`  | `Int?`            | 기숙사 호실 (비기숙사생인 경우 `null`)                                                                  | `301`               |
-| `majorClub`      | `ClubSummaryDto?` | 전공 동아리 (미소속인 경우 `null`)                                                                    | -                   |
-| `autonomousClub` | `ClubSummaryDto?` | 자율 동아리 (미소속인 경우 `null`)                                                                    | -                   |
+| 필드               | 타입                | 설명                                                                                         | 예시                           |
+|------------------|-------------------|--------------------------------------------------------------------------------------------|------------------------------|
+| `id`             | `Long`            | 학생 ID                                                                                      | `1`                          |
+| `name`           | `String`          | 이름                                                                                         | `홍길동`                        |
+| `sex`            | `Sex`             | 성별 (`MAN`, `WOMAN`)                                                                        | `WOMAN`                      |
+| `email`          | `String`          | 이메일                                                                                        | `student@gsm.hs.kr`          |
+| `grade`          | `Int?`            | 학년 (졸업/자퇴 시 `null`)                                                                        | `1`                          |
+| `classNum`       | `Int?`            | 반 (졸업/자퇴 시 `null`)                                                                         | `1`                          |
+| `number`         | `Int?`            | 번호 (졸업/자퇴 시 `null`)                                                                        | `1`                          |
+| `studentNumber`  | `Int?`            | 학번 (졸업/자퇴 시 `null`)                                                                        | `1101`                       |
+| `major`          | `Major?`          | 학과 (졸업/자퇴 시 `null`, `SW_DEVELOPMENT`, `SMART_IOT`, `AI`)                                   | `SW_DEVELOPMENT`             |
+| `specialty`      | `String?`         | 전공 (미설정 시 `null`)                                                                          | `백엔드`                        |
+| `role`           | `StudentRole`     | 학생 역할 (`STUDENT_COUNCIL`, `DORMITORY_MANAGER`, `GENERAL_STUDENT`, `GRADUATE`, `WITHDRAWN`) | `GENERAL_STUDENT`            |
+| `dormitoryFloor` | `Int?`            | 기숙사 층 (비기숙사생인 경우 `null`)                                                                   | `3`                          |
+| `dormitoryRoom`  | `Int?`            | 기숙사 호실 (비기숙사생인 경우 `null`)                                                                  | `301`                        |
+| `majorClub`      | `ClubSummaryDto?` | 전공 동아리 (미소속인 경우 `null`)                                                                    | -                            |
+| `autonomousClub` | `ClubSummaryDto?` | 자율 동아리 (미소속인 경우 `null`)                                                                    | -                            |
+| `githubId`       | `String?`         | GitHub 아이디 (미설정 시 `null`)                                                                  | `octocat`                    |
+| `githubUrl`      | `String?`         | GitHub 프로필 URL (미설정 시 `null`)                                                              | `https://github.com/octocat` |
 
 ### 동아리 객체 (ClubSummaryDto)
 
@@ -165,7 +169,9 @@ curl -X GET "https://api.datagsm.com/v1/students?sortBy=NAME&sortDirection=DESC&
           "name": "SW개발동아리",
           "type": "MAJOR_CLUB"
         },
-        "autonomousClub": null
+        "autonomousClub": null,
+        "githubId": "octocat",
+        "githubUrl": "https://github.com/octocat"
       }
     ]
   }

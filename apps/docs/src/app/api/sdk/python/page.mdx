@@ -76,6 +76,8 @@ from datagsm_openapi.api.student import StudentRequest
 request = StudentRequest(
     grade=1,  # 1학년
     class_num=1,  # 1반
+    major="SW_DEVELOPMENT",  # SW 개발과
+    github_id="octocat",  # GitHub ID
     page=0,  # 첫 번째 페이지
     size=50  # 페이지당 50명
 )
@@ -117,9 +119,9 @@ SDK는 다음과 같은 API 클라이언트를 제공합니다.
 
 **`client.students`** - 학생 데이터 조회 및 관리
 
-| 메서드                     | 설명              | 반환 타입             |
-|-------------------------|-----------------|-------------------|
-| `get_students(request)` | 조건에 맞는 학생 목록 조회 | `StudentResponse` |
+| 메서드                     | 설명               | 반환 타입             |
+|-------------------------|------------------|-------------------|
+| `get_students(request)` | 조건에 맞는 학생 목록 조회  | `StudentResponse` |
 | `get_student(id)`       | 특정 학생의 상세 데이터 조회 | `Student`         |
 
 ```python

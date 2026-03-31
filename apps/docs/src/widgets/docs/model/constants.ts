@@ -64,7 +64,11 @@ export const docsSections: DocsSection[] = [
           {
             label: '.NET SDK',
             href: '/api/sdk/dotnet',
-          }
+          },
+          {
+            label: 'SDK 버저닝 컨벤션',
+            href: '/api/sdk/versioning',
+          },
         ],
       },
     ],
@@ -137,6 +141,10 @@ export const docsSections: DocsSection[] = [
           {
             label: 'Java / Kotlin SDK',
             href: '/oauth/sdk/java',
+          },
+          {
+            label: 'SDK 버저닝 컨벤션',
+            href: '/oauth/sdk/versioning',
           },
         ],
       },
