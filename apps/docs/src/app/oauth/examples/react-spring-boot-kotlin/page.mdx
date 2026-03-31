@@ -262,7 +262,7 @@ class OAuthService {
 
   constructor() {
     this.tokenUrl = process.env.REACT_APP_DATAGSM_TOKEN_URL ||
-                    'https://oauth.data.hellogsm.kr/v1/oauth/token';
+                    'https://oauth.authorization.datagsm.kr/v1/oauth/token';
     this.clientId = process.env.REACT_APP_DATAGSM_CLIENT_ID || '';
     this.clientSecret = process.env.REACT_APP_DATAGSM_CLIENT_SECRET || '';
     this.backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8080';
@@ -344,8 +344,8 @@ const LoginPage: React.FC = () => {
     clientId: process.env.REACT_APP_DATAGSM_CLIENT_ID || '',
     clientSecret: process.env.REACT_APP_DATAGSM_CLIENT_SECRET || '',
     redirectUri: process.env.REACT_APP_REDIRECT_URI || 'http://localhost:3000/callback',
-    authUrl: 'https://oauth.data.hellogsm.kr/v1/oauth/authorize',
-    tokenUrl: 'https://oauth.data.hellogsm.kr/v1/oauth/token',
+    authUrl: 'https://oauth.authorization.datagsm.kr/v1/oauth/authorize',
+    tokenUrl: 'https://oauth.authorization.datagsm.kr/v1/oauth/token',
   });
 
   return (
@@ -691,7 +691,7 @@ class OAuthService(
     private val logger = LoggerFactory.getLogger(OAuthService::class.java)
     private val httpClient: HttpClient = HttpClient.newHttpClient()
 
-    @Value("\\${'$'}{datagsm.oauth.userinfo-url:https://oauth-userinfo.data.hellogsm.kr/userinfo}")
+    @Value("\\${'$'}{datagsm.oauth.userinfo-url:https://oauth.resource.datagsm.kr/userinfo}")
     private lateinit var userInfoUrl: String
 
     /**
@@ -1094,8 +1094,8 @@ REACT_APP_DATAGSM_CLIENT_SECRET=your-client-secret-here
 REACT_APP_REDIRECT_URI=http://localhost:3000/callback
 
 # DataGSM API URLs
-REACT_APP_DATAGSM_AUTH_URL=https://oauth.data.hellogsm.kr/v1/oauth/authorize
-REACT_APP_DATAGSM_TOKEN_URL=https://oauth.data.hellogsm.kr/v1/oauth/token
+REACT_APP_DATAGSM_AUTH_URL=https://oauth.authorization.datagsm.kr/v1/oauth/authorize
+REACT_APP_DATAGSM_TOKEN_URL=https://oauth.authorization.datagsm.kr/v1/oauth/token
 
 # 백엔드 API URL
 REACT_APP_BACKEND_URL=http://localhost:8080`} />
@@ -1122,7 +1122,7 @@ REACT_APP_BACKEND_URL=http://localhost:8080`} />
 # DataGSM OAuth 설정
 datagsm:
   oauth:
-    userinfo-url: https://oauth-userinfo.data.hellogsm.kr/userinfo
+    userinfo-url: https://oauth.resource.datagsm.kr/userinfo
 
 # JWT 설정
 jwt:

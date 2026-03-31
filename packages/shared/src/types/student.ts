@@ -23,13 +23,12 @@ export interface Student {
   major: StudentMajor;
   specialty: string | null;
   githubId: string | null;
+  githubUrl: string | null;
   role: StudentRole;
   dormitoryFloor: number;
   dormitoryRoom: number;
   majorClub: Club | null;
   autonomousClub: Club | null;
-  githubId: string | null;
-  githubUrl: string | null;
 }
 
 export interface StudentListData {

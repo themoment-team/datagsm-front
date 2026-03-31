@@ -163,7 +163,7 @@ const LoginPage = () => {
     const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
 
     // DataGSM OAuth 인가 엔드포인트로 리다이렉트
-    const authUrl = new URL('https://oauth.data.hellogsm.kr/v1/oauth/authorize');
+    const authUrl = new URL('https://oauth.authorization.datagsm.kr/v1/oauth/authorize');
     authUrl.searchParams.append('client_id', clientId);
     authUrl.searchParams.append('redirect_uri', redirectUri);
     authUrl.searchParams.append('state', state);
@@ -618,10 +618,10 @@ public class OAuthService {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("\${datagsm.oauth.token-url:https://oauth.data.hellogsm.kr/v1/oauth/token}")
+    @Value("\${datagsm.oauth.token-url:https://oauth.authorization.datagsm.kr/v1/oauth/token}")
     private String tokenUrl;
 
-    @Value("\${datagsm.oauth.userinfo-url:https://oauth-userinfo.data.hellogsm.kr/userinfo}")
+    @Value("\${datagsm.oauth.userinfo-url:https://oauth.resource.datagsm.kr/userinfo}")
     private String userInfoUrl;
 
     @Value("\${datagsm.oauth.client-id}")
@@ -1144,8 +1144,8 @@ BACKEND_URL=http://localhost:8080`} />
 # DataGSM OAuth 설정
 datagsm:
   oauth:
-    token-url: https://oauth.data.hellogsm.kr/v1/oauth/token
-    userinfo-url: https://oauth-userinfo.data.hellogsm.kr/userinfo
+    token-url: https://oauth.authorization.datagsm.kr/v1/oauth/token
+    userinfo-url: https://oauth.resource.datagsm.kr/userinfo
     client-id: \${OAUTH_CLIENT_ID}
     redirect-uri: \${OAUTH_REDIRECT_URI:http://localhost:3000/callback}
 

@@ -349,7 +349,7 @@ from datagsm_openapi import DataGsmClient
 
 # DataGSM 클라이언트 설정
 DATAGSM_API_KEY = os.getenv("DATAGSM_API_KEY")
-DATAGSM_BASE_URL = os.getenv("DATAGSM_BASE_URL", "https://openapi.data.hellogsm.kr")
+DATAGSM_BASE_URL = os.getenv("DATAGSM_BASE_URL", "https://openapi.datagsm.kr")
 
 # views.py
 from django.http import JsonResponse
@@ -407,7 +407,7 @@ class MyAppConfig(AppConfig):
 
 ```bash
 export DATAGSM_API_KEY="your-api-key-here"
-export DATAGSM_BASE_URL="https://openapi.data.hellogsm.kr"  # 선택사항
+export DATAGSM_BASE_URL="https://openapi.datagsm.kr"  # 선택사항
 ```
 
 ## 일반 Python 프로젝트에서 사용하기
