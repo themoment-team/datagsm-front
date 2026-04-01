@@ -31,7 +31,9 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
             <Input
               {...field}
               placeholder="동아리 이름으로 검색"
-              className={cn('pl-9')}
+              className={cn(
+                'border-foreground rounded-none pl-9 font-mono',
+              )}
               onChange={(e) => {
                 field.onChange(e.target.value || 'all');
               }}
@@ -43,13 +45,19 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
 
       <div className={cn('flex items-center gap-4')}>
         <div className={cn('flex items-center gap-2')}>
-          <Label className={cn('text-sm')}>타입:</Label>
+          <Label
+            className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
+          >
+            타입:
+          </Label>
           <Controller
             control={control}
             name="clubType"
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className={cn('w-24')}>
+                <SelectTrigger
+                  className={cn('border-foreground w-24 rounded-none')}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -62,18 +70,27 @@ const ClubFilter = ({ control }: ClubFilterProps) => {
           />
         </div>
         <div className={cn('flex items-center gap-2')}>
-          <Label className={cn('text-sm')}>상태:</Label>
+          <Label
+            className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
+          >
+            상태:
+          </Label>
           <Controller
             control={control}
             name="status"
             render={({ field }) => (
-              <Select value={field.value ?? 'all'} onValueChange={(v) => field.onChange(v === 'all' ? undefined : v)}>
-                <SelectTrigger className={cn('w-24')}>
+              <Select
+                value={field.value ?? 'all'}
+                onValueChange={(value) => field.onChange(value === 'all' ? undefined : value)}
+              >
+                <SelectTrigger
+                  className={cn('border-foreground w-24 rounded-none')}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">전체</SelectItem>
-                  <SelectItem value="ACTIVE">운영중</SelectItem>
+                  <SelectItem value="ACTIVE">운영 중</SelectItem>
                   <SelectItem value="ABOLISHED">폐지</SelectItem>
                 </SelectContent>
               </Select>

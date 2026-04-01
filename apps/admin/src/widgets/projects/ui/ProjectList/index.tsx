@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Button,
+  PixelIconButton,
   Skeleton,
   Table,
   TableBody,
@@ -30,8 +30,7 @@ interface ProjectListProps {
 
 const ProjectList = ({ projects, isLoading, onEdit, onDelete }: ProjectListProps) => {
   return (
-    <div className={cn('mb-4 overflow-x-auto rounded-md border')}>
-      <Table>
+    <Table>
         <TableHeader>
           <TableRow>
             <TableHead>이름</TableHead>
@@ -66,14 +65,14 @@ const ProjectList = ({ projects, isLoading, onEdit, onDelete }: ProjectListProps
                 <TableCell>{project.club?.name || '무소속'}</TableCell>
                 <TableCell>
                   <div className={cn('flex items-center gap-2')}>
-                    <Button variant="ghost" size="icon" onClick={() => onEdit?.(project)}>
-                      <Pencil className={cn('h-4 w-4')} />
-                    </Button>
+                    <PixelIconButton onClick={() => onEdit?.(project)}>
+                      <Pencil className={cn('h-3.5 w-3.5')} />
+                    </PixelIconButton>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className={cn('text-destructive')}>
-                          <Trash2 className={cn('h-4 w-4')} />
-                        </Button>
+                        <PixelIconButton variant="destructive">
+                          <Trash2 className={cn('h-3.5 w-3.5')} />
+                        </PixelIconButton>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
@@ -107,7 +106,6 @@ const ProjectList = ({ projects, isLoading, onEdit, onDelete }: ProjectListProps
           )}
         </TableBody>
       </Table>
-    </div>
   );
 };
 

@@ -1,12 +1,13 @@
 @import 'tailwindcss';
-@source "../../../../../packages/shared/src";
 @import '../../../../../packages/shared/src/styles/globals.css';
+
+@source "../../../../../packages/shared/src";
 
 @layer utilities {
   .sidebar-scrollbar {
     @supports not selector(::-webkit-scrollbar) {
       scrollbar-width: thin;
-      scrollbar-color: var(--border) transparent;
+      scrollbar-color: color-mix(in srgb, var(--foreground) 20%, transparent) transparent;
     }
 
     &::-webkit-scrollbar {
@@ -15,7 +16,7 @@
 
     &::-webkit-scrollbar-thumb {
       border-radius: 9999px;
-      background-color: var(--border);
+      background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
     }
   }
 }

@@ -11,8 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Badge,
-  Button,
+  PixelIconButton,
   Skeleton,
   Table,
   TableBody,
@@ -49,56 +48,60 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
   return (
     <TableRow>
       <TableCell className={cn('font-medium')}>{client.clientName}</TableCell>
-      <TableCell>{client.serviceName}</TableCell>
+      <TableCell className={cn('text-muted-foreground')}>{client.serviceName}</TableCell>
       <TableCell>
         <div className={cn('flex items-center gap-2')}>
-          <code className={cn('bg-muted rounded px-2 py-1 font-mono text-xs')}>{client.id}</code>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn('h-6 w-6')}
-            onClick={() => copy(client.id)}
-          >
-            {copied ? (
-              <Check className={cn('h-3 w-3 text-green-500')} />
-            ) : (
-              <Copy className={cn('h-3 w-3')} />
-            )}
-          </Button>
+          <code className={cn('bg-muted px-2 py-1 text-xs font-mono')}>
+            {client.id}
+          </code>
+          <PixelIconButton size="sm" onClick={() => copy(client.id)}>
+            {copied ? <Check className={cn('h-3 w-3')} /> : <Copy className={cn('h-3 w-3')} />}
+          </PixelIconButton>
         </div>
       </TableCell>
       <TableCell>
         <div className={cn('flex flex-wrap gap-1')}>
           {client.redirectUrl.map((url, index) => (
-            <Badge key={index} variant="secondary" className={cn('font-mono text-xs')}>
+            <span
+              key={index}
+              className={cn('border border-foreground/25 px-1.5 py-0.5 text-xs text-muted-foreground font-mono')}
+            >
               {url}
-            </Badge>
+            </span>
           ))}
         </div>
       </TableCell>
       <TableCell>
         <div className={cn('flex flex-wrap gap-1')}>
           {client.scopes.map((scope, index) => (
-            <Badge key={index} variant="outline" className={cn('text-xs')}>
+            <span
+              key={index}
+              className={cn('bg-foreground px-1.5 py-0.5 text-xs uppercase text-background font-mono')}
+            >
               {scope}
-            </Badge>
+            </span>
           ))}
         </div>
       </TableCell>
       <TableCell>
         <div className={cn('flex items-center gap-1')}>
-          <Button variant="ghost" size="icon" onClick={() => onEdit(client)}>
-            <Pencil className={cn('h-4 w-4')} />
-          </Button>
+          <PixelIconButton onClick={() => onEdit(client)}>
+            <Pencil className={cn('h-3.5 w-3.5')} />
+          </PixelIconButton>
+
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" title="삭제">
-                <Trash2 className={cn('text-destructive h-4 w-4')} />
-              </Button>
+              <PixelIconButton variant="destructive">
+                <Trash2 className={cn('h-3.5 w-3.5')} />
+              </PixelIconButton>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent
+              className={cn('border-2 border-foreground pixel-shadow')}
+            >
               <AlertDialogHeader>
-                <AlertDialogTitle>클라이언트 삭제</AlertDialogTitle>
+                <AlertDialogTitle className="font-pixel text-[12px] leading-[1.8]">
+                  클라이언트 삭제
+                </AlertDialogTitle>
                 <AlertDialogDescription>
                   정말로 &apos;{client.clientName}&apos; 클라이언트를 삭제하시겠습니까? 이 작업은
                   되돌릴 수 없습니다.
@@ -137,61 +140,47 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
   });
 
   return (
-    <div className={cn('rounded-md border')}>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>클라이언트 이름</TableHead>
-            <TableHead>서비스 명칭</TableHead>
-            <TableHead>클라이언트 ID</TableHead>
-            <TableHead>리다이렉트 URL</TableHead>
-            <TableHead>권한 범위</TableHead>
-            <TableHead className={cn('w-25')}>작업</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
-            Array.from({ length: 5 }).map((_, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Skeleton className={cn('h-4 w-32')} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className={cn('h-4 w-24')} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className={cn('h-6 w-48')} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className={cn('h-4 w-60')} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className={cn('h-4 w-24')} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className={cn('h-8 w-16')} />
-                </TableCell>
-              </TableRow>
-            ))
-          ) : clients && clients.length > 0 ? (
-            clients.map((client) => (
-              <ClientListItem
-                key={client.id}
-                client={client}
-                onEdit={onEdit}
-                onDelete={(id) => deleteClient(id)}
-              />
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={6} className={cn('h-24 text-center')}>
-                등록된 클라이언트가 없습니다.
-              </TableCell>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>클라이언트 이름</TableHead>
+          <TableHead>서비스 명칭</TableHead>
+          <TableHead>클라이언트 ID</TableHead>
+          <TableHead>리다이렉트 URL</TableHead>
+          <TableHead>권한 범위</TableHead>
+          <TableHead className={cn('w-24')}>작업</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, index) => (
+            <TableRow key={index}>
+              <TableCell><Skeleton className={cn('h-4 w-32')} /></TableCell>
+              <TableCell><Skeleton className={cn('h-4 w-24')} /></TableCell>
+              <TableCell><Skeleton className={cn('h-6 w-48')} /></TableCell>
+              <TableCell><Skeleton className={cn('h-4 w-60')} /></TableCell>
+              <TableCell><Skeleton className={cn('h-4 w-24')} /></TableCell>
+              <TableCell><Skeleton className={cn('h-7 w-16')} /></TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+          ))
+        ) : clients && clients.length > 0 ? (
+          clients.map((client) => (
+            <ClientListItem
+              key={client.id}
+              client={client}
+              onEdit={onEdit}
+              onDelete={(id) => deleteClient(id)}
+            />
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={6} className={cn('h-24 text-center text-muted-foreground font-mono')}>
+              {'>'} 등록된 클라이언트가 없습니다.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 };
 

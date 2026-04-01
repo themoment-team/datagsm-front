@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { useURLFilters } from '@repo/shared/hooks';
-import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
+import { CommonPagination, PageHeader } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
 import { Client, CreateClientData } from '@/entities/clients';
@@ -55,43 +55,45 @@ const ClientsPage = () => {
   };
 
   return (
-    <div className={cn('bg-background h-[calc(100vh-4.0625rem)]')}>
+    <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
-        <Card>
-          <CardHeader>
-            <div className={cn('flex items-center justify-between')}>
-              <CardTitle className={cn('text-2xl')}>OAuth 클라이언트 관리</CardTitle>
-              <ClientFormDialog mode="create" onCreateSuccess={handleCreateSuccess} />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <ClientList clients={clients} isLoading={isLoading} onEdit={handleEdit} />
-
-            {/* Pagination */}
-            <div className={cn('mt-4')}>
-              <CommonPagination
-                isLoading={isLoading}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <ClientSuccessDialog
-          open={isSuccessDialogOpen}
-          onOpenChange={setIsSuccessDialogOpen}
-          client={createdClient}
+        {/* Page header */}
+        <PageHeader
+          breadcrumb="DATAGSM / OAuth"
+          title="클라이언트"
+          action={<ClientFormDialog mode="create" onCreateSuccess={handleCreateSuccess} />}
         />
 
-        <ClientFormDialog
-          mode="edit"
-          client={editingClient ?? undefined}
-          open={isEditDialogOpen}
-          onOpenChange={setIsEditDialogOpen}
-        />
+        {/* Table */}
+        <div
+          className={cn('border-2 border-foreground pixel-shadow')}
+        >
+          <ClientList clients={clients} isLoading={isLoading} onEdit={handleEdit} />
+        </div>
+
+        {/* Pagination */}
+        <div className={cn('mt-5')}>
+          <CommonPagination
+            isLoading={isLoading}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </main>
+
+      <ClientSuccessDialog
+        open={isSuccessDialogOpen}
+        onOpenChange={setIsSuccessDialogOpen}
+        client={createdClient}
+      />
+
+      <ClientFormDialog
+        mode="edit"
+        client={editingClient ?? undefined}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+      />
     </div>
   );
 };

@@ -106,7 +106,7 @@ const params = new URLSearchParams({
   code_challenge_method: 'S256',
 });
 
-window.location.href = `https://oauth.data.hellogsm.kr/v1/oauth/authorize?${params}`;
+window.location.href = `https://oauth.authorization.datagsm.kr/v1/oauth/authorize?${params}`;
 ```
 
 #### URL 구성 (state만 사용)
@@ -122,7 +122,7 @@ const params = new URLSearchParams({
   state,
 });
 
-window.location.href = `https://oauth.data.hellogsm.kr/v1/oauth/authorize?${params}`;
+window.location.href = `https://oauth.authorization.datagsm.kr/v1/oauth/authorize?${params}`;
 ```
 
 #### 콜백 처리 예시

@@ -13,9 +13,9 @@ const HomePage = async () => {
   ]);
 
   return (
-    <div className={cn('bg-background h-[calc(100vh-4.0625rem)]')}>
+    <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-16')}>
-        <div className={cn('mx-auto max-w-3xl')}>
+        <div className={cn('mx-auto max-w-2xl')}>
           <ApiKeyHeader />
           <ApiKeyManager
             initialApiKeyData={initialApiKeyData}

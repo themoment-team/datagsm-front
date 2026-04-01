@@ -36,7 +36,7 @@ export const metadata = { title: 'Java / Kotlin SDK' }
 
 <CodeTabs>
   <CodeTab label="Gradle (Kotlin DSL)" language="kotlin" code={`dependencies {
-    implementation("com.github.themoment-team:datagsm-oauth-sdk-java:1.2.0")
+    implementation("com.github.themoment-team:datagsm-oauth-sdk-java:1.4.1")
 }
 
 repositories {
@@ -44,7 +44,7 @@ repositories {
 }`} />
 
   <CodeTab label="Gradle (Groovy)" language="groovy" code={`dependencies {
-    implementation 'com.github.themoment-team:datagsm-oauth-sdk-java:1.2.0'
+    implementation 'com.github.themoment-team:datagsm-oauth-sdk-java:1.4.1'
 }
 
 repositories {
@@ -62,7 +62,7 @@ repositories {
     <dependency>
         <groupId>com.github.themoment-team</groupId>
         <artifactId>datagsm-oauth-sdk-java</artifactId>
-        <version>1.2.0</version>
+        <version>1.4.1</version>
     </dependency>
 </dependencies>`} />
 </CodeTabs>
@@ -81,8 +81,8 @@ DataGsmOAuthClient client = DataGsmOAuthClient.builder("your-client-id", "your-c
 
 // 커스텀 Base URL 설정 (선택사항)
 DataGsmOAuthClient clientWithCustomUrl = DataGsmOAuthClient.builder("your-client-id", "your-client-secret")
-    .authorizationBaseUrl("https://oauth.data.hellogsm.kr")
-    .userInfoBaseUrl("https://oauth-userinfo.data.hellogsm.kr")
+    .authorizationBaseUrl("https://oauth.authorization.datagsm.kr")
+    .userInfoBaseUrl("https://oauth.resource.datagsm.kr")
     .build();`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.oauth.DataGsmOAuthClient
@@ -92,8 +92,8 @@ val client = DataGsmOAuthClient.builder("your-client-id", "your-client-secret").
 
 // 커스텀 Base URL 설정 (선택사항)
 val clientWithCustomUrl = DataGsmOAuthClient.builder("your-client-id", "your-client-secret")
-    .authorizationBaseUrl("https://oauth.data.hellogsm.kr")
-    .userInfoBaseUrl("https://oauth-userinfo.data.hellogsm.kr")
+    .authorizationBaseUrl("https://oauth.authorization.datagsm.kr")
+    .userInfoBaseUrl("https://oauth.resource.datagsm.kr")
     .build()`} />
 
 </CodeTabs>
@@ -466,6 +466,7 @@ Authorization URL 빌더 모델
 | `number`         | `Integer`     | 번호        |
 | `studentNumber`  | `Integer`     | 학번        |
 | `major`          | `Major`       | 학과        |
+| `specialty`      | `String`      | 전공        |
 | `role`           | `StudentRole` | 학생 역할     |
 | `dormitoryFloor` | `Integer`     | 기숙사 층     |
 | `dormitoryRoom`  | `Integer`     | 기숙사 호실    |
@@ -730,8 +731,8 @@ datagsm:
   oauth:
     client-id: ${DATAGSM_CLIENT_ID}
     client-secret: ${DATAGSM_CLIENT_SECRET} # 환경 변수에서 로드
-    authorization-base-url: https://oauth.data.hellogsm.kr
-    user-info-base-url: https://oauth-userinfo.data.hellogsm.kr
+    authorization-base-url: https://oauth.authorization.datagsm.kr
+    user-info-base-url: https://oauth.resource.datagsm.kr
 ```
 
 ### Service 클래스에서 사용

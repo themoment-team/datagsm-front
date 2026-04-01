@@ -7,8 +7,9 @@ import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Student, StudentRole, StudentSex } from '@repo/shared/types';
-import { Card, CardContent, CardHeader, CardTitle, CommonPagination } from '@repo/shared/ui';
+import { CommonPagination, PageHeader } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+
 import { useForm, useWatch } from 'react-hook-form';
 
 import { StudentFilterSchema, StudentFilterType } from '@/entities/student';
@@ -166,41 +167,39 @@ const StudentsPage = () => {
   const totalPages = studentsData?.data.totalPages ?? 0;
 
   return (
-    <div className={cn('bg-background h-[calc(100vh-4.0625rem)]')}>
+    <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
-        <Card>
-          <CardHeader>
-            <div className={cn('flex items-center justify-between')}>
-              <CardTitle className={cn('text-2xl')}>학생 관리</CardTitle>
-              <div className={cn('flex items-center gap-2')}>
-                <GraduateThirdGradeButton />
-                <StudentExcelActions />
-                <StudentFormDialog
-                  mode="create"
-                  clubs={clubsData?.data}
-                  isLoadingClubs={isLoadingClubs}
-                />
-              </div>
+        {/* Page header */}
+        <PageHeader
+          breadcrumb="DATAGSM / Admin"
+          title="학생 관리"
+          action={
+            <div className={cn('flex items-center gap-2')}>
+              <GraduateThirdGradeButton />
+              <StudentExcelActions />
+              <StudentFormDialog mode="create" clubs={clubsData?.data} isLoadingClubs={isLoadingClubs} />
             </div>
+          }
+        />
 
-            <StudentFilter control={control} />
-          </CardHeader>
-          <CardContent>
-            <div className={cn('space-y-4')}>
-              <StudentList
-                students={students}
-                isLoading={isLoadingStudents}
-                onEdit={handleEditStudent}
-              />
-              <CommonPagination
-                isLoading={isLoadingStudents}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </div>
-          </CardContent>
-        </Card>
+        {/* Filters */}
+        <div className={cn('mb-4')}>
+          <StudentFilter control={control} />
+        </div>
+
+        {/* Table */}
+        <div className={cn('border-2 border-foreground pixel-shadow')}>
+          <StudentList students={students} isLoading={isLoadingStudents} onEdit={handleEditStudent} />
+        </div>
+
+        <div className={cn('mt-5')}>
+          <CommonPagination
+            isLoading={isLoadingStudents}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
 
         {editingStudent && (
           <StudentFormDialog

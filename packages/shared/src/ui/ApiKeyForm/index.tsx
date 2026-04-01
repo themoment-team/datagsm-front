@@ -28,8 +28,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  Button,
-  Card,
   Checkbox,
   FormErrorMessage,
   Input,
@@ -180,7 +178,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
       onSettled: () => setIsRenewConfirmOpen(false),
     };
     if (isApiKeyDataEqual) {
-      rotateApiKey(pendingFormData, sharedOptions);
+      rotateApiKey(undefined, sharedOptions);
     } else {
       updateApiKey(pendingFormData, sharedOptions);
     }
@@ -199,20 +197,28 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
 
   if (isLoadingApiKey || isLoadingKeyScope) {
     return (
-      <Card className={cn('p-6')}>
-        <div className={cn('text-muted-foreground text-sm')}>권한 범위를 불러오는 중...</div>
-      </Card>
+      <div
+        className={cn('border-2 border-foreground p-5 pixel-shadow-sm')}
+      >
+        <span className={cn('text-sm text-muted-foreground font-mono')}>
+          {'>'} 권한 범위 불러오는 중...
+        </span>
+      </div>
     );
   }
 
   return (
-    <Card className={cn('p-6')}>
+    <div
+      className={cn('border-2 border-foreground p-5 pixel-shadow-sm')}
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={cn('mb-6 flex flex-col gap-4')}>
           <div>
-            <p className={cn('mb-2 text-lg font-extrabold')}>API 권한 범위 선택</p>
-            <p className={cn('text-muted-foreground text-sm')}>
-              API 키로 접근할 수 있는 권한 범위를 선택하세요. 여러 개를 선택할 수 있습니다.
+            <p className={cn('mb-1 text-sm font-bold uppercase tracking-wide font-mono')}>
+              API 권한 범위 선택
+            </p>
+            <p className={cn('text-muted-foreground text-xs font-mono')}>
+              {'>'} API 키로 접근할 수 있는 권한 범위를 선택하세요.
             </p>
           </div>
           <div className={cn('mb-4 space-y-6')}>
@@ -280,24 +286,26 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
             <Tooltip className="w-full">
               <TooltipTrigger asChild>
                 {apiKeyData?.data?.apiKey ? (
-                  <Button
-                    className="w-full"
+                  <button
+                    className={cn(
+                      'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
+                    )}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
-                    size="lg"
                     type="button"
                     onClick={onRenewClick}
                   >
                     {buttonText}
-                  </Button>
+                  </button>
                 ) : (
-                  <Button
-                    className="w-full"
+                  <button
+                    className={cn(
+                      'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
+                    )}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
-                    size="lg"
                     type="submit"
                   >
                     {buttonText}
-                  </Button>
+                  </button>
                 )}
               </TooltipTrigger>
               <TooltipContent>{buttonTooptipText}</TooltipContent>
@@ -321,16 +329,16 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
               </AlertDialog>
               <Tooltip className="w-full">
                 <TooltipTrigger asChild>
-                  <Button
-                    className="w-full"
+                  <button
+                    className={cn(
+                      'w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest text-foreground transition-all hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-60 font-mono',
+                    )}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
-                    size="lg"
                     type="button"
-                    variant="outline"
                     onClick={onExtendClick}
                   >
                     기한 연장하기
-                  </Button>
+                  </button>
                 </TooltipTrigger>
                 <TooltipContent>API 키의 만료 기한을 연장합니다.</TooltipContent>
               </Tooltip>
@@ -338,7 +346,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
           )}
         </div>
       </form>
-    </Card>
+    </div>
   );
 };
 

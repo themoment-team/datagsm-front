@@ -1,7 +1,6 @@
 import { Student } from '@repo/shared/types';
 import {
-  Badge,
-  Button,
+  PixelIconButton,
   Skeleton,
   Table,
   TableBody,
@@ -13,7 +12,7 @@ import {
 import { cn } from '@repo/shared/utils';
 import { Pencil } from 'lucide-react';
 
-import { getMajorLabel, getRoleBadgeVariant, getRoleLabel, getSexLabel } from '@/entities/student';
+import { getMajorLabel, getRoleBadgeStyle, getRoleLabel, getSexLabel } from '@/entities/student';
 
 interface StudentListProps {
   students?: Student[];
@@ -23,8 +22,7 @@ interface StudentListProps {
 
 const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
   return (
-    <div className={cn('overflow-x-auto rounded-md border')}>
-      <Table>
+    <Table>
         <TableHeader>
           <TableRow>
             <TableHead>이름</TableHead>
@@ -59,7 +57,7 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                     <Skeleton className={cn('h-4 w-24')} />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className={cn('h-5 w-16 rounded-full')} />
+                    <Skeleton className={cn('h-5 w-16')} />
                   </TableCell>
                   <TableCell>
                     <Skeleton className={cn('h-4 w-12')} />
@@ -83,9 +81,9 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                   <TableCell>{student.studentNumber}</TableCell>
                   <TableCell>{getMajorLabel(student.major)}</TableCell>
                   <TableCell>
-                    <Badge variant={getRoleBadgeVariant(student.role)}>
+                    <span className={cn('border px-1.5 py-0.5 text-xs font-mono uppercase', getRoleBadgeStyle(student.role))}>
                       {getRoleLabel(student.role)}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
                     {student.dormitoryRoom ? `${student.dormitoryRoom}호` : '없음'}
@@ -94,15 +92,14 @@ const StudentList = ({ students, isLoading, onEdit }: StudentListProps) => {
                   <TableCell>{student.autonomousClub?.name ?? '없음'}</TableCell>
 
                   <TableCell>
-                    <Button variant="ghost" size="icon" onClick={() => onEdit?.(student)}>
-                      <Pencil className={cn('h-4 w-4')} />
-                    </Button>
+                    <PixelIconButton onClick={() => onEdit?.(student)}>
+                      <Pencil className={cn('h-3.5 w-3.5')} />
+                    </PixelIconButton>
                   </TableCell>
                 </TableRow>
               ))}
         </TableBody>
       </Table>
-    </div>
   );
 };
 

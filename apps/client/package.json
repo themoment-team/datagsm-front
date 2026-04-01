@@ -13,6 +13,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@repo/shared": "workspace:*",
+    "galmuri": "^2.40.3",
     "lucide-react": "^0.546.0",
     "next": "15.5.9",
     "react": "19.2.1",

@@ -76,6 +76,8 @@ from datagsm_openapi.api.student import StudentRequest
 request = StudentRequest(
     grade=1,  # 1학년
     class_num=1,  # 1반
+    major="SW_DEVELOPMENT",  # SW 개발과
+    github_id="octocat",  # GitHub ID
     page=0,  # 첫 번째 페이지
     size=50  # 페이지당 50명
 )
@@ -117,9 +119,9 @@ SDK는 다음과 같은 API 클라이언트를 제공합니다.
 
 **`client.students`** - 학생 데이터 조회 및 관리
 
-| 메서드                     | 설명              | 반환 타입             |
-|-------------------------|-----------------|-------------------|
-| `get_students(request)` | 조건에 맞는 학생 목록 조회 | `StudentResponse` |
+| 메서드                     | 설명               | 반환 타입             |
+|-------------------------|------------------|-------------------|
+| `get_students(request)` | 조건에 맞는 학생 목록 조회  | `StudentResponse` |
 | `get_student(id)`       | 특정 학생의 상세 데이터 조회 | `Student`         |
 
 ```python
@@ -347,7 +349,7 @@ from datagsm_openapi import DataGsmClient
 
 # DataGSM 클라이언트 설정
 DATAGSM_API_KEY = os.getenv("DATAGSM_API_KEY")
-DATAGSM_BASE_URL = os.getenv("DATAGSM_BASE_URL", "https://openapi.data.hellogsm.kr")
+DATAGSM_BASE_URL = os.getenv("DATAGSM_BASE_URL", "https://openapi.datagsm.kr")
 
 # views.py
 from django.http import JsonResponse
@@ -405,7 +407,7 @@ class MyAppConfig(AppConfig):
 
 ```bash
 export DATAGSM_API_KEY="your-api-key-here"
-export DATAGSM_BASE_URL="https://openapi.data.hellogsm.kr"  # 선택사항
+export DATAGSM_BASE_URL="https://openapi.datagsm.kr"  # 선택사항
 ```
 
 ## 일반 Python 프로젝트에서 사용하기

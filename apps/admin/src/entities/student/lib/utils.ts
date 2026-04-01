@@ -15,6 +15,20 @@ export const getRoleBadgeVariant = (role: StudentRole) => {
   }
 };
 
+export const getRoleBadgeStyle = (role: StudentRole) => {
+  switch (role) {
+    case 'STUDENT_COUNCIL':
+    case 'DORMITORY_MANAGER':
+      return 'bg-foreground text-background border-foreground';
+    case 'WITHDRAWN':
+      return 'bg-destructive text-white border-destructive';
+    case 'GRADUATE':
+      return 'bg-sky-400 text-white border-sky-400';
+    default:
+      return 'border-foreground/25 text-foreground';
+  }
+};
+
 export const getRoleLabel = (role: StudentRole) => {
   switch (role) {
     case 'STUDENT_COUNCIL':

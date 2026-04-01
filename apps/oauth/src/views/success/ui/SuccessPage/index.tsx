@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/shared/ui';
+import { cn } from '@repo/shared/utils';
 import { AlertCircle, CheckCircle2, ExternalLink } from 'lucide-react';
 
 const SuccessPage = () => {
@@ -41,50 +41,84 @@ const SuccessPage = () => {
   const content = (page && contentMap[page as keyof typeof contentMap]) || defaultContent;
 
   return (
-    <div className="bg-background flex min-h-screen items-center justify-center px-4">
-      <Card className="w-full max-w-md text-center">
-        <CardHeader className="space-y-4 pb-4">
+    <div className={cn('bg-background flex min-h-screen items-center justify-center px-4')}>
+      <div
+        className={cn(
+          'w-full max-w-md border-2 bg-background pixel-shadow-lg',
+          content.isError ? 'border-destructive' : 'border-foreground',
+        )}
+      >
+        {/* Title bar */}
+        <div
+          className={cn(
+            'flex items-center gap-3 border-b-2 px-5 py-3',
+            content.isError
+              ? 'border-destructive bg-destructive text-white'
+              : 'border-foreground bg-foreground text-background',
+          )}
+        >
           <div
-            className={`mx-auto flex h-20 w-20 items-center justify-center rounded-full ${
-              content.isError ? 'bg-destructive/10' : 'bg-green-500/10'
-            }`}
+            className={cn(
+              'flex h-6 w-6 flex-shrink-0 items-center justify-center text-[8px] font-pixel',
+              content.isError ? 'bg-white text-destructive' : 'bg-background text-foreground',
+            )}
+          >
+            D
+          </div>
+          <span className="text-[9px] font-pixel">DataGSM</span>
+        </div>
+
+        {/* Icon + title */}
+        <div className={cn('flex flex-col items-center gap-4 border-b border-foreground/15 px-6 py-6 text-center')}>
+          <div
+            className={cn(
+              'flex items-center justify-center border-2 p-4',
+              content.isError ? 'border-destructive' : 'border-foreground',
+            )}
           >
             {content.isError ? (
-              <AlertCircle className="text-destructive h-10 w-10" />
+              <AlertCircle className="text-destructive h-8 w-8" />
             ) : (
-              <CheckCircle2 className="h-10 w-10 text-green-500" />
+              <CheckCircle2 className="h-8 w-8 text-foreground" />
             )}
           </div>
-          <div className="space-y-2">
-            <CardTitle className="text-2xl">{content.title}</CardTitle>
-            <CardDescription className="text-base">{content.description}</CardDescription>
+          <div>
+            <h1 className={cn('text-lg font-bold text-foreground')}>{content.title}</h1>
+            <p className={cn('mt-1 text-sm text-muted-foreground')}>{content.description}</p>
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent className="space-y-6">
-          <div className="bg-muted/50 space-y-2 rounded-lg p-4">
-            <p className="text-muted-foreground text-sm">
+        {/* Body */}
+        <div className={cn('space-y-4 px-6 py-5')}>
+          <div className={cn('border border-foreground/20 bg-muted/30 px-4 py-3')}>
+            <p className={cn('text-xs text-muted-foreground font-mono')}>
               {content.isError ? '원활한 서비스를 위해' : '이 창을 닫고 원래 페이지로 돌아가서'}
             </p>
-            <p className="text-base font-medium">{content.mainText}</p>
+            <p className={cn('mt-1 text-sm font-medium text-foreground')}>{content.mainText}</p>
           </div>
 
-          <div className="text-muted-foreground flex items-center justify-center gap-2 text-sm">
-            <ExternalLink className="h-4 w-4" />
+          <div className={cn('flex items-center gap-2 text-xs text-muted-foreground font-mono')}>
+            <ExternalLink className="h-3.5 w-3.5 flex-shrink-0" />
             <span>로그인을 시도했던 서비스로 돌아가세요</span>
           </div>
+        </div>
 
-          {content.buttonText && (
-            <Button
+        {content.buttonText && (
+          <div className={cn('px-6 pb-6')}>
+            <button
               onClick={handleAction}
-              variant={content.isError ? 'destructive' : 'outline'}
-              className="w-full"
+              className={cn(
+                'w-full cursor-pointer border-2 px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all font-mono',
+                content.isError
+                  ? 'border-destructive bg-destructive text-white hover:bg-background hover:text-destructive'
+                  : 'border-foreground bg-foreground text-background hover:bg-background hover:text-foreground',
+              )}
             >
               {content.buttonText}
-            </Button>
-          )}
-        </CardContent>
-      </Card>
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

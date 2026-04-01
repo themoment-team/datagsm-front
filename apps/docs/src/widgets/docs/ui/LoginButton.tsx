@@ -7,12 +7,14 @@ import { cn } from '@repo/shared/utils';
 interface LoginButtonProps {
   type?: 'default' | 'icon';
   variant?: 'white' | 'black' | 'gray';
+  logo?: 'dg' | 'd';
   className?: string;
 }
 
 export const LoginButton = ({
   type = 'default',
   variant = 'white',
+  logo = 'd',
   className,
 }: LoginButtonProps) => {
   const isIcon = type === 'icon';
@@ -23,7 +25,13 @@ export const LoginButton = ({
     gray: 'bg-[#EFEFEF] text-[#000000] border border-[#E5E5E5]',
   };
 
-  const logoSrc = variant === 'black' ? '/images/docs/DG_white.svg' : '/images/docs/DG_black.svg';
+  const prefix = logo === 'dg' ? 'DG' : 'D';
+  const logoSrc = variant === 'black'
+    ? `/images/docs/${prefix}_white.svg`
+    : `/images/docs/${prefix}_black.svg`;
+
+  const logoWidth = logo === 'dg' ? (isIcon ? 27 : 38) : (isIcon ? 10 : 14);
+  const logoHeight = logo === 'dg' ? (isIcon ? 10 : 14) : (isIcon ? 10 : 14);
 
   return (
     <div
@@ -34,7 +42,7 @@ export const LoginButton = ({
         className,
       )}
     >
-      <Image src={logoSrc} alt="logo" width={isIcon ? 27 : 38} height={isIcon ? 10 : 14} />
+      <Image src={logoSrc} alt="logo" width={logoWidth} height={logoHeight} />
       {!isIcon && (
         <span
           className={cn('text-[14px] leading-none')}
