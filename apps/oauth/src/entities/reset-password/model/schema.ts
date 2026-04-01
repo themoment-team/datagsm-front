@@ -2,12 +2,7 @@ import { z } from 'zod';
 
 export const ResetPasswordFormSchema = z
   .object({
-    email: z
-      .string()
-      .min(1, { message: '이메일을 입력해주세요.' })
-      .regex(/^[a-zA-Z0-9._-]+$/, {
-        message: '이메일 아이디는 영문, 숫자, ., _, - 만 사용할 수 있습니다.',
-      }),
+    email: z.string().min(1, { message: '이메일을 입력해주세요.' }),
     code: z
       .string()
       .min(1, { message: '인증 코드를 입력해주세요.' })
