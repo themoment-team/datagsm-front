@@ -6,6 +6,7 @@ export const NAV_LINKS = {
   client: [
     { href: '/', label: 'APIKey' },
     { href: '/clients', label: 'Client' },
+    { href: '/application', label: 'Application' },
     { href: DOCS_URL, label: 'Docs' },
     { href: STATUS_URL, label: 'Status' },
     { href: '/myinfo', label: 'My' },
@@ -19,6 +20,7 @@ export const NAV_LINKS = {
   docs: [
     { href: CLIENT_URL, label: 'APIKey' },
     { href: `${CLIENT_URL}/clients`, label: 'Client' },
+    { href: `${CLIENT_URL}/application`, label: 'Application' },
     { href: '/', label: 'Docs' },
     { href: STATUS_URL, label: 'Status' },
     { href: `${CLIENT_URL}/myinfo`, label: 'My' },
@@ -26,6 +28,7 @@ export const NAV_LINKS = {
   status: [
     { href: CLIENT_URL, label: 'APIKey' },
     { href: `${CLIENT_URL}/clients`, label: 'Client' },
+    { href: `${CLIENT_URL}/application`, label: 'Application' },
     { href: DOCS_URL, label: 'Docs' },
     { href: '/', label: 'Status' },
     { href: `${CLIENT_URL}/myinfo`, label: 'My' },
