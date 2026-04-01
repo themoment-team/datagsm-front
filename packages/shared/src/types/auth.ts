@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 import { ApiResponse } from './base';
-import { UserRoleType } from './userRole';
 import { Student } from './student';
+import { UserRoleType } from './userRole';
 
 export interface Account {
   id: number;
@@ -74,9 +74,16 @@ export const ApiKeyFormSchema = z.object({
 
 export type ApiKeyFormType = z.infer<typeof ApiKeyFormSchema>;
 
+export interface ScopesType {
+  scope: string;
+  description: string;
+  applicationName: string;
+}
+
 export interface OAuthSessionData {
   serviceName: string;
   expiresAt: number;
+  requestedScopes: ScopesType[];
 }
 
 export type OAuthSessionResponse = ApiResponse<OAuthSessionData>;

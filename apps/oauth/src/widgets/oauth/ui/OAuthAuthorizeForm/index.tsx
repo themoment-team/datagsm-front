@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import { SignInFormType } from '@repo/shared/types';
+import { ScopesType, SignInFormType } from '@repo/shared/types';
 import { SignInForm } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { AlertCircle } from 'lucide-react';
@@ -38,7 +38,25 @@ const OAuthAuthorizeForm = () => {
   const { data: sessionResponse, isLoading: isLoadingServiceName } = useGetOAuthSession(token);
   const sessionData = sessionResponse?.data;
   const serviceName = sessionData?.serviceName;
+  // const serviceScope = sessionData?.requestedScopes;
 
+  const serviceScope: ScopesType[] = [
+    {
+      scope: 'self:read',
+      description: '내 정보 조회',
+      applicationName: 'flooding',
+    },
+    {
+      scope: 'self:read',
+      description: '내 정보 조회',
+      applicationName: 'flooding',
+    },
+    {
+      scope: 'self:read',
+      description: '내 정보 조회',
+      applicationName: 'EveryGSM',
+    },
+  ];
   const updateRemainingTime = useCallback(() => {
     if (!sessionExpiresAt.current) return false;
 
@@ -178,6 +196,7 @@ const OAuthAuthorizeForm = () => {
         signupHref="/signup"
         resetHref="/signin/reset-password"
         serviceName={serviceName || undefined}
+        serviceScope={serviceScope}
         isLoadingServiceName={isLoadingServiceName}
         remainingTime={remainingTime}
       />
@@ -188,11 +207,11 @@ const OAuthAuthorizeForm = () => {
             'bg-background/80 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm',
           )}
         >
-          <div className="flex max-w-md flex-col items-center gap-4 border-2 border-destructive bg-background p-8 text-center pixel-shadow">
-            <div className="border-2 border-destructive p-3">
+          <div className="border-destructive bg-background pixel-shadow flex max-w-md flex-col items-center gap-4 border-2 p-8 text-center">
+            <div className="border-destructive border-2 p-3">
               <AlertCircle className="text-destructive h-8 w-8" />
             </div>
-            <h2 className="text-xl font-bold text-foreground">인증 세션 만료</h2>
+            <h2 className="text-foreground text-xl font-bold">인증 세션 만료</h2>
             <p className="text-muted-foreground text-sm">
               보안을 위해 인증 세션이 만료되었습니다.
               <br />이 창을 닫고 서비스에서 다시 로그인을 시도해주세요.
