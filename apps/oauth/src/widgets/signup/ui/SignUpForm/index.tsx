@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { EMAIL_DOMAIN } from '@repo/shared/constants';
 import { useDebounce } from '@repo/shared/hooks';
 import {
   Checkbox,
@@ -16,7 +17,7 @@ import {
   Input,
   Label,
 } from '@repo/shared/ui';
-import { cn, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
+import { cn, formatEmailWithDomain, getApiErrorCode, minutesToMs } from '@repo/shared/utils';
 import { Eye, EyeOff } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -27,7 +28,6 @@ import { useCheckEmailCode, useSendEmailCode, useSignUp } from '@/widgets/signup
 import { PRIVACY_POLICY } from '../../constants/privacyPolicy';
 
 const RESEND_COOLDOWN_MS = minutesToMs(5);
-const EMAIL_DOMAIN = '@gsm.hs.kr';
 const STORAGE_KEY = 'email_verification_timestamp';
 
 const SignUpForm = () => {
@@ -194,7 +194,10 @@ const SignUpForm = () => {
       lastCheckedCode.current !== debouncedCode
     ) {
       lastCheckedCode.current = debouncedCode;
-      checkEmailCode({ email: `${emailValue}${EMAIL_DOMAIN}`, code: debouncedCode });
+      checkEmailCode({
+        email: formatEmailWithDomain(emailValue),
+        code: debouncedCode,
+      });
     }
   }, [codeSent, debouncedCode, emailValue, checkEmailCode]);
 
@@ -224,7 +227,7 @@ const SignUpForm = () => {
     const isEmailValid = await trigger('email');
     if (!isEmailValid) return;
     const email = getValues('email');
-    sendEmailCode({ email: `${email}${EMAIL_DOMAIN}` });
+    sendEmailCode({ email: formatEmailWithDomain(email) });
   };
 
   const formatTime = (seconds: number) => {
@@ -243,36 +246,34 @@ const SignUpForm = () => {
       return;
     }
     const { email, password, code } = data;
-    signUp({ email: `${email}${EMAIL_DOMAIN}`, password, code });
+    signUp({ email: formatEmailWithDomain(email), password, code });
   };
 
   return (
     <>
       <div
-        className={cn('w-full max-w-md border-2 border-foreground bg-background pixel-shadow-lg')}
+        className={cn('border-foreground bg-background pixel-shadow-lg w-full max-w-md border-2')}
       >
         {/* Title bar */}
         <div
           className={cn(
-            'flex items-center gap-3 border-b-2 border-foreground bg-foreground px-5 py-3',
+            'border-foreground bg-foreground flex items-center gap-3 border-b-2 px-5 py-3',
           )}
         >
           <div
             className={cn(
-              'flex h-6 w-6 flex-shrink-0 items-center justify-center bg-background text-foreground text-[8px] font-pixel',
+              'bg-background text-foreground font-pixel flex h-6 w-6 flex-shrink-0 items-center justify-center text-[8px]',
             )}
           >
             D
           </div>
-          <span className={cn('text-[9px] text-background font-pixel')}>
-            DataGSM
-          </span>
+          <span className={cn('text-background font-pixel text-[9px]')}>DataGSM</span>
         </div>
 
         {/* Header */}
-        <div className={cn('border-b border-border/50 px-6 py-5')}>
-          <h1 className={cn('text-xl font-bold text-foreground')}>회원가입</h1>
-          <p className={cn('mt-1 text-sm text-muted-foreground')}>
+        <div className={cn('border-border/50 border-b px-6 py-5')}>
+          <h1 className={cn('text-foreground text-xl font-bold')}>회원가입</h1>
+          <p className={cn('text-muted-foreground mt-1 text-sm')}>
             @gsm.hs.kr 도메인 계정만 사용 가능합니다
           </p>
         </div>
@@ -283,7 +284,7 @@ const SignUpForm = () => {
             <div className={cn('space-y-1.5')}>
               <Label
                 htmlFor="email"
-                className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
               >
                 Email
               </Label>
@@ -297,12 +298,12 @@ const SignUpForm = () => {
                       {...register('email')}
                       disabled={remainingTime > 0 || isCodeVerified}
                       className={cn(
-                        'rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground',
+                        'border-foreground focus-visible:border-foreground rounded-none focus-visible:ring-0',
                       )}
                     />
                     <span
                       className={cn(
-                        'border-foreground bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap border border-l-0 px-3 text-xs font-mono',
+                        'border-foreground bg-muted text-muted-foreground flex h-9 items-center whitespace-nowrap border border-l-0 px-3 font-mono text-xs',
                       )}
                     >
                       {EMAIL_DOMAIN}
@@ -315,7 +316,7 @@ const SignUpForm = () => {
                   onClick={handleSendCode}
                   disabled={isButtonDisabled}
                   className={cn(
-                    'h-9 flex-shrink-0 cursor-pointer border-2 border-foreground bg-foreground px-3 text-xs uppercase tracking-wider text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 font-mono',
+                    'border-foreground bg-foreground text-background hover:bg-background hover:text-foreground h-9 flex-shrink-0 cursor-pointer border-2 px-3 font-mono text-xs uppercase tracking-wider transition-all disabled:cursor-not-allowed disabled:opacity-50',
                   )}
                 >
                   {isSendingCode
@@ -333,7 +334,7 @@ const SignUpForm = () => {
             <div className={cn('space-y-1.5', !codeSent && 'cursor-not-allowed')}>
               <Label
                 htmlFor="code"
-                className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
               >
                 Verify Code
               </Label>
@@ -344,13 +345,11 @@ const SignUpForm = () => {
                 {...register('code')}
                 disabled={!codeSent || isCodeVerified}
                 className={cn(
-                  'rounded-none border-foreground focus-visible:ring-0 focus-visible:border-foreground',
+                  'border-foreground focus-visible:border-foreground rounded-none focus-visible:ring-0',
                 )}
               />
               {isCodeVerified ? (
-                <p className={cn('text-xs text-green-600 font-mono')}>
-                  {'>'} 인증 완료
-                </p>
+                <p className={cn('font-mono text-xs text-green-600')}>{'>'} 인증 완료</p>
               ) : (
                 <FormErrorMessage error={errors.code} />
               )}
@@ -360,7 +359,7 @@ const SignUpForm = () => {
             <div className={cn('space-y-1.5')}>
               <Label
                 htmlFor="password"
-                className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
               >
                 Password
               </Label>
@@ -372,7 +371,7 @@ const SignUpForm = () => {
                   {...register('password')}
                   disabled={!isCodeVerified || isSigningUp}
                   className={cn(
-                    'rounded-none border-foreground pr-10 focus-visible:ring-0 focus-visible:border-foreground',
+                    'border-foreground focus-visible:border-foreground rounded-none pr-10 focus-visible:ring-0',
                   )}
                 />
                 <button
@@ -380,7 +379,7 @@ const SignUpForm = () => {
                   aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                   onClick={() => setShowPassword(!showPassword)}
                   className={cn(
-                    'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground',
+                    'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
                     (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
                   )}
                   disabled={!isCodeVerified || isSigningUp}
@@ -395,7 +394,7 @@ const SignUpForm = () => {
             <div className={cn('space-y-1.5')}>
               <Label
                 htmlFor="confirmPassword"
-                className={cn('text-xs uppercase tracking-widest text-muted-foreground font-mono')}
+                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
               >
                 Confirm Password
               </Label>
@@ -407,7 +406,7 @@ const SignUpForm = () => {
                   {...register('confirmPassword')}
                   disabled={!isCodeVerified || isSigningUp}
                   className={cn(
-                    'rounded-none border-foreground pr-10 focus-visible:ring-0 focus-visible:border-foreground',
+                    'border-foreground focus-visible:border-foreground rounded-none pr-10 focus-visible:ring-0',
                   )}
                 />
                 <button
@@ -415,7 +414,7 @@ const SignUpForm = () => {
                   aria-label={showConfirmPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className={cn(
-                    'absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground',
+                    'text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors',
                     (!isCodeVerified || isSigningUp) && 'cursor-not-allowed opacity-50',
                   )}
                   disabled={!isCodeVerified || isSigningUp}
@@ -457,19 +456,19 @@ const SignUpForm = () => {
             <button
               type="submit"
               className={cn(
-                'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
+                'border-foreground bg-foreground text-background hover:bg-background hover:text-foreground w-full cursor-pointer border-2 py-3 font-mono text-xs font-bold uppercase tracking-widest transition-all disabled:cursor-not-allowed disabled:opacity-60',
               )}
               disabled={isSigningUp || !isCodeVerified || !isFormValid}
             >
               {isSigningUp ? 'PROCESSING...' : 'SIGN UP'}
             </button>
 
-            <p className={cn('text-center text-xs text-muted-foreground')}>
+            <p className={cn('text-muted-foreground text-center text-xs')}>
               이미 계정이 있으신가요?{' '}
               <button
                 type="button"
                 onClick={() => window.close()}
-                className={cn('font-semibold text-foreground underline underline-offset-2')}
+                className={cn('text-foreground font-semibold underline underline-offset-2')}
               >
                 창을 닫고 로그인으로 돌아가기
               </button>
@@ -481,7 +480,9 @@ const SignUpForm = () => {
       {/* Privacy dialog */}
       <Dialog open={isPrivacyDialogOpen} onOpenChange={setIsPrivacyDialogOpen}>
         <DialogContent
-          className={cn('flex max-h-[80vh] max-w-md flex-col border-2 border-foreground pixel-shadow')}
+          className={cn(
+            'border-foreground pixel-shadow flex max-h-[80vh] max-w-md flex-col border-2',
+          )}
         >
           <DialogHeader>
             <DialogTitle className={cn('text-base font-bold')}>개인정보 처리방침</DialogTitle>
@@ -554,7 +555,7 @@ const SignUpForm = () => {
           </div>
           <div className={cn('flex flex-col gap-2 border-t pt-4')}>
             {!hasScrolledToBottom && (
-              <p className={cn('text-center text-xs text-muted-foreground font-mono')}>
+              <p className={cn('text-muted-foreground text-center font-mono text-xs')}>
                 {'>'} 내용을 끝까지 읽어주세요
               </p>
             )}
@@ -562,7 +563,7 @@ const SignUpForm = () => {
               onClick={handlePrivacyAgree}
               disabled={!hasScrolledToBottom}
               className={cn(
-                'w-full cursor-pointer border-2 border-foreground bg-foreground py-2.5 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 font-mono',
+                'border-foreground bg-foreground text-background hover:bg-background hover:text-foreground w-full cursor-pointer border-2 py-2.5 font-mono text-xs font-bold uppercase tracking-widest transition-all disabled:cursor-not-allowed disabled:opacity-50',
               )}
             >
               동의합니다

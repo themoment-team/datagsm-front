@@ -118,6 +118,9 @@ importers:
       '@repo/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      galmuri:
+        specifier: ^2.40.3
+        version: 2.40.3
       lucide-react:
         specifier: ^0.546.0
         version: 0.546.0(react@19.2.1)

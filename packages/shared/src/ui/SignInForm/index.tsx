@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { EMAIL_DOMAIN } from '@repo/shared/constants';
 import { ScopesType, SignInFormSchema, SignInFormType } from '@repo/shared/types';
 import {
   Dialog,
@@ -16,12 +17,10 @@ import {
   Label,
   Skeleton,
 } from '@repo/shared/ui';
-import { cn } from '@repo/shared/utils';
+import { cn, formatEmailWithDomain } from '@repo/shared/utils';
 import { Clock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
-const EMAIL_DOMAIN = '@gsm.hs.kr';
 
 type SignInLocalFormType = z.infer<typeof SignInFormSchema>;
 
@@ -63,9 +62,9 @@ const SignInForm = ({
     resolver: zodResolver(SignInFormSchema),
   });
 
-  const handleFormSubmit = handleSubmit((data) =>
-    onSubmit({ email: `${data.email}${EMAIL_DOMAIN}`, password: data.password }),
-  );
+  const handleFormSubmit = handleSubmit((data) => {
+    onSubmit({ email: formatEmailWithDomain(data.email), password: data.password });
+  });
 
   return (
     <>
