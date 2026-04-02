@@ -17,7 +17,6 @@ const ApplicationPage = () => {
     setIsEditDialogOpen(true);
   };
 
-  // 임시 데이터 (API 통신 전)
   const applications: Application[] = [];
   const isLoading = false;
 
