@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import { ScopesType, SignInFormType } from '@repo/shared/types';
+import { SignInFormType } from '@repo/shared/types';
 import { SignInForm } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 import { AlertCircle } from 'lucide-react';
@@ -38,25 +38,8 @@ const OAuthAuthorizeForm = () => {
   const { data: sessionResponse, isLoading: isLoadingServiceName } = useGetOAuthSession(token);
   const sessionData = sessionResponse?.data;
   const serviceName = sessionData?.serviceName;
-  // const serviceScope = sessionData?.requestedScopes;
+  const serviceScope = sessionData?.requestedScopes;
 
-  const serviceScope: ScopesType[] = [
-    {
-      scope: 'self:read',
-      description: '내 정보 조회',
-      applicationName: 'flooding',
-    },
-    {
-      scope: 'self:read',
-      description: '내 정보 조회',
-      applicationName: 'flooding',
-    },
-    {
-      scope: 'self:read',
-      description: '내 정보 조회',
-      applicationName: 'EveryGSM',
-    },
-  ];
   const updateRemainingTime = useCallback(() => {
     if (!sessionExpiresAt.current) return false;
 
@@ -87,9 +70,15 @@ const OAuthAuthorizeForm = () => {
   }, []);
 
   useEffect(() => {
-    if (!sessionData?.expiresAt || !sessionData?.serviceName || !token) return;
+    if (
+      !sessionData?.expiresAt ||
+      !sessionData?.serviceName ||
+      sessionData?.requestedScopes ||
+      !token
+    )
+      return;
 
-    const { expiresAt, serviceName } = sessionData;
+    const { expiresAt, serviceName, requestedScopes } = sessionData;
     sessionExpiresAt.current = expiresAt;
 
     localStorage.setItem(
@@ -98,11 +87,19 @@ const OAuthAuthorizeForm = () => {
         token,
         expiresAt,
         serviceName,
+        requestedScopes,
       }),
     );
 
     updateRemainingTime();
-  }, [sessionData, sessionData?.expiresAt, sessionData?.serviceName, token, updateRemainingTime]);
+  }, [
+    sessionData,
+    sessionData?.expiresAt,
+    sessionData?.serviceName,
+    sessionData?.requestedScopes,
+    token,
+    updateRemainingTime,
+  ]);
 
   useEffect(() => {
     if (isExpired) return;
