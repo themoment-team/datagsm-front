@@ -15,3 +15,29 @@ export type ApplicationFormType = {
   applicationName: string;
   applicationScopes: ApplicationScope[];
 };
+
+export interface ApplicationScopeResponse {
+  id: number;
+  scopeName: string;
+  description: string;
+}
+
+export interface ApplicationItemResponse {
+  id: string;
+  name: string;
+  accountId: number;
+  scopes: ApplicationScopeResponse[];
+}
+
+export interface ApplicationsResponse {
+  totalPages: number;
+  totalElements: number;
+  applications: ApplicationItemResponse[];
+}
+
+export interface GetApplicationsParams {
+  name?: string;
+  id?: string;
+  page?: number;
+  size?: number;
+}

@@ -92,6 +92,11 @@ export const clientQueryKeys = {
   getAvailableScopes: () => ['clients', 'available-scopes'] as const,
 } as const;
 
+export const applicationQueryKeys = {
+  getApplications: (params: { page?: number; size?: number; name?: string; id?: string }) =>
+    ['applications', 'list', params] as const,
+} as const;
+
 export const healthQueryKeys = {
   getHealth: () => ['health', 'check'] as const,
 } as const;

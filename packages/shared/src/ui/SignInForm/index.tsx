@@ -270,10 +270,10 @@ const SignInForm = ({
                   >
                     <ShieldCheck className={cn('text-foreground mt-0.5 h-5 w-5 flex-shrink-0')} />
                     <div className={cn('flex space-y-0.5')}>
-                      <span className={cn('text-foreground text- block font-semibold')}>
+                      <span className={cn('text-foreground block text-lg font-semibold')}>
                         {x.applicationName}
                       </span>
-                      <span className={cn('text-muted-foreground block text-[10px] leading-tight')}>
+                      <span className={cn('text-muted-foreground block text-sm leading-tight')}>
                         {x.description}
                       </span>
                     </div>
