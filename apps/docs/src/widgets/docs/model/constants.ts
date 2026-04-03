@@ -83,6 +83,10 @@ export const docsSections: DocsSection[] = [
         href: '/oauth/pkce',
       },
       {
+        label: '서드파티 권한 범위',
+        href: '/oauth/thirdparty-scope',
+      },
+      {
         label: 'Design 가이드',
         href: '/oauth/design',
       },
