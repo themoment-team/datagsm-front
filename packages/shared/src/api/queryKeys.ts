@@ -95,6 +95,7 @@ export const clientQueryKeys = {
 export const applicationQueryKeys = {
   getApplications: (params: { page?: number; size?: number; name?: string; id?: string }) =>
     ['applications', 'list', params] as const,
+  postApplication: () => ['applications', 'create'] as const,
 } as const;
 
 export const healthQueryKeys = {

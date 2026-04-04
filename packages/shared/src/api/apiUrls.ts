@@ -161,6 +161,7 @@ export const applicationUrl = {
     const queryString = urlParams.toString();
     return queryString ? `/v1/applications?${queryString}` : '/v1/applications';
   },
+  postApplication: () => '/v1/applications',
 } as const;
 
 export const healthUrl = {

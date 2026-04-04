@@ -10,8 +10,6 @@ export interface Application {
   applicationScopes: ApplicationScope[];
 }
 
-export interface CreateApplicationData extends Omit<Application, 'id'> {}
-
 export type ApplicationFormType = {
   applicationName: string;
   applicationScopes: ApplicationScope[];
@@ -34,6 +32,14 @@ export interface ApplicationsResponse {
   totalPages: number;
   totalElements: number;
   applications: ApplicationItemResponse[];
+}
+
+export interface CreateApplicationRequest {
+  name: string;
+  scopes: {
+    scopeName: string;
+    description: string;
+  }[];
 }
 
 export interface GetApplicationsParams {

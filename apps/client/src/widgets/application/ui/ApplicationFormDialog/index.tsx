@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Dialog,
@@ -20,6 +21,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Application, ApplicationFormSchema, ApplicationFormType } from '@/entities/application';
+import { useCreateApplication } from '@/widgets/application';
 
 interface ApplicationFormDialogProps {
   mode: 'create' | 'edit';
@@ -36,10 +38,13 @@ const ApplicationFormDialog = ({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
 }: ApplicationFormDialogProps) => {
+  const queryClient = useQueryClient();
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
+
+  const { mutate: createApplication, isPending: isCreatePending } = useCreateApplication();
 
   const {
     register,
@@ -77,12 +82,33 @@ const ApplicationFormDialog = ({
   }, [mode, application, open, reset]);
 
   const onSubmit = (data: ApplicationFormType) => {
-    // API 통신은 아직 구현되지 않음
-    console.log('Application Data:', data);
-    toast.success(
-      mode === 'create' ? '애플리케이션이 생성되었습니다.' : '애플리케이션이 수정되었습니다.',
-    );
-    setOpen(false);
+    if (mode === 'create') {
+      createApplication(
+        {
+          name: data.applicationName,
+          scopes: data.applicationScopes.map((scope) => ({
+            scopeName: scope.applicationScope,
+            description: scope.applicationDescription,
+          })),
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ['applications', 'list'],
+            });
+            toast.success('애플리케이션이 생성되었습니다.');
+            setOpen(false);
+            reset();
+          },
+          onError: () => {
+            toast.error('애플리케이션 생성에 실패했습니다.');
+          },
+        },
+      );
+    } else {
+      // Edit logic not implemented yet
+      toast.info('수정 기능은 아직 구현되지 않았습니다.');
+    }
   };
 
   const title = mode === 'create' ? 'ADD APPLICATION' : 'EDIT APPLICATION';
@@ -121,6 +147,7 @@ const ApplicationFormDialog = ({
               placeholder="애플리케이션 이름 입력"
               className={cn('border-foreground rounded-none font-mono')}
               {...register('applicationName')}
+              disabled={isCreatePending}
             />
             <FormErrorMessage error={errors.applicationName} />
           </div>
@@ -138,6 +165,7 @@ const ApplicationFormDialog = ({
                 size="sm"
                 onClick={() => append({ applicationScope: '', applicationDescription: '' })}
                 className={cn('h-8')}
+                disabled={isCreatePending}
               >
                 <Plus className={cn('mr-1 h-3 w-3')} />
                 Scope 추가
@@ -157,6 +185,7 @@ const ApplicationFormDialog = ({
                       size="icon"
                       onClick={() => remove(index)}
                       className={cn('absolute right-1 top-1 h-6 w-6')}
+                      disabled={isCreatePending}
                     >
                       <X className={cn('h-4 w-4')} />
                     </Button>
@@ -170,6 +199,7 @@ const ApplicationFormDialog = ({
                       placeholder="예: user.read"
                       className={cn('border-foreground rounded-none font-mono text-sm')}
                       {...register(`applicationScopes.${index}.applicationScope` as const)}
+                      disabled={isCreatePending}
                     />
                     <FormErrorMessage error={errors.applicationScopes?.[index]?.applicationScope} />
                   </div>
@@ -182,6 +212,7 @@ const ApplicationFormDialog = ({
                       placeholder="권한에 대한 설명 입력"
                       className={cn('border-foreground rounded-none font-mono text-sm')}
                       {...register(`applicationScopes.${index}.applicationDescription` as const)}
+                      disabled={isCreatePending}
                     />
                     <FormErrorMessage
                       error={errors.applicationScopes?.[index]?.applicationDescription}
@@ -196,7 +227,9 @@ const ApplicationFormDialog = ({
           </div>
 
           <div className={cn('flex justify-end pt-2')}>
-            <Button type="submit">{submitText}</Button>
+            <Button type="submit" disabled={isCreatePending}>
+              {isCreatePending ? '처리 중...' : submitText}
+            </Button>
           </div>
         </form>
       </DialogContent>
