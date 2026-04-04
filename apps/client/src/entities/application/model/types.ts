@@ -6,6 +6,7 @@ export interface ApplicationScope {
 export interface Application {
   id: string;
   applicationName: string;
+  accountId: number;
   applicationScopes: ApplicationScope[];
 }
 

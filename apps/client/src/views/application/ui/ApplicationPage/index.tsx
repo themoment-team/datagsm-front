@@ -6,6 +6,7 @@ import { CommonPagination, PageHeader } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
 import { Application } from '@/entities/application';
+import { useGetMy } from '@/shared/hooks';
 import { ApplicationFormDialog, ApplicationList } from '@/widgets/application';
 
 import { useGetApplications } from '../../model/useGetApplications';
@@ -17,6 +18,7 @@ const ApplicationPage = () => {
   const [editingApplication, setEditingApplication] = useState<Application | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
 
+  const { data: myData } = useGetMy();
   const { data: applicationsData, isLoading } = useGetApplications({
     page: currentPage,
     size: PAGE_SIZE,
@@ -31,6 +33,7 @@ const ApplicationPage = () => {
     applicationsData?.data.applications.map((app) => ({
       id: app.id,
       applicationName: app.name,
+      accountId: app.accountId,
       applicationScopes: app.scopes.map((scope) => ({
         applicationScope: scope.scopeName,
         applicationDescription: scope.description,
@@ -49,7 +52,12 @@ const ApplicationPage = () => {
 
         {/* Table */}
         <div className={cn('border-foreground pixel-shadow border-2')}>
-          <ApplicationList applications={applications} isLoading={isLoading} onEdit={handleEdit} />
+          <ApplicationList
+            applications={applications}
+            isLoading={isLoading}
+            onEdit={handleEdit}
+            myId={myData?.data.id}
+          />
         </div>
 
         {/* Pagination */}

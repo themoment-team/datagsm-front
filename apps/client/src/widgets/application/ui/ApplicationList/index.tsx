@@ -29,15 +29,22 @@ interface ApplicationListProps {
   applications?: Application[];
   isLoading?: boolean;
   onEdit: (application: Application) => void;
+  myId?: number;
 }
 
 interface ApplicationListItemProps {
   application: Application;
   onEdit: (application: Application) => void;
   onDelete: (id: string) => void;
+  isOwner: boolean;
 }
 
-const ApplicationListItem = ({ application, onEdit, onDelete }: ApplicationListItemProps) => {
+const ApplicationListItem = ({
+  application,
+  onEdit,
+  onDelete,
+  isOwner,
+}: ApplicationListItemProps) => {
   return (
     <TableRow>
       <TableCell className={cn('font-medium')}>{application.applicationName}</TableCell>
@@ -46,7 +53,9 @@ const ApplicationListItem = ({ application, onEdit, onDelete }: ApplicationListI
           {application.applicationScopes.map((scope, index) => (
             <div
               key={index}
-              className={cn('group relative bg-foreground px-1.5 py-0.5 text-xs uppercase text-background font-mono cursor-help')}
+              className={cn(
+                'group relative bg-foreground px-1.5 py-0.5 text-xs uppercase text-background font-mono cursor-help',
+              )}
               title={scope.applicationDescription}
             >
               {scope.applicationScope}
@@ -55,48 +64,46 @@ const ApplicationListItem = ({ application, onEdit, onDelete }: ApplicationListI
         </div>
       </TableCell>
       <TableCell>
-        <div className={cn('flex items-center gap-1')}>
-          <PixelIconButton onClick={() => onEdit(application)}>
-            <Pencil className={cn('h-3.5 w-3.5')} />
-          </PixelIconButton>
+        {isOwner && (
+          <div className={cn('flex items-center gap-1')}>
+            <PixelIconButton onClick={() => onEdit(application)}>
+              <Pencil className={cn('h-3.5 w-3.5')} />
+            </PixelIconButton>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <PixelIconButton variant="destructive">
-                <Trash2 className={cn('h-3.5 w-3.5')} />
-              </PixelIconButton>
-            </AlertDialogTrigger>
-            <AlertDialogContent
-              className={cn('border-2 border-foreground pixel-shadow')}
-            >
-              <AlertDialogHeader>
-                <AlertDialogTitle className="font-pixel text-[12px] leading-[1.8]">
-                  애플리케이션 삭제
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  정말로 &apos;{application.applicationName}&apos; 애플리케이션을 삭제하시겠습니까?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => onDelete(application.id)}
-                  className={cn(
-                    'bg-destructive hover:bg-destructive/90 text-white',
-                  )}
-                >
-                  삭제
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <PixelIconButton variant="destructive">
+                  <Trash2 className={cn('h-3.5 w-3.5')} />
+                </PixelIconButton>
+              </AlertDialogTrigger>
+              <AlertDialogContent className={cn('border-2 border-foreground pixel-shadow')}>
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="font-pixel text-[12px] leading-[1.8]">
+                    애플리케이션 삭제
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    정말로 &apos;{application.applicationName}&apos; 애플리케이션을 삭제하시겠습니까?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => onDelete(application.id)}
+                    className={cn('bg-destructive hover:bg-destructive/90 text-white')}
+                  >
+                    삭제
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
       </TableCell>
     </TableRow>
   );
 };
 
-const ApplicationList = ({ applications, isLoading, onEdit }: ApplicationListProps) => {
+const ApplicationList = ({ applications, isLoading, onEdit, myId }: ApplicationListProps) => {
   const handleDelete = (id: string) => {
     // API 통신은 아직 구현되지 않음
     console.log('Delete Application ID:', id);
@@ -116,9 +123,15 @@ const ApplicationList = ({ applications, isLoading, onEdit }: ApplicationListPro
         {isLoading ? (
           Array.from({ length: 5 }).map((_, index) => (
             <TableRow key={index}>
-              <TableCell><Skeleton className={cn('h-4 w-48')} /></TableCell>
-              <TableCell><Skeleton className={cn('h-4 w-64')} /></TableCell>
-              <TableCell><Skeleton className={cn('h-7 w-16')} /></TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-48')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-64')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-7 w-16')} />
+              </TableCell>
             </TableRow>
           ))
         ) : applications && applications.length > 0 ? (
@@ -128,11 +141,15 @@ const ApplicationList = ({ applications, isLoading, onEdit }: ApplicationListPro
               application={app}
               onEdit={onEdit}
               onDelete={handleDelete}
+              isOwner={app.accountId === myId}
             />
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={3} className={cn('h-24 text-center text-muted-foreground font-mono')}>
+            <TableCell
+              colSpan={3}
+              className={cn('h-24 text-center text-muted-foreground font-mono')}
+            >
               {'>'} 등록된 애플리케이션이 없습니다.
             </TableCell>
           </TableRow>

@@ -4,7 +4,7 @@ import { MyAccountResponse } from '@repo/shared/types';
 import { PageHeader, Skeleton } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-import { ProfileInfo, WithdrawalSection, useGetMy } from '@/widgets/myinfo';
+import { ProfileInfo, useGetMy, WithdrawalSection } from '@/widgets/myinfo';
 
 interface MyInfoPageProps {
   initialData: MyAccountResponse | undefined;
