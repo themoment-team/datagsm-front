@@ -1,5 +1,5 @@
 export interface ApplicationScope {
-  id?: number;
+  scopeId?: number;
   applicationScope: string;
   applicationDescription: string;
 }

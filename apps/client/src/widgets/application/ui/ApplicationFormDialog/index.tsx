@@ -118,11 +118,32 @@ const ApplicationFormDialog = ({
     } else if (mode === 'edit' && application) {
       setIsUpdatePending(true);
       try {
-        const promises: Promise<any>[] = [];
+        // 1. 삭제 작업 먼저 수행 (이름 충돌 방지)
+        const currentScopeIds = data.applicationScopes
+          .map((s) => s.scopeId)
+          .filter((id): id is number => id !== undefined);
+
+        const deletedScopes = application.applicationScopes.filter(
+          (original) => original.scopeId !== undefined && !currentScopeIds.includes(original.scopeId),
+        );
+
+        if (deletedScopes.length > 0) {
+          await Promise.all(
+            deletedScopes.map((scope) =>
+              deleteApplicationScope({
+                applicationId: application.id,
+                scopeId: scope.scopeId!,
+              }),
+            ),
+          );
+        }
+
+        // 2. 수정 및 생성 작업 수행
+        const updateAndCreatePromises: Promise<any>[] = [];
 
         // 이름 수정 확인
         if (data.applicationName !== application.applicationName) {
-          promises.push(
+          updateAndCreatePromises.push(
             updateApplicationName({
               id: application.id,
               data: { name: data.applicationName },
@@ -130,39 +151,20 @@ const ApplicationFormDialog = ({
           );
         }
 
-        // Scope 수정, 삭제, 추가 확인
-        // 삭제된 Scope 찾기
-        const currentScopeIds = data.applicationScopes
-          .map((s) => s.id)
-          .filter((id): id is number => id !== undefined);
-
-        const deletedScopes = application.applicationScopes.filter(
-          (original) => original.id !== undefined && !currentScopeIds.includes(original.id),
-        );
-
-        for (const scope of deletedScopes) {
-          promises.push(
-            deleteApplicationScope({
-              applicationId: application.id,
-              scopeId: scope.id!,
-            }),
-          );
-        }
-
-        // 수정 또는 추가된 Scope 확인
+        // Scope 수정 또는 추가 확인
         for (const scope of data.applicationScopes) {
-          if (scope.id) {
+          if (scope.scopeId) {
             // 수정
-            const original = application.applicationScopes.find((s) => s.id === scope.id);
+            const original = application.applicationScopes.find((s) => s.scopeId === scope.scopeId);
             if (
               original &&
               (original.applicationScope !== scope.applicationScope ||
                 original.applicationDescription !== scope.applicationDescription)
             ) {
-              promises.push(
+              updateAndCreatePromises.push(
                 updateApplicationScope({
                   applicationId: application.id,
-                  scopeId: scope.id,
+                  scopeId: scope.scopeId,
                   data: {
                     scopeName: scope.applicationScope,
                     description: scope.applicationDescription,
@@ -172,7 +174,7 @@ const ApplicationFormDialog = ({
             }
           } else {
             // 추가 (id가 없는 경우)
-            promises.push(
+            updateAndCreatePromises.push(
               createApplicationScope({
                 applicationId: application.id,
                 data: {
@@ -184,8 +186,11 @@ const ApplicationFormDialog = ({
           }
         }
 
-        if (promises.length > 0) {
-          await Promise.all(promises);
+        if (updateAndCreatePromises.length > 0 || deletedScopes.length > 0) {
+          if (updateAndCreatePromises.length > 0) {
+            await Promise.all(updateAndCreatePromises);
+          }
+          
           queryClient.invalidateQueries({
             queryKey: ['applications', 'list'],
           });
