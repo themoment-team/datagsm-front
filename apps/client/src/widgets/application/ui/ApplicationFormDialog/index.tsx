@@ -44,7 +44,19 @@ const ApplicationFormDialog = ({
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
 
-  const { mutate: createApplication, isPending: isCreatePending } = useCreateApplication();
+  const { mutate: createApplication, isPending: isCreatePending } = useCreateApplication({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['applications', 'list'],
+      });
+      toast.success('애플리케이션이 생성되었습니다.');
+      setOpen(false);
+      reset();
+    },
+    onError: () => {
+      toast.error('애플리케이션 생성에 실패했습니다.');
+    },
+  });
 
   const {
     register,
@@ -83,28 +95,13 @@ const ApplicationFormDialog = ({
 
   const onSubmit = (data: ApplicationFormType) => {
     if (mode === 'create') {
-      createApplication(
-        {
-          name: data.applicationName,
-          scopes: data.applicationScopes.map((scope) => ({
-            scopeName: scope.applicationScope,
-            description: scope.applicationDescription,
-          })),
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: ['applications', 'list'],
-            });
-            toast.success('애플리케이션이 생성되었습니다.');
-            setOpen(false);
-            reset();
-          },
-          onError: () => {
-            toast.error('애플리케이션 생성에 실패했습니다.');
-          },
-        },
-      );
+      createApplication({
+        name: data.applicationName,
+        scopes: data.applicationScopes.map((scope) => ({
+          scopeName: scope.applicationScope,
+          description: scope.applicationDescription,
+        })),
+      });
     } else {
       // Edit logic not implemented yet
       toast.info('수정 기능은 아직 구현되지 않았습니다.');
