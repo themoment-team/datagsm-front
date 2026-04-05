@@ -163,6 +163,11 @@ export const applicationUrl = {
   },
   postApplication: () => '/v1/applications',
   deleteApplicationById: (id: string) => `/v1/applications/${id}`,
+  patchApplication: (id: string) => `/v1/applications/${id}`,
+  patchApplicationScope: (applicationId: string, scopeId: number) =>
+    `/v1/applications/${applicationId}/scopes/${scopeId}`,
+  deleteApplicationScope: (applicationId: string, scopeId: number) =>
+    `/v1/applications/${applicationId}/scopes/${scopeId}`,
 } as const;
 
 export const healthUrl = {

@@ -97,6 +97,9 @@ export const applicationQueryKeys = {
     ['applications', 'list', params] as const,
   postApplication: () => ['applications', 'create'] as const,
   deleteApplicationById: () => ['applications', 'delete'] as const,
+  patchApplication: () => ['applications', 'update'] as const,
+  patchApplicationScope: () => ['applications', 'scopes', 'update'] as const,
+  deleteApplicationScope: () => ['applications', 'scopes', 'delete'] as const,
 } as const;
 
 export const healthQueryKeys = {

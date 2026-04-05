@@ -1,4 +1,5 @@
 export interface ApplicationScope {
+  id?: number;
   applicationScope: string;
   applicationDescription: string;
 }
@@ -40,6 +41,15 @@ export interface CreateApplicationRequest {
     scopeName: string;
     description: string;
   }[];
+}
+
+export interface UpdateApplicationRequest {
+  name: string;
+}
+
+export interface UpdateApplicationScopeRequest {
+  scopeName: string;
+  description: string;
 }
 
 export interface GetApplicationsParams {

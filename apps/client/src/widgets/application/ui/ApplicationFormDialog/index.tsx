@@ -21,7 +21,12 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Application, ApplicationFormSchema, ApplicationFormType } from '@/entities/application';
-import { useCreateApplication } from '@/widgets/application';
+import {
+  useCreateApplication,
+  useDeleteApplicationScope,
+  useUpdateApplicationName,
+  useUpdateApplicationScope,
+} from '@/widgets/application';
 
 interface ApplicationFormDialogProps {
   mode: 'create' | 'edit';
@@ -58,6 +63,12 @@ const ApplicationFormDialog = ({
     },
   });
 
+  const { mutateAsync: updateApplicationName } = useUpdateApplicationName();
+  const { mutateAsync: updateApplicationScope } = useUpdateApplicationScope();
+  const { mutateAsync: deleteApplicationScope } = useDeleteApplicationScope();
+
+  const [isUpdatePending, setIsUpdatePending] = useState(false);
+
   const {
     register,
     control,
@@ -93,7 +104,7 @@ const ApplicationFormDialog = ({
     }
   }, [mode, application, open, reset]);
 
-  const onSubmit = (data: ApplicationFormType) => {
+  const onSubmit = async (data: ApplicationFormType) => {
     if (mode === 'create') {
       createApplication({
         name: data.applicationName,
@@ -102,14 +113,85 @@ const ApplicationFormDialog = ({
           description: scope.applicationDescription,
         })),
       });
-    } else {
-      // Edit logic not implemented yet
-      toast.info('수정 기능은 아직 구현되지 않았습니다.');
+    } else if (mode === 'edit' && application) {
+      setIsUpdatePending(true);
+      try {
+        const promises: Promise<any>[] = [];
+
+        // 이름 수정 확인
+        if (data.applicationName !== application.applicationName) {
+          promises.push(
+            updateApplicationName({
+              id: application.id,
+              data: { name: data.applicationName },
+            }),
+          );
+        }
+
+        // Scope 수정 및 삭제 확인
+        // 삭제된 Scope 찾기
+        const currentScopeIds = data.applicationScopes
+          .map((s) => s.id)
+          .filter((id): id is number => id !== undefined);
+
+        const deletedScopes = application.applicationScopes.filter(
+          (original) => original.id !== undefined && !currentScopeIds.includes(original.id),
+        );
+
+        for (const scope of deletedScopes) {
+          promises.push(
+            deleteApplicationScope({
+              applicationId: application.id,
+              scopeId: scope.id!,
+            }),
+          );
+        }
+
+        // 수정된 Scope 찾기
+        for (const scope of data.applicationScopes) {
+          if (scope.id) {
+            const original = application.applicationScopes.find((s) => s.id === scope.id);
+            if (
+              original &&
+              (original.applicationScope !== scope.applicationScope ||
+                original.applicationDescription !== scope.applicationDescription)
+            ) {
+              promises.push(
+                updateApplicationScope({
+                  applicationId: application.id,
+                  scopeId: scope.id,
+                  data: {
+                    scopeName: scope.applicationScope,
+                    description: scope.applicationDescription,
+                  },
+                }),
+              );
+            }
+          }
+        }
+
+        if (promises.length > 0) {
+          await Promise.all(promises);
+          queryClient.invalidateQueries({
+            queryKey: ['applications', 'list'],
+          });
+          toast.success('애플리케이션이 수정되었습니다.');
+        } else {
+          toast.info('변경사항이 없습니다.');
+        }
+
+        setOpen(false);
+      } catch (error) {
+        toast.error('애플리케이션 수정 중 오류가 발생했습니다.');
+      } finally {
+        setIsUpdatePending(false);
+      }
     }
   };
 
   const title = mode === 'create' ? 'ADD APPLICATION' : 'EDIT APPLICATION';
   const submitText = mode === 'create' ? '추가' : '저장';
+  const isPending = isCreatePending || isUpdatePending;
 
   const defaultTrigger = (
     <Button size="sm" className={cn('gap-2')}>
@@ -144,7 +226,7 @@ const ApplicationFormDialog = ({
               placeholder="애플리케이션 이름 입력"
               className={cn('border-foreground rounded-none font-mono')}
               {...register('applicationName')}
-              disabled={isCreatePending}
+              disabled={isPending}
             />
             <FormErrorMessage error={errors.applicationName} />
           </div>
@@ -162,7 +244,7 @@ const ApplicationFormDialog = ({
                 size="sm"
                 onClick={() => append({ applicationScope: '', applicationDescription: '' })}
                 className={cn('h-8')}
-                disabled={isCreatePending}
+                disabled={isPending}
               >
                 <Plus className={cn('mr-1 h-3 w-3')} />
                 Scope 추가
@@ -182,7 +264,7 @@ const ApplicationFormDialog = ({
                       size="icon"
                       onClick={() => remove(index)}
                       className={cn('absolute right-1 top-1 h-6 w-6')}
-                      disabled={isCreatePending}
+                      disabled={isPending}
                     >
                       <X className={cn('h-4 w-4')} />
                     </Button>
@@ -196,7 +278,7 @@ const ApplicationFormDialog = ({
                       placeholder="예: user.read"
                       className={cn('border-foreground rounded-none font-mono text-sm')}
                       {...register(`applicationScopes.${index}.applicationScope` as const)}
-                      disabled={isCreatePending}
+                      disabled={isPending}
                     />
                     <FormErrorMessage error={errors.applicationScopes?.[index]?.applicationScope} />
                   </div>
@@ -209,7 +291,7 @@ const ApplicationFormDialog = ({
                       placeholder="권한에 대한 설명 입력"
                       className={cn('border-foreground rounded-none font-mono text-sm')}
                       {...register(`applicationScopes.${index}.applicationDescription` as const)}
-                      disabled={isCreatePending}
+                      disabled={isPending}
                     />
                     <FormErrorMessage
                       error={errors.applicationScopes?.[index]?.applicationDescription}
@@ -224,8 +306,8 @@ const ApplicationFormDialog = ({
           </div>
 
           <div className={cn('flex justify-end pt-2')}>
-            <Button type="submit" disabled={isCreatePending}>
-              {isCreatePending ? '처리 중...' : submitText}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? '처리 중...' : submitText}
             </Button>
           </div>
         </form>
