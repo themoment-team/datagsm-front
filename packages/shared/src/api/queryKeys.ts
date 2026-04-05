@@ -100,6 +100,7 @@ export const applicationQueryKeys = {
   patchApplication: () => ['applications', 'update'] as const,
   patchApplicationScope: () => ['applications', 'scopes', 'update'] as const,
   deleteApplicationScope: () => ['applications', 'scopes', 'delete'] as const,
+  postApplicationScope: () => ['applications', 'scopes', 'create'] as const,
 } as const;
 
 export const healthQueryKeys = {

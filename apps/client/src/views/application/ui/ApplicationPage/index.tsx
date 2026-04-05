@@ -35,6 +35,7 @@ const ApplicationPage = () => {
       applicationName: app.name,
       accountId: app.accountId,
       applicationScopes: app.scopes.map((scope) => ({
+        id: scope.id,
         applicationScope: scope.scopeName,
         applicationDescription: scope.description,
       })),

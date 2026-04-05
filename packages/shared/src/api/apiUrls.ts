@@ -168,6 +168,7 @@ export const applicationUrl = {
     `/v1/applications/${applicationId}/scopes/${scopeId}`,
   deleteApplicationScope: (applicationId: string, scopeId: number) =>
     `/v1/applications/${applicationId}/scopes/${scopeId}`,
+  postApplicationScope: (applicationId: string) => `/v1/applications/${applicationId}/scopes`,
 } as const;
 
 export const healthUrl = {

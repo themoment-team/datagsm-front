@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import { Application, ApplicationFormSchema, ApplicationFormType } from '@/entities/application';
 import {
   useCreateApplication,
+  useCreateApplicationScope,
   useDeleteApplicationScope,
   useUpdateApplicationName,
   useUpdateApplicationScope,
@@ -66,6 +67,7 @@ const ApplicationFormDialog = ({
   const { mutateAsync: updateApplicationName } = useUpdateApplicationName();
   const { mutateAsync: updateApplicationScope } = useUpdateApplicationScope();
   const { mutateAsync: deleteApplicationScope } = useDeleteApplicationScope();
+  const { mutateAsync: createApplicationScope } = useCreateApplicationScope();
 
   const [isUpdatePending, setIsUpdatePending] = useState(false);
 
@@ -128,7 +130,7 @@ const ApplicationFormDialog = ({
           );
         }
 
-        // Scope 수정 및 삭제 확인
+        // Scope 수정, 삭제, 추가 확인
         // 삭제된 Scope 찾기
         const currentScopeIds = data.applicationScopes
           .map((s) => s.id)
@@ -147,9 +149,10 @@ const ApplicationFormDialog = ({
           );
         }
 
-        // 수정된 Scope 찾기
+        // 수정 또는 추가된 Scope 확인
         for (const scope of data.applicationScopes) {
           if (scope.id) {
+            // 수정
             const original = application.applicationScopes.find((s) => s.id === scope.id);
             if (
               original &&
@@ -167,6 +170,17 @@ const ApplicationFormDialog = ({
                 }),
               );
             }
+          } else {
+            // 추가 (id가 없는 경우)
+            promises.push(
+              createApplicationScope({
+                applicationId: application.id,
+                data: {
+                  scopeName: scope.applicationScope,
+                  description: scope.applicationDescription,
+                },
+              }),
+            );
           }
         }
 
