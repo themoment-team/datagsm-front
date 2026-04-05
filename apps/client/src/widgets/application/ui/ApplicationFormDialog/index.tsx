@@ -118,8 +118,13 @@ const ApplicationFormDialog = ({
     } else if (mode === 'edit' && application) {
       setIsUpdatePending(true);
       try {
+        const submittedScopes = data.applicationScopes.map((scope, index) => ({
+          ...scope,
+          scopeId: fields[index]?.scopeId,
+        }));
+
         // 1. 삭제 작업 먼저 수행 (이름 충돌 방지)
-        const currentScopeIds = data.applicationScopes
+        const currentScopeIds = submittedScopes
           .map((s) => s.scopeId)
           .filter((id): id is number => id !== undefined);
 
@@ -142,44 +147,44 @@ const ApplicationFormDialog = ({
         const updateAndCreatePromises: Promise<any>[] = [];
 
         // 이름 수정 확인
-        if (data.applicationName !== application.applicationName) {
+        if (data.applicationName.trim() !== application.applicationName.trim()) {
           updateAndCreatePromises.push(
             updateApplicationName({
               id: application.id,
-              data: { name: data.applicationName },
+              data: { name: data.applicationName.trim() },
             }),
           );
         }
 
         // Scope 수정 또는 추가 확인
-        for (const scope of data.applicationScopes) {
+        for (const scope of submittedScopes) {
           if (scope.scopeId) {
-            // 수정
+            // 수정 대상 비교 (공백 제거 후 비교)
             const original = application.applicationScopes.find((s) => s.scopeId === scope.scopeId);
             if (
               original &&
-              (original.applicationScope !== scope.applicationScope ||
-                original.applicationDescription !== scope.applicationDescription)
+              (original.applicationScope.trim() !== scope.applicationScope.trim() ||
+                original.applicationDescription.trim() !== scope.applicationDescription.trim())
             ) {
               updateAndCreatePromises.push(
                 updateApplicationScope({
                   applicationId: application.id,
                   scopeId: scope.scopeId,
                   data: {
-                    scopeName: scope.applicationScope,
-                    description: scope.applicationDescription,
+                    scopeName: scope.applicationScope.trim(),
+                    description: scope.applicationDescription.trim(),
                   },
                 }),
               );
             }
           } else {
-            // 추가 (id가 없는 경우)
+            // scope 추가
             updateAndCreatePromises.push(
               createApplicationScope({
                 applicationId: application.id,
                 data: {
-                  scopeName: scope.applicationScope,
-                  description: scope.applicationDescription,
+                  scopeName: scope.applicationScope.trim(),
+                  description: scope.applicationDescription.trim(),
                 },
               }),
             );
