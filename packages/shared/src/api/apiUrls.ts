@@ -162,6 +162,7 @@ export const applicationUrl = {
     return queryString ? `/v1/applications?${queryString}` : '/v1/applications';
   },
   postApplication: () => '/v1/applications',
+  deleteApplicationById: (id: string) => `/v1/applications/${id}`,
 } as const;
 
 export const healthUrl = {

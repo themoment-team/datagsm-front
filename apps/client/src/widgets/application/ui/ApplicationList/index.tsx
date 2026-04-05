@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +25,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Application } from '@/entities/application';
+import { useDeleteApplication } from '@/widgets/application';
 
 interface ApplicationListProps {
   applications?: Application[];
@@ -104,10 +106,21 @@ const ApplicationListItem = ({
 };
 
 const ApplicationList = ({ applications, isLoading, onEdit, myId }: ApplicationListProps) => {
+  const queryClient = useQueryClient();
+  const { mutate: deleteApplication } = useDeleteApplication({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['applications', 'list'],
+      });
+      toast.success('애플리케이션이 삭제되었습니다.');
+    },
+    onError: () => {
+      toast.error('애플리케이션 삭제에 실패했습니다.');
+    },
+  });
+
   const handleDelete = (id: string) => {
-    // API 통신은 아직 구현되지 않음
-    console.log('Delete Application ID:', id);
-    toast.success('애플리케이션이 삭제되었습니다.');
+    deleteApplication(id);
   };
 
   return (
