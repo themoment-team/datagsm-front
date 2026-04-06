@@ -373,13 +373,15 @@ const ClientFormDialog = ({
                               <div className={cn('flex-1')}>
                                 <label
                                   htmlFor={`${mode}-${scope.scope}`}
-                                  className={cn('text-ms cursor-pointer font-mono leading-none')}
+                                  className={cn('block cursor-pointer')}
                                 >
-                                  {getAfterColon(scope.scope)}
+                                  <p className={cn('text-ms font-mono leading-none')}>
+                                    {getAfterColon(scope.scope)}
+                                  </p>
+                                  <p className={cn('text-muted-foreground mt-0.5 text-xs')}>
+                                    {scope.description}
+                                  </p>
                                 </label>
-                                <p className={cn('text-muted-foreground mt-0.5 text-xs')}>
-                                  {scope.description}
-                                </p>
                               </div>
                             </div>
                           ))}
