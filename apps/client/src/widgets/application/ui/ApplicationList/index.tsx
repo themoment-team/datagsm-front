@@ -1,6 +1,5 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +20,7 @@ import {
   TableRow,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -56,9 +56,9 @@ const ApplicationListItem = ({
             <div
               key={index}
               className={cn(
-                'group relative bg-foreground px-1.5 py-0.5 text-xs uppercase text-background font-mono cursor-help',
+                'bg-foreground text-background group relative cursor-help px-1.5 py-0.5 font-mono text-xs uppercase',
               )}
-              title={scope.applicationDescription}
+              title={scope.applicationScope}
             >
               {scope.applicationScope}
             </div>
@@ -78,13 +78,14 @@ const ApplicationListItem = ({
                   <Trash2 className={cn('h-3.5 w-3.5')} />
                 </PixelIconButton>
               </AlertDialogTrigger>
-              <AlertDialogContent className={cn('border-2 border-foreground pixel-shadow')}>
+              <AlertDialogContent className={cn('border-foreground pixel-shadow border-2')}>
                 <AlertDialogHeader>
                   <AlertDialogTitle className="font-pixel text-[12px] leading-[1.8]">
                     애플리케이션 삭제
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    정말로 &apos;{application.applicationName}&apos; 애플리케이션을 삭제하시겠습니까?
+                    정말로 &apos;{application.applicationName}&apos; 애플리케이션을
+                    삭제하시겠습니까?
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -161,7 +162,7 @@ const ApplicationList = ({ applications, isLoading, onEdit, myId }: ApplicationL
           <TableRow>
             <TableCell
               colSpan={3}
-              className={cn('h-24 text-center text-muted-foreground font-mono')}
+              className={cn('text-muted-foreground h-24 text-center font-mono')}
             >
               {'>'} 등록된 애플리케이션이 없습니다.
             </TableCell>
