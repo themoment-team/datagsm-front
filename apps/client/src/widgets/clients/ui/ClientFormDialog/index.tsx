@@ -23,8 +23,13 @@ import {
   FormErrorMessage,
   Input,
   Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@repo/shared/ui';
-import { cn } from '@repo/shared/utils';
+import { cn, getAfterColon } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loader2, Pencil, Plus, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -52,6 +57,7 @@ const ClientFormDialog = ({
 }: ClientFormDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedAppName, setSelectedAppName] = useState<string>('all');
   const pendingFormData = useRef<ClientFormType | null>(null);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -115,6 +121,12 @@ const ClientFormDialog = ({
       fieldName: 'scopes',
     });
 
+  const appNames = Object.keys(groupedScopes);
+  const filteredGroups =
+    selectedAppName === 'all'
+      ? Object.entries(groupedScopes)
+      : Object.entries(groupedScopes).filter(([name]) => name === selectedAppName);
+
   useEffect(() => {
     if (!open) return;
 
@@ -132,6 +144,7 @@ const ClientFormDialog = ({
         redirectUrls: [{ url: '' }],
         scopes: [],
       });
+      setSelectedAppName('all');
     }
   }, [mode, client, open, reset]);
 
@@ -201,7 +214,7 @@ const ClientFormDialog = ({
       }}
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
-      <DialogContent className={cn('max-h-[90vh] max-w-lg overflow-y-auto p-0')}>
+      <DialogContent className={cn('max-h-[90vh] max-w-lg p-0')}>
         <DialogHeader className={cn('border-foreground border-b-2 px-6 py-5')}>
           <DialogTitle className={cn('font-pixel text-[14px] leading-none')}>{title}</DialogTitle>
         </DialogHeader>
@@ -310,42 +323,74 @@ const ClientFormDialog = ({
               <p className={cn('text-muted-foreground text-xs')}>
                 클라이언트가 접근할 수 있는 권한 범위를 선택하세요.
               </p>
-              <div className={cn('border-foreground mt-2 space-y-4 rounded-none border-2 p-4')}>
-                {Object.entries(groupedScopes).map(([applicationName, scopes]) => {
-                  return (
-                    <div key={applicationName}>
-                      <h4
-                        className={cn(
-                          'text-muted-foreground mb-2 font-mono text-xs font-semibold uppercase tracking-widest',
-                        )}
-                      >
-                        {applicationName}
-                      </h4>
-                      <div className={cn('space-y-2')}>
-                        {scopes.map((scope) => (
-                          <div
-                            key={scope.scope}
-                            className={cn('flex items-center gap-3', getIndentation())}
-                          >
-                            <Checkbox
-                              id={`${mode}-${scope.scope}`}
-                              checked={isScopeChecked(scope.scope)}
-                              onCheckedChange={() => handleScopeToggle(scope.scope)}
-                            />
-                            <div className={cn('flex-1')}>
-                              <label
-                                htmlFor={`${mode}-${scope.scope}`}
-                                className={cn('cursor-pointer font-mono text-base leading-none')}
-                              >
-                                {scope.description}
-                              </label>
+
+              <div className={cn('mt-2')}>
+                <Select value={selectedAppName} onValueChange={setSelectedAppName}>
+                  <SelectTrigger className={cn('border-foreground rounded-none font-mono text-xs')}>
+                    <SelectValue placeholder="애플리케이션 필터" />
+                  </SelectTrigger>
+                  <SelectContent className={cn('border-foreground rounded-none')}>
+                    <SelectItem value="all" className={cn('font-mono text-xs')}>
+                      전체 애플리케이션
+                    </SelectItem>
+                    {appNames.map((name) => (
+                      <SelectItem key={name} value={name} className={cn('font-mono text-xs')}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div
+                className={cn(
+                  'border-foreground mt-2 max-h-60 space-y-4 overflow-y-auto rounded-none border-2 p-4',
+                )}
+              >
+                {filteredGroups.length > 0 ? (
+                  filteredGroups.map(([applicationName, scopes]) => {
+                    return (
+                      <div key={applicationName}>
+                        <h4
+                          className={cn(
+                            'text-muted-foreground mb-2 font-mono text-xs font-semibold uppercase tracking-widest',
+                          )}
+                        >
+                          {applicationName}
+                        </h4>
+                        <div className={cn('space-y-2')}>
+                          {scopes.map((scope) => (
+                            <div
+                              key={scope.scope}
+                              className={cn('flex items-center gap-3', getIndentation())}
+                            >
+                              <Checkbox
+                                id={`${mode}-${scope.scope}`}
+                                checked={isScopeChecked(scope.scope)}
+                                onCheckedChange={() => handleScopeToggle(scope.scope)}
+                              />
+                              <div className={cn('flex-1')}>
+                                <label
+                                  htmlFor={`${mode}-${scope.scope}`}
+                                  className={cn('text-ms cursor-pointer font-mono leading-none')}
+                                >
+                                  {getAfterColon(scope.scope)}
+                                </label>
+                                <p className={cn('text-muted-foreground mt-0.5 text-xs')}>
+                                  {scope.description}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                ) : (
+                  <p className={cn('text-muted-foreground py-4 text-center font-mono text-xs')}>
+                    {'>'} 권한 범위가 없습니다.
+                  </p>
+                )}
               </div>
               <FormErrorMessage error={errors.scopes as any} />
             </div>
