@@ -37,6 +37,8 @@ const ROLE_MAP: Record<string, string> = {
   GENERAL_STUDENT: '일반학생',
   STUDENT_COUNCIL: '학생회',
   DORMITORY_MANAGER: '기숙사자치위원회',
+  GRADUATE: '졸업생',
+  WITHDRAWN: '자퇴생',
 };
 
 const SEX_MAP: Record<string, string> = {
@@ -47,6 +49,7 @@ const SEX_MAP: Record<string, string> = {
 export const ProfileInfo = ({ data }: ProfileInfoProps) => {
   const { student, email, role } = data;
   const isAdmin = role === 'ROOT' || role === 'ADMIN';
+  const isInactive = student?.role === 'GRADUATE' || student?.role === 'WITHDRAWN';
 
   if (!student) {
     return (
@@ -80,7 +83,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
           <div>
             <p className={cn('font-pixel text-[14px]')}>{student.name}</p>
             <div className={cn('mt-2 flex flex-wrap items-center gap-2')}>
-              <span className={cn('border border-foreground/25 px-1.5 py-0.5 text-xs font-mono uppercase')}>{MAJOR_MAP[student.major] || student.major}</span>
+              {student.major && <span className={cn('border border-foreground/25 px-1.5 py-0.5 text-xs font-mono uppercase')}>{MAJOR_MAP[student.major] || student.major}</span>}
               {isAdmin && <span className={cn('border border-destructive/40 px-1.5 py-0.5 text-xs font-mono uppercase text-destructive')}>{role}</span>}
             </div>
           </div>
@@ -91,24 +94,28 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
       <SectionCard title="학적 정보" icon={<GraduationCap />}>
         <div className={cn('grid grid-flow-col grid-rows-3')}>
           <InfoItem label="이름" value={student.name} />
-          <InfoItem label="학과" value={MAJOR_MAP[student.major] || student.major} />
-          <InfoItem label="성별" value={SEX_MAP[student.sex] || student.sex} />
-          <InfoItem label="학년" value={`${student.grade}학년`} />
-          <InfoItem label="반" value={`${student.classNum}반`} />
-          <InfoItem label="번호" value={`${student.number}번`} />
+          <InfoItem label="학과" value={student.major ? (MAJOR_MAP[student.major] || student.major) : '-'} />
+          <InfoItem label="성별" value={student.sex ? (SEX_MAP[student.sex] || student.sex) : '-'} />
+          <InfoItem label="학년" value={isInactive || !student.grade ? '-' : `${student.grade}학년`} />
+          <InfoItem label="반" value={isInactive || !student.classNum ? '-' : `${student.classNum}반`} />
+          <InfoItem label="번호" value={isInactive || !student.number ? '-' : `${student.number}번`} />
         </div>
       </SectionCard>
 
       {/* 진로 정보 */}
-      <SpecialtyCard currentSpecialty={student.specialty} />
+      <SpecialtyCard currentSpecialty={student.specialty} isInactive={isInactive} />
 
       {/* GitHub 정보 */}
-      <GithubIdCard currentGithubId={student.githubId} />
+      <GithubIdCard currentGithubId={student.githubId} isInactive={isInactive} />
 
       {/* 기숙사 및 동아리 정보 */}
       <SectionCard title="기숙사 및 동아리" icon={<Home />}>
         <div className={cn('grid grid-cols-2')}>
-          <InfoItem label="기숙사 호실" value={`${student.dormitoryFloor}층 ${student.dormitoryRoom}호`} className={cn('col-span-2')} />
+          <InfoItem
+            label="기숙사 호실"
+            value={isInactive || (!student.dormitoryFloor && !student.dormitoryRoom) ? '-' : `${student.dormitoryFloor}층 ${student.dormitoryRoom}호`}
+            className={cn('col-span-2')}
+          />
           <InfoItem label="전공동아리" value={student.majorClub?.name || '없음'} />
           <InfoItem label="자율동아리" value={student.autonomousClub?.name || '없음'} />
         </div>
@@ -125,7 +132,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
   );
 };
 
-const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }) => {
+const SpecialtyCard = ({ currentSpecialty, isInactive }: { currentSpecialty: string | null; isInactive: boolean }) => {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [isCustom, setIsCustom] = useState(false);
@@ -167,7 +174,7 @@ const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }
       title="진로 정보"
       icon={<Briefcase />}
       headerAction={
-        !isEditing && (
+        !isEditing && !isInactive && (
           <PixelIconButton size="sm" onClick={startEdit} aria-label="진로 정보 수정">
             <Pencil className={cn('h-3 w-3')} />
           </PixelIconButton>
@@ -257,7 +264,7 @@ const SpecialtyCard = ({ currentSpecialty }: { currentSpecialty: string | null }
   );
 };
 
-const GithubIdCard = ({ currentGithubId }: { currentGithubId: string | null }) => {
+const GithubIdCard = ({ currentGithubId, isInactive }: { currentGithubId: string | null; isInactive: boolean }) => {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -291,7 +298,7 @@ const GithubIdCard = ({ currentGithubId }: { currentGithubId: string | null }) =
       title="GitHub"
       icon={<Link />}
       headerAction={
-        !isEditing && (
+        !isEditing && !isInactive && (
           <PixelIconButton size="sm" onClick={startEdit} aria-label="GitHub ID 수정">
             <Pencil className={cn('h-3 w-3')} />
           </PixelIconButton>
