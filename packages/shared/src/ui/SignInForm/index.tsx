@@ -266,16 +266,16 @@ const SignInForm = ({
                 {serviceScope.map((x, index) => (
                   <div
                     key={x.scope + index}
-                    className={cn('bg-muted/30 flex items-end gap-2 border border-dashed p-2')}
+                    className={cn('bg-muted/30 flex items-center gap-2 border border-dashed p-2')}
                   >
-                    <ShieldCheck className={cn('text-foreground mt-0.5 h-5 w-5 flex-shrink-0')} />
-                    <div className={cn('flex space-y-0.5')}>
-                      <span className={cn('text-foreground block text-lg font-semibold')}>
+                    <ShieldCheck className={cn('text-foreground h-5 w-5 flex-shrink-0')} />
+                    <div className={cn('flex items-end')}>
+                      <p className={cn('text-foreground block flex text-lg font-semibold')}>
                         {x.applicationName}
-                      </span>
-                      <span className={cn('text-muted-foreground block text-sm leading-tight')}>
+                      </p>
+                      <p className={cn('text-muted-foreground mb-0.5 block text-sm leading-tight')}>
                         {x.description}
-                      </span>
+                      </p>
                     </div>
                   </div>
                 ))}
