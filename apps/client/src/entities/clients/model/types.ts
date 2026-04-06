@@ -36,6 +36,7 @@ export type UpdateClientData = Client;
 
 export type CreateClientResponse = ApiResponse<CreateClientData>;
 export type UpdateClientResponse = ApiResponse<UpdateClientData>;
+export type ClientListResponse = ApiResponse<ClientListData>;
 
 export type { ClientAvailableScope, AvailableScopesResponse };
 
