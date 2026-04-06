@@ -26,10 +26,11 @@ export const useClientScopeSelection = <T extends FieldValues>({
     list.forEach((item) => {
       if (!item || !item.applicationName) return;
 
-      if (!groups[item.applicationName]) {
-        groups[item.applicationName] = [];
+      const applicationName = item.applicationName;
+      if (!groups[applicationName]) {
+        groups[applicationName] = [];
       }
-      groups[item.applicationName].push(item);
+      groups[applicationName]!.push(item);
     });
 
     return groups;
