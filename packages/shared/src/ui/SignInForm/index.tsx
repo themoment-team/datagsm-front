@@ -136,7 +136,11 @@ const SignInForm = ({
                 <span className={cn('font-medium underline underline-offset-2 hover:opacity-70')}>
                   {serviceName}
                 </span>
-                에서 다음과 같은 권한을 요청합니다
+                에서 다음과 같은{' '}
+                <span className={cn('font-medium underline underline-offset-2 hover:opacity-70')}>
+                  권한
+                </span>
+                을 요청합니다
               </label>
             </div>
             {/* Email */}
@@ -269,7 +273,7 @@ const SignInForm = ({
                     className={cn('bg-muted/30 flex items-center gap-2 border border-dashed p-2')}
                   >
                     <ShieldCheck className={cn('text-foreground h-5 w-5 flex-shrink-0')} />
-                    <div className={cn('flex items-end')}>
+                    <div className={cn('flex items-end gap-1')}>
                       <p className={cn('text-foreground block flex text-lg font-semibold')}>
                         {x.applicationName}
                       </p>
