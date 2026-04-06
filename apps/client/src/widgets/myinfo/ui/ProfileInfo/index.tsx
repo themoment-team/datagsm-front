@@ -113,11 +113,11 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
         <div className={cn('grid grid-cols-2')}>
           <InfoItem
             label="기숙사 호실"
-            value={isInactive || (!student.dormitoryFloor && !student.dormitoryRoom) ? '-' : `${student.dormitoryFloor}층 ${student.dormitoryRoom}호`}
+            value={isInactive || student.dormitoryFloor == null || student.dormitoryRoom == null ? '-' : `${student.dormitoryFloor}층 ${student.dormitoryRoom}호`}
             className={cn('col-span-2')}
           />
-          <InfoItem label="전공동아리" value={student.majorClub?.name || '없음'} />
-          <InfoItem label="자율동아리" value={student.autonomousClub?.name || '없음'} />
+          <InfoItem label="전공동아리" value={isInactive ? '-' : (student.majorClub?.name || '없음')} />
+          <InfoItem label="자율동아리" value={isInactive ? '-' : (student.autonomousClub?.name || '없음')} />
         </div>
       </SectionCard>
 
