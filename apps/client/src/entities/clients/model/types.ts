@@ -1,7 +1,7 @@
 import {
   ApiResponse,
-  ClientAvailableScope,
   ClientAvailableScopesResponse as AvailableScopesResponse,
+  ClientAvailableScope,
 } from '@repo/shared/types';
 
 export interface Client {
@@ -25,30 +25,18 @@ export interface CreateClientRequest {
   scopes: string[];
 }
 
-export interface CreateClientData {
-  id: string;
-  clientName: string;
-  serviceName: string;
-  redirectUrl: string[];
-  scopes: string[];
-}
-
-export type CreateClientResponse = ApiResponse<CreateClientData>;
-
 export interface UpdateClientRequest {
   clientName: string;
   serviceName: string;
   redirectUrls: string[];
 }
 
-export interface UpdateClientData {
-  id: string;
-  clientName: string;
-  serviceName: string;
-  redirectUrl: string[];
-  scopes: string[];
-}
+export type CreateClientData = Client;
+export type UpdateClientData = Client;
 
+export type CreateClientResponse = ApiResponse<CreateClientData>;
 export type UpdateClientResponse = ApiResponse<UpdateClientData>;
 
 export type { ClientAvailableScope, AvailableScopesResponse };
+
+export type { ClientFormType } from './schema';
