@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authQueryKeys } from '@repo/shared/api';
 import {
+  useApiKeyScopeSelection,
   useCreateApiKey,
   useGetApiKey,
   useGetAvailableScope,
   useRotateApiKey,
-  useScopeSelection,
   useUpdateApiKey,
 } from '@repo/shared/hooks';
 import {
@@ -145,7 +145,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
       ? '기존 API 키를 폐기하고 권한 범위와 설명이 같은 새로운 키를 발급합니다.'
       : 'API 키의 권한 범위 및 설명을 수정한 새로운 키를 발급합니다.';
 
-  const { handleScopeToggle, isScopeChecked, getIndentation } = useScopeSelection({
+  const { handleScopeToggle, isScopeChecked, getIndentation } = useApiKeyScopeSelection({
     availableScopes: availableKeyScope,
     watch,
     setValue,
@@ -197,10 +197,8 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
 
   if (isLoadingApiKey || isLoadingKeyScope) {
     return (
-      <div
-        className={cn('border-2 border-foreground p-5 pixel-shadow-sm')}
-      >
-        <span className={cn('text-sm text-muted-foreground font-mono')}>
+      <div className={cn('border-foreground pixel-shadow-sm border-2 p-5')}>
+        <span className={cn('text-muted-foreground font-mono text-sm')}>
           {'>'} 권한 범위 불러오는 중...
         </span>
       </div>
@@ -208,27 +206,25 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
   }
 
   return (
-    <div
-      className={cn('border-2 border-foreground p-5 pixel-shadow-sm')}
-    >
+    <div className={cn('border-foreground pixel-shadow-sm border-2 p-5')}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={cn('mb-6 flex flex-col gap-4')}>
           <div>
-            <p className={cn('mb-1 text-sm font-bold uppercase tracking-wide font-mono')}>
+            <p className={cn('mb-1 font-mono text-sm font-bold uppercase tracking-wide')}>
               API 권한 범위 선택
             </p>
-            <p className={cn('text-muted-foreground text-xs font-mono')}>
+            <p className={cn('text-muted-foreground font-mono text-xs')}>
               {'>'} API 키로 접근할 수 있는 권한 범위를 선택하세요.
             </p>
           </div>
           <div className={cn('mb-4 space-y-6')}>
             {availableKeyScope?.data?.list.map((category) => {
-              const hasMultipleScopes = category.scopes.length > 1;
+              const hasMultipleScopes = category.scopes?.length > 1;
               return (
                 <div key={category.title}>
                   <h3 className={cn('mb-2 text-sm font-semibold')}>{category.title}</h3>
                   <div className={cn('space-y-2')}>
-                    {category.scopes.map((scope) => (
+                    {category.scopes?.map((scope) => (
                       <div
                         key={scope.scope}
                         className={cn(
@@ -259,9 +255,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
               );
             })}
           </div>
-          <FormErrorMessage
-            error={Array.isArray(errors.scopes) ? errors.scopes[0] : errors.scopes}
-          />
+          <FormErrorMessage error={errors.scopes as any} />
           <Input placeholder="설명을 작성해주세요." {...register('description')} />
           <FormErrorMessage error={errors.description} />
           {apiKeyData?.data?.apiKey && (
@@ -288,7 +282,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                 {apiKeyData?.data?.apiKey ? (
                   <button
                     className={cn(
-                      'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
+                      'bg-foreground text-background font-mono w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
                     )}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
                     type="button"
@@ -299,7 +293,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                 ) : (
                   <button
                     className={cn(
-                      'w-full cursor-pointer border-2 border-foreground bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 font-mono',
+                      'bg-foreground text-background font-mono w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
                     )}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
                     type="submit"
@@ -331,7 +325,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                 <TooltipTrigger asChild>
                   <button
                     className={cn(
-                      'w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest text-foreground transition-all hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-60 font-mono',
+                      'text-foreground font-mono w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest transition-all hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-60',
                     )}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
                     type="button"

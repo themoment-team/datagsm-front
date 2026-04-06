@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EMAIL_DOMAIN } from '@repo/shared/constants';
-import { ScopesType, SignInFormSchema, SignInFormType } from '@repo/shared/types';
+import { ClientAvailableScope, SignInFormSchema, SignInFormType } from '@repo/shared/types';
 import {
   Dialog,
   DialogContent,
@@ -30,7 +30,7 @@ interface SignInFormProps {
   signupHref: string;
   resetHref: string;
   serviceName?: string;
-  serviceScope?: ScopesType[];
+  serviceScope?: ClientAvailableScope[];
   isLoadingServiceName?: boolean;
   remainingTime?: number | null;
 }
@@ -266,7 +266,7 @@ const SignInForm = ({
                 {serviceScope.map((x, index) => (
                   <div
                     key={x.scope + index}
-                    className={cn('bg-muted/30 flex items-start gap-2 border border-dashed p-2')}
+                    className={cn('bg-muted/30 flex items-end gap-2 border border-dashed p-2')}
                   >
                     <ShieldCheck className={cn('text-foreground mt-0.5 h-5 w-5 flex-shrink-0')} />
                     <div className={cn('flex space-y-0.5')}>

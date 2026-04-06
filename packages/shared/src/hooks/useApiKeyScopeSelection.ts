@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useMemo } from 'react';
 
@@ -6,27 +6,26 @@ import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from 'rea
 
 import { AvailableScopeListResponse } from '../types';
 
-interface UseScopeSelectionParams<T extends FieldValues> {
+interface UseApiKeyScopeSelectionParams<T extends FieldValues> {
   availableScopes?: AvailableScopeListResponse;
   watch: UseFormWatch<T>;
   setValue: UseFormSetValue<T>;
   fieldName: Path<T>;
 }
 
-export const useScopeSelection = <T extends FieldValues>({
+export const useApiKeyScopeSelection = <T extends FieldValues>({
   availableScopes,
   watch,
   setValue,
   fieldName,
-}: UseScopeSelectionParams<T>) => {
+}: UseApiKeyScopeSelectionParams<T>) => {
   const scopeMap = useMemo(() => {
     const map = new Map<string, string[]>();
-
     const categories = availableScopes?.data?.list || [];
-    categories.forEach((category) => {
-      category.scopes.forEach(({ scope }) => {
-        if (scope.endsWith(':*')) return;
 
+    categories.forEach((category) => {
+      category.scopes?.forEach(({ scope }) => {
+        if (scope.endsWith(':*')) return;
         const prefix = scope.split(':')[0];
         map.set(prefix!, [...(map.get(prefix!) ?? []), scope]);
       });
@@ -38,7 +37,6 @@ export const useScopeSelection = <T extends FieldValues>({
   const handleScopeToggle = (scope: string) => {
     const currentScopes = (watch(fieldName) as string[]) || [];
 
-    // 전체 권한 범위 선택
     if (scope.endsWith(':*')) {
       const prefix = scope.split(':')[0];
       const relatedScopes = scopeMap.get(prefix!) ?? [];
@@ -57,7 +55,6 @@ export const useScopeSelection = <T extends FieldValues>({
       return;
     }
 
-    // 일반 권한 범위 단일 토글
     setValue(
       fieldName,
       (currentScopes.includes(scope)

@@ -1,4 +1,8 @@
-import { ApiResponse } from '@repo/shared/types';
+import {
+  ApiResponse,
+  ClientAvailableScope,
+  ClientAvailableScopesResponse as AvailableScopesResponse,
+} from '@repo/shared/types';
 
 export interface Client {
   id: string;
@@ -14,30 +18,27 @@ export interface ClientListData {
   clients: Client[];
 }
 
-export type ClientListResponse = ApiResponse<ClientListData>;
-
 export interface CreateClientRequest {
   clientName: string;
   serviceName: string;
-  scopes: string[];
   redirectUrls: string[];
+  scopes: string[];
 }
 
 export interface CreateClientData {
-  clientId: string;
-  clientSecret: string;
+  id: string;
   clientName: string;
   serviceName: string;
-  redirectUrls: string[];
+  redirectUrl: string[];
   scopes: string[];
 }
 
 export type CreateClientResponse = ApiResponse<CreateClientData>;
 
 export interface UpdateClientRequest {
-  clientName?: string;
-  serviceName?: string;
-  redirectUrls?: string[];
+  clientName: string;
+  serviceName: string;
+  redirectUrls: string[];
 }
 
 export interface UpdateClientData {
@@ -50,16 +51,4 @@ export interface UpdateClientData {
 
 export type UpdateClientResponse = ApiResponse<UpdateClientData>;
 
-export interface AvailableScopeData {
-  scope: string;
-  description: string;
-}
-
-export interface AvailableScopeGroupData {
-  title: string;
-  scopes: AvailableScopeData[];
-}
-
-export type AvailableScopesResponse = ApiResponse<{
-  list: AvailableScopeGroupData[];
-}>;
+export type { ClientAvailableScope, AvailableScopesResponse };

@@ -74,16 +74,20 @@ export const ApiKeyFormSchema = z.object({
 
 export type ApiKeyFormType = z.infer<typeof ApiKeyFormSchema>;
 
-export interface ScopesType {
+export interface ClientAvailableScope {
   scope: string;
   description: string;
   applicationName: string;
 }
 
+export type ClientAvailableScopesResponse = ApiResponse<{
+  list: ClientAvailableScope[];
+}>;
+
 export interface OAuthSessionData {
   serviceName: string;
   expiresAt: number;
-  requestedScopes: ScopesType[];
+  requestedScopes: ClientAvailableScope[];
 }
 
 export type OAuthSessionResponse = ApiResponse<OAuthSessionData>;
