@@ -1,8 +1,9 @@
+import { DM_Sans, JetBrains_Mono, Press_Start_2P } from 'next/font/google';
+import localFont from 'next/font/local';
+
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import { Header, TooltipProvider } from '@repo/shared/ui';
 import type { Metadata } from 'next';
-import { DM_Sans, JetBrains_Mono, Press_Start_2P } from 'next/font/google';
-import localFont from 'next/font/local';
 
 import { GoogleAnalytics } from '@/shared/lib';
 import { SoundModeProvider } from '@/shared/sound-mode';
