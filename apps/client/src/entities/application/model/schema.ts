@@ -5,7 +5,10 @@ export const ApplicationFormSchema = z.object({
   applicationScopes: z
     .array(
       z.object({
-        applicationScope: z.string().min(1, '권한 범위를 입력해주세요.'),
+        applicationScope: z
+          .string()
+          .min(1, '권한 범위를 입력해주세요.')
+          .regex(/^[a-z0-9_-]+$/, '소문자 영문, 숫자, 언더스코어(_), 하이픈(-)만 입력 가능합니다.'),
         applicationDescription: z.string().min(1, '권한 설명을 입력해주세요.'),
       }),
     )
