@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ApiResponse } from '@repo/shared/types';
 import {
   Button,
   Dialog,
@@ -14,7 +15,6 @@ import {
   Input,
   Label,
 } from '@repo/shared/ui';
-import { ApiResponse } from '@repo/shared/types';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
@@ -241,7 +241,7 @@ const ApplicationFormDialog = ({
       }}
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
-      <DialogContent className={cn('max-h-[90vh] max-w-lg p-0')}>
+      <DialogContent className={cn('max-h-[90vh] p-0 sm:max-w-xl')}>
         <DialogHeader className={cn('border-foreground border-b-2 px-6 py-5')}>
           <DialogTitle className={cn('font-pixel text-[14px] leading-none')}>{title}</DialogTitle>
         </DialogHeader>
