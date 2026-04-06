@@ -14,8 +14,10 @@ import {
   Input,
   Label,
 } from '@repo/shared/ui';
+import { ApiResponse } from '@repo/shared/types';
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
 import { Plus, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -59,7 +61,7 @@ const ApplicationFormDialog = ({
       setOpen(false);
       reset();
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<ApiResponse<void>>) => {
       const message = error?.response?.data?.message || '애플리케이션 생성에 실패했습니다.';
       toast.error(message);
     },
@@ -146,7 +148,7 @@ const ApplicationFormDialog = ({
         }
 
         // 2. 수정 및 생성 작업 수행
-        const updateAndCreatePromises: Promise<any>[] = [];
+        const updateAndCreatePromises: Promise<ApiResponse<void>>[] = [];
 
         // 이름 수정 확인
         if (data.applicationName.trim() !== application.applicationName.trim()) {
@@ -207,9 +209,11 @@ const ApplicationFormDialog = ({
         }
 
         setOpen(false);
-      } catch (error: any) {
-        const message =
-          error?.response?.data?.message || '애플리케이션 수정 중 오류가 발생했습니다.';
+      } catch (error) {
+        let message = '애플리케이션 수정 중 오류가 발생했습니다.';
+        if (axios.isAxiosError<ApiResponse<void>>(error)) {
+          message = error.response?.data?.message || message;
+        }
         toast.error(message);
       } finally {
         setIsUpdatePending(false);

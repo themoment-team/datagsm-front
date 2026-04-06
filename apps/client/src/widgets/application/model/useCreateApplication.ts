@@ -7,11 +7,11 @@ import { CreateApplicationRequest } from '@/entities/application';
 
 export const useCreateApplication = (
   options?: Omit<
-    UseMutationOptions<ApiResponse<void>, AxiosError, CreateApplicationRequest>,
+    UseMutationOptions<ApiResponse<void>, AxiosError<ApiResponse<void>>, CreateApplicationRequest>,
     'mutationKey' | 'mutationFn'
   >,
 ) =>
-  useMutation({
+  useMutation<ApiResponse<void>, AxiosError<ApiResponse<void>>, CreateApplicationRequest>({
     mutationKey: applicationQueryKeys.postApplication(),
     mutationFn: (data: CreateApplicationRequest) =>
       post<ApiResponse<void>>(applicationUrl.postApplication(), data),

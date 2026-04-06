@@ -31,8 +31,9 @@ import {
 } from '@repo/shared/ui';
 import { cn, getAfterColon } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { Loader2, Pencil, Plus, X } from 'lucide-react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { FieldError, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Client, ClientFormSchema, ClientFormType, CreateClientData } from '@/entities/clients';
@@ -392,7 +393,7 @@ const ClientFormDialog = ({
                   </p>
                 )}
               </div>
-              <FormErrorMessage error={errors.scopes as any} />
+              <FormErrorMessage error={errors.scopes as unknown as FieldError} />
             </div>
           )}
 

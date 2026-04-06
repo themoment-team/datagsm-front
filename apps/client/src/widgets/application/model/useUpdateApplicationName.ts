@@ -7,11 +7,19 @@ import { UpdateApplicationRequest } from '@/entities/application';
 
 export const useUpdateApplicationName = (
   options?: Omit<
-    UseMutationOptions<ApiResponse<void>, AxiosError, { id: string; data: UpdateApplicationRequest }>,
+    UseMutationOptions<
+      ApiResponse<void>,
+      AxiosError<ApiResponse<void>>,
+      { id: string; data: UpdateApplicationRequest }
+    >,
     'mutationKey' | 'mutationFn'
   >,
 ) =>
-  useMutation({
+  useMutation<
+    ApiResponse<void>,
+    AxiosError<ApiResponse<void>>,
+    { id: string; data: UpdateApplicationRequest }
+  >({
     mutationKey: applicationQueryKeys.patchApplication(),
     mutationFn: ({ id, data }: { id: string; data: UpdateApplicationRequest }) =>
       patch<ApiResponse<void>>(applicationUrl.patchApplication(id), data),

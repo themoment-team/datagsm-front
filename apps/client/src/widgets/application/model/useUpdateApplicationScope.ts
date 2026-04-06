@@ -9,13 +9,17 @@ export const useUpdateApplicationScope = (
   options?: Omit<
     UseMutationOptions<
       ApiResponse<void>,
-      AxiosError,
+      AxiosError<ApiResponse<void>>,
       { applicationId: string; scopeId: number; data: UpdateApplicationScopeRequest }
     >,
     'mutationKey' | 'mutationFn'
   >,
 ) =>
-  useMutation({
+  useMutation<
+    ApiResponse<void>,
+    AxiosError<ApiResponse<void>>,
+    { applicationId: string; scopeId: number; data: UpdateApplicationScopeRequest }
+  >({
     mutationKey: applicationQueryKeys.patchApplicationScope(),
     mutationFn: ({
       applicationId,
