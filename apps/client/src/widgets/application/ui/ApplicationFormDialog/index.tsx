@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Dialog,
@@ -16,6 +15,7 @@ import {
   Label,
 } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Plus, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -129,7 +129,8 @@ const ApplicationFormDialog = ({
           .filter((id): id is number => id !== undefined);
 
         const deletedScopes = application.applicationScopes.filter(
-          (original) => original.scopeId !== undefined && !currentScopeIds.includes(original.scopeId),
+          (original) =>
+            original.scopeId !== undefined && !currentScopeIds.includes(original.scopeId),
         );
 
         if (deletedScopes.length > 0) {
@@ -195,7 +196,7 @@ const ApplicationFormDialog = ({
           if (updateAndCreatePromises.length > 0) {
             await Promise.all(updateAndCreatePromises);
           }
-          
+
           queryClient.invalidateQueries({
             queryKey: ['applications', 'list'],
           });
@@ -233,7 +234,7 @@ const ApplicationFormDialog = ({
       }}
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
-      <DialogContent className={cn('max-h-[90vh] max-w-lg overflow-y-auto p-0')}>
+      <DialogContent className={cn('max-h-[90vh] max-w-lg p-0')}>
         <DialogHeader className={cn('border-foreground border-b-2 px-6 py-5')}>
           <DialogTitle className={cn('font-pixel text-[14px] leading-none')}>{title}</DialogTitle>
         </DialogHeader>
@@ -275,7 +276,7 @@ const ApplicationFormDialog = ({
               </Button>
             </div>
 
-            <div className={cn('space-y-4')}>
+            <div className={cn('sidebar-scrollbar max-h-80 space-y-4 overflow-y-auto pr-2')}>
               {fields.map((field, index) => (
                 <div
                   key={field.id}
@@ -299,7 +300,7 @@ const ApplicationFormDialog = ({
                       Scope 이름
                     </Label>
                     <Input
-                      placeholder="예: user.read"
+                      placeholder="예: user_read"
                       className={cn('border-foreground rounded-none font-mono text-sm')}
                       {...register(`applicationScopes.${index}.applicationScope` as const)}
                       disabled={isPending}

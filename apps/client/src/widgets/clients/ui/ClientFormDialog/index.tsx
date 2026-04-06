@@ -344,7 +344,7 @@ const ClientFormDialog = ({
 
               <div
                 className={cn(
-                  'border-foreground mt-2 max-h-60 space-y-4 overflow-y-auto rounded-none border-2 p-4',
+                  'border-foreground sidebar-scrollbar mt-2 max-h-60 space-y-4 overflow-y-auto rounded-none border-2 p-4',
                 )}
               >
                 {filteredGroups.length > 0 ? (
