@@ -282,7 +282,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                 {apiKeyData?.data?.apiKey ? (
                   <button
                     className={cn(
-                      'bg-foreground text-background font-mono w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
+                      'bg-foreground text-background border-foreground hover:bg-background hover:text-foreground w-full cursor-pointer border-2 py-3 font-mono text-xs font-bold uppercase tracking-widest transition-all disabled:cursor-not-allowed disabled:opacity-60',
                     )}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
                     type="button"
@@ -293,7 +293,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                 ) : (
                   <button
                     className={cn(
-                      'bg-foreground text-background font-mono w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest transition-all hover:bg-background hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60',
+                      'bg-foreground text-background border-foreground hover:bg-background hover:text-foreground w-full cursor-pointer border-2 py-3 font-mono text-xs font-bold uppercase tracking-widest transition-all disabled:cursor-not-allowed disabled:opacity-60',
                     )}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
                     type="submit"
@@ -325,7 +325,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
                 <TooltipTrigger asChild>
                   <button
                     className={cn(
-                      'text-foreground font-mono w-full cursor-pointer border-2 border-foreground py-3 text-xs font-bold uppercase tracking-widest transition-all hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-60',
+                      'text-foreground border-foreground hover:bg-foreground hover:text-background w-full cursor-pointer border-2 py-3 font-mono text-xs font-bold uppercase tracking-widest transition-all disabled:cursor-not-allowed disabled:opacity-60',
                     )}
                     disabled={isCreatingApiKey || isUpdatingApiKey || isRotatingApiKey}
                     type="button"

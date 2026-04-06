@@ -59,8 +59,9 @@ const ApplicationFormDialog = ({
       setOpen(false);
       reset();
     },
-    onError: () => {
-      toast.error('애플리케이션 생성에 실패했습니다.');
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || '애플리케이션 생성에 실패했습니다.';
+      toast.error(message);
     },
   });
 
@@ -206,8 +207,10 @@ const ApplicationFormDialog = ({
         }
 
         setOpen(false);
-      } catch (error) {
-        toast.error('애플리케이션 수정 중 오류가 발생했습니다.');
+      } catch (error: any) {
+        const message =
+          error?.response?.data?.message || '애플리케이션 수정 중 오류가 발생했습니다.';
+        toast.error(message);
       } finally {
         setIsUpdatePending(false);
       }
