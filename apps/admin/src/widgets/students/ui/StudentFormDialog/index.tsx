@@ -416,7 +416,7 @@ const StudentFormDialog = ({
                         }
                         onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                       >
-                        <SelectTrigger className={cn('border-foreground rounded-none')}>
+                        <SelectTrigger className={cn('w-full border-foreground')}>
                           <SelectValue placeholder="전공 동아리 선택" />
                         </SelectTrigger>
                         <SelectContent>
@@ -462,7 +462,7 @@ const StudentFormDialog = ({
                         }
                         onValueChange={(val) => field.onChange(val === 'none' ? null : Number(val))}
                       >
-                        <SelectTrigger className={cn('border-foreground rounded-none')}>
+                        <SelectTrigger className={cn('w-full border-foreground')}>
                           <SelectValue placeholder="자율 동아리 선택" />
                         </SelectTrigger>
                         <SelectContent>
