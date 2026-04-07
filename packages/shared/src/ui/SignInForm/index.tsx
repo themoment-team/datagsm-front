@@ -129,7 +129,6 @@ const SignInForm = ({
                 <Skeleton className={cn('mt-2 h-4 w-48')} />
               ) : (
                 <label
-                  htmlFor="privacy"
                   className={cn('cursor-pointer text-sm leading-none')}
                   onClick={(e) => {
                     e.preventDefault();
