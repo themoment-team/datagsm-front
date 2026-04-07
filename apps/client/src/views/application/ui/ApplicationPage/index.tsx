@@ -46,7 +46,7 @@ const ApplicationPage = () => {
       <main className={cn('container mx-auto px-4 py-8')}>
         {/* Page header */}
         <PageHeader
-          breadcrumb="DATAGSM / APPLICANTION"
+          breadcrumb="DATAGSM / APPLICATION"
           title="애플리케이션"
           action={<ApplicationFormDialog mode="create" />}
         />
