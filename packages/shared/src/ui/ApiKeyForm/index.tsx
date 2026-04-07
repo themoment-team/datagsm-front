@@ -149,7 +149,6 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
     availableScopes: availableKeyScope,
     watch,
     setValue,
-    fieldName: 'scopes',
   });
 
   const onSubmit = (data: ApiKeyFormType) => {

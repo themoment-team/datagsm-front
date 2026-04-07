@@ -2,23 +2,23 @@
 
 import { useMemo } from 'react';
 
-import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
-import { AvailableScopeListResponse } from '../types';
+import { ApiKeyFormType, AvailableScopeListResponse } from '../types';
 
-interface UseApiKeyScopeSelectionParams<T extends FieldValues> {
+interface UseApiKeyScopeSelectionParams {
   availableScopes?: AvailableScopeListResponse;
-  watch: UseFormWatch<T>;
-  setValue: UseFormSetValue<T>;
-  fieldName: Path<T>;
+  watch: UseFormWatch<ApiKeyFormType>;
+  setValue: UseFormSetValue<ApiKeyFormType>;
 }
 
-export const useApiKeyScopeSelection = <T extends FieldValues>({
+export const useApiKeyScopeSelection = ({
   availableScopes,
   watch,
   setValue,
-  fieldName,
-}: UseApiKeyScopeSelectionParams<T>) => {
+}: UseApiKeyScopeSelectionParams) => {
+  const fieldName = 'scopes';
+
   const scopeMap = useMemo(() => {
     const map = new Map<string, string[]>();
     const categories = availableScopes?.data?.list || [];
@@ -35,7 +35,7 @@ export const useApiKeyScopeSelection = <T extends FieldValues>({
   }, [availableScopes]);
 
   const handleScopeToggle = (scope: string) => {
-    const currentScopes = (watch(fieldName) as string[]) || [];
+    const currentScopes = watch(fieldName) || [];
 
     if (scope.endsWith(':*')) {
       const prefix = scope.split(':')[0];
@@ -48,7 +48,7 @@ export const useApiKeyScopeSelection = <T extends FieldValues>({
         ? currentScopes.filter((id) => !relatedScopes.includes(id))
         : Array.from(new Set([...currentScopes, ...relatedScopes]));
 
-      setValue(fieldName, nextSelected as PathValue<T, Path<T>>, {
+      setValue(fieldName, nextSelected, {
         shouldValidate: true,
         shouldDirty: true,
       });
@@ -57,15 +57,15 @@ export const useApiKeyScopeSelection = <T extends FieldValues>({
 
     setValue(
       fieldName,
-      (currentScopes.includes(scope)
+      currentScopes.includes(scope)
         ? currentScopes.filter((id) => id !== scope)
-        : [...currentScopes, scope]) as PathValue<T, Path<T>>,
+        : [...currentScopes, scope],
       { shouldValidate: true, shouldDirty: true },
     );
   };
 
   const isScopeChecked = (scope: string) => {
-    const currentScopes = (watch(fieldName) as string[]) || [];
+    const currentScopes = watch(fieldName) || [];
 
     if (scope.endsWith(':*')) {
       const prefix = scope.split(':')[0];
