@@ -122,7 +122,6 @@ const ClientFormDialog = ({
       availableScopes,
       watch,
       setValue,
-      fieldName: 'scopes',
     });
 
   const appNames = Object.keys(groupedScopes);

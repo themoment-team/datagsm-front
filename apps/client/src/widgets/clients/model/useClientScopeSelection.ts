@@ -2,23 +2,23 @@
 
 import { useMemo } from 'react';
 
-import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
-import { ClientAvailableScope, AvailableScopesResponse } from '@/entities/clients';
+import { ClientAvailableScope, AvailableScopesResponse, ClientFormType } from '@/entities/clients';
 
-interface UseClientScopeSelectionParams<T extends FieldValues> {
+interface UseClientScopeSelectionParams {
   availableScopes?: AvailableScopesResponse;
-  watch: UseFormWatch<T>;
-  setValue: UseFormSetValue<T>;
-  fieldName: Path<T>;
+  watch: UseFormWatch<ClientFormType>;
+  setValue: UseFormSetValue<ClientFormType>;
 }
 
-export const useClientScopeSelection = <T extends FieldValues>({
+export const useClientScopeSelection = ({
   availableScopes,
   watch,
   setValue,
-  fieldName,
-}: UseClientScopeSelectionParams<T>) => {
+}: UseClientScopeSelectionParams) => {
+  const fieldName = 'scopes';
+
   const groupedScopes = useMemo(() => {
     const list = availableScopes?.data?.list || [];
     const groups: Record<string, ClientAvailableScope[]> = {};
@@ -37,19 +37,19 @@ export const useClientScopeSelection = <T extends FieldValues>({
   }, [availableScopes]);
 
   const handleScopeToggle = (scope: string) => {
-    const currentScopes = (watch(fieldName) as string[]) || [];
+    const currentScopes = watch(fieldName) || [];
 
     setValue(
       fieldName,
-      (currentScopes.includes(scope)
+      currentScopes.includes(scope)
         ? currentScopes.filter((id) => id !== scope)
-        : [...currentScopes, scope]) as PathValue<T, Path<T>>,
+        : [...currentScopes, scope],
       { shouldValidate: true, shouldDirty: true },
     );
   };
 
   const isScopeChecked = (scope: string) => {
-    const currentScopes = (watch(fieldName) as string[]) || [];
+    const currentScopes = watch(fieldName) || [];
 
     return currentScopes.includes(scope);
   };
