@@ -35,7 +35,7 @@ const OAuthAuthorizeForm = () => {
     thirtySec: false,
     expired: false,
   });
-  const { data: sessionResponse, isLoading: isLoadingServiceName } = useGetOAuthSession(token);
+  const { data: sessionResponse, isLoading: isLoadingServiceInfo } = useGetOAuthSession(token);
   const sessionData = sessionResponse?.data;
   const serviceName = sessionData?.serviceName;
   const serviceScope = sessionData?.requestedScopes;
@@ -194,7 +194,7 @@ const OAuthAuthorizeForm = () => {
         resetHref="/signin/reset-password"
         serviceName={serviceName || undefined}
         serviceScope={serviceScope}
-        isLoadingServiceName={isLoadingServiceName}
+        isLoadingServiceInfo={isLoadingServiceInfo}
         remainingTime={remainingTime}
       />
 

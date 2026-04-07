@@ -31,7 +31,7 @@ interface SignInFormProps {
   resetHref: string;
   serviceName?: string;
   serviceScope?: ClientAvailableScope[];
-  isLoadingServiceName?: boolean;
+  isLoadingServiceInfo?: boolean;
   remainingTime?: number | null;
 }
 
@@ -42,7 +42,7 @@ const SignInForm = ({
   resetHref,
   serviceName,
   serviceScope,
-  isLoadingServiceName = false,
+  isLoadingServiceInfo = false,
   remainingTime,
 }: SignInFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -90,7 +90,7 @@ const SignInForm = ({
         {/* Header */}
         <div className={cn('border-border/50 border-b px-6 py-5')}>
           <h1 className={cn('text-foreground text-xl font-bold')}>로그인</h1>
-          {isLoadingServiceName ? (
+          {isLoadingServiceInfo ? (
             <Skeleton className={cn('mt-2 h-4 w-48')} />
           ) : (
             <p className={cn('text-muted-foreground mt-1 text-sm')}>
@@ -125,23 +125,27 @@ const SignInForm = ({
         <form onSubmit={handleFormSubmit}>
           <div className={cn('space-y-4 px-6 pt-5')}>
             <div className={cn('flex items-center gap-2')}>
-              <label
-                htmlFor="privacy"
-                className={cn('cursor-pointer text-sm leading-none')}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsRequestScopeDialogOpen(true);
-                }}
-              >
-                <span className={cn('font-medium underline underline-offset-2 hover:opacity-70')}>
-                  {serviceName}
-                </span>
-                에서 다음과 같은{' '}
-                <span className={cn('font-medium underline underline-offset-2 hover:opacity-70')}>
-                  권한
-                </span>
-                을 요청합니다
-              </label>
+              {isLoadingServiceInfo ? (
+                <Skeleton className={cn('mt-2 h-4 w-48')} />
+              ) : (
+                <label
+                  htmlFor="privacy"
+                  className={cn('cursor-pointer text-sm leading-none')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsRequestScopeDialogOpen(true);
+                  }}
+                >
+                  <span className={cn('font-medium underline underline-offset-2 hover:opacity-70')}>
+                    {serviceName}
+                  </span>
+                  에서 다음과 같은{' '}
+                  <span className={cn('font-medium underline underline-offset-2 hover:opacity-70')}>
+                    권한
+                  </span>
+                  을 요청합니다
+                </label>
+              )}
             </div>
             {/* Email */}
             <div className={cn('space-y-1.5')}>
