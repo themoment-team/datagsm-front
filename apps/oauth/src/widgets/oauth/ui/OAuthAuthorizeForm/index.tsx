@@ -73,7 +73,7 @@ const OAuthAuthorizeForm = () => {
     if (
       !sessionData?.expiresAt ||
       !sessionData?.serviceName ||
-      sessionData?.requestedScopes ||
+      !sessionData?.requestedScopes ||
       !token
     )
       return;
