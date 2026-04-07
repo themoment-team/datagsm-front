@@ -31,7 +31,15 @@ export interface UpdateClientRequest {
   redirectUrls: string[];
 }
 
-export type CreateClientData = Client;
+export interface CreateClientData {
+  clientId: string;
+  clientSecret: string;
+  clientName: string;
+  serviceName: string;
+  redirectUrls: string[];
+  scopes: string[];
+}
+
 export type UpdateClientData = Client;
 
 export type CreateClientResponse = ApiResponse<CreateClientData>;
