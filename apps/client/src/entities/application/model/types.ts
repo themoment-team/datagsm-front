@@ -11,11 +11,6 @@ export interface Application {
   applicationScopes: ApplicationScope[];
 }
 
-export type ApplicationFormType = {
-  applicationName: string;
-  applicationScopes: ApplicationScope[];
-};
-
 export interface ApplicationScopeResponse {
   id: number;
   scopeName: string;
