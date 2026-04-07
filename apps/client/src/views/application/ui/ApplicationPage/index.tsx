@@ -1,32 +1,91 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { useSearchParams } from 'next/navigation';
+
+import { useURLFilters } from '@repo/shared/hooks';
 import { CommonPagination, PageHeader } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
+import { useForm, useWatch } from 'react-hook-form';
 
 import { Application } from '@/entities/application';
 import { useGetMy } from '@/shared/hooks';
-import { ApplicationFormDialog, ApplicationList } from '@/widgets/application';
+import { ApplicationFilter, ApplicationFormDialog, ApplicationList } from '@/widgets/application';
+import { ApplicationFilterValues } from '@/widgets/application/ui/ApplicationFilter';
 
 import { useGetApplications } from '../../model/useGetApplications';
 
 const PAGE_SIZE = 10;
 
 const ApplicationPage = () => {
+  const searchParams = useSearchParams();
+  const { updateURL } = useURLFilters<ApplicationFilterValues>();
+
+  const initialValues = useMemo(
+    () => ({
+      name: searchParams.get('name') || 'all',
+      page: Number(searchParams.get('page')) || 0,
+    }),
+    [searchParams],
+  );
+
+  const form = useForm<ApplicationFilterValues>({
+    defaultValues: {
+      name: initialValues.name,
+    },
+  });
+
+  const { control } = form;
+  const filters = useWatch({ control });
+
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingApplication, setEditingApplication] = useState<Application | null>(null);
-  const [currentPage, setCurrentPage] = useState(0);
+
+  const currentPage = initialValues.page;
+
+  useEffect(() => {
+    if (filters.name !== initialValues.name) {
+      updateURL(
+        {
+          name: filters.name,
+        },
+        0,
+      );
+    }
+  }, [filters.name, initialValues.name, updateURL]);
 
   const { data: myData } = useGetMy();
+
   const { data: applicationsData, isLoading } = useGetApplications({
     page: currentPage,
     size: PAGE_SIZE,
+    name: initialValues.name !== 'all' ? initialValues.name : undefined,
   });
+
+  const { data: allApplicationsData, isLoading: isLoadingAll } = useGetApplications({
+    page: 0,
+    size: 100,
+  });
+
+  const applicationNames = useMemo(() => {
+    const apps = allApplicationsData?.data.applications || [];
+    const names = apps.map((app) => app.name);
+    return Array.from(new Set(names));
+  }, [allApplicationsData]);
 
   const handleEdit = (application: Application) => {
     setEditingApplication(application);
     setIsEditDialogOpen(true);
+  };
+
+  const handlePageChange = (page: number) => {
+    updateURL(
+      {
+        name: filters.name,
+      },
+      page,
+    );
   };
 
   const applications =
@@ -51,6 +110,15 @@ const ApplicationPage = () => {
           action={<ApplicationFormDialog mode="create" />}
         />
 
+        {/* Filter */}
+        <div className={cn('mb-6')}>
+          <ApplicationFilter
+            control={control}
+            applicationNames={applicationNames}
+            isLoading={isLoadingAll}
+          />
+        </div>
+
         {/* Table */}
         <div className={cn('border-foreground pixel-shadow border-2')}>
           <ApplicationList
@@ -62,12 +130,12 @@ const ApplicationPage = () => {
         </div>
 
         {/* Pagination */}
-        <div className={cn('mt-8 flex justify-center')}>
+        <div className={cn('mt-8')}>
           <CommonPagination
             isLoading={isLoading}
             currentPage={currentPage}
             totalPages={applicationsData?.data.totalPages ?? 0}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
           />
         </div>
       </main>

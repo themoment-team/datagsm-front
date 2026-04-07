@@ -1,5 +1,6 @@
 export { default as ApplicationFormDialog } from './ui/ApplicationFormDialog';
 export { default as ApplicationList } from './ui/ApplicationList';
+export { default as ApplicationFilter } from './ui/ApplicationFilter';
 export * from './model/useCreateApplication';
 export * from './model/useDeleteApplication';
 export * from './model/useUpdateApplicationName';
