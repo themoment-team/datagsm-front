@@ -254,7 +254,7 @@ const ApiKeyForm = ({ initialApiKeyData, initialAvailableScope, userRole }: ApiK
               );
             })}
           </div>
-          <FormErrorMessage error={errors.scopes as any} />
+          <FormErrorMessage error={errors.scopes} />
           <Input placeholder="설명을 작성해주세요." {...register('description')} />
           <FormErrorMessage error={errors.description} />
           {apiKeyData?.data?.apiKey && (
