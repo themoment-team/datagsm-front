@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useClientScopeSelection } from '@repo/shared/hooks';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,13 +30,17 @@ import {
 } from '@repo/shared/ui';
 import { cn, getAfterColon } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { Loader2, Pencil, Plus, X } from 'lucide-react';
 import { FieldError, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Client, ClientFormSchema, ClientFormType, CreateClientData } from '@/entities/clients';
-import { useCreateClient, useGetAvailableScopes, useUpdateClient } from '@/widgets/clients';
+import {
+  useClientScopeSelection,
+  useCreateClient,
+  useGetAvailableScopes,
+  useUpdateClient,
+} from '@/widgets/clients';
 
 interface ClientFormDialogProps {
   mode: 'create' | 'edit';

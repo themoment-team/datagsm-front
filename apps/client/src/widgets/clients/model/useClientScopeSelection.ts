@@ -4,10 +4,10 @@ import { useMemo } from 'react';
 
 import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
-import { ClientAvailableScope, ClientAvailableScopesResponse } from '../types';
+import { ClientAvailableScope, AvailableScopesResponse } from '@/entities/clients';
 
 interface UseClientScopeSelectionParams<T extends FieldValues> {
-  availableScopes?: ClientAvailableScopesResponse;
+  availableScopes?: AvailableScopesResponse;
   watch: UseFormWatch<T>;
   setValue: UseFormSetValue<T>;
   fieldName: Path<T>;

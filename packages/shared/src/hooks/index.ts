@@ -1,7 +1,6 @@
 export * from './useCopyToClipboard';
 export * from './useDebounce';
 export * from './useURLFilters';
-export * from './useClientScopeSelection';
 export * from './useApiKeyScopeSelection';
 export * from './useExchangeToken';
 export * from './useRefreshToken';
