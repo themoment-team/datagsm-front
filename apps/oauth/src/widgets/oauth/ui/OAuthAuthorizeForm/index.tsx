@@ -165,7 +165,6 @@ const OAuthAuthorizeForm = () => {
       } else {
         toast.error('알 수 없는 네트워크 오류가 발생했습니다.');
       }
-    } finally {
       setIsPending(false);
     }
   };
@@ -188,11 +187,11 @@ const OAuthAuthorizeForm = () => {
             'bg-background/80 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm',
           )}
         >
-          <div className="flex max-w-md flex-col items-center gap-4 border-2 border-destructive bg-background p-8 text-center pixel-shadow">
-            <div className="border-2 border-destructive p-3">
+          <div className="border-destructive bg-background pixel-shadow flex max-w-md flex-col items-center gap-4 border-2 p-8 text-center">
+            <div className="border-destructive border-2 p-3">
               <AlertCircle className="text-destructive h-8 w-8" />
             </div>
-            <h2 className="text-xl font-bold text-foreground">인증 세션 만료</h2>
+            <h2 className="text-foreground text-xl font-bold">인증 세션 만료</h2>
             <p className="text-muted-foreground text-sm">
               보안을 위해 인증 세션이 만료되었습니다.
               <br />이 창을 닫고 서비스에서 다시 로그인을 시도해주세요.

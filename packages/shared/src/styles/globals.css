@@ -39,6 +39,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --animate-progress-bar-loading: progress-bar-loading 1s ease-in-out infinite;
   --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
   --font-pixel: 'Press Start 2P', monospace;
@@ -151,6 +152,10 @@
   }
 }
 
+
+
+
+
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -159,4 +164,18 @@ input[type='number']::-webkit-inner-spin-button {
 
 input[type='number'] {
   -moz-appearance: textfield;
+}
+
+@keyframes progress-bar-loading {
+  0% {
+    left: -20%;
+    width: 20%;
+  }
+  50% {
+    width: 70%;
+  }
+  100% {
+    left: 100%;
+    width: 0;
+  }
 }

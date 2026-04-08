@@ -59,9 +59,14 @@ const SignInForm = ({
       {/* Title bar */}
       <div
         className={cn(
-          'border-foreground bg-foreground flex items-center gap-3 border-b-2 px-5 py-3',
+          'border-foreground bg-foreground relative flex items-center gap-3 border-b-2 px-5 py-3',
         )}
       >
+        {isPending && (
+          <div className="absolute left-0 right-0 top-[-0.5rem] z-10 h-1 overflow-hidden bg-white">
+            <div className="animate-progress-bar-loading absolute h-full bg-black" />
+          </div>
+        )}
         <div
           className={cn(
             'bg-background text-foreground font-pixel flex h-6 w-6 flex-shrink-0 items-center justify-center text-[8px]',
