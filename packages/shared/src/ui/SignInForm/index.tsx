@@ -63,7 +63,7 @@ const SignInForm = ({
         )}
       >
         {isPending && (
-          <div className="absolute left-0 right-0 top-[-0.5rem] z-10 h-1 overflow-hidden bg-white">
+          <div className="absolute left-0 right-0 top-[-0.5rem] z-10 h-2 overflow-hidden">
             <div className="animate-progress-bar-loading absolute h-full bg-black" />
           </div>
         )}
