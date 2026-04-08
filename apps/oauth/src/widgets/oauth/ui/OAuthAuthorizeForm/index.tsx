@@ -147,6 +147,7 @@ const OAuthAuthorizeForm = () => {
       }
 
       if (!response.ok) {
+        setIsPending(false);
         switch (response.status) {
           case 400:
             toast.error('세션이 만료되었습니다. 다시 시도해주세요.');
