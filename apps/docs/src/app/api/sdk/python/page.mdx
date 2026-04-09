@@ -170,10 +170,11 @@ project = client.projects.get_project(1)
 
 **`client.neis`** - 나이스 교육정보시스템 데이터 조회
 
-| 메서드                      | 설명        | 반환 타입            |
-|--------------------------|-----------|------------------|
-| `get_meals(request)`     | 급식 데이터 조회 | `list[Meal]`     |
-| `get_schedules(request)` | 학사일정 조회   | `list[Schedule]` |
+| 메서드                       | 설명         | 반환 타입             |
+|---------------------------|------------|-------------------|
+| `get_meals(request)`      | 급식 데이터 조회  | `list[Meal]`      |
+| `get_schedules(request)`  | 학사일정 조회    | `list[Schedule]`  |
+| `get_timetables(request)` | 시간표 데이터 조회 | `list[Timetable]` |
 
 ```python
 # 급식 데이터 조회
@@ -181,6 +182,9 @@ meals = client.neis.get_meals(request)
 
 # 학사일정 조회
 schedules = client.neis.get_schedules(request)
+
+# 시간표 조회
+timetables = client.neis.get_timetables(request)
 ```
 
 ## 예외 처리

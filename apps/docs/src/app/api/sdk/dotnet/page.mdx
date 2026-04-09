@@ -202,10 +202,11 @@ var project = await client.Projects.GetProjectAsync(1);
 
 **`client.Neis`** - 나이스 교육정보시스템 데이터 조회
 
-| 메서드                           | 설명        | 반환 타입              |
-|---------------------------------|-----------|---------------------|
-| `GetMealsAsync()`               | 오늘의 급식 조회 | `IList<Meal>`       |
-| `GetSchedulesAsync(request)`    | 학사일정 범위 조회 | `IList<Schedule>`   |
+| 메서드                           | 설명         | 반환 타입              |
+|-------------------------------|------------|--------------------|
+| `GetMealsAsync()`             | 오늘의 급식 조회  | `IList<Meal>`      |
+| `GetSchedulesAsync(request)`  | 학사일정 범위 조회 | `IList<Schedule>`  |
+| `GetTimetablesAsync(request)` | 시간표 데이터 조회 | `IList<Timetable>` |
 
 ```csharp
 // 오늘의 급식 조회
@@ -216,6 +217,14 @@ var schedules = await client.Neis.GetSchedulesAsync(new ScheduleRequest
 {
     FromDate = new DateOnly(2025, 3, 1),
     ToDate   = new DateOnly(2025, 3, 31)
+});
+
+// 시간표 조회
+var timetables = await client.Neis.GetTimetablesAsync(new TimetableRequest
+{
+    Grade    = 2,
+    ClassNum = 3,
+    Date     = new DateOnly(2025, 3, 1)
 });
 ```
 

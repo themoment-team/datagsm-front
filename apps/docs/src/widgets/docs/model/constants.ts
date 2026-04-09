@@ -41,6 +41,10 @@ export const docsSections: DocsSection[] = [
                 label: '학사일정 데이터 API',
                 href: '/api/http/neis/schedules',
               },
+              {
+                label: '시간표 데이터 API',
+                href: '/api/http/neis/timetables',
+              },
             ],
           },
         ],

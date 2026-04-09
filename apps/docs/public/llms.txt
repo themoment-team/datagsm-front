@@ -1,6 +1,6 @@
 # DataGSM Docs
 
-> 광주소프트웨어마이스터고등학교(GSM)의 학생·동아리·프로젝트·급식·학사일정 데이터를 중앙집중적으로 제공하는 OpenAPI 및 OAuth 인증 서비스의 공식 기술 문서입니다. 더모먼트팀이 2025년부터 운영하며, GAuth 종료 이후 OAuth 인증 시스템도 함께 제공합니다.
+> 광주소프트웨어마이스터고등학교(GSM)의 학생·동아리·프로젝트·급식·학사일정·시간표 데이터를 중앙집중적으로 제공하는 OpenAPI 및 OAuth 인증 서비스의 공식 기술 문서입니다. 더모먼트팀이 2025년부터 운영하며, GAuth 종료 이후 OAuth 인증 시스템도 함께 제공합니다.
 
 ## Docs
 
@@ -9,9 +9,10 @@
 - [학생 데이터 API](https://datagsm-front-client.vercel.app/api/http/student): GET /v1/students — 학년·반·번호·성별·역할·기숙사 호실 등 필터링, 페이지네이션, 정렬 지원. STUDENT_READ 권한 필요
 - [동아리 데이터 API](https://datagsm-front-client.vercel.app/api/http/club): GET /v1/clubs — 동아리 종류(전공·취업·자율) 필터링, 부장·부원 데이터 포함. CLUB_READ 권한 필요
 - [프로젝트 데이터 API](https://datagsm-front-client.vercel.app/api/http/project): GET /v1/projects — 동아리별 프로젝트 및 참가자 데이터 조회. PROJECT_READ 권한 필요
-- [NEIS 데이터 API 개요](https://datagsm-front-client.vercel.app/api/http/neis): 급식·학사일정 API 공통 사항. NEIS_READ 권한 필요
+- [NEIS 데이터 API 개요](https://datagsm-front-client.vercel.app/api/http/neis): 급식·학사일정·시간표 API 공통 사항. NEIS_READ 권한 필요
 - [급식 데이터 API](https://datagsm-front-client.vercel.app/api/http/neis/meals): GET /v1/neis/meals — 날짜·기간 기준 급식 메뉴, 알레르기, 영양 데이터 조회
 - [학사일정 데이터 API](https://datagsm-front-client.vercel.app/api/http/neis/schedules): GET /v1/neis/schedules — 날짜·기간 기준 학사일정·행사 데이터 조회
+- [시간표 데이터 API](https://datagsm-front-client.vercel.app/api/http/neis/timetables): GET /v1/neis/timetables — 학년·반·날짜·기간 기준 교시별 과목·교사 시간표 조회
 - [SDK 개요](https://datagsm-front-client.vercel.app/api/sdk): OpenAPI SDK 사용 이점 — 타입 안전성, 에러 처리, 보일러플레이트 제거 비교
 - [SDK Java/Kotlin](https://datagsm-front-client.vercel.app/api/sdk/java): datagsm-openapi-sdk-java:1.1.1 (JitPack, OkHttp 기반). JDK 13+
 - [SDK JavaScript/TypeScript](https://datagsm-front-client.vercel.app/api/sdk/javascript): datagsm-openapi-sdk-javascript (npm, fetch 기반). Node.js 20+
