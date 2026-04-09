@@ -69,9 +69,15 @@ const SignInForm = ({
   return (
     <>
       <div
-        className={cn('border-foreground bg-background pixel-shadow-lg w-full max-w-sm border-2')}
+        className={cn(
+          'border-foreground bg-foreground relative flex items-center gap-3 border-b-2 px-5 py-3',
+        )}
       >
-        {/* Title bar */}
+        {isPending && (
+          <div className="absolute left-[-2px] right-[-2px] top-[-0.5rem] z-10 h-2 overflow-hidden">
+            <div className="animate-progress-bar-loading absolute h-full bg-black" />
+          </div>
+        )}
         <div
           className={cn(
             'border-foreground bg-foreground flex items-center gap-3 border-b-2 px-5 py-3',
@@ -85,6 +91,12 @@ const SignInForm = ({
             D
           </div>
           <span className={cn('text-background font-pixel text-[9px]')}>DataGSM</span>
+        </div>
+
+        <div className="relative">
+          {isPending && (
+            <div className="bg-background/50 absolute inset-0 z-20 flex cursor-not-allowed items-center justify-center" />
+          )}
         </div>
 
         {/* Header */}
