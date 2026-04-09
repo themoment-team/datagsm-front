@@ -12,11 +12,11 @@ GET /v1/neis/meals
 
 ## 요청 파라미터
 
-| 파라미터       | 타입          | 필수 여부 | 설명                            | 예시           |
-|------------|-------------|-------|-------------------------------|--------------|
+| 파라미터       | 타입          | 필수 여부 | 설명                             | 예시           |
+|------------|-------------|-------|--------------------------------|--------------|
 | `date`     | `LocalDate` | 선택    | 특정 날짜의 급식 데이터 조회 (ISO 8601 형식) | `2025-12-15` |
-| `fromDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)        | `2025-12-01` |
-| `toDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)        | `2025-12-31` |
+| `fromDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)         | `2025-12-01` |
+| `toDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)         | `2025-12-31` |
 
 **날짜 파라미터 사용 규칙:**
 
@@ -99,7 +99,7 @@ curl -X GET "https://api.datagsm.com/v1/neis/meals?fromDate=2025-12-01&toDate=20
 | 상태 코드                   | 설명                  |
 |-------------------------|---------------------|
 | `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
-| `403 Forbidden`         | 권한 범위 부족               |
+| `403 Forbidden`         | 권한 범위 부족            |
 | `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
 | `400 Bad Request`       | 잘못된 요청 파라미터         |
 
@@ -183,3 +183,4 @@ fun getMeals(date: String): String {
 
 - [NEIS 데이터 OpenAPI 개요](/api/http/neis)
 - [학사일정 데이터 API](/api/http/neis/schedules)
+- [시간표 데이터 API](/api/http/neis/timetables)
