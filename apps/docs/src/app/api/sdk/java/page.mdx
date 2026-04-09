@@ -308,23 +308,30 @@ val project = client.projects().getProject(1L)`} />
 
 **`client.neis()`** - 나이스 교육정보시스템 데이터 조회
 
-| 메서드                     | 설명       | 반환 타입            |
-|-------------------------|----------|------------------|
-| `getMeals(request)`     | 급식 데이터 조회 | `List<Meal>`     |
-| `getSchedules(request)` | 학사일정 조회  | `List<Schedule>` |
+| 메서드                        | 설명        | 반환 타입               |
+|----------------------------|-----------|---------------------|
+| `getMeals(request)`        | 급식 데이터 조회  | `List<Meal>`        |
+| `getSchedules(request)`    | 학사일정 조회   | `List<Schedule>`    |
+| `getTimetables(request)`   | 시간표 데이터 조회 | `List<Timetable>`   |
 
 <CodeTabs>
   <CodeTab label="Java" language="java" code={`// 급식 데이터 조회
 List<Meal> meals = client.neis().getMeals(request);
 
 // 학사일정 조회
-List<Schedule> schedules = client.neis().getSchedules(request);`} />
+List<Schedule> schedules = client.neis().getSchedules(request);
+
+// 시간표 조회
+List<Timetable> timetables = client.neis().getTimetables(request);`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`// 급식 데이터 조회
 val meals = client.neis().getMeals(request)
 
 // 학사일정 조회
-val schedules = client.neis().getSchedules(request)`} />
+val schedules = client.neis().getSchedules(request)
+
+// 시간표 조회
+val timetables = client.neis().getTimetables(request)`} />
 
 </CodeTabs>
 
