@@ -12,20 +12,20 @@ GET /v1/neis/timetables
 
 ## 요청 파라미터
 
-| 파라미터        | 타입          | 필수 여부 | 설명                          | 예시           |
-|-------------|-------------|-------|-----------------------------|--------------|
-| `grade`     | `Int`       | 필수    | 학년 (1 ~ 3)                  | `2`          |
-| `classNum`  | `Int`       | 필수    | 반 (1 ~ 4)                   | `3`          |
-| `date`      | `LocalDate` | 선택    | 특정 날짜의 시간표 조회 (ISO 8601 형식) | `2025-12-15` |
-| `startDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)      | `2025-12-01` |
-| `endDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)      | `2025-12-31` |
+| 파라미터       | 타입          | 필수 여부 | 설명                          | 예시           |
+|------------|-------------|-------|-----------------------------|--------------|
+| `grade`    | `Int`       | 필수    | 학년 (1 ~ 3)                  | `2`          |
+| `classNum` | `Int`       | 필수    | 반 (1 ~ 4)                   | `3`          |
+| `date`     | `LocalDate` | 선택    | 특정 날짜의 시간표 조회 (ISO 8601 형식) | `2025-12-15` |
+| `fromDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)      | `2025-12-01` |
+| `toDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)      | `2025-12-31` |
 
 **날짜 파라미터 사용 규칙:**
 
-- `date`, `startDate`, `endDate` 중 **하나 이상 반드시 지정**해야 합니다.
+- `date`, `fromDate`, `toDate` 중 **하나 이상 반드시 지정**해야 합니다.
 - `date`: 특정 날짜의 시간표 데이터만 조회
-- `startDate`와 `endDate`: 기간 범위 내의 시간표 데이터 조회
-- `date`와 `startDate`/`endDate`는 동시에 사용할 수 없습니다.
+- `fromDate`와 `toDate`: 기간 범위 내의 시간표 데이터 조회
+- `date`와 `fromDate`/`toDate`는 동시에 사용할 수 없습니다.
 - 최대 조회 기간은 365일입니다.
 
 ## 응답 형식
@@ -72,7 +72,7 @@ curl -X GET "https://api.datagsm.com/v1/neis/timetables?grade=2&classNum=3&date=
   -H "X-API-KEY: your-api-key-here"
 
 # 기간 범위 조회
-curl -X GET "https://api.datagsm.com/v1/neis/timetables?grade=2&classNum=3&startDate=2025-12-01&endDate=2025-12-31" \
+curl -X GET "https://api.datagsm.com/v1/neis/timetables?grade=2&classNum=3&fromDate=2025-12-01&toDate=2025-12-31" \
   -H "X-API-KEY: your-api-key-here"
 ```
 
