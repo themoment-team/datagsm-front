@@ -9,17 +9,13 @@ export const useCreateApplicationScope = (
   options?: Omit<
     UseMutationOptions<
       ApiResponse<void>,
-      AxiosError<ApiResponse<void>>,
+      AxiosError,
       { applicationId: string; data: UpdateApplicationScopeRequest }
     >,
     'mutationKey' | 'mutationFn'
   >,
 ) =>
-  useMutation<
-    ApiResponse<void>,
-    AxiosError<ApiResponse<void>>,
-    { applicationId: string; data: UpdateApplicationScopeRequest }
-  >({
+  useMutation({
     mutationKey: applicationQueryKeys.postApplicationScope(),
     mutationFn: ({
       applicationId,

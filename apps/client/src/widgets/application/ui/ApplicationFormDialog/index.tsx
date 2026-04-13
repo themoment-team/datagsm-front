@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ApiResponse } from '@repo/shared/types';
+import { BaseApiResponse } from '@repo/shared/types';
 import {
   Button,
   Dialog,
@@ -61,8 +61,10 @@ const ApplicationFormDialog = ({
       setOpen(false);
       reset();
     },
-    onError: (error: AxiosError<ApiResponse<void>>) => {
-      const message = error?.response?.data?.message || '애플리케이션 생성에 실패했습니다.';
+    onError: (error) => {
+      const message =
+        (error?.response?.data as BaseApiResponse)?.message ||
+        '애플리케이션 생성에 실패했습니다.';
       toast.error(message);
     },
   });
@@ -148,7 +150,7 @@ const ApplicationFormDialog = ({
         }
 
         // 2. 수정 및 생성 작업 수행
-        const updateAndCreatePromises: Promise<ApiResponse<void>>[] = [];
+        const updateAndCreatePromises: Promise<BaseApiResponse>[] = [];
 
         // 이름 수정 확인
         if (data.applicationName.trim() !== application.applicationName.trim()) {
@@ -211,8 +213,8 @@ const ApplicationFormDialog = ({
         setOpen(false);
       } catch (error) {
         let message = '애플리케이션 수정 중 오류가 발생했습니다.';
-        if (axios.isAxiosError<ApiResponse<void>>(error)) {
-          message = error.response?.data?.message || message;
+        if (axios.isAxiosError(error)) {
+          message = (error.response?.data as BaseApiResponse)?.message || message;
         }
         toast.error(message);
       } finally {
