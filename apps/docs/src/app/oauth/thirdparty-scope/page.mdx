@@ -271,7 +271,12 @@ jwks = requests.get(
 ).json()
 
 from jwt.algorithms import RSAAlgorithm
-public_key = RSAAlgorithm.from_jwk(jwks['keys'][0])
+
+# kid와 일치하는 키를 찾아 공개 키 생성
+header = jwt.get_unverified_header(access_token)
+kid = header.get('kid')
+key_data = next(k for k in jwks['keys'] if k['kid'] == kid)
+public_key = RSAAlgorithm.from_jwk(key_data)
 
 # JWT 검증
 decoded = jwt.decode(
@@ -290,6 +295,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 
 JwkProvider provider = new UrlJwkProvider(
     new URL("https://oauth.authorization.datagsm.kr/v1/oauth/jwk-set"));
