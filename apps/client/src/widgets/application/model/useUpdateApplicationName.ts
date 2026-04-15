@@ -5,15 +5,20 @@ import { AxiosError } from 'axios';
 
 import { UpdateApplicationRequest } from '@/entities/application';
 
+interface UpdateApplicationNameParams {
+  id: string;
+  data: UpdateApplicationRequest;
+}
+
 export const useUpdateApplicationName = (
   options?: Omit<
-    UseMutationOptions<BaseApiResponse, AxiosError, { id: string; data: UpdateApplicationRequest }>,
+    UseMutationOptions<BaseApiResponse, AxiosError, UpdateApplicationNameParams>,
     'mutationKey' | 'mutationFn'
   >,
 ) =>
   useMutation({
     mutationKey: applicationQueryKeys.patchApplication(),
-    mutationFn: ({ id, data }: { id: string; data: UpdateApplicationRequest }) =>
+    mutationFn: ({ id, data }: UpdateApplicationNameParams) =>
       patch<BaseApiResponse>(applicationUrl.patchApplication(id), data),
     ...options,
   });
