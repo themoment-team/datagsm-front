@@ -1,5 +1,5 @@
 import { applicationQueryKeys, applicationUrl, post } from '@repo/shared/api';
-import { ApiResponse } from '@repo/shared/types';
+import { BaseApiResponse } from '@repo/shared/types';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
@@ -8,7 +8,7 @@ import { UpdateApplicationScopeRequest } from '@/entities/application';
 export const useCreateApplicationScope = (
   options?: Omit<
     UseMutationOptions<
-      ApiResponse<void>,
+      BaseApiResponse,
       AxiosError,
       { applicationId: string; data: UpdateApplicationScopeRequest }
     >,
@@ -23,6 +23,6 @@ export const useCreateApplicationScope = (
     }: {
       applicationId: string;
       data: UpdateApplicationScopeRequest;
-    }) => post<ApiResponse<void>>(applicationUrl.postApplicationScope(applicationId), data),
+    }) => post<BaseApiResponse>(applicationUrl.postApplicationScope(applicationId), data),
     ...options,
   });
