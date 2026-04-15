@@ -27,4 +27,5 @@
 - [OAuth 구현 예제](https://datagsm-front-client.vercel.app/oauth/examples): React+Spring Boot BFF(PKCE), Next.js+Spring Boot(PKCE), React+Spring Boot Kotlin(레거시), Vanilla JS+NestJS(레거시)
 - [OAuth SDK 개요](https://datagsm-front-client.vercel.app/oauth/sdk): OAuth SDK 사용 이점 비교
 - [OAuth SDK Java](https://datagsm-front-client.vercel.app/oauth/sdk/java): Java/Kotlin 환경용 OAuth 클라이언트 SDK
+- [서드파티 권한 범위](https://datagsm-front-client.vercel.app/oauth/thirdparty-scope): 서드파티 애플리케이션의 커스텀 OAuth 권한 범위 정의·등록·JWT 포함 흐름, JWK Set 기반 토큰 검증 방법
 - [OAuth SDK React](https://datagsm-front-client.vercel.app/oauth/sdk/react): React 환경용 OAuth 클라이언트 SDK
