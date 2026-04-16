@@ -49,7 +49,7 @@ const ClubsPage = () => {
       foundedYear: club.foundedYear,
       abolishedYear: club.abolishedYear,
       leaderId: club.leader?.id,
-      participantIds: club.participants.map((p) => p.id),
+      participantIds: club.participants?.map((p) => p.id) ?? [],
     });
   };
 
