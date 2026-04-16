@@ -177,17 +177,12 @@ const ClubFormDialog = ({
   };
 
   const onInvalid = (errors: FieldErrors<AddClubType>) => {
-    const firstError =
-      errors.name?.message ||
-      errors.type?.message ||
-      errors.status?.message ||
-      errors.foundedYear?.message ||
-      errors.abolishedYear?.message ||
-      errors.leaderId?.message ||
-      (!Array.isArray(errors.participantIds) ? errors.participantIds?.message : undefined);
+    const firstError = Object.values(errors)
+      .flat()
+      .find((error) => error?.message);
 
-    if (firstError) {
-      toast.error(String(firstError));
+    if (firstError?.message) {
+      toast.error(String(firstError.message));
     }
   };
 
