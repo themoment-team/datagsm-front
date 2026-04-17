@@ -97,7 +97,7 @@ const ProjectsPage = () => {
         0,
       );
     }
-  }, [debouncedProjectName, filters.clubId, initialValues, updateURL]);
+  }, [debouncedProjectName, filters.clubId, filters.status, initialValues, updateURL]);
 
   const handlePageChange = (page: number) => {
     updateURL(
