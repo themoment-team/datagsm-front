@@ -34,10 +34,8 @@ const ProjectFilter = ({ control, clubs }: ProjectFilterProps) => {
               {...field}
               placeholder="프로젝트 이름으로 검색"
               className={cn('border-foreground rounded-none pl-9 font-mono')}
-              onChange={(e) => {
-                field.onChange(e.target.value || 'all');
-              }}
-              value={field.value === 'all' ? '' : field.value}
+              onChange={field.onChange}
+              value={field.value ?? ''}
             />
           )}
         />

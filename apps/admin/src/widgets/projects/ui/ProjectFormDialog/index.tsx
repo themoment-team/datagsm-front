@@ -151,9 +151,16 @@ const ProjectFormDialog = ({
       } else if (mode === 'edit' && project) {
         await updateProject({ projectId: project.id, data: formattedData });
 
-        if (formattedData.status === 'ENDED' && formattedData.endYear !== undefined) {
+        const isStatusChanged = project.status !== formattedData.status;
+        const isEndYearChanged = project.endYear !== (formattedData.endYear ?? null);
+
+        if (
+          formattedData.status === 'ENDED' &&
+          formattedData.endYear !== undefined &&
+          (isStatusChanged || isEndYearChanged)
+        ) {
           await endProject({ projectId: project.id, endYear: formattedData.endYear });
-        } else if (project.status === 'ENDED') {
+        } else if (isStatusChanged && project.status === 'ENDED') {
           await reactivateProject(project.id);
         }
 
