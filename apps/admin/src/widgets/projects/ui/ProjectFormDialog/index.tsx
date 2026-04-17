@@ -252,79 +252,88 @@ const ProjectFormDialog = ({
               />
               <FormErrorMessage error={errors.status} />
             </div>
-            <div className={cn('space-y-2')}>
-              <Label
-                htmlFor="startYear"
-                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
-              >
-                시작 연도
-              </Label>
-              <Input
-                id="startYear"
-                type="number"
-                placeholder="시작 연도 입력"
-                className={cn('border-foreground rounded-none font-mono')}
-                {...register('startYear', {
-                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
-                })}
-              />
-              <FormErrorMessage error={errors.startYear} />
-            </div>
-            <div className={cn('space-y-2')}>
-              <Label
-                htmlFor="clubId"
-                className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
-              >
-                동아리
-              </Label>
-              <Controller
-                control={control}
-                name="clubId"
-                render={({ field }) => (
-                  <Select
-                    value={field.value ? String(field.value) : 'none'}
-                    onValueChange={(val) => field.onChange(val === 'none' ? 0 : Number(val))}
-                  >
-                    <SelectTrigger
-                      className={cn(
-                        'border-foreground rounded-none font-mono',
-                      )}
-                    >
-                      <SelectValue placeholder="동아리 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">선택 안 함</SelectItem>
-                      {clubs.map((club) => (
-                        <SelectItem key={club.id} value={String(club.id)}>
-                          {club.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              <FormErrorMessage error={errors.clubId} />
-            </div>
-            {currentStatus === 'ENDED' && (
+            <div
+              className={cn(
+                'col-span-2 grid gap-4',
+                currentStatus === 'ENDED' ? 'md:grid-cols-3' : 'md:grid-cols-2',
+              )}
+            >
               <div className={cn('space-y-2')}>
                 <Label
-                  htmlFor="endYear"
-                  className={cn('text-muted-foreground font-mono text-xs uppercase tracking-widest')}
+                  htmlFor="startYear"
+                  className={cn(
+                    'text-muted-foreground font-mono text-xs uppercase tracking-widest',
+                  )}
                 >
-                  종료 연도
+                  시작 연도
                 </Label>
                 <Input
-                  id="endYear"
+                  id="startYear"
                   type="number"
-                  placeholder="종료 연도 입력"
+                  placeholder="시작 연도 입력"
                   className={cn('border-foreground rounded-none font-mono')}
-                  {...register('endYear', {
+                  {...register('startYear', {
                     setValueAs: (value) => (value === '' ? undefined : Number(value)),
                   })}
                 />
-                <FormErrorMessage error={errors.endYear} />
+                <FormErrorMessage error={errors.startYear} />
               </div>
-            )}
+              {currentStatus === 'ENDED' && (
+                <div className={cn('space-y-2')}>
+                  <Label
+                    htmlFor="endYear"
+                    className={cn(
+                      'text-muted-foreground font-mono text-xs uppercase tracking-widest',
+                    )}
+                  >
+                    종료 연도
+                  </Label>
+                  <Input
+                    id="endYear"
+                    type="number"
+                    placeholder="종료 연도 입력"
+                    className={cn('border-foreground rounded-none font-mono')}
+                    {...register('endYear', {
+                      setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                    })}
+                  />
+                  <FormErrorMessage error={errors.endYear} />
+                </div>
+              )}
+              <div className={cn('space-y-2')}>
+                <Label
+                  htmlFor="clubId"
+                  className={cn(
+                    'text-muted-foreground font-mono text-xs uppercase tracking-widest',
+                  )}
+                >
+                  동아리
+                </Label>
+                <Controller
+                  control={control}
+                  name="clubId"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ? String(field.value) : 'none'}
+                      onValueChange={(val) => field.onChange(val === 'none' ? 0 : Number(val))}
+                    >
+                      <SelectTrigger className={cn('border-foreground rounded-none font-mono')}>
+                        <SelectValue placeholder="동아리 선택" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">선택 안 함</SelectItem>
+                        {clubs.map((club) => (
+                          <SelectItem key={club.id} value={String(club.id)}>
+                            {club.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <FormErrorMessage error={errors.clubId} />
+              </div>
+            </div>
             <div className={cn('col-span-2 space-y-2')}>
               <Label
                 htmlFor="description"

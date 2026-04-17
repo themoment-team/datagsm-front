@@ -56,7 +56,7 @@ const ProjectsPage = () => {
     (): ProjectFilterType & { page: number } => ({
       projectName: searchParams.get('projectName') || '',
       clubId: searchParams.get('clubId') ? Number(searchParams.get('clubId')) : undefined,
-      status: (searchParams.get('status') as ProjectFilterType['status']) || 'ACTIVE',
+      status: searchParams.get('status') === 'ENDED' ? 'ENDED' : 'ACTIVE',
       page: Number(searchParams.get('page')) || 0,
     }),
     [searchParams],

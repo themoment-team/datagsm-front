@@ -54,15 +54,11 @@ const ProjectFilter = ({ control, clubs }: ProjectFilterProps) => {
             control={control}
             name="status"
             render={({ field }) => (
-              <Select
-                value={field.value ?? 'ACTIVE'}
-                onValueChange={(value) => field.onChange(value === 'all' ? undefined : value)}
-              >
+              <Select value={field.value ?? 'ACTIVE'} onValueChange={field.onChange}>
                 <SelectTrigger className={cn('border-foreground w-28 rounded-none')}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">전체</SelectItem>
                   <SelectItem value="ACTIVE">운영 중</SelectItem>
                   <SelectItem value="ENDED">종료</SelectItem>
                 </SelectContent>
