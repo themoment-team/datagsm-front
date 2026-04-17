@@ -35,9 +35,10 @@ const OAuthAuthorizeForm = () => {
     thirtySec: false,
     expired: false,
   });
-  const { data: sessionResponse, isLoading: isLoadingServiceName } = useGetOAuthSession(token);
+  const { data: sessionResponse, isLoading: isLoadingServiceInfo } = useGetOAuthSession(token);
   const sessionData = sessionResponse?.data;
   const serviceName = sessionData?.serviceName;
+  const serviceScope = sessionData?.requestedScopes;
 
   const updateRemainingTime = useCallback(() => {
     if (!sessionExpiresAt.current) return false;
@@ -69,9 +70,15 @@ const OAuthAuthorizeForm = () => {
   }, []);
 
   useEffect(() => {
-    if (!sessionData?.expiresAt || !sessionData?.serviceName || !token) return;
+    if (
+      !sessionData?.expiresAt ||
+      !sessionData?.serviceName ||
+      !sessionData?.requestedScopes ||
+      !token
+    )
+      return;
 
-    const { expiresAt, serviceName } = sessionData;
+    const { expiresAt, serviceName, requestedScopes } = sessionData;
     sessionExpiresAt.current = expiresAt;
 
     localStorage.setItem(
@@ -80,11 +87,19 @@ const OAuthAuthorizeForm = () => {
         token,
         expiresAt,
         serviceName,
+        requestedScopes,
       }),
     );
 
     updateRemainingTime();
-  }, [sessionData, sessionData?.expiresAt, sessionData?.serviceName, token, updateRemainingTime]);
+  }, [
+    sessionData,
+    sessionData?.expiresAt,
+    sessionData?.serviceName,
+    sessionData?.requestedScopes,
+    token,
+    updateRemainingTime,
+  ]);
 
   useEffect(() => {
     if (isExpired) return;
@@ -178,7 +193,8 @@ const OAuthAuthorizeForm = () => {
         signupHref="/signup"
         resetHref="/signin/reset-password"
         serviceName={serviceName || undefined}
-        isLoadingServiceName={isLoadingServiceName}
+        serviceScope={serviceScope}
+        isLoadingServiceInfo={isLoadingServiceInfo}
         remainingTime={remainingTime}
       />
 

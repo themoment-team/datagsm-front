@@ -6,14 +6,13 @@ import { useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useURLFilters } from '@repo/shared/hooks';
-import { CommonPagination } from '@repo/shared/ui';
+import { ApiKeyFormDialog, CommonPagination } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-
 import { useForm, useWatch } from 'react-hook-form';
 
 import { ApiKeyFilterSchema, ApiKeyFilterType } from '@/entities/api-key';
 import { useGetApiKeys } from '@/views/api-keys';
-import { ApiKeyFilter, ApiKeyFormDialog, ApiKeyList } from '@/widgets/api-keys';
+import { ApiKeyFilter, ApiKeyList } from '@/widgets/api-keys';
 
 const PAGE_SIZE = 10;
 
@@ -92,12 +91,18 @@ const ApiKeyPage = () => {
     <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
       <main className={cn('container mx-auto px-4 py-8')}>
         {/* Page header */}
-        <div className={cn('mb-6 flex items-end justify-between border-b-2 border-foreground pb-4')}>
+        <div
+          className={cn('border-foreground mb-6 flex items-end justify-between border-b-2 pb-4')}
+        >
           <div>
-            <p className={cn('mb-2 text-xs uppercase tracking-widest text-muted-foreground font-mono')}>
+            <p
+              className={cn(
+                'text-muted-foreground mb-2 font-mono text-xs uppercase tracking-widest',
+              )}
+            >
               DATAGSM / Admin
             </p>
-            <h1 className={cn('text-[15px] text-foreground leading-tight font-pixel')}>
+            <h1 className={cn('text-foreground font-pixel text-[15px] leading-tight')}>
               API Key 관리
             </h1>
           </div>
@@ -110,7 +115,7 @@ const ApiKeyPage = () => {
         </div>
 
         {/* Table */}
-        <div className={cn('border-2 border-foreground pixel-shadow')}>
+        <div className={cn('border-foreground pixel-shadow border-2')}>
           <ApiKeyList apiKeys={apiKeys} isLoading={isLoadingApiKeys} />
         </div>
 

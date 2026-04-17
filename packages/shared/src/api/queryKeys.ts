@@ -92,6 +92,17 @@ export const clientQueryKeys = {
   getAvailableScopes: () => ['clients', 'available-scopes'] as const,
 } as const;
 
+export const applicationQueryKeys = {
+  getApplications: (params: { page?: number; size?: number; name?: string; id?: string }) =>
+    ['applications', 'list', params] as const,
+  postApplication: () => ['applications', 'create'] as const,
+  deleteApplicationById: () => ['applications', 'delete'] as const,
+  patchApplication: () => ['applications', 'update'] as const,
+  patchApplicationScope: () => ['applications', 'scopes', 'update'] as const,
+  deleteApplicationScope: () => ['applications', 'scopes', 'delete'] as const,
+  postApplicationScope: () => ['applications', 'scopes', 'create'] as const,
+} as const;
+
 export const healthQueryKeys = {
   getHealth: () => ['health', 'check'] as const,
 } as const;

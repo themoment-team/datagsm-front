@@ -149,6 +149,28 @@ export const clientUrl = {
   getAvailableScopes: () => '/v1/clients/available-scopes',
 } as const;
 
+export const applicationUrl = {
+  getApplications: (params: { page?: number; size?: number; name?: string; id?: string }) => {
+    const urlParams = new URLSearchParams();
+
+    if (params.page !== undefined) urlParams.append('page', params.page.toString());
+    if (params.size !== undefined) urlParams.append('size', params.size.toString());
+    if (params.name) urlParams.append('name', params.name);
+    if (params.id) urlParams.append('id', params.id);
+
+    const queryString = urlParams.toString();
+    return queryString ? `/v1/applications?${queryString}` : '/v1/applications';
+  },
+  postApplication: () => '/v1/applications',
+  deleteApplicationById: (id: string) => `/v1/applications/${id}`,
+  patchApplication: (id: string) => `/v1/applications/${id}`,
+  patchApplicationScope: (applicationId: string, scopeId: number) =>
+    `/v1/applications/${applicationId}/scopes/${scopeId}`,
+  deleteApplicationScope: (applicationId: string, scopeId: number) =>
+    `/v1/applications/${applicationId}/scopes/${scopeId}`,
+  postApplicationScope: (applicationId: string) => `/v1/applications/${applicationId}/scopes`,
+} as const;
+
 export const healthUrl = {
   getHealth: () => '/v1/health',
 } as const;

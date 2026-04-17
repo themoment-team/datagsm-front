@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@repo/shared/ui';
-import { cn } from '@repo/shared/utils';
+import { cn, getAfterColon } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Copy, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -51,9 +51,7 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
       <TableCell className={cn('text-muted-foreground')}>{client.serviceName}</TableCell>
       <TableCell>
         <div className={cn('flex items-center gap-2')}>
-          <code className={cn('bg-muted px-2 py-1 text-xs font-mono')}>
-            {client.id}
-          </code>
+          <code className={cn('bg-muted px-2 py-1 font-mono text-xs')}>{client.id}</code>
           <PixelIconButton size="sm" onClick={() => copy(client.id)}>
             {copied ? <Check className={cn('h-3 w-3')} /> : <Copy className={cn('h-3 w-3')} />}
           </PixelIconButton>
@@ -64,7 +62,9 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
           {client.redirectUrl.map((url, index) => (
             <span
               key={index}
-              className={cn('border border-foreground/25 px-1.5 py-0.5 text-xs text-muted-foreground font-mono')}
+              className={cn(
+                'border-foreground/25 text-muted-foreground border px-1.5 py-0.5 font-mono text-xs',
+              )}
             >
               {url}
             </span>
@@ -76,9 +76,11 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
           {client.scopes.map((scope, index) => (
             <span
               key={index}
-              className={cn('bg-foreground px-1.5 py-0.5 text-xs uppercase text-background font-mono')}
+              className={cn(
+                'bg-foreground text-background px-1.5 py-0.5 font-mono text-xs uppercase',
+              )}
             >
-              {scope}
+              {getAfterColon(scope)}
             </span>
           ))}
         </div>
@@ -95,9 +97,7 @@ const ClientListItem = ({ client, onEdit, onDelete }: ClientListItemProps) => {
                 <Trash2 className={cn('h-3.5 w-3.5')} />
               </PixelIconButton>
             </AlertDialogTrigger>
-            <AlertDialogContent
-              className={cn('border-2 border-foreground pixel-shadow')}
-            >
+            <AlertDialogContent className={cn('border-foreground pixel-shadow border-2')}>
               <AlertDialogHeader>
                 <AlertDialogTitle className="font-pixel text-[12px] leading-[1.8]">
                   클라이언트 삭제
@@ -155,12 +155,24 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
         {isLoading ? (
           Array.from({ length: 5 }).map((_, index) => (
             <TableRow key={index}>
-              <TableCell><Skeleton className={cn('h-4 w-32')} /></TableCell>
-              <TableCell><Skeleton className={cn('h-4 w-24')} /></TableCell>
-              <TableCell><Skeleton className={cn('h-6 w-48')} /></TableCell>
-              <TableCell><Skeleton className={cn('h-4 w-60')} /></TableCell>
-              <TableCell><Skeleton className={cn('h-4 w-24')} /></TableCell>
-              <TableCell><Skeleton className={cn('h-7 w-16')} /></TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-32')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-24')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-6 w-48')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-60')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-24')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-7 w-16')} />
+              </TableCell>
             </TableRow>
           ))
         ) : clients && clients.length > 0 ? (
@@ -174,7 +186,10 @@ const ClientList = ({ clients, isLoading, onEdit }: ClientListProps) => {
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={6} className={cn('h-24 text-center text-muted-foreground font-mono')}>
+            <TableCell
+              colSpan={6}
+              className={cn('text-muted-foreground h-24 text-center font-mono')}
+            >
               {'>'} 등록된 클라이언트가 없습니다.
             </TableCell>
           </TableRow>
