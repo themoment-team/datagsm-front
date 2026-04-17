@@ -56,6 +56,7 @@ const ProjectsPage = () => {
     (): ProjectFilterType & { page: number } => ({
       projectName: searchParams.get('projectName') || '',
       clubId: searchParams.get('clubId') ? Number(searchParams.get('clubId')) : undefined,
+      status: (searchParams.get('status') as ProjectFilterType['status']) || 'ACTIVE',
       page: Number(searchParams.get('page')) || 0,
     }),
     [searchParams],
@@ -66,10 +67,11 @@ const ProjectsPage = () => {
     defaultValues: {
       projectName: initialValues.projectName,
       clubId: initialValues.clubId,
+      status: initialValues.status,
     },
   });
 
-  const { register, control } = filterForm;
+  const { control } = filterForm;
 
   const filters = useWatch({
     control,
@@ -81,13 +83,16 @@ const ProjectsPage = () => {
 
   useEffect(() => {
     const hasChanged =
-      debouncedProjectName !== initialValues.projectName || filters.clubId !== initialValues.clubId;
+      debouncedProjectName !== initialValues.projectName ||
+      filters.clubId !== initialValues.clubId ||
+      filters.status !== initialValues.status;
 
     if (hasChanged) {
       updateURL(
         {
           projectName: debouncedProjectName,
           clubId: filters.clubId,
+          status: filters.status,
         },
         0,
       );
@@ -99,6 +104,7 @@ const ProjectsPage = () => {
       {
         projectName: debouncedProjectName,
         clubId: filters.clubId,
+        status: filters.status,
       },
       page,
     );
@@ -109,6 +115,7 @@ const ProjectsPage = () => {
     size: PAGE_SIZE,
     projectName: debouncedProjectName || undefined,
     clubId: filters.clubId,
+    status: filters.status,
   };
 
   const { data: projectsData, isLoading: isLoadingProjects } = useGetProjects(queryParams);
@@ -127,6 +134,11 @@ const ProjectsPage = () => {
 
   const projectForm = useForm<AddProjectType>({
     resolver: zodResolver(AddProjectSchema),
+    defaultValues: {
+      status: 'ACTIVE',
+      participantIds: [],
+      clubId: 0,
+    },
   });
 
   return (
@@ -149,7 +161,7 @@ const ProjectsPage = () => {
 
         {/* Filters */}
         <div className={cn('mb-4')}>
-          <ProjectFilter register={register} control={control} clubs={clubs} />
+          <ProjectFilter control={control} clubs={clubs} />
         </div>
 
         {/* Table */}

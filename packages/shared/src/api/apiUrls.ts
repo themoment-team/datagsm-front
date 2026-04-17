@@ -84,11 +84,14 @@ export const authUrl = {
 export const projectUrl = {
   putProjectById: (projectId: number) => `/v1/projects/${projectId}`,
   deleteProjectById: (projectId: number) => `/v1/projects/${projectId}`,
+  postProjectEndById: (projectId: number) => `/v1/projects/${projectId}/end`,
+  postProjectReactivateById: (projectId: number) => `/v1/projects/${projectId}/reactivate`,
   getProjects: (params: {
     page?: number;
     size?: number;
     projectName?: string;
     clubId?: number;
+    status?: 'ACTIVE' | 'ENDED';
   }) => {
     const urlParams = new URLSearchParams();
 
@@ -96,6 +99,7 @@ export const projectUrl = {
     if (params.size !== undefined) urlParams.append('size', params.size.toString());
     if (params.projectName) urlParams.append('projectName', params.projectName);
     if (params.clubId !== undefined) urlParams.append('clubId', params.clubId.toString());
+    if (params.status !== undefined) urlParams.append('status', params.status);
 
     const queryString = urlParams.toString();
     return queryString ? `/v1/projects?${queryString}` : '/v1/projects';

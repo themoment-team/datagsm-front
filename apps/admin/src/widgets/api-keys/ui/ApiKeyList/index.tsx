@@ -77,27 +77,26 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
 
   return (
     <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className={cn('w-[80px]')}>ID</TableHead>
-            <TableHead className={cn('w-[200px]')}>설명</TableHead>
-            <TableHead>API Key</TableHead>
-            <TableHead className={cn('w-[180px]')}>만료일</TableHead>
-            <TableHead className={cn('w-[100px]')}>작업</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {apiKeys.map((apiKey) => (
-            <TableRow key={apiKey.id}>
-              <TableCell className={cn('font-medium')}>{apiKey.id}</TableCell>
-              <TableCell className={cn('w-[200px] truncate')} title={apiKey.description}>
-                {apiKey.description}
-              </TableCell>
-              <TableCell className={cn('break-all font-mono text-[11px]')}>
-                {apiKey.apiKey}
-              </TableCell>
-              <TableCell>{formatDate(apiKey.expiresAt)}</TableCell>
-              <TableCell>
+      <TableHeader>
+        <TableRow>
+          <TableHead className={cn('w-[80px]')}>ID</TableHead>
+          <TableHead className={cn('w-[200px]')}>설명</TableHead>
+          <TableHead>API Key</TableHead>
+          <TableHead className={cn('w-[180px]')}>만료일</TableHead>
+          <TableHead className={cn('w-[100px]')}>작업</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {apiKeys.map((apiKey) => (
+          <TableRow key={apiKey.id}>
+            <TableCell className={cn('font-medium')}>{apiKey.id}</TableCell>
+            <TableCell className={cn('w-[200px] truncate')} title={apiKey.description}>
+              {apiKey.description}
+            </TableCell>
+            <TableCell className={cn('break-all font-mono text-[11px]')}>{apiKey.apiKey}</TableCell>
+            <TableCell>{formatDate(apiKey.expiresAt)}</TableCell>
+            <TableCell>
+              <div className={cn('flex items-center gap-2 whitespace-nowrap')}>
                 <AlertDialog onOpenChange={() => setExtendDays(30)}>
                   <AlertDialogTrigger asChild>
                     <PixelIconButton>
@@ -112,7 +111,11 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className={cn('my-4 space-y-2')}>
-                      <Label className={cn('font-mono text-xs uppercase tracking-widest text-muted-foreground')}>
+                      <Label
+                        className={cn(
+                          'font-mono text-xs uppercase tracking-widest text-muted-foreground',
+                        )}
+                      >
                         연장 일수 (1~365)
                       </Label>
                       <Input
@@ -120,14 +123,18 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                         min={1}
                         max={365}
                         value={extendDays}
-                        onChange={(e) => setExtendDays(Math.min(365, Math.max(1, Number(e.target.value))))}
+                        onChange={(e) =>
+                          setExtendDays(Math.min(365, Math.max(1, Number(e.target.value))))
+                        }
                         className={cn('w-32')}
                       />
                     </div>
                     <AlertDialogFooter>
                       <AlertDialogCancel>취소</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => updateApiKeyExpiration({ apiKeyId: apiKey.id, days: extendDays })}
+                        onClick={() =>
+                          updateApiKeyExpiration({ apiKeyId: apiKey.id, days: extendDays })
+                        }
                         className={cn('bg-black text-white hover:bg-black/50')}
                       >
                         연장
@@ -145,8 +152,8 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Api Key 삭제</AlertDialogTitle>
                       <AlertDialogDescription>
-                        정말로 &apos;{apiKey.description}&apos;를 삭제하시겠습니까? 이 작업은 되돌릴
-                        수 없습니다.
+                        정말로 &apos;{apiKey.description}&apos;를 삭제하시겠습니까? 이 작업은 되돌릴 수
+                        없습니다.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -160,11 +167,12 @@ const ApiKeyList = ({ apiKeys, isLoading }: ApiKeyListProps) => {
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
 

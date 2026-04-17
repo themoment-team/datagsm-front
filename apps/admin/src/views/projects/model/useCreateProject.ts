@@ -6,8 +6,11 @@ import { AxiosError } from 'axios';
 export interface CreateProjectRequest {
   name: string;
   description: string;
+  startYear: number;
   clubId?: number | null;
   participantIds: number[];
+  status: 'ACTIVE' | 'ENDED';
+  endYear?: number;
 }
 
 export const useCreateProject = (
