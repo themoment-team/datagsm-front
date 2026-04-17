@@ -21,11 +21,7 @@ export const AddClubSchema = z
       .number({ message: '설립연도를 입력해주세요.' })
       .int()
       .min(1900, { message: '1900년 이후의 연도를 입력해주세요.' }),
-    abolishedYear: z
-      .number({ message: '폐지연도를 입력해주세요.' })
-      .int()
-      .min(1900, { message: '1900년 이후의 연도를 입력해주세요.' })
-      .optional(),
+    abolishedYear: z.number().optional(),
     leaderId: z.number({ message: '동아리 부장을 선택해주세요.' }).min(1).optional(),
     participantIds: z.array(z.number()),
   })
@@ -46,6 +42,26 @@ export const AddClubSchema = z
       return true;
     },
     { message: '한 명 이상의 팀원을 선택해주세요.', path: ['participantIds'] },
-  );
+  )
+  .superRefine((data, ctx) => {
+    if (data.status !== 'ABOLISHED') return;
+
+    if (data.abolishedYear === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '폐지연도를 입력해주세요.',
+        path: ['abolishedYear'],
+      });
+      return;
+    }
+
+    if (!Number.isInteger(data.abolishedYear) || data.abolishedYear < 1900) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '1900년 이후의 연도를 입력해주세요.',
+        path: ['abolishedYear'],
+      });
+    }
+  });
 
 export type AddClubType = z.infer<typeof AddClubSchema>;

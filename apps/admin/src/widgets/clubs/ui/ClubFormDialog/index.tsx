@@ -29,7 +29,7 @@ import {
 import { cn } from '@repo/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { ChevronDown, Pencil, Plus, X } from 'lucide-react';
-import { Controller, SubmitHandler, UseFormReturn } from 'react-hook-form';
+import { Controller, FieldErrors, SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { AddClubType } from '@/entities/club';
@@ -86,7 +86,10 @@ const ClubFormDialog = ({
     if (currentStatus === 'ABOLISHED') {
       setValue('leaderId', undefined);
       setValue('participantIds', []);
+      return;
     }
+
+    setValue('abolishedYear', undefined);
   }, [currentStatus, setValue]);
 
   const filteredStudents = useMemo(() => {
@@ -135,7 +138,7 @@ const ClubFormDialog = ({
           foundedYear: club.foundedYear,
           abolishedYear: club.abolishedYear,
           leaderId: club.leader?.id,
-          participantIds: club.participants.map((p) => p.id),
+          participantIds: club.participants?.map((p) => p.id) ?? [],
         });
       } else if (mode === 'create') {
         reset({
@@ -158,13 +161,28 @@ const ClubFormDialog = ({
   }, [open]);
 
   const onSubmit: SubmitHandler<AddClubType> = (data) => {
+    const normalizedData = {
+      ...data,
+      abolishedYear: data.abolishedYear ?? undefined,
+    };
+
     if (mode === 'create') {
-      createClub(data);
+      createClub(normalizedData);
       return;
     }
 
     if (club) {
-      updateClub({ clubId: club.id, data });
+      updateClub({ clubId: club.id, data: normalizedData });
+    }
+  };
+
+  const onInvalid = (errors: FieldErrors<AddClubType>) => {
+    const firstError = Object.values(errors)
+      .flat()
+      .find((error) => error?.message);
+
+    if (firstError?.message) {
+      toast.error(String(firstError.message));
     }
   };
 
@@ -195,14 +213,14 @@ const ClubFormDialog = ({
     >
       {!isControlled && <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>}
       <DialogContent
-        className={cn('max-w-2xl p-0')}
+        className={cn('max-w-2xl p-0 max-h-[90vh] overflow-y-auto')}
       >
         <DialogHeader className={cn('border-foreground border-b-2 px-6 py-5')}>
           <DialogTitle className={cn('font-pixel text-foreground text-[14px] leading-none')}>
             {title}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-6 px-6 py-6')}>
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className={cn('space-y-6 px-6 py-6')}>
           <div className={cn('grid grid-cols-2 gap-4 pt-4')}>
             <div className={cn('space-y-2')}>
               <Label
