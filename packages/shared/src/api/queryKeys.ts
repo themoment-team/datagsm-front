@@ -67,7 +67,15 @@ export const authQueryKeys = {
 export const projectQueryKeys = {
   putProjectById: () => ['projects', 'update'] as const,
   deleteProjectById: () => ['projects', 'delete'] as const,
-  getProjects: (params: { page?: number; size?: number; projectName?: string; clubId?: number }) =>
+  postProjectEndById: () => ['projects', 'end'] as const,
+  postProjectReactivateById: () => ['projects', 'reactivate'] as const,
+  getProjects: (params: {
+    page?: number;
+    size?: number;
+    projectName?: string;
+    clubId?: number;
+    status?: string;
+  }) =>
     ['projects', 'list', params] as const,
   postProject: () => ['projects', 'create'] as const,
 } as const;
