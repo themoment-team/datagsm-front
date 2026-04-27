@@ -67,7 +67,15 @@ export const authQueryKeys = {
 export const projectQueryKeys = {
   putProjectById: () => ['projects', 'update'] as const,
   deleteProjectById: () => ['projects', 'delete'] as const,
-  getProjects: (params: { page?: number; size?: number; projectName?: string; clubId?: number }) =>
+  postProjectEndById: () => ['projects', 'end'] as const,
+  postProjectReactivateById: () => ['projects', 'reactivate'] as const,
+  getProjects: (params: {
+    page?: number;
+    size?: number;
+    projectName?: string;
+    clubId?: number;
+    status?: string;
+  }) =>
     ['projects', 'list', params] as const,
   postProject: () => ['projects', 'create'] as const,
 } as const;
@@ -90,6 +98,17 @@ export const clientQueryKeys = {
   patchClientById: () => ['clients', 'update'] as const,
   getClients: (page?: number, size?: number) => ['clients', 'my', { page, size }] as const,
   getAvailableScopes: () => ['clients', 'available-scopes'] as const,
+} as const;
+
+export const applicationQueryKeys = {
+  getApplications: (params: { page?: number; size?: number; name?: string; id?: string }) =>
+    ['applications', 'list', params] as const,
+  postApplication: () => ['applications', 'create'] as const,
+  deleteApplicationById: () => ['applications', 'delete'] as const,
+  patchApplication: () => ['applications', 'update'] as const,
+  patchApplicationScope: () => ['applications', 'scopes', 'update'] as const,
+  deleteApplicationScope: () => ['applications', 'scopes', 'delete'] as const,
+  postApplicationScope: () => ['applications', 'scopes', 'create'] as const,
 } as const;
 
 export const healthQueryKeys = {

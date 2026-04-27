@@ -1,8 +1,9 @@
+import { DM_Sans, JetBrains_Mono, Press_Start_2P } from 'next/font/google';
+import localFont from 'next/font/local';
+
 import { TanStackProvider, ToastProvider } from '@repo/shared/lib';
 import { Header, TooltipProvider } from '@repo/shared/ui';
 import type { Metadata } from 'next';
-import { DM_Sans, JetBrains_Mono, Press_Start_2P } from 'next/font/google';
-import localFont from 'next/font/local';
 
 import { GoogleAnalytics } from '@/shared/lib';
 import { SoundModeProvider } from '@/shared/sound-mode';
@@ -41,9 +42,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'DataGSM',
     description: '광주소프트웨어마이스터고등학교 OpenAPI & OAuth 플랫폼',
-    url: 'https://datagsm-front-client.vercel.app/',
+    url: 'https://www.datagsm.kr/',
     siteName: 'DataGSM',
-    images: 'https://datagsm-front-client.vercel.app/og-image.png',
+    images: 'https://www.datagsm.kr/images/og-image.png',
     type: 'website',
   },
 };

@@ -5,3 +5,4 @@ export * from './error';
 export * from './pkce';
 export * from './path';
 export * from './email';
+export * from './string';

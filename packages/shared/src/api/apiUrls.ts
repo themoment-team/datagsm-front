@@ -84,11 +84,14 @@ export const authUrl = {
 export const projectUrl = {
   putProjectById: (projectId: number) => `/v1/projects/${projectId}`,
   deleteProjectById: (projectId: number) => `/v1/projects/${projectId}`,
+  postProjectEndById: (projectId: number) => `/v1/projects/${projectId}/end`,
+  postProjectReactivateById: (projectId: number) => `/v1/projects/${projectId}/reactivate`,
   getProjects: (params: {
     page?: number;
     size?: number;
     projectName?: string;
     clubId?: number;
+    status?: 'ACTIVE' | 'ENDED';
   }) => {
     const urlParams = new URLSearchParams();
 
@@ -96,6 +99,7 @@ export const projectUrl = {
     if (params.size !== undefined) urlParams.append('size', params.size.toString());
     if (params.projectName) urlParams.append('projectName', params.projectName);
     if (params.clubId !== undefined) urlParams.append('clubId', params.clubId.toString());
+    if (params.status !== undefined) urlParams.append('status', params.status);
 
     const queryString = urlParams.toString();
     return queryString ? `/v1/projects?${queryString}` : '/v1/projects';
@@ -147,6 +151,28 @@ export const clientUrl = {
     return queryString ? `/v1/clients/my?${queryString}` : '/v1/clients/my';
   },
   getAvailableScopes: () => '/v1/clients/available-scopes',
+} as const;
+
+export const applicationUrl = {
+  getApplications: (params: { page?: number; size?: number; name?: string; id?: string }) => {
+    const urlParams = new URLSearchParams();
+
+    if (params.page !== undefined) urlParams.append('page', params.page.toString());
+    if (params.size !== undefined) urlParams.append('size', params.size.toString());
+    if (params.name) urlParams.append('name', params.name);
+    if (params.id) urlParams.append('id', params.id);
+
+    const queryString = urlParams.toString();
+    return queryString ? `/v1/applications?${queryString}` : '/v1/applications';
+  },
+  postApplication: () => '/v1/applications',
+  deleteApplicationById: (id: string) => `/v1/applications/${id}`,
+  patchApplication: (id: string) => `/v1/applications/${id}`,
+  patchApplicationScope: (applicationId: string, scopeId: number) =>
+    `/v1/applications/${applicationId}/scopes/${scopeId}`,
+  deleteApplicationScope: (applicationId: string, scopeId: number) =>
+    `/v1/applications/${applicationId}/scopes/${scopeId}`,
+  postApplicationScope: (applicationId: string) => `/v1/applications/${applicationId}/scopes`,
 } as const;
 
 export const healthUrl = {

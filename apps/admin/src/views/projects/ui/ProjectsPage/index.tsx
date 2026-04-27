@@ -9,7 +9,6 @@ import { useDebounce, useURLFilters } from '@repo/shared/hooks';
 import { Project } from '@repo/shared/types';
 import { CommonPagination, PageHeader } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
-
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -26,7 +25,7 @@ import { ProjectFilter, ProjectFormDialog, ProjectList } from '@/widgets/project
 
 import { useDeleteProject, useGetProjects } from '../../model';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 const ProjectsPage = () => {
   const queryClient = useQueryClient();
@@ -56,6 +55,7 @@ const ProjectsPage = () => {
     (): ProjectFilterType & { page: number } => ({
       projectName: searchParams.get('projectName') || '',
       clubId: searchParams.get('clubId') ? Number(searchParams.get('clubId')) : undefined,
+      status: searchParams.get('status') === 'ENDED' ? 'ENDED' : 'ACTIVE',
       page: Number(searchParams.get('page')) || 0,
     }),
     [searchParams],
@@ -66,10 +66,11 @@ const ProjectsPage = () => {
     defaultValues: {
       projectName: initialValues.projectName,
       clubId: initialValues.clubId,
+      status: initialValues.status,
     },
   });
 
-  const { register, control } = filterForm;
+  const { control } = filterForm;
 
   const filters = useWatch({
     control,
@@ -81,24 +82,28 @@ const ProjectsPage = () => {
 
   useEffect(() => {
     const hasChanged =
-      debouncedProjectName !== initialValues.projectName || filters.clubId !== initialValues.clubId;
+      debouncedProjectName !== initialValues.projectName ||
+      filters.clubId !== initialValues.clubId ||
+      filters.status !== initialValues.status;
 
     if (hasChanged) {
       updateURL(
         {
           projectName: debouncedProjectName,
           clubId: filters.clubId,
+          status: filters.status,
         },
         0,
       );
     }
-  }, [debouncedProjectName, filters.clubId, initialValues, updateURL]);
+  }, [debouncedProjectName, filters.clubId, filters.status, initialValues, updateURL]);
 
   const handlePageChange = (page: number) => {
     updateURL(
       {
         projectName: debouncedProjectName,
         clubId: filters.clubId,
+        status: filters.status,
       },
       page,
     );
@@ -109,6 +114,7 @@ const ProjectsPage = () => {
     size: PAGE_SIZE,
     projectName: debouncedProjectName || undefined,
     clubId: filters.clubId,
+    status: filters.status,
   };
 
   const { data: projectsData, isLoading: isLoadingProjects } = useGetProjects(queryParams);
@@ -127,6 +133,11 @@ const ProjectsPage = () => {
 
   const projectForm = useForm<AddProjectType>({
     resolver: zodResolver(AddProjectSchema),
+    defaultValues: {
+      status: 'ACTIVE',
+      participantIds: [],
+      clubId: 0,
+    },
   });
 
   return (
@@ -149,11 +160,11 @@ const ProjectsPage = () => {
 
         {/* Filters */}
         <div className={cn('mb-4')}>
-          <ProjectFilter register={register} control={control} clubs={clubs} />
+          <ProjectFilter control={control} clubs={clubs} />
         </div>
 
         {/* Table */}
-        <div className={cn('border-2 border-foreground pixel-shadow')}>
+        <div className={cn('border-foreground pixel-shadow border-2')}>
           <ProjectList
             projects={projectList}
             isLoading={isLoadingProjects}

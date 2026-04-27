@@ -16,11 +16,12 @@ export const useGetOAuthSession = (token: string | null) => {
         try {
           const parsed = JSON.parse(storedData);
           // 토큰이 일치하고 필요한 정보가 다 있다면 즉시 반환
-          if (parsed.token === token && parsed.serviceName && parsed.expiresAt) {
+          if (parsed.token === token && parsed.serviceName && parsed.expiresAt && parsed.requestedScopes) {
             return {
               data: {
                 serviceName: parsed.serviceName,
                 expiresAt: parsed.expiresAt,
+                requestedScopes: parsed.requestedScopes,
               },
             } as OAuthSessionResponse;
           }

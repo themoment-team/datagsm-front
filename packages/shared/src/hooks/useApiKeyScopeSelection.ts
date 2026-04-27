@@ -1,32 +1,31 @@
-﻿'use client';
+'use client';
 
 import { useMemo } from 'react';
 
-import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
-import { AvailableScopeListResponse } from '../types';
+import { ApiKeyFormType, AvailableScopeListResponse } from '../types';
 
-interface UseScopeSelectionParams<T extends FieldValues> {
+interface UseApiKeyScopeSelectionParams {
   availableScopes?: AvailableScopeListResponse;
-  watch: UseFormWatch<T>;
-  setValue: UseFormSetValue<T>;
-  fieldName: Path<T>;
+  watch: UseFormWatch<ApiKeyFormType>;
+  setValue: UseFormSetValue<ApiKeyFormType>;
 }
 
-export const useScopeSelection = <T extends FieldValues>({
+export const useApiKeyScopeSelection = ({
   availableScopes,
   watch,
   setValue,
-  fieldName,
-}: UseScopeSelectionParams<T>) => {
+}: UseApiKeyScopeSelectionParams) => {
+  const fieldName = 'scopes';
+
   const scopeMap = useMemo(() => {
     const map = new Map<string, string[]>();
-
     const categories = availableScopes?.data?.list || [];
-    categories.forEach((category) => {
-      category.scopes.forEach(({ scope }) => {
-        if (scope.endsWith(':*')) return;
 
+    categories.forEach((category) => {
+      category.scopes?.forEach(({ scope }) => {
+        if (scope.endsWith(':*')) return;
         const prefix = scope.split(':')[0];
         map.set(prefix!, [...(map.get(prefix!) ?? []), scope]);
       });
@@ -36,9 +35,8 @@ export const useScopeSelection = <T extends FieldValues>({
   }, [availableScopes]);
 
   const handleScopeToggle = (scope: string) => {
-    const currentScopes = (watch(fieldName) as string[]) || [];
+    const currentScopes = watch(fieldName) || [];
 
-    // 전체 권한 범위 선택
     if (scope.endsWith(':*')) {
       const prefix = scope.split(':')[0];
       const relatedScopes = scopeMap.get(prefix!) ?? [];
@@ -50,25 +48,24 @@ export const useScopeSelection = <T extends FieldValues>({
         ? currentScopes.filter((id) => !relatedScopes.includes(id))
         : Array.from(new Set([...currentScopes, ...relatedScopes]));
 
-      setValue(fieldName, nextSelected as PathValue<T, Path<T>>, {
+      setValue(fieldName, nextSelected, {
         shouldValidate: true,
         shouldDirty: true,
       });
       return;
     }
 
-    // 일반 권한 범위 단일 토글
     setValue(
       fieldName,
-      (currentScopes.includes(scope)
+      currentScopes.includes(scope)
         ? currentScopes.filter((id) => id !== scope)
-        : [...currentScopes, scope]) as PathValue<T, Path<T>>,
+        : [...currentScopes, scope],
       { shouldValidate: true, shouldDirty: true },
     );
   };
 
   const isScopeChecked = (scope: string) => {
-    const currentScopes = (watch(fieldName) as string[]) || [];
+    const currentScopes = watch(fieldName) || [];
 
     if (scope.endsWith(':*')) {
       const prefix = scope.split(':')[0];

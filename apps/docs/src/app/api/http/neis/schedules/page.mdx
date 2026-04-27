@@ -12,11 +12,11 @@ GET /v1/neis/schedules
 
 ## 요청 파라미터
 
-| 파라미터       | 타입          | 필수 여부 | 설명                              | 예시           |
-|------------|-------------|-------|---------------------------------|--------------|
+| 파라미터       | 타입          | 필수 여부 | 설명                               | 예시           |
+|------------|-------------|-------|----------------------------------|--------------|
 | `date`     | `LocalDate` | 선택    | 특정 날짜의 학사일정 데이터 조회 (ISO 8601 형식) | `2025-12-15` |
-| `fromDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)          | `2025-12-01` |
-| `toDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)          | `2025-12-31` |
+| `fromDate` | `LocalDate` | 선택    | 조회 시작 날짜 (ISO 8601 형식)           | `2025-12-01` |
+| `toDate`   | `LocalDate` | 선택    | 조회 종료 날짜 (ISO 8601 형식)           | `2025-12-31` |
 
 **날짜 파라미터 사용 규칙:**
 
@@ -28,32 +28,38 @@ GET /v1/neis/schedules
 
 모든 성공 응답은 다음과 같은 구조로 반환됩니다.
 
-| 필드        | 타입       | 설명               | 예시   |
-|-----------|----------|------------------|------|
-| `status`  | `String` | HTTP 상태 메시지      | `OK` |
-| `code`    | `Int`    | HTTP 상태 코드       | `200` |
-| `message` | `String` | 응답 메시지           | `OK` |
-| `data`    | `Array`  | 학사일정 데이터 목록 배열 | -    |
+| 필드        | 타입       | 설명          | 예시    |
+|-----------|----------|-------------|-------|
+| `status`  | `String` | HTTP 상태 메시지 | `OK`  |
+| `code`    | `Int`    | HTTP 상태 코드  | `200` |
+| `message` | `String` | 응답 메시지      | `OK`  |
+| `data`    | `Object` | 학사일정 응답 객체  | -     |
 
-### data 배열
+### data 객체
 
-`data` 필드는 학사일정 데이터 객체의 배열이며, 각 학사일정 객체는 다음 필드를 포함합니다.
+| 필드          | 타입      | 설명             | 예시 |
+|-------------|---------|----------------|----|
+| `schedules` | `Array` | 학사일정 데이터 목록 배열 | -  |
 
-| 필드                 | 타입          | 설명                           | 예시                 |
-|--------------------|-------------|------------------------------|--------------------|
-| `scheduleId`       | `String`    | 학사일정 ID                      | `7430310_20251215` |
-| `schoolCode`       | `String`    | 학교 코드                        | `7430310`          |
-| `schoolName`       | `String`    | 학교명                          | `광주소프트웨어마이스터고등학교`  |
-| `officeCode`       | `String`    | 시도교육청 코드                     | `G10`              |
-| `officeName`       | `String`    | 시도교육청명                       | `광주광역시교육청`         |
-| `scheduleDate`     | `LocalDate` | 학사일정 날짜                      | `2025-12-15`       |
-| `academicYear`     | `String`    | 학년도                          | `2025`             |
-| `eventName`        | `String`    | 행사명                          | `기말고사`             |
+### schedules 배열
+
+`schedules` 필드는 학사일정 데이터 객체의 배열이며, 각 학사일정 객체는 다음 필드를 포함합니다.
+
+| 필드                 | 타입          | 설명                               | 예시                 |
+|--------------------|-------------|----------------------------------|--------------------|
+| `scheduleId`       | `String`    | 학사일정 ID                          | `7430310_20251215` |
+| `schoolCode`       | `String`    | 학교 코드                            | `7430310`          |
+| `schoolName`       | `String`    | 학교명                              | `광주소프트웨어마이스터고등학교`  |
+| `officeCode`       | `String`    | 시도교육청 코드                         | `G10`              |
+| `officeName`       | `String`    | 시도교육청명                           | `광주광역시교육청`         |
+| `scheduleDate`     | `LocalDate` | 학사일정 날짜                          | `2025-12-15`       |
+| `academicYear`     | `String`    | 학년도                              | `2025`             |
+| `eventName`        | `String`    | 행사명                              | `기말고사`             |
 | `eventContent`     | `String?`   | 행사내용 (없는 경우 `null`)              | `2025학년도 2학기 기말고사` |
 | `dayCategory`      | `String?`   | 수업공제일명 (공휴일/휴업일 등, 없는 경우 `null`) | `휴업일`              |
 | `schoolCourseType` | `String?`   | 학교과정명 (없는 경우 `null`)             | `고등학교`             |
 | `dayNightType`     | `String?`   | 주야과정명 (없는 경우 `null`)             | `주간`               |
-| `targetGrades`     | `List<Int>` | 해당 학년 목록                     | `[1, 2, 3]`        |
+| `targetGrades`     | `List<Int>` | 해당 학년 목록                         | `[1, 2, 3]`        |
 
 ## 요청 예시
 
@@ -74,23 +80,25 @@ curl -X GET "https://api.datagsm.com/v1/neis/schedules?fromDate=2025-12-01&toDat
   "status": "OK",
   "code": 200,
   "message": "OK",
-  "data": [
-    {
-      "scheduleId": "7430310_20251215",
-      "schoolCode": "7430310",
-      "schoolName": "광주소프트웨어마이스터고등학교",
-      "officeCode": "G10",
-      "officeName": "광주광역시교육청",
-      "scheduleDate": "2025-12-15",
-      "academicYear": "2025",
-      "eventName": "기말고사",
-      "eventContent": "2025학년도 2학기 기말고사",
-      "dayCategory": null,
-      "schoolCourseType": "고등학교",
-      "dayNightType": "주간",
-      "targetGrades": [1, 2, 3]
-    }
-  ]
+  "data": {
+    "schedules": [
+      {
+        "scheduleId": "7430310_20251215",
+        "schoolCode": "7430310",
+        "schoolName": "광주소프트웨어마이스터고등학교",
+        "officeCode": "G10",
+        "officeName": "광주광역시교육청",
+        "scheduleDate": "2025-12-15",
+        "academicYear": "2025",
+        "eventName": "기말고사",
+        "eventContent": "2025학년도 2학기 기말고사",
+        "dayCategory": null,
+        "schoolCourseType": "고등학교",
+        "dayNightType": "주간",
+        "targetGrades": [1, 2, 3]
+      }
+    ]
+  }
 }
 ```
 
@@ -99,7 +107,7 @@ curl -X GET "https://api.datagsm.com/v1/neis/schedules?fromDate=2025-12-01&toDat
 | 상태 코드                   | 설명                  |
 |-------------------------|---------------------|
 | `401 Unauthorized`      | API 키가 유효하지 않거나 만료됨 |
-| `403 Forbidden`         | 권한 범위 부족               |
+| `403 Forbidden`         | 권한 범위 부족            |
 | `429 Too Many Requests` | 단위 시간에 너무 많은 요청량 발생 |
 | `400 Bad Request`       | 잘못된 요청 파라미터         |
 
@@ -183,3 +191,4 @@ fun getSchedules(date: String): String {
 
 - [NEIS 데이터 OpenAPI 개요](/api/http/neis)
 - [급식 데이터 API](/api/http/neis/meals)
+- [시간표 데이터 API](/api/http/neis/timetables)

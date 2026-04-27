@@ -41,6 +41,10 @@ export const docsSections: DocsSection[] = [
                 label: '학사일정 데이터 API',
                 href: '/api/http/neis/schedules',
               },
+              {
+                label: '시간표 데이터 API',
+                href: '/api/http/neis/timetables',
+              },
             ],
           },
         ],
@@ -81,6 +85,10 @@ export const docsSections: DocsSection[] = [
       {
         label: 'PKCE 가이드',
         href: '/oauth/pkce',
+      },
+      {
+        label: '서드파티 권한 범위',
+        href: '/oauth/thirdparty-scope',
       },
       {
         label: 'Design 가이드',

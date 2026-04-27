@@ -21,6 +21,8 @@ import {
 import { cn } from '@repo/shared/utils';
 import { Pencil, Trash2 } from 'lucide-react';
 
+import { getProjectStatusLabel } from '@/entities/project';
+
 interface ProjectListProps {
   projects: Project[];
   isLoading?: boolean;
@@ -31,81 +33,107 @@ interface ProjectListProps {
 const ProjectList = ({ projects, isLoading, onEdit, onDelete }: ProjectListProps) => {
   return (
     <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>이름</TableHead>
-            <TableHead>설명</TableHead>
-            <TableHead>동아리</TableHead>
-            <TableHead className={cn('w-24')}></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
-            Array.from({ length: 10 }).map((_, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Skeleton className={cn('h-4 w-32')} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className={cn('h-4 w-48')} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className={cn('h-4 w-24')} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className={cn('h-8 w-8')} />
-                </TableCell>
-              </TableRow>
-            ))
-          ) : projects.length > 0 ? (
-            projects.map((project) => (
-              <TableRow key={project.id}>
-                <TableCell className={cn('font-medium')}>{project.name}</TableCell>
-                <TableCell className={cn('max-w-xs truncate')}>{project.description}</TableCell>
-                <TableCell>{project.club?.name || '무소속'}</TableCell>
-                <TableCell>
-                  <div className={cn('flex items-center gap-2')}>
-                    <PixelIconButton onClick={() => onEdit?.(project)}>
-                      <Pencil className={cn('h-3.5 w-3.5')} />
-                    </PixelIconButton>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <PixelIconButton variant="destructive">
-                          <Trash2 className={cn('h-3.5 w-3.5')} />
-                        </PixelIconButton>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>프로젝트 삭제</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            정말로 &apos;{project.name}&apos; 프로젝트를 삭제하시겠습니까? 이 작업은
-                            되돌릴 수 없습니다.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>취소</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => onDelete?.(project.id)}
-                            className={cn('bg-destructive hover:bg-destructive/90 text-white')}
-                          >
-                            삭제
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={4} className={cn('text-muted-foreground h-32 text-center')}>
-                프로젝트 데이터가 없습니다.
+      <TableHeader>
+        <TableRow>
+          <TableHead>이름</TableHead>
+          <TableHead>상태</TableHead>
+          <TableHead>시작 연도</TableHead>
+          <TableHead>종료 연도</TableHead>
+          <TableHead>설명</TableHead>
+          <TableHead>동아리</TableHead>
+          <TableHead className={cn('w-24')}>작업</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {isLoading ? (
+          Array.from({ length: 10 }).map((_, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-32')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-5 w-14')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-12')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-12')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-48')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-4 w-24')} />
+              </TableCell>
+              <TableCell>
+                <Skeleton className={cn('h-8 w-8')} />
               </TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          ))
+        ) : projects.length > 0 ? (
+          projects.map((project) => (
+            <TableRow key={project.id}>
+              <TableCell className={cn('font-medium')}>{project.name}</TableCell>
+              <TableCell>
+                <span
+                  className={cn(
+                    'px-1.5 py-0.5 font-mono text-xs uppercase',
+                    project.status === 'ACTIVE'
+                      ? 'bg-foreground text-background'
+                      : 'border-foreground/25 text-muted-foreground border',
+                  )}
+                >
+                  {getProjectStatusLabel(project.status)}
+                </span>
+              </TableCell>
+              <TableCell className={cn('font-mono text-xs')}>{project.startYear}</TableCell>
+              <TableCell className={cn('font-mono text-xs')}>{project.endYear ?? '-'}</TableCell>
+              <TableCell className={cn('max-w-xs truncate')}>{project.description}</TableCell>
+              <TableCell>{project.club?.name || '무소속'}</TableCell>
+              <TableCell>
+                <div className={cn('flex items-center gap-2')}>
+                  <PixelIconButton onClick={() => onEdit?.(project)}>
+                    <Pencil className={cn('h-3.5 w-3.5')} />
+                  </PixelIconButton>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <PixelIconButton variant="destructive">
+                        <Trash2 className={cn('h-3.5 w-3.5')} />
+                      </PixelIconButton>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>프로젝트 삭제</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          정말로 &apos;{project.name}&apos; 프로젝트를 삭제하시겠습니까? 이 작업은
+                          되돌릴 수 없습니다.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>취소</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => onDelete?.(project.id)}
+                          className={cn('bg-destructive hover:bg-destructive/90 text-white')}
+                        >
+                          삭제
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={7} className={cn('text-muted-foreground h-32 text-center')}>
+              프로젝트 데이터가 없습니다.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 };
 

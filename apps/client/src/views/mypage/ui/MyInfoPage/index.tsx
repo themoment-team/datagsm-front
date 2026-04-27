@@ -4,7 +4,8 @@ import { MyAccountResponse } from '@repo/shared/types';
 import { PageHeader, Skeleton } from '@repo/shared/ui';
 import { cn } from '@repo/shared/utils';
 
-import { ProfileInfo, WithdrawalSection, useGetMy } from '@/widgets/myinfo';
+import { useGetMy } from '@/shared/hooks';
+import { ProfileInfo, WithdrawalSection } from '@/widgets/myinfo';
 
 interface MyInfoPageProps {
   initialData: MyAccountResponse | undefined;
@@ -17,7 +18,7 @@ const MyInfoPage = ({ initialData }: MyInfoPageProps) => {
     return (
       <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
         <main className={cn('container mx-auto px-4 py-8')}>
-          <div className={cn('mb-6 border-b-2 border-foreground pb-4')}>
+          <div className={cn('border-foreground mb-6 border-b-2 pb-4')}>
             <Skeleton className={cn('mb-2 h-3 w-32')} />
             <Skeleton className={cn('h-5 w-24')} />
           </div>
@@ -35,9 +36,9 @@ const MyInfoPage = ({ initialData }: MyInfoPageProps) => {
     return (
       <div className={cn('bg-background min-h-[calc(100vh-3.5rem)]')}>
         <main className={cn('container mx-auto px-4 py-8')}>
-          <div className={cn('border-2 border-foreground px-6 py-12 text-center')}>
+          <div className={cn('border-foreground border-2 px-6 py-12 text-center')}>
             <p className={cn('font-pixel text-[12px]')}>오류</p>
-            <p className={cn('mt-3 text-sm text-muted-foreground font-mono')}>
+            <p className={cn('text-muted-foreground mt-3 font-mono text-sm')}>
               로그인 상태를 확인하거나 잠시 후 다시 시도해주세요.
             </p>
           </div>

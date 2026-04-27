@@ -1,10 +1,15 @@
 import { ApiResponse, Club, ClubMember } from '@repo/shared/types';
 
+export type ProjectStatus = 'ACTIVE' | 'ENDED';
+
 export interface Project {
   id: number;
   name: string;
   description: string;
-  club: Club;
+  startYear: number;
+  endYear: number | null;
+  status: ProjectStatus;
+  club: Club | null;
   participants: ClubMember[];
 }
 
@@ -20,6 +25,7 @@ export interface ProjectQueryParams {
   projectId?: number;
   projectName?: string;
   clubId?: number;
+  status?: ProjectStatus;
   page: number;
   size: number;
 }
