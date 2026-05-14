@@ -70,6 +70,10 @@ export const docsSections: DocsSection[] = [
             href: '/api/sdk/dotnet',
           },
           {
+            label: 'Go SDK',
+            href: '/api/sdk/go',
+          },
+          {
             label: 'SDK 버저닝 컨벤션',
             href: '/api/sdk/versioning',
           },
