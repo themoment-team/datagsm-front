@@ -108,7 +108,7 @@ client, err := datagsm.NewClient("your-api-key",
 // 학생 목록 조회 (2학년, AI 전공)
 resp, err := client.Students().List(ctx, datagsm.StudentQuery{
     Grade:   datagsm.Ptr(2),
-    Major:   (*datagsm.Major)(datagsm.Ptr(string(datagsm.MajorAI))),
+    Major:   datagsm.Ptr(datagsm.MajorAI),
     SortBy:  datagsm.StudentSortByName,
     SortDir: datagsm.SortDirASC,
     Page:    0,
@@ -242,7 +242,7 @@ schedules, err := client.NEIS().Schedules(ctx, datagsm.ScheduleQuery{
 timetables, err := client.NEIS().Timetables(ctx, datagsm.TimetableQuery{
     Grade:    2,
     ClassNum: 3,
-    Date:     &today,
+    Date:     datagsm.Ptr(time.Now()),
 })
 ```
 
