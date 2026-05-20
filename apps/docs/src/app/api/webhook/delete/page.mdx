@@ -26,14 +26,14 @@ DELETE /v1/webhooks/{webhookId}
 
 | 파라미터        | 타입     | 필수 여부 | 설명         | 예시  |
 |-------------|--------|-------|------------|-----|
-| `webhookId` | `Long` | 필수    | Webhook ID | `1` |
+| `webhookId` | `integer` | 필수    | Webhook ID | `1` |
 
 ### 응답 형식
 
 | 필드        | 타입       | 설명          | 예시                                  |
 |-----------|----------|-------------|-------------------------------------|
 | `status`  | `String` | HTTP 상태 메시지 | `OK`                                |
-| `code`    | `Int`    | HTTP 상태 코드  | `200`                               |
+| `code`    | `integer` | HTTP 상태 코드  | `200`                               |
 | `message` | `String` | 응답 메시지      | `Webhook을 성공적으로 삭제했습니다.` |
 | `data`    | `null`   | 데이터 없음      | `null`                              |
 

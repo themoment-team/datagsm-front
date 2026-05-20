@@ -30,15 +30,15 @@ GET /v1/webhooks
 
 | 필드         | 타입                    | 설명         |
 |------------|-----------------------|------------|
-| `webhooks` | `List<WebhookResDto>` | Webhook 목록 |
+| `webhooks` | `array<object>` | Webhook 목록 |
 
 #### Webhook 객체 (WebhookResDto)
 
 | 필드           | 타입                  | 설명                  | 예시                                       |
 |--------------|---------------------|---------------------|------------------------------------------|
-| `id`         | `Long`              | Webhook ID          | `1`                                      |
-| `target_url` | `String`            | 수신 URL              | `https://example.com/webhooks/datagsm`   |
-| `events`     | `Set<WebhookEvent>` | 구독 이벤트 목록           | `["STUDENT_GRADUATED", "CLUB_CREATED"]` |
+| `id`         | `integer`       | Webhook ID          | `1`                                      |
+| `target_url` | `String`        | 수신 URL              | `https://example.com/webhooks/datagsm`   |
+| `events`     | `array<string>` | 구독 이벤트 목록           | `["STUDENT_GRADUATED", "CLUB_CREATED"]` |
 | `is_active`  | `Boolean`           | 활성화 여부              | `true`                                   |
 | `created_at` | `String`            | 생성 일시 (`ISO-8601`) | `2026-05-13T10:00:00`                    |
 
