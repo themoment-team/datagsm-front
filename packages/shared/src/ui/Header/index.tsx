@@ -111,6 +111,7 @@ const Header = ({ role = 'client' }: HeaderProps) => {
               key={link.href}
               href={link.href}
               onClick={closeMenu}
+              tabIndex={isMenuOpen ? 0 : -1}
               className={cn(
                 'text-muted-foreground hover:text-foreground font-mono text-sm uppercase tracking-widest transition-colors',
               )}
@@ -125,6 +126,7 @@ const Header = ({ role = 'client' }: HeaderProps) => {
                   handleLogout();
                   closeMenu();
                 }}
+                tabIndex={isMenuOpen ? 0 : -1}
                 className={cn(
                   'border-foreground hover:bg-foreground hover:text-background flex w-full cursor-pointer items-center justify-center gap-2 border py-3 font-mono text-xs uppercase tracking-widest transition-all',
                 )}
