@@ -119,8 +119,8 @@ const Header = ({ role = 'client' }: HeaderProps) => {
               {link.label}
             </Link>
           ))}
-          <div className={cn('mt-4 border-t pt-4')}>
-            {(role === 'client' || role === 'admin') && (
+          {(role === 'client' || role === 'admin') && (
+            <div className={cn('mt-4 border-t pt-4')}>
               <button
                 onClick={() => {
                   handleLogout();
@@ -134,8 +134,8 @@ const Header = ({ role = 'client' }: HeaderProps) => {
                 <LogOut className={cn('h-4 w-4')} />
                 <span>Logout</span>
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </nav>
       </div>
 
