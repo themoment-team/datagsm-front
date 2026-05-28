@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
@@ -15,7 +15,7 @@ interface HeaderProps {
 }
 
 const Header = ({ role = 'client' }: HeaderProps) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
   const handleLogout = () => {
@@ -31,6 +31,17 @@ const Header = ({ role = 'client' }: HeaderProps) => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 640) {
+        closeMenu();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const links = NAV_LINKS[role];
 
@@ -90,7 +101,7 @@ const Header = ({ role = 'client' }: HeaderProps) => {
       {/* Mobile Side Menu */}
       <div
         className={cn(
-          'bg-background border-foreground fixed top-14 right-0 bottom-0 z-50 w-64 border-l-2 transition-transform duration-300 ease-in-out sm:hidden',
+          'bg-background border-foreground fixed bottom-0 right-0 top-14 z-50 w-64 border-l-2 transition-transform duration-300 ease-in-out sm:hidden',
           isMenuOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
