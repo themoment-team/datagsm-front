@@ -80,7 +80,7 @@ DataGsmOpenApiClient client = DataGsmOpenApiClient.builder("your-api-key-here").
 
 // 커스텀 Base URL 설정 (선택사항)
 DataGsmOpenApiClient clientWithCustomUrl = DataGsmOpenApiClient.builder("your-api-key-here")
-    .baseUrl("https://api.datagsm.com") // 설정하지 않는다면 공식 Base URL 사용
+    .baseUrl("https://openapi.datagsm.kr") // 설정하지 않는다면 공식 Base URL 사용
     .build();`} />
 
   <CodeTab label="Kotlin" language="kotlin" code={`import team.themoment.datagsm.sdk.openapi.DataGsmOpenApiClient
@@ -90,7 +90,7 @@ val client = DataGsmOpenApiClient.builder("your-api-key-here").build()
 
 // 커스텀 Base URL 설정 (선택사항)
 val clientWithCustomUrl = DataGsmOpenApiClient.builder("your-api-key-here")
-    .baseUrl("https://api.datagsm.com") // 설정하지 않는다면 공식 Base URL 사용
+    .baseUrl("https://openapi.datagsm.kr") // 설정하지 않는다면 공식 Base URL 사용
     .build()`} />
 
 </CodeTabs>
@@ -522,7 +522,7 @@ var baseUrl: String = ""
 datagsm:
   api:
     key: ${DATAGSM_API_KEY} # 환경 변수에서 로드
-    base-url: https://api.datagsm.com
+    base-url: https://openapi.datagsm.kr
 ```
 
 ### Service 클래스에서 사용

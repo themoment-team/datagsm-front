@@ -90,7 +90,7 @@ List<Meal> meals = client.neis().getMeals(
 // ❌ 직접 HTTP 호출 - 많은 보일러플레이트 코드 필요
 HttpClient httpClient = HttpClient.newHttpClient();
 HttpRequest request = HttpRequest.newBuilder()
-    .uri(URI.create("https://api.datagsm.com/v1/neis/meals?date=2025-01-02"))
+    .uri(URI.create("https://openapi.datagsm.kr/v1/neis/meals?date=2025-01-02"))
     .header("X-API-KEY", "your-api-key")
     .GET()
     .build();

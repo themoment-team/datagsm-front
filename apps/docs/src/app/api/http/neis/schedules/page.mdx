@@ -65,11 +65,11 @@ GET /v1/neis/schedules
 
 ```bash
 # 특정 날짜 조회
-curl -X GET "https://api.datagsm.com/v1/neis/schedules?date=2025-12-15" \
+curl -X GET "https://openapi.datagsm.kr/v1/neis/schedules?date=2025-12-15" \
   -H "X-API-KEY: your-api-key-here"
 
 # 기간 범위 조회
-curl -X GET "https://api.datagsm.com/v1/neis/schedules?fromDate=2025-12-01&toDate=2025-12-31" \
+curl -X GET "https://openapi.datagsm.kr/v1/neis/schedules?fromDate=2025-12-01&toDate=2025-12-31" \
   -H "X-API-KEY: your-api-key-here"
 ```
 
@@ -120,7 +120,7 @@ curl -X GET "https://api.datagsm.com/v1/neis/schedules?fromDate=2025-12-01&toDat
 
 async function getSchedules(date) {
   try {
-    const response = await axios.get('https://api.datagsm.com/v1/neis/schedules', {
+    const response = await axios.get('https://openapi.datagsm.kr/v1/neis/schedules', {
       headers: {
         'X-API-KEY': 'your-api-key-here',
       },
@@ -140,7 +140,7 @@ async function getSchedules(date) {
 def get_schedules(date):
     try:
         response = requests.get(
-            'https://api.datagsm.com/v1/neis/schedules',
+            'https://openapi.datagsm.kr/v1/neis/schedules',
             headers={'X-API-KEY': 'your-api-key-here'},
             params={'date': date}
         )
@@ -157,7 +157,7 @@ public class NeisAPI {
     public static String getSchedules(String date) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://api.datagsm.com/v1/neis/schedules?date=" + date))
+            .uri(URI.create("https://openapi.datagsm.kr/v1/neis/schedules?date=" + date))
             .header("X-API-KEY", "your-api-key-here")
             .GET()
             .build();
@@ -176,7 +176,7 @@ import java.net.URI
 fun getSchedules(date: String): String {
     val client = HttpClient.newHttpClient()
     val request = HttpRequest.newBuilder()
-        .uri(URI.create("https://api.datagsm.com/v1/neis/schedules?date=\${date}"))
+        .uri(URI.create("https://openapi.datagsm.kr/v1/neis/schedules?date=\${date}"))
         .header("X-API-KEY", "your-api-key-here")
         .GET()
         .build()
