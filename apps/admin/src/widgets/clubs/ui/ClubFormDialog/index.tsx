@@ -136,7 +136,7 @@ const ClubFormDialog = ({
           type: club.type,
           status: club.status,
           foundedYear: club.foundedYear,
-          abolishedYear: club.abolishedYear,
+          abolishedYear: club.abolishedYear ?? undefined,
           leaderId: club.leader?.id,
           participantIds: club.participants?.map((p) => p.id) ?? [],
         });
